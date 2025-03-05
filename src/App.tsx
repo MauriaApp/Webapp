@@ -1,26 +1,26 @@
-import CountBtn from "@/components/count-btn";
-import ReactSVG from "@/assets/react.svg";
-import { Badge } from "@/components/ui/badge";
+import Home from "./pages/page";
+import PlanningPage from "./pages/planning/page";
+import NotesPage from "./pages/notes/page";
+import AbsencesPage from "./pages/absences/page";
+import { ToastContextProvider } from "./contexts/toastContent";
+import { ModalContextProvider } from "./contexts/modalContext";
+
+import { BrowserRouter, Route, Routes } from "react-router";
 
 function App() {
   return (
-    <main className="flex flex-col items-center justify-center h-screen">
-      <div className="flex flex-col items-center gap-y-4">
-        <div className="inline-flex items-center gap-x-4">
-          <img src={ReactSVG} alt="React Logo" className="w-32" />
-          <span className="text-6xl">+</span>
-          <img src={"/vite.svg"} alt="Vite Logo" className="w-32" />
-        </div>
-        <a
-          href="https://ui.shadcn.com"
-          rel="noopener noreferrer nofollow"
-          target="_blank"
-        >
-          <Badge variant="outline">shadcn/ui</Badge>
-        </a>
-        <CountBtn />
-      </div>
-    </main>
+    <ToastContextProvider>
+      <ModalContextProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/planning" element={<PlanningPage />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/absences" element={<AbsencesPage />} />
+          </Routes>
+        </BrowserRouter>
+      </ModalContextProvider>
+    </ToastContextProvider>
   );
 }
 

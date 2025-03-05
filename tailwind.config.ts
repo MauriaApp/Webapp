@@ -1,9 +1,13 @@
-import tailwindAnimate from "tailwindcss-animate";
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -47,12 +51,25 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
+        // Custom theme colors for Mauria app
+        mauria: {
+          dark: {
+            bg: "#2D1E43",
+            card: "#3D2A53",
+            accent: "#F27935",
+            alert: "#B25B43",
+            border: "#3D2A53",
+          },
+          // Light theme colors
+          light: {
+            bg: "#FAF9F6",
+            card: "#FFFFFF",
+            accent: "#F27935",
+            alert: "#FFE5E5",
+            border: "#E5E7EB",
+            purple: "#2D1E43",
+            text: "#1F2937",
+          },
         },
       },
       borderRadius: {
@@ -62,20 +79,12 @@ const config: Config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
         },
       },
       animation: {
@@ -84,7 +93,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [tailwindAnimate],
-};
+  plugins: [require("tailwindcss-animate")],
+}
 
-export default config;
