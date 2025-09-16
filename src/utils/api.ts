@@ -1,4 +1,4 @@
-const API_URL = "https:///mauria-api.fly.dev"
+const API_URL = "https://mauria-api.fly.dev"
 
 export function getSession() {
   const email = localStorage.getItem("email")
@@ -16,14 +16,14 @@ export function setSession(email: string, password: string) {
   localStorage.setItem("password", password)
 }
 
-export async function login(email: string, password: string) {
-  const response = await fetch(`${API_URL}/login`, {
+export async function login(email: string, password: string): Promise<boolean> {
+  const response = await fetch(`${API_URL}/aurion/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      username: email,
+      email,
       password,
     }),
   })
@@ -42,7 +42,22 @@ type PlanningQueryParams = {
   end: string
 }
 
-export async function fetchPlanning(params?: PlanningQueryParams) {
+type PlanningDayData = {
+  id: string
+  title: string
+  start: string
+  end: string
+  allDay: boolean
+  editable: boolean
+  className: string
+}
+
+export type PlanningEntry = {
+  success: boolean
+  data: PlanningDayData[]
+}
+
+export async function fetchPlanning(params?: PlanningQueryParams): Promise<PlanningEntry | null> {
   const session = getSession()
   if (!session) return null
 
@@ -51,44 +66,61 @@ export async function fetchPlanning(params?: PlanningQueryParams) {
   const end = params?.end ?? start
 
   const response = await fetch(
-    `${API_URL}/planning?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+    `${API_URL}/aurion/planning?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: session.email,
+        email: session.email,
         password: session.password,
       }),
     }
   )
 
   if (response.ok) {
-    const data = await response.json()
+    const data = (await response.json() as PlanningEntry)
     localStorage.setItem("lastPlanningUpdate", new Date().toISOString())
-    localStorage.setItem("planning", JSON.stringify(data))
+    localStorage.setItem("planning", JSON.stringify(data.data))
     return data
   }
 
   return null
 }
 
-export async function fetchNotes() {
+type NoteData = {
+  date: string
+  code: string
+  epreuve: string
+  note: string
+  coefficient: string
+  moyenne: string
+  min: string
+  mediane: string
+  ecartType: string
+  commentaire: string
+}
+
+export type NotesEntry = {
+  success: boolean
+  data: NoteData[]
+}
+
+export async function fetchNotes(): Promise<NotesEntry | null> {
   const session = getSession()
   if (!session) return null
 
   localStorage.setItem("newNotes", JSON.stringify([]))
 
-  const response = await fetch(`${API_URL}/poststats`, {
+  const response = await fetch(`${API_URL}/notes`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      username: session.email,
+      email: session.email,
       password: session.password,
-      shared: "",
     }),
   })
 
@@ -97,61 +129,31 @@ export async function fetchNotes() {
     return null
   }
 
-  const data = await response.json()
+  const data = (await response.json() as NotesEntry)
   const oldNotes = JSON.parse(localStorage.getItem("notes") ?? "[]") as Array<{ code: string }>
-  const newNotes = data.filter((note: { code: string }) => !oldNotes.some((old) => old.code === note.code))
+  const newNotes = data.data.filter((note: { code: string }) => !oldNotes.some((old) => old.code === note.code))
 
-  localStorage.setItem("notes", JSON.stringify(data))
+  localStorage.setItem("notes", JSON.stringify(data.data))
   localStorage.setItem("newNotes", JSON.stringify(newNotes))
 
   return data
 }
 
-export async function pushNoteStats() {
-  const session = getSession()
-  if (!session) return null
-
-  const shared = localStorage.getItem("notesShared") ?? ""
-
-  await fetch(`${API_URL}/poststats`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username: session.email,
-      password: session.password,
-      shared,
-    }),
-  })
+type AbsenceData = {
+  date: string
+  type: string
+  duree: string
+  heure: string
+  classe: string
+  prof: string
 }
 
-export async function fetchNoteStats() {
-  const session = getSession()
-  if (!session) return null
-
-  const response = await fetch(`${API_URL}/getstats`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username: session.email,
-      password: session.password,
-    }),
-  })
-
-  if (!response.ok) {
-    localStorage.setItem("userStats", "null")
-    return null
-  }
-
-  const data = await response.json()
-  localStorage.setItem("userStats", JSON.stringify(data))
-  return data
+export type AbsencesEntry = {
+  success: boolean
+  data: AbsenceData[]
 }
 
-export async function fetchAbsences() {
+export async function fetchAbsences(): Promise<AbsencesEntry | null> {
   const session = getSession()
   if (!session) return null
 
@@ -161,7 +163,7 @@ export async function fetchAbsences() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      username: session.email,
+      email: session.email,
       password: session.password,
     }),
   })
@@ -170,8 +172,8 @@ export async function fetchAbsences() {
     return null
   }
 
-  const data = await response.json()
-  localStorage.setItem("absences", JSON.stringify(data))
+  const data = (await response.json() as AbsencesEntry)
+  localStorage.setItem("absences", JSON.stringify(data.data))
   return data
 }
 
@@ -202,20 +204,32 @@ function deriveFirstName(email: string | null) {
     .join("-")
 }
 
-export async function fetchAssos() {
-  const response = await fetch(`${API_URL}/assos`)
+export type AssociationData = {
+  name: string
+  description: string
+  contact: string
+  image: string
+}
+
+export async function fetchAssos(): Promise<AssociationData[] | null> {
+  const response = await fetch(`${API_URL}/associations`)
 
   if (!response.ok) {
     return null
   }
 
-  const data = await response.json()
+  const data = (await response.json() as AssociationData[])
   localStorage.setItem("associations", JSON.stringify(data))
   return data
 }
 
-export async function fetchImportantMessage() {
-  const response = await fetch(`${API_URL}/msg`)
+export type MessageEntry = {
+  title: string
+  message: string
+}
+
+export async function fetchImportantMessage(): Promise<MessageEntry> {
+  const response = await fetch(`${API_URL}/messages`)
 
   if (!response.ok) {
     return {
@@ -227,17 +241,7 @@ export async function fetchImportantMessage() {
   return response.json()
 }
 
-export async function fetchEventJunia() {
-  const response = await fetch(`${API_URL}/events`)
-
-  if (!response.ok) {
-    return []
-  }
-
-  return response.json()
-}
-
-export type UpdateLogEntry = {
+export type UpdatesEntry = {
   version: string
   date: string
   titleVisu: string
@@ -246,7 +250,7 @@ export type UpdateLogEntry = {
   contentDev: string
 }
 
-export async function fetchUpdates(): Promise<UpdateLogEntry[] | null> {
+export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
   const response = await fetch(`${API_URL}/updates`)
 
   if (!response.ok) {
@@ -254,12 +258,18 @@ export async function fetchUpdates(): Promise<UpdateLogEntry[] | null> {
     return null
   }
 
-  const data = (await response.json()) as UpdateLogEntry[]
+  const data = (await response.json()) as UpdatesEntry[]
   localStorage.setItem("updates-log", JSON.stringify(data))
   return data
 }
 
-export async function fetchToolsQuery() {
+type ToolData = {
+  buttonTitle: string
+  description: string
+  url: string
+}
+
+export async function fetchTools(): Promise<ToolData[]> {
   try {
     const response = await fetch(`${API_URL}/tools`)
 
@@ -267,7 +277,7 @@ export async function fetchToolsQuery() {
       throw new Error("Failed to fetch tools")
     }
 
-    const data = await response.json()
+    const data = (await response.json() as ToolData[])
     localStorage.setItem("tools", JSON.stringify(data))
     return data
   } catch {
