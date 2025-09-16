@@ -1,4 +1,4 @@
-const API_URL = "https://mauriaapi.fly.dev"
+const API_URL = "https:///mauria-api.fly.dev"
 
 export function getSession() {
   const email = localStorage.getItem("email")
@@ -237,15 +237,24 @@ export async function fetchEventJunia() {
   return response.json()
 }
 
-export async function fetchUpdates() {
-  const response = await fetch(`${API_URL}/update`)
+export type UpdateLogEntry = {
+  version: string
+  date: string
+  titleVisu: string
+  contentVisu: string
+  titleDev: string
+  contentDev: string
+}
+
+export async function fetchUpdates(): Promise<UpdateLogEntry[] | null> {
+  const response = await fetch(`${API_URL}/updates`)
 
   if (!response.ok) {
     localStorage.setItem("updates-log", "[]")
     return null
   }
 
-  const data = await response.json()
+  const data = (await response.json()) as UpdateLogEntry[]
   localStorage.setItem("updates-log", JSON.stringify(data))
   return data
 }

@@ -39,7 +39,7 @@ export default function FirstLaunchDrawer() {
               Bienvenue sur Mauria !
             </DrawerTitle>
             <p className="text-sm text-muted-foreground mb-3 text-center">
-              Voici quelques repères utiles pour démarrer.
+              Voici quelques repères utiles pour démarrer
             </p>
           </DrawerHeader>
         </div>
