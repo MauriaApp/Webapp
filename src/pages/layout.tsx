@@ -4,6 +4,7 @@ import type React from "react";
 import BottomNavigation from "@/components/bottom-navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import FirstLaunchDrawer from "@/components/first-launch-drawer";
 
 export default function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default function RootLayout({
   return (
     <ThemeProvider defaultTheme="light">
       <div className="flex flex-col min-h-screen bg-mauria-light-bg dark:bg-mauria-dark-bg">
+        <FirstLaunchDrawer />
         {/* Header */}
         <header className="flex items-center justify-between p-4 bg-mauria-light-purple dark:bg-mauria-dark-bg">
           <h1 className="text-2xl font-bold text-white">Mauria</h1>
