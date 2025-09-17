@@ -13,14 +13,14 @@ import {
 import { Button } from "@/components/ui/button"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { fetchUpdates, UpdateLogEntry } from "@/utils/api"
+import { fetchUpdates, UpdatesEntry } from "@/utils/api"
 import { formatUpdateContentList } from "@/utils/updates"
 
 const LAST_SEEN_UPDATE_KEY = "lastSeenUpdate"
 
 export default function NewUpdateDrawer() {
   const [open, setOpen] = useState(false)
-  const [update, setUpdate] = useState<UpdateLogEntry | null>(null)
+  const [update, setUpdate] = useState<UpdatesEntry | null>(null)
 
   useEffect(() => {
     (async () => {
