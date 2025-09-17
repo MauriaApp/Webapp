@@ -1,39 +1,60 @@
+"use client"
+
+import { useEffect, useMemo, useState } from "react"
+import RootLayout from "@/pages/layout"
 import { Card } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import RootLayout from "@/pages/layout"
+import { fetchNotes } from "@/utils/api"
+import { mergeNotesData } from "@/utils/notes"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Info } from "lucide-react"
 
 export default function NotesPage() {
+  const now = new Date()
+  let currentYear = now.getFullYear()
+  const month = now.getMonth() + 1
+  if (month >= 9) currentYear++
+
+  const [onlyThisYear, setOnlyThisYear] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  useEffect(() => {
+    fetchNotes().finally(() => setRefreshKey((k) => k + 1))
+  }, [])
+
+  const merged = useMemo(
+    () => mergeNotesData(onlyThisYear, currentYear),
+    [onlyThisYear, currentYear, refreshKey]
+  )
+
   return (
     <RootLayout>
-
-      {/* Main Content */}
-      <main className="flex-1 px-4 pb-20">
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">Notes</h2>
-
-        {/* Toggle */}
-        <div className="flex items-center justify-between mb-6">
-          <Label htmlFor="current-year" className="text-xl text-mauria-light-purple dark:text-gray-300">
-            Année actuelle
-          </Label>
-          <Switch id="current-year" className="data-[state=checked]:bg-mauria-light-accent" />
+      <main className="max-w-3xl mx-auto p-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <Switch id="onlyThisYear" checked={onlyThisYear} onCheckedChange={setOnlyThisYear} />
+          <Label htmlFor="onlyThisYear">Afficher uniquement cette année</Label>
         </div>
 
-        {/* Grades List */}
-        <div className="space-y-4">
-          <GradeCard grade="17.00" course="Evaluation du TP1" coef="1" date="03/01/2023" />
-
-          <GradeCard grade="18.00" course="Partiel de Logique" coef="33" date="16/12/2022" />
-
-          <GradeCard grade="20.00" course="Contrôle Continu de Sciences et société" coef="20" date="15/12/2022" />
-
-          <GradeCard grade="20.00" course="Partiel d'Electromagnétisme" coef="1" date="14/12/2022" />
-
-          <GradeCard grade="20.00" course="Partiel d'Electromagnétisme" coef="100" date="14/12/2022" />
-        </div>
+        {merged.length === 0 ? (
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertTitle>Aucune note pour l'instant</AlertTitle>
+          </Alert>
+        ) : (
+          <div className="space-y-2">
+            {merged.map(({ note }) => (
+              <GradeCard
+                key={(note as any).code}
+                grade={(note as any).grade}
+                course={(note as any).course}
+                coef={(note as any).coef}
+                date={(note as any).date}
+              />
+            ))}
+          </div>
+        )}
       </main>
-
     </RootLayout>
   )
 }
@@ -50,7 +71,7 @@ function GradeCard({
   date: string
 }) {
   return (
-    <Card className="bg-white dark:bg-mauria-dark-card border-none shadow-md p-4">
+    <Card className="p-4 hover:shadow-md transition-shadow">
       <div className="flex">
         <div className="w-20 mr-4">
           <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">{grade}</div>
@@ -64,4 +85,3 @@ function GradeCard({
     </Card>
   )
 }
-
