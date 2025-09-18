@@ -61,16 +61,10 @@ export default function AbsencesPage() {
 
   return (
     <RootLayout>
-      <main className="flex-1 px-4 pb-20">
-        <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">Absences</h2>
-
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Label htmlFor="current-year" className="text-xl text-mauria-light-purple dark:text-gray-300">
-              Année actuelle
-            </Label>
-            <Switch id="current-year" checked={onlyThisYear} onCheckedChange={setOnlyThisYear} />
-          </div>
+      <main className="max-w-3xl mx-auto p-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <Switch id="onlyThisYear" checked={onlyThisYear} onCheckedChange={setOnlyThisYear} />
+          <Label htmlFor="onlyThisYear">Afficher uniquement cette année</Label>
         </div>
 
         <Card className="mb-6">
