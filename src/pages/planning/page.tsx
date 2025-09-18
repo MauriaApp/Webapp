@@ -4,7 +4,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
-import RootLayout from "@/pages/layout";
 import { mockPlanning } from "../mock";
 
 export default function PlanningPage() {
@@ -183,60 +182,53 @@ export default function PlanningPage() {
     }, []);
 
     return (
-        <RootLayout>
-            {/* Main Content */}
-            <main className="flex-1 px-4 pb-20">
-                {/* Title */}
-                <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">
-                    Planning
-                </h2>
+        <main className="flex-1 px-4 pb-20">
+            {/* Title */}
+            <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">
+                Planning
+            </h2>
 
-                <section className="rounded-lg overflow-hidden shadow-lg">
-                    <FullCalendar
-                        datesSet={() => {
-                            window.dispatchEvent(new Event("resize"));
-                        }}
-                        ref={calendarRef}
-                        locale={FrLocale}
-                        plugins={[
-                            dayGridPlugin,
-                            timeGridPlugin,
-                            interactionPlugin,
-                        ]}
-                        initialView="timeGridWeek"
-                        headerToolbar={{
-                            left: "today",
-                            center: "timeGridWeek,timeGridDay",
-                            right: "prev,next",
-                        }}
-                        slotMinTime="07:00:00"
-                        slotMaxTime="22:00:00"
-                        titleFormat={{ month: "short", day: "numeric" }}
-                        allDaySlot={false}
-                        firstDay={0}
-                        hiddenDays={[0]}
-                        eventSources={[data, userEvents]}
-                        eventColor="#3f2a56"
-                        contentHeight="auto"
-                        nowIndicator={true}
-                        stickyHeaderDates={false}
-                        editable={false}
-                        eventAllow={() => false}
-                        droppable={false}
-                        eventStartEditable={false}
-                        eventDurationEditable={false}
-                        eventResizableFromStart={false}
-                        eventClick={(info) => {
-                            // Handle event click
-                            console.log(info.event);
-                        }}
-                    />
-                    <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
-                        {/* Dernière actualisation : {dayjs().fromNow()} */}
-                        Dernière actualisation : il y a ///// minutes
-                    </div>
-                </section>
-            </main>
-        </RootLayout>
+            <section className="rounded-lg overflow-hidden shadow-lg">
+                <FullCalendar
+                    datesSet={() => {
+                        window.dispatchEvent(new Event("resize"));
+                    }}
+                    ref={calendarRef}
+                    locale={FrLocale}
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView="timeGridWeek"
+                    headerToolbar={{
+                        left: "today",
+                        center: "timeGridWeek,timeGridDay",
+                        right: "prev,next",
+                    }}
+                    slotMinTime="07:00:00"
+                    slotMaxTime="22:00:00"
+                    titleFormat={{ month: "short", day: "numeric" }}
+                    allDaySlot={false}
+                    firstDay={0}
+                    hiddenDays={[0]}
+                    eventSources={[data, userEvents]}
+                    eventColor="#3f2a56"
+                    contentHeight="auto"
+                    nowIndicator={true}
+                    stickyHeaderDates={false}
+                    editable={false}
+                    eventAllow={() => false}
+                    droppable={false}
+                    eventStartEditable={false}
+                    eventDurationEditable={false}
+                    eventResizableFromStart={false}
+                    eventClick={(info) => {
+                        // Handle event click
+                        console.log(info.event);
+                    }}
+                />
+                <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
+                    {/* Dernière actualisation : {dayjs().fromNow()} */}
+                    Dernière actualisation : il y a ///// minutes
+                </div>
+            </section>
+        </main>
     );
 }

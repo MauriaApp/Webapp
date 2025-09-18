@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import RootLayout from "@/pages/layout";
 import {
     getCurrentYearAbsences,
     getJustifiedAbsencesDuration,
@@ -72,109 +71,105 @@ export default function AbsencesPage() {
     );
 
     return (
-        <RootLayout>
-            <main className="max-w-3xl mx-auto p-4 space-y-4">
-                <div className="flex items-center gap-2">
-                    <Switch
-                        id="onlyThisYear"
-                        checked={onlyThisYear}
-                        onCheckedChange={setOnlyThisYear}
-                    />
-                    <Label htmlFor="onlyThisYear">
-                        Afficher uniquement cette année
-                    </Label>
-                </div>
+        <main className="max-w-3xl mx-auto p-4 space-y-4">
+            <div className="flex items-center gap-2">
+                <Switch
+                    id="onlyThisYear"
+                    checked={onlyThisYear}
+                    onCheckedChange={setOnlyThisYear}
+                />
+                <Label htmlFor="onlyThisYear">
+                    Afficher uniquement cette année
+                </Label>
+            </div>
 
-                <Card className="mb-6">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Total
-                        </CardTitle>
-                        <div className="text-4xl font-bold tracking-tight text-primary">
-                            {total}
-                        </div>
-                    </CardHeader>
+            <Card className="mb-6">
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">
+                        Total
+                    </CardTitle>
+                    <div className="text-4xl font-bold tracking-tight text-primary">
+                        {total}
+                    </div>
+                </CardHeader>
 
-                    <Separator />
+                <Separator />
 
-                    <CardContent className="pt-4">
-                        <div className="flex items-start gap-6">
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-muted-foreground">
-                                    Justifiées
-                                </div>
-                                <div className="mt-1 text-2xl font-semibold text-green-600">
-                                    {justified}
-                                </div>
+                <CardContent className="pt-4">
+                    <div className="flex items-start gap-6">
+                        <div className="flex-1">
+                            <div className="text-sm font-medium text-muted-foreground">
+                                Justifiées
                             </div>
-
-                            <div className="h-10 w-px bg-border" />
-
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-muted-foreground">
-                                    Non-justifiées
-                                </div>
-                                <div className="mt-1 text-2xl font-semibold text-amber-600">
-                                    {unjustified}
-                                </div>
+                            <div className="mt-1 text-2xl font-semibold text-green-600">
+                                {justified}
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
 
-                <div className="space-y-4">
-                    {list.length === 0 ? (
-                        <Alert className="mb-4">
-                            <Info className="h-4 w-4" />
-                            <AlertTitle>Aucune absence trouvée</AlertTitle>
-                        </Alert>
-                    ) : (
-                        list.map((a, i) => {
-                            const key = (a as any).id ?? `${a.date ?? ""}-${i}`;
-                            return (
-                                <AbsenceCard
-                                    key={key}
-                                    duration={
-                                        (a as any).duration ??
-                                        (a as any).length ??
-                                        ""
-                                    }
-                                    type={
-                                        (a as any).type ??
-                                        ((a as any).justified
-                                            ? "Absence excusée"
-                                            : "Absence non excusée")
-                                    }
-                                    course={
-                                        (a as any).course ??
-                                        (a as any).subject ??
-                                        (a as any).module ??
-                                        ""
-                                    }
-                                    time={
-                                        (a as any).time ??
-                                        ((a as any).start && (a as any).end
-                                            ? `${(a as any).start} - ${
-                                                  (a as any).end
-                                              }`
-                                            : "")
-                                    }
-                                    date={
-                                        (a as any).date ?? (a as any).day ?? ""
-                                    }
-                                    excused={
-                                        !!(
-                                            (a as any).excused ??
-                                            (a as any).justified
-                                        )
-                                    }
-                                />
-                            );
-                        })
-                    )}
-                </div>
-            </main>
-        </RootLayout>
+                        <div className="h-10 w-px bg-border" />
+
+                        <div className="flex-1">
+                            <div className="text-sm font-medium text-muted-foreground">
+                                Non-justifiées
+                            </div>
+                            <div className="mt-1 text-2xl font-semibold text-amber-600">
+                                {unjustified}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="space-y-4">
+                {list.length === 0 ? (
+                    <Alert className="mb-4">
+                        <Info className="h-4 w-4" />
+                        <AlertTitle>Aucune absence trouvée</AlertTitle>
+                    </Alert>
+                ) : (
+                    list.map((a, i) => {
+                        const key = (a as any).id ?? `${a.date ?? ""}-${i}`;
+                        return (
+                            <AbsenceCard
+                                key={key}
+                                duration={
+                                    (a as any).duration ??
+                                    (a as any).length ??
+                                    ""
+                                }
+                                type={
+                                    (a as any).type ??
+                                    ((a as any).justified
+                                        ? "Absence excusée"
+                                        : "Absence non excusée")
+                                }
+                                course={
+                                    (a as any).course ??
+                                    (a as any).subject ??
+                                    (a as any).module ??
+                                    ""
+                                }
+                                time={
+                                    (a as any).time ??
+                                    ((a as any).start && (a as any).end
+                                        ? `${(a as any).start} - ${
+                                              (a as any).end
+                                          }`
+                                        : "")
+                                }
+                                date={(a as any).date ?? (a as any).day ?? ""}
+                                excused={
+                                    !!(
+                                        (a as any).excused ??
+                                        (a as any).justified
+                                    )
+                                }
+                            />
+                        );
+                    })
+                )}
+            </div>
+        </main>
     );
 }
 

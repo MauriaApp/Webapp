@@ -6,22 +6,34 @@ import { ToastContextProvider } from "./contexts/toastContent";
 import { ModalContextProvider } from "./contexts/modalContext";
 
 import { BrowserRouter, Route, Routes } from "react-router";
+import RootLayout from "./pages/layout";
+import { CurrentYearProvider } from "./contexts/currentYearContext";
 
 function App() {
-  return (
-    <ToastContextProvider>
-      <ModalContextProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/planning" element={<PlanningPage />} />
-            <Route path="/notes" element={<NotesPage />} />
-            <Route path="/absences" element={<AbsencesPage />} />
-          </Routes>
-        </BrowserRouter>
-      </ModalContextProvider>
-    </ToastContextProvider>
-  );
+    return (
+        <ToastContextProvider>
+            <ModalContextProvider>
+                <BrowserRouter>
+                    <RootLayout>
+                        <CurrentYearProvider>
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route
+                                    path="/planning"
+                                    element={<PlanningPage />}
+                                />
+                                <Route path="/notes" element={<NotesPage />} />
+                                <Route
+                                    path="/absences"
+                                    element={<AbsencesPage />}
+                                />
+                            </Routes>
+                        </CurrentYearProvider>
+                    </RootLayout>
+                </BrowserRouter>
+            </ModalContextProvider>
+        </ToastContextProvider>
+    );
 }
 
 export default App;

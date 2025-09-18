@@ -1,100 +1,42 @@
 import { mockNotes } from "@/pages/mock";
-import type { NotesEntry } from "@/utils/api";
 
-type RawApiNote = NotesEntry["data"][number];
-
-type UiNote = {
-    code: string;
+export type Grade = {
     date: string;
-    course: string;
+    code: string;
+    name: string;
     grade: string;
-    coef: string;
+    coefficient: string;
+    average: string;
+    min: string;
+    max: string;
+    median: string;
+    standardDeviation: string;
+    comment: string;
 };
 
-type UiStats = {
-    moyenne?: string;
-    min?: string;
-    mediane?: string;
-    ecartType?: string;
-    commentaire?: string;
-    code?: string;
-};
+export function getGrades({
+    showCurrentYearOnly,
+}: { showCurrentYearOnly?: boolean } = {}) {
+    return mockNotes.data.filter((grade) => {
+        if (showCurrentYearOnly) {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
 
-type MergedNote = { note: UiNote; stats?: UiStats };
+            // Academic year starts in September (month 8) and ends in August (month 7)
+            const academicYear =
+                currentMonth >= 8 ? currentYear : currentYear - 1;
 
-function formatDateFR(iso: string): string {
-    const [y, m, d] = iso.split("-");
-    if (!y || !m || !d) return iso;
-    return `${d}/${m}/${y}`;
-}
+            const gradeDate = new Date(
+                grade.date.split("/").reverse().join("-")
+            );
+            const gradeMonth = gradeDate.getMonth();
+            const gradeYear = gradeDate.getFullYear();
+            const gradeAcademicYear =
+                gradeMonth >= 8 ? gradeYear : gradeYear - 1;
 
-function parseLocalNotes(): RawApiNote[] {
-    try {
-        const raw = localStorage.getItem("notes");
-        if (!raw) return [];
-        const parsed = JSON.parse(raw) as RawApiNote[];
-        return Array.isArray(parsed) ? parsed : [];
-    } catch {
-        return [];
-    }
-}
-
-export const getCurrentYearMergedNotesData = (
-    mergedNotesData: MergedNote[],
-    currentYear: number
-): MergedNote[] => {
-    return mergedNotesData.filter(({ note }) => {
-        const yearPrefix = Number(note.code?.split("_")?.[0]);
-        return yearPrefix === currentYear;
+            return gradeAcademicYear === academicYear;
+        }
+        return true;
     });
-};
-
-export const mergeNotesData = (
-    getThisYearNotes: boolean,
-    currentYear: number
-): MergedNote[] => {
-    // const rawNotes = parseLocalNotes()
-    const rawNotes = mockNotes.data;
-    if (rawNotes.length === 0) return [];
-
-    const byCode = new Map<string, RawApiNote>();
-    for (const n of rawNotes) {
-        if (!n?.code) continue;
-        byCode.set(n.code, n);
-    }
-
-    const merged: MergedNote[] = [];
-    for (const n of byCode.values()) {
-        const note: UiNote = {
-            code: n.code,
-            date: formatDateFR(n.date),
-            course: n.epreuve,
-            grade: n.note,
-            coef: n.coefficient,
-        };
-
-        const hasAnyStat =
-            n.moyenne !== undefined ||
-            n.min !== undefined ||
-            n.mediane !== undefined ||
-            n.ecartType !== undefined ||
-            n.commentaire !== undefined;
-
-        const stats: UiStats | undefined = hasAnyStat
-            ? {
-                  moyenne: n.moyenne,
-                  min: n.min,
-                  mediane: n.mediane,
-                  ecartType: n.ecartType,
-                  commentaire: n.commentaire,
-                  code: n.code,
-              }
-            : undefined;
-
-        merged.push({ note, stats });
-    }
-
-    return getThisYearNotes
-        ? getCurrentYearMergedNotesData(merged, currentYear)
-        : merged;
-};
+}
