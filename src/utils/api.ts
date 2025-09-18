@@ -139,7 +139,7 @@ export async function fetchNotes(): Promise<NotesEntry | null> {
   return data
 }
 
-type AbsenceData = {
+export type AbsenceData = {
   date: string
   type: string
   duree: string
