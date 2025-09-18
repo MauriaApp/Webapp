@@ -1,92 +1,80 @@
-import { parse } from "date-fns"
-import { AbsenceData } from "./api"
+import { mockAbsences } from "@/pages/mock";
 
-export const getCurrentYearAbsences = (
-  absences: AbsenceData[] | null
-): AbsenceData[] | null => {
-  if (!absences) return null
+export type Absence = {
+    date: string;
+    type: string;
+    duration: string;
+    time: string;
+    class: string;
+    teacher: string;
+};
 
-  const now = new Date()
-  const y = now.getFullYear()
-  const m = now.getMonth()
+export const getAbsences = ({
+    showCurrentYearOnly,
+}: { showCurrentYearOnly?: boolean } = {}): Absence[] => {
+    if (!showCurrentYearOnly) return mockAbsences.data;
 
-  const start =
-    m >= 8
-      ? new Date(y, 8, 1, 0, 0, 0, 0)
-      : new Date(y - 1, 8, 1, 0, 0, 0, 0)
+    const absences = mockAbsences.data;
 
-  const end =
-    m >= 8
-      ? new Date(y + 1, 7, 31, 23, 59, 59, 999)
-      : new Date(y, 7, 31, 23, 59, 59, 999)
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
 
-  return absences.filter((a) => {
-    const d = parseAurionDate(a.date)
-    return d >= start && d <= end
-  })
-}
+    // School year starts September 1st
+    const schoolYearStart =
+        currentMonth >= 8
+            ? new Date(currentYear, 8, 1) // September 1st of current year
+            : new Date(currentYear - 1, 8, 1); // September 1st of previous year
 
-export const getTotalAbsencesDuration = (
-  absences: AbsenceData[] | null,
-  thisYear?: boolean
-): string => {
-  const list = thisYear ? getCurrentYearAbsences(absences) : absences
-  if (!list || list.length === 0) return "0h00"
+    const schoolYearEnd =
+        currentMonth >= 8
+            ? new Date(currentYear + 1, 7, 31, 23, 59, 59, 999) // August 31st of next year
+            : new Date(currentYear, 7, 31, 23, 59, 59, 999); // August 31st of current year
 
-  const { hours, minutes } = sumDurations(list)
-  return formatHhMm(hours, minutes)
-}
+    return absences.filter((absence) => {
+        const absenceDate = new Date(absence.date);
+        return absenceDate >= schoolYearStart && absenceDate <= schoolYearEnd;
+    });
+};
 
-export const getJustifiedAbsencesDuration = (
-  absences: AbsenceData[] | null,
-  thisYear?: boolean
-): string => {
-  const list = thisYear ? getCurrentYearAbsences(absences) : absences
-  if (!list || list.length === 0) return "0h00"
+export const getAbsencesDurations = (
+    absences: Absence[] | null,
+    thisYear?: boolean
+) => {
+    const targetAbsences = thisYear
+        ? getAbsences({ showCurrentYearOnly: true })
+        : absences;
 
-  const filtered = list.filter((a) => !a.type.includes(" non "))
-  const { hours, minutes } = sumDurations(filtered)
-  return formatHhMm(hours, minutes)
-}
+    if (!targetAbsences)
+        return { total: "0:00", justified: "0:00", unjustified: "0:00" };
 
-export const getUnjustifiedAbsencesDuration = (
-  absences: AbsenceData[] | null,
-  thisYear?: boolean
-): string => {
-  const list = thisYear ? getCurrentYearAbsences(absences) : absences
-  if (!list || list.length === 0) return "0h00"
+    let totalMinutes = 0;
+    let justifiedMinutes = 0;
+    let unjustifiedMinutes = 0;
 
-  const filtered = list.filter((a) => a.type.includes(" non "))
-  const { hours, minutes } = sumDurations(filtered)
-  return formatHhMm(hours, minutes)
-}
+    targetAbsences.forEach((absence) => {
+        const [hours, minutes] = absence.duration.split(":").map(Number);
+        const durationInMinutes = hours * 60 + minutes;
 
-function parseAurionDate(s: string): Date {
-  const cleaned = (s || "").replace(/[-.]/g, "/").trim()
+        totalMinutes += durationInMinutes;
 
-  try {
-    const d = parse(cleaned, "dd/MM/yyyy", new Date())
-    if (!isNaN(d.getTime())) return d
-  } catch {}
+        const type = absence.type.toLowerCase();
+        if (type.includes("non")) {
+            unjustifiedMinutes += durationInMinutes;
+        } else {
+            justifiedMinutes += durationInMinutes;
+        }
+    });
 
-  const fallback = new Date(cleaned)
-  return isNaN(fallback.getTime()) ? new Date(0) : fallback
-}
+    const formatDuration = (minutes: number) => {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}:${remainingMinutes.toString().padStart(2, "0")}`;
+    };
 
-function sumDurations(list: AbsenceData[]): { hours: number; minutes: number } {
-  let h = 0
-  let m = 0
-  for (const a of list) {
-    const [hh, mm] = a.duree.split(":").map((x) => parseInt(x, 10) || 0)
-    h += hh
-    m += mm
-  }
-  const carry = Math.floor(m / 60)
-  h += carry
-  m = m % 60
-  return { hours: h, minutes: m }
-}
-
-function formatHhMm(hours: number, minutes: number): string {
-  return `${hours}h${minutes < 10 ? "0" : ""}${minutes}`
-}
+    return {
+        total: formatDuration(totalMinutes),
+        justified: formatDuration(justifiedMinutes),
+        unjustified: formatDuration(unjustifiedMinutes),
+    };
+};

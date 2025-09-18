@@ -1,4 +1,5 @@
-import { Grade } from "@/utils/notes";
+import { Absence } from "@/utils/absences";
+import { Grade } from "@/utils/grades";
 
 export const mockNotes: { success: boolean; data: Grade[] } = {
     success: true,
@@ -45,24 +46,24 @@ export const mockNotes: { success: boolean; data: Grade[] } = {
     ],
 };
 
-export const mockAbsences = {
+export const mockAbsences: { success: boolean; data: Absence[] } = {
     success: true,
     data: [
         {
             date: "07/12/21",
             type: "Absence non excusée",
-            duree: "2:05",
-            heure: "10:20 - 12:25",
-            classe: "Mathématiques 2 : Analyse - Mathématiques 2 : Analyse",
-            prof: "Laura SAINI",
+            duration: "2:05",
+            time: "10:20 - 12:25",
+            class: "Mathématiques 2 : Analyse - Mathématiques 2 : Analyse",
+            teacher: "Laura SAINI",
         },
         {
             date: "23/11/21",
             type: "Absence excusée avec justificatif",
-            duree: "2:05",
-            heure: "08:00 - 10:05",
-            classe: "Mathématiques 2 : Analyse",
-            prof: "Laura SAINI",
+            duration: "2:05",
+            time: "08:00 - 10:05",
+            class: "Mathématiques 2 : Analyse",
+            teacher: "Laura SAINI",
         },
     ],
 };

@@ -3,70 +3,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import {
-    getCurrentYearAbsences,
-    getJustifiedAbsencesDuration,
-    getTotalAbsencesDuration,
-    getUnjustifiedAbsencesDuration,
-} from "@/utils/absences";
-import { AbsenceData, fetchAbsences } from "@/utils/api";
-import { useEffect, useMemo, useState } from "react";
+import { getAbsences, getAbsencesDurations } from "@/utils/absences";
+import { useMemo } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { mockAbsences } from "../mock";
 import { AbsenceCard } from "./absences-card";
+import { useCurrentYear } from "@/contexts/currentYearContext";
 
 export function AbsencesPage() {
-    const [onlyThisYear, setOnlyThisYear] = useState(true);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [, setLoading] = useState(false);
-    const [, setLastUpdated] = useState<Date | null>(null);
+    const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
 
-    useEffect(() => {
-        setLoading(true);
-        fetchAbsences()
-            .catch(() => {})
-            .finally(() => {
-                setLastUpdated(new Date());
-                setRefreshKey((k) => k + 1);
-                setLoading(false);
-            });
-    }, []);
+    const absences = getAbsences({ showCurrentYearOnly });
 
-    // const allAbsences = useMemo<AbsenceData[] | null>(() => {
-    //     return getAbsences() as AbsenceData[] | null;
-    // }, [refreshKey]);
-    const allAbsences = mockAbsences.data as AbsenceData[];
-
-    const list = useMemo<AbsenceData[]>(() => {
-        const base = onlyThisYear
-            ? getCurrentYearAbsences(allAbsences)
-            : allAbsences;
-        const arr = base ?? [];
-        return arr.slice().sort((a, b) => dateKey(b.date) - dateKey(a.date));
-    }, [allAbsences, onlyThisYear]);
-
-    const total = useMemo(
-        () => getTotalAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
-    const justified = useMemo(
-        () => getJustifiedAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
-    const unjustified = useMemo(
-        () => getUnjustifiedAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
+    const { total, justified, unjustified } = useMemo(() => {
+        return getAbsencesDurations(absences, showCurrentYearOnly);
+    }, [absences, showCurrentYearOnly]);
 
     return (
         <main className="max-w-3xl mx-auto p-4 space-y-4">
             <div className="flex items-center gap-2">
                 <Switch
                     id="onlyThisYear"
-                    checked={onlyThisYear}
-                    onCheckedChange={setOnlyThisYear}
+                    checked={showCurrentYearOnly}
+                    onCheckedChange={toggleCurrentYearFilter}
                 />
                 <Label htmlFor="onlyThisYear">
                     Afficher uniquement cette année
@@ -111,52 +71,15 @@ export function AbsencesPage() {
             </Card>
 
             <div className="space-y-4">
-                {list.length === 0 ? (
+                {absences.length === 0 ? (
                     <Alert className="mb-4">
                         <Info className="h-4 w-4" />
                         <AlertTitle>Aucune absence trouvée</AlertTitle>
                     </Alert>
                 ) : (
-                    list.map((a, i) => {
-                        const key = (a as any).id ?? `${a.date ?? ""}-${i}`;
-                        return (
-                            <AbsenceCard
-                                key={key}
-                                duration={
-                                    (a as any).duration ??
-                                    (a as any).length ??
-                                    ""
-                                }
-                                type={
-                                    (a as any).type ??
-                                    ((a as any).justified
-                                        ? "Absence excusée"
-                                        : "Absence non excusée")
-                                }
-                                course={
-                                    (a as any).course ??
-                                    (a as any).subject ??
-                                    (a as any).module ??
-                                    ""
-                                }
-                                time={
-                                    (a as any).time ??
-                                    ((a as any).start && (a as any).end
-                                        ? `${(a as any).start} - ${
-                                              (a as any).end
-                                          }`
-                                        : "")
-                                }
-                                date={(a as any).date ?? (a as any).day ?? ""}
-                                excused={
-                                    !!(
-                                        (a as any).excused ??
-                                        (a as any).justified
-                                    )
-                                }
-                            />
-                        );
-                    })
+                    absences.map((absence, index) => (
+                        <AbsenceCard key={index} absence={absence} />
+                    ))
                 )}
             </div>
         </main>

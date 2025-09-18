@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Grade } from "@/utils/notes";
+import { Grade } from "@/utils/grades";
 
 export function GradeCard({ note }: { note: Grade }) {
     return (
