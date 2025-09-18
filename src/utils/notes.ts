@@ -1,96 +1,100 @@
-import type { NotesEntry } from "@/utils/api"
+import { mockNotes } from "@/pages/mock";
+import type { NotesEntry } from "@/utils/api";
 
-type RawApiNote = NotesEntry["data"][number]
+type RawApiNote = NotesEntry["data"][number];
 
 type UiNote = {
-  code: string
-  date: string
-  course: string
-  grade: string
-  coef: string
-}
+    code: string;
+    date: string;
+    course: string;
+    grade: string;
+    coef: string;
+};
 
 type UiStats = {
-  moyenne?: string
-  min?: string
-  mediane?: string
-  ecartType?: string
-  commentaire?: string
-  code?: string
-}
+    moyenne?: string;
+    min?: string;
+    mediane?: string;
+    ecartType?: string;
+    commentaire?: string;
+    code?: string;
+};
 
-type MergedNote = { note: UiNote; stats?: UiStats }
+type MergedNote = { note: UiNote; stats?: UiStats };
 
 function formatDateFR(iso: string): string {
-  const [y, m, d] = iso.split("-")
-  if (!y || !m || !d) return iso
-  return `${d}/${m}/${y}`
+    const [y, m, d] = iso.split("-");
+    if (!y || !m || !d) return iso;
+    return `${d}/${m}/${y}`;
 }
 
 function parseLocalNotes(): RawApiNote[] {
-  try {
-    const raw = localStorage.getItem("notes")
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as RawApiNote[]
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+    try {
+        const raw = localStorage.getItem("notes");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw) as RawApiNote[];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        return [];
+    }
 }
 
 export const getCurrentYearMergedNotesData = (
-  mergedNotesData: MergedNote[],
-  currentYear: number
+    mergedNotesData: MergedNote[],
+    currentYear: number
 ): MergedNote[] => {
-  return mergedNotesData.filter(({ note }) => {
-    const yearPrefix = Number(note.code?.split("_")?.[0])
-    return yearPrefix === currentYear
-  })
-}
+    return mergedNotesData.filter(({ note }) => {
+        const yearPrefix = Number(note.code?.split("_")?.[0]);
+        return yearPrefix === currentYear;
+    });
+};
 
 export const mergeNotesData = (
-  getThisYearNotes: boolean,
-  currentYear: number
+    getThisYearNotes: boolean,
+    currentYear: number
 ): MergedNote[] => {
-  const rawNotes = parseLocalNotes()
-  if (rawNotes.length === 0) return []
+    // const rawNotes = parseLocalNotes()
+    const rawNotes = mockNotes.data;
+    if (rawNotes.length === 0) return [];
 
-  const byCode = new Map<string, RawApiNote>()
-  for (const n of rawNotes) {
-    if (!n?.code) continue
-    byCode.set(n.code, n)
-  }
-
-  const merged: MergedNote[] = []
-  for (const n of byCode.values()) {
-    const note: UiNote = {
-      code: n.code,
-      date: formatDateFR(n.date),
-      course: n.epreuve,
-      grade: n.note,
-      coef: n.coefficient,
+    const byCode = new Map<string, RawApiNote>();
+    for (const n of rawNotes) {
+        if (!n?.code) continue;
+        byCode.set(n.code, n);
     }
 
-    const hasAnyStat =
-      n.moyenne !== undefined ||
-      n.min !== undefined ||
-      n.mediane !== undefined ||
-      n.ecartType !== undefined ||
-      n.commentaire !== undefined
+    const merged: MergedNote[] = [];
+    for (const n of byCode.values()) {
+        const note: UiNote = {
+            code: n.code,
+            date: formatDateFR(n.date),
+            course: n.epreuve,
+            grade: n.note,
+            coef: n.coefficient,
+        };
 
-    const stats: UiStats | undefined = hasAnyStat
-      ? {
-          moyenne: n.moyenne,
-          min: n.min,
-          mediane: n.mediane,
-          ecartType: n.ecartType,
-          commentaire: n.commentaire,
-          code: n.code,
-        }
-      : undefined
+        const hasAnyStat =
+            n.moyenne !== undefined ||
+            n.min !== undefined ||
+            n.mediane !== undefined ||
+            n.ecartType !== undefined ||
+            n.commentaire !== undefined;
 
-    merged.push({ note, stats })
-  }
+        const stats: UiStats | undefined = hasAnyStat
+            ? {
+                  moyenne: n.moyenne,
+                  min: n.min,
+                  mediane: n.mediane,
+                  ecartType: n.ecartType,
+                  commentaire: n.commentaire,
+                  code: n.code,
+              }
+            : undefined;
 
-  return getThisYearNotes ? getCurrentYearMergedNotesData(merged, currentYear) : merged
-}
+        merged.push({ note, stats });
+    }
+
+    return getThisYearNotes
+        ? getCurrentYearMergedNotesData(merged, currentYear)
+        : merged;
+};

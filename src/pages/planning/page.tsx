@@ -1,73 +1,40 @@
-import { useRef, useEffect } from "react"
-import FullCalendar from "@fullcalendar/react"
-import interactionPlugin from "@fullcalendar/interaction"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import timeGridPlugin from "@fullcalendar/timegrid"
-import FrLocale from "@fullcalendar/core/locales/fr"
-import RootLayout from "@/pages/layout"
-
+import { useRef, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import interactionPlugin from "@fullcalendar/interaction";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import FrLocale from "@fullcalendar/core/locales/fr";
+import RootLayout from "@/pages/layout";
+import { mockPlanning } from "../mock";
 
 export default function PlanningPage() {
-  const calendarRef = useRef<FullCalendar>(null)
+    const calendarRef = useRef<FullCalendar>(null);
 
-  // Example data
-  const data = {
-    events: [
-      {
-        title: "Développement Web\nISEN C402 - Amphi Prépa",
-        start: "2025-03-05T08:00:00",
-        end: "2025-03-05T10:00:00",
-      },
-      {
-        title: "Physique des Ondes\nISEN C953 - Salle de TP",
-        start: "2025-03-05T10:20:00",
-        end: "2025-03-05T12:20:00",
-      },
-      {
-        title: "Mathématiques 7: Mathématiques Discrètes\nISEN B804 (H)",
-        start: "2025-03-05T15:30:00",
-        end: "2025-03-05T17:30:00",
-      },
-      {
-        title: "ISA Salle 221 H",
-        start: "2025-03-06T08:00:00",
-        end: "2025-03-06T10:00:00",
-      },
-      {
-        title: "ISEN B802 (H)",
-        start: "2025-03-07T08:00:00",
-        end: "2025-03-07T10:00:00",
-      },
-      {
-        title: "ISEN B802 (H)",
-        start: "2025-03-08T08:00:00",
-        end: "2025-03-08T10:00:00",
-      },
-    ],
-  }
+    // Example data
+    const data = mockPlanning.data;
 
-  // Example personal events
-  const userEvents = {
-    events: [
-      {
-        title: "Complexe sportif d'Ennetières",
-        start: "2025-03-05T10:10:00",
-        end: "2025-03-05T12:30:00",
-        classNames: ["est-perso"],
-      },
-      {
-        title: "TD Auto Géré\nISEN A906 Anglais",
-        start: "2025-03-06T10:20:00",
-        end: "2025-03-06T12:20:00",
-        classNames: ["TD_AUTO_GERE_PLANIFIE"],
-      },
-    ],
-  }
+    // Example personal events
+    const userEvents = {
+        events: [
+            {
+                title: "Complexe sportif d'Ennetières",
+                start: "2025-03-05T10:10:00",
+                end: "2025-03-05T12:30:00",
+                classNames: ["est-perso"],
+            },
+            {
+                title: "TD Auto Géré\nISEN A906 Anglais",
+                start: "2025-03-06T10:20:00",
+                end: "2025-03-06T12:20:00",
+                classNames: ["TD_AUTO_GERE_PLANIFIE"],
+            },
+        ],
+    };
 
-  // Add custom styles for FullCalendar
-  useEffect(() => {
-    const style = document.createElement("style")
-    style.innerHTML = `
+    // Add custom styles for FullCalendar
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
       .fc .fc-button {
         color: #2D1E43 !important;
         background-color: white !important;
@@ -207,65 +174,69 @@ export default function PlanningPage() {
         white-space: normal !important;
         margin-bottom: 8px !important;
       }
-    `
-    document.head.appendChild(style)
+    `;
+        document.head.appendChild(style);
 
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
 
-  return (
-    <RootLayout>
+    return (
+        <RootLayout>
+            {/* Main Content */}
+            <main className="flex-1 px-4 pb-20">
+                {/* Title */}
+                <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">
+                    Planning
+                </h2>
 
-      {/* Main Content */}
-      <main className="flex-1 px-4 pb-20">
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">Planning</h2>
-
-        <section className="rounded-lg overflow-hidden shadow-lg">
-          <FullCalendar
-            datesSet={() => {
-              window.dispatchEvent(new Event("resize"))
-            }}
-            ref={calendarRef}
-            locale={FrLocale}
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="timeGridWeek"
-            headerToolbar={{
-              left: "today",
-              center: "timeGridWeek,timeGridDay",
-              right: "prev,next",
-            }}
-            slotMinTime="07:00:00"
-            slotMaxTime="22:00:00"
-            titleFormat={{ month: "short", day: "numeric" }}
-            allDaySlot={false}
-            firstDay={0}
-            hiddenDays={[0]}
-            eventSources={[data, userEvents]}
-            eventColor="#3f2a56"
-            contentHeight="auto"
-            nowIndicator={true}
-            stickyHeaderDates={false}
-            editable={false}
-            eventAllow={() => false}
-            droppable={false}
-            eventStartEditable={false}
-            eventDurationEditable={false}
-            eventResizableFromStart={false}
-            eventClick={(info) => {
-              // Handle event click
-              console.log(info.event)
-            }}
-          />
-          <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
-            {/* Dernière actualisation : {dayjs().fromNow()} */}
-            Dernière actualisation : il y a ///// minutes
-          </div>
-        </section>
-      </main>
-    </RootLayout>
-  )
+                <section className="rounded-lg overflow-hidden shadow-lg">
+                    <FullCalendar
+                        datesSet={() => {
+                            window.dispatchEvent(new Event("resize"));
+                        }}
+                        ref={calendarRef}
+                        locale={FrLocale}
+                        plugins={[
+                            dayGridPlugin,
+                            timeGridPlugin,
+                            interactionPlugin,
+                        ]}
+                        initialView="timeGridWeek"
+                        headerToolbar={{
+                            left: "today",
+                            center: "timeGridWeek,timeGridDay",
+                            right: "prev,next",
+                        }}
+                        slotMinTime="07:00:00"
+                        slotMaxTime="22:00:00"
+                        titleFormat={{ month: "short", day: "numeric" }}
+                        allDaySlot={false}
+                        firstDay={0}
+                        hiddenDays={[0]}
+                        eventSources={[data, userEvents]}
+                        eventColor="#3f2a56"
+                        contentHeight="auto"
+                        nowIndicator={true}
+                        stickyHeaderDates={false}
+                        editable={false}
+                        eventAllow={() => false}
+                        droppable={false}
+                        eventStartEditable={false}
+                        eventDurationEditable={false}
+                        eventResizableFromStart={false}
+                        eventClick={(info) => {
+                            // Handle event click
+                            console.log(info.event);
+                        }}
+                    />
+                    <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
+                        {/* Dernière actualisation : {dayjs().fromNow()} */}
+                        Dernière actualisation : il y a ///// minutes
+                    </div>
+                </section>
+            </main>
+        </RootLayout>
+    );
 }
-
