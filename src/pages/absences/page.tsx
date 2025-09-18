@@ -15,19 +15,9 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { mockAbsences } from "../mock";
+import { AbsenceCard } from "./absences-card";
 
-function dateKey(s: string): number {
-    const parts = (s || "")
-        .trim()
-        .split(/[/.:-]/)
-        .map((x) => parseInt(x, 10));
-    const d = parts[0] || 1;
-    const m = (parts[1] || 1) - 1;
-    const y = parts[2] || 1970;
-    return new Date(y, m, d).getTime();
-}
-
-export default function AbsencesPage() {
+export function AbsencesPage() {
     const [onlyThisYear, setOnlyThisYear] = useState(true);
     const [refreshKey, setRefreshKey] = useState(0);
     const [, setLoading] = useState(false);
@@ -170,53 +160,5 @@ export default function AbsencesPage() {
                 )}
             </div>
         </main>
-    );
-}
-
-function AbsenceCard({
-    duration,
-    type,
-    course,
-    time,
-    date,
-    excused = false,
-}: {
-    duration: string;
-    type: string;
-    course: string;
-    time: string;
-    date: string;
-    excused?: boolean;
-}) {
-    return (
-        <Card className="bg-white dark:bg-mauria-dark-card border-none shadow-md p-4">
-            <div className="flex">
-                <div className="w-20 mr-4">
-                    <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
-                        {duration}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {time}
-                    </div>
-                </div>
-                <div className="flex-1">
-                    <div
-                        className={`text-lg font-medium ${
-                            excused
-                                ? "text-mauria-light-purple"
-                                : "text-mauria-light-accent"
-                        } dark:text-white`}
-                    >
-                        {type}
-                    </div>
-                    <div className="text-gray-700 dark:text-gray-300">
-                        {course}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {date}
-                    </div>
-                </div>
-            </div>
-        </Card>
     );
 }

@@ -1,7 +1,7 @@
 import Home from "./pages/page";
 import PlanningPage from "./pages/planning/page";
-import NotesPage from "./pages/notes/page";
-import AbsencesPage from "./pages/absences/page";
+import { GradesPage } from "./pages/grades/page";
+import { AbsencesPage } from "./pages/absences/page";
 import { ToastContextProvider } from "./contexts/toastContent";
 import { ModalContextProvider } from "./contexts/modalContext";
 
@@ -22,7 +22,10 @@ function App() {
                                     path="/planning"
                                     element={<PlanningPage />}
                                 />
-                                <Route path="/notes" element={<NotesPage />} />
+                                <Route
+                                    path="/grades"
+                                    element={<GradesPage />}
+                                />
                                 <Route
                                     path="/absences"
                                     element={<AbsencesPage />}

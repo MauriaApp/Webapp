@@ -4,11 +4,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { GradeCard } from "./note-card";
+import { GradeCard } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { getGrades } from "@/utils/notes";
 
-export default function NotesPage() {
+export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
 
     const merged = getGrades({ showCurrentYearOnly });
