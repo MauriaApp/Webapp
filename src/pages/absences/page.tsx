@@ -29,69 +29,74 @@ function dateKey(s: string): number {
 }
 
 export default function AbsencesPage() {
-    const [onlyThisYear, setOnlyThisYear] = useState(true);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [, setLoading] = useState(false);
-    const [, setLastUpdated] = useState<Date | null>(null);
+  const [onlyThisYear, setOnlyThisYear] = useState(true)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [, setLoading] = useState(false)
+  const [, setLastUpdated] = useState<Date | null>(null)
 
-    useEffect(() => {
-        setLoading(true);
-        fetchAbsences()
-            .catch(() => {})
-            .finally(() => {
-                setLastUpdated(new Date());
-                setRefreshKey((k) => k + 1);
-                setLoading(false);
-            });
-    }, []);
+  useEffect(() => {
+    setLoading(true)
+    fetchAbsences()
+      .catch(() => {})
+      .finally(() => {
+        setLastUpdated(new Date())
+        setRefreshKey((k) => k + 1)
+        setLoading(false)
+      })
+  }, [])
 
-    // const allAbsences = useMemo<AbsenceData[] | null>(() => {
+      // const allAbsences = useMemo<AbsenceData[] | null>(() => {
     //     return getAbsences() as AbsenceData[] | null;
     // }, [refreshKey]);
     const allAbsences = mockAbsences.data as AbsenceData[];
 
-    const list = useMemo<AbsenceData[]>(() => {
-        const base = onlyThisYear
-            ? getCurrentYearAbsences(allAbsences)
-            : allAbsences;
-        const arr = base ?? [];
-        return arr.slice().sort((a, b) => dateKey(b.date) - dateKey(a.date));
-    }, [allAbsences, onlyThisYear]);
+  const list = useMemo<AbsenceData[]>(() => {
+    const base = onlyThisYear ? getCurrentYearAbsences(allAbsences) : allAbsences
+    const arr = base ?? []
+    return arr.slice().sort((a, b) => dateKey(b.date) - dateKey(a.date))
+  }, [allAbsences, onlyThisYear])
 
-    const total = useMemo(
-        () => getTotalAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
-    const justified = useMemo(
-        () => getJustifiedAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
-    const unjustified = useMemo(
-        () => getUnjustifiedAbsencesDuration(allAbsences, onlyThisYear),
-        [allAbsences, onlyThisYear]
-    );
+  const total = useMemo(
+    () => getTotalAbsencesDuration(allAbsences, onlyThisYear),
+    [allAbsences, onlyThisYear]
+  )
+  const justified = useMemo(
+    () => getJustifiedAbsencesDuration(allAbsences, onlyThisYear),
+    [allAbsences, onlyThisYear]
+  )
+  const unjustified = useMemo(
+    () => getUnjustifiedAbsencesDuration(allAbsences, onlyThisYear),
+    [allAbsences, onlyThisYear]
+  )
 
-    return (
-        <RootLayout>
-            <main className="flex-1 px-4 pb-20">
-                <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">
-                    Absences
-                </h2>
+  return (
+    <RootLayout>
+      <main className="max-w-3xl mx-auto p-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <Switch id="onlyThisYear" checked={onlyThisYear} onCheckedChange={setOnlyThisYear} />
+          <Label htmlFor="onlyThisYear">Afficher uniquement cette année</Label>
+        </div>
 
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                        <Label
-                            htmlFor="current-year"
-                            className="text-xl text-mauria-light-purple dark:text-gray-300"
-                        >
-                            Année actuelle
-                        </Label>
-                        <Switch
-                            id="current-year"
-                            checked={onlyThisYear}
-                            onCheckedChange={setOnlyThisYear}
-                        />
-                    </div>
+        <Card className="mb-6">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total
+            </CardTitle>
+            <div className="text-4xl font-bold tracking-tight text-primary">
+              {total}
+            </div>
+          </CardHeader>
+
+          <Separator />
+
+          <CardContent className="pt-4">
+            <div className="flex items-start gap-6">
+              <div className="flex-1">
+                <div className="text-sm font-medium text-muted-foreground">
+                  Justifiées
+                </div>
+                <div className="mt-1 text-2xl font-semibold text-green-600">
+                  {justified}
                 </div>
 
                 <Card className="mb-6">
