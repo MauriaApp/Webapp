@@ -1,309 +1,318 @@
-const API_URL = "https://mauria-api.fly.dev"
+const API_URL = "https://mauria-api.fly.dev";
 
 export function getSession() {
-  const email = localStorage.getItem("email")
-  const password = localStorage.getItem("password")
+    const email = localStorage.getItem("email");
+    const password = localStorage.getItem("password");
 
-  if (!email || !password) {
-    return null
-  }
+    if (!email || !password) {
+        return null;
+    }
 
-  return { email, password }
+    return { email, password };
 }
 
 export function setSession(email: string, password: string) {
-  localStorage.setItem("email", email)
-  localStorage.setItem("password", password)
+    localStorage.setItem("email", email);
+    localStorage.setItem("password", password);
 }
 
 export async function login(email: string, password: string): Promise<boolean> {
-  const response = await fetch(`${API_URL}/aurion/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      password,
-    }),
-  })
+    const response = await fetch(`${API_URL}/aurion/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email,
+            password,
+        }),
+    });
 
-  if (response.status === 302) {
-    setSession(email, password)
-    await fetchFirstName()
-    return true
-  }
+    if (response.status === 302) {
+        setSession(email, password);
+        await fetchFirstName();
+        return true;
+    }
 
-  return false
+    return false;
 }
 
 type PlanningQueryParams = {
-  start: string
-  end: string
-}
+    start: string;
+    end: string;
+};
 
 type PlanningDayData = {
-  id: string
-  title: string
-  start: string
-  end: string
-  allDay: boolean
-  editable: boolean
-  className: string
-}
+    id: string;
+    title: string;
+    start: string;
+    end: string;
+    allDay: boolean;
+    editable: boolean;
+    className: string;
+};
 
 export type PlanningEntry = {
-  success: boolean
-  data: PlanningDayData[]
-}
+    success: boolean;
+    data: PlanningDayData[];
+};
 
-export async function fetchPlanning(params?: PlanningQueryParams): Promise<PlanningEntry | null> {
-  const session = getSession()
-  if (!session) return null
+export async function fetchPlanning(
+    params?: PlanningQueryParams
+): Promise<PlanningEntry | null> {
+    const session = getSession();
+    if (!session) return null;
 
-  const today = new Date()
-  const start = params?.start ?? formatDate(today)
-  const end = params?.end ?? start
+    const today = new Date();
+    const start = params?.start ?? formatDate(today);
+    const end = params?.end ?? start;
 
-  const response = await fetch(
-    `${API_URL}/aurion/planning?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: session.email,
-        password: session.password,
-      }),
+    const response = await fetch(
+        `${API_URL}/aurion/planning?start=${encodeURIComponent(
+            start
+        )}&end=${encodeURIComponent(end)}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: session.email,
+                password: session.password,
+            }),
+        }
+    );
+
+    if (response.ok) {
+        const data = (await response.json()) as PlanningEntry;
+        localStorage.setItem("lastPlanningUpdate", new Date().toISOString());
+        localStorage.setItem("planning", JSON.stringify(data.data));
+        return data;
     }
-  )
 
-  if (response.ok) {
-    const data = (await response.json() as PlanningEntry)
-    localStorage.setItem("lastPlanningUpdate", new Date().toISOString())
-    localStorage.setItem("planning", JSON.stringify(data.data))
-    return data
-  }
-
-  return null
+    return null;
 }
 
 type NoteData = {
-  date: string
-  code: string
-  epreuve: string
-  note: string
-  coefficient: string
-  moyenne: string
-  min: string
-  mediane: string
-  ecartType: string
-  commentaire: string
-}
+    date: string;
+    code: string;
+    epreuve: string;
+    note: string;
+    coefficient: string;
+    moyenne: string;
+    min: string;
+    mediane: string;
+    ecartType: string;
+    commentaire: string;
+};
 
 export type NotesEntry = {
-  success: boolean
-  data: NoteData[]
-}
+    success: boolean;
+    data: NoteData[];
+};
 
 export async function fetchNotes(): Promise<NotesEntry | null> {
-  const session = getSession()
-  if (!session) return null
+    const session = getSession();
+    if (!session) return null;
 
-  localStorage.setItem("newNotes", JSON.stringify([]))
+    localStorage.setItem("newNotes", JSON.stringify([]));
 
-  const response = await fetch(`${API_URL}/notes`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: session.email,
-      password: session.password,
-    }),
-  })
+    const response = await fetch(`${API_URL}/notes`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email: session.email,
+            password: session.password,
+        }),
+    });
 
-  if (!response.ok) {
-    localStorage.setItem("notes", JSON.stringify([]))
-    return null
-  }
+    if (!response.ok) {
+        localStorage.setItem("notes", JSON.stringify([]));
+        return null;
+    }
 
-  const data = (await response.json() as NotesEntry)
-  const oldNotes = JSON.parse(localStorage.getItem("notes") ?? "[]") as Array<{ code: string }>
-  const newNotes = data.data.filter((note: { code: string }) => !oldNotes.some((old) => old.code === note.code))
+    const data = (await response.json()) as NotesEntry;
+    const oldNotes = JSON.parse(
+        localStorage.getItem("notes") ?? "[]"
+    ) as Array<{ code: string }>;
+    const newNotes = data.data.filter(
+        (note: { code: string }) =>
+            !oldNotes.some((old) => old.code === note.code)
+    );
 
-  localStorage.setItem("notes", JSON.stringify(data.data))
-  localStorage.setItem("newNotes", JSON.stringify(newNotes))
+    localStorage.setItem("notes", JSON.stringify(data.data));
+    localStorage.setItem("newNotes", JSON.stringify(newNotes));
 
-  return data
+    return data;
 }
 
 export type AbsenceData = {
-  date: string
-  type: string
-  duree: string
-  heure: string
-  classe: string
-  prof: string
-}
+    date: string;
+    type: string;
+    duree: string;
+    heure: string;
+    classe: string;
+    prof: string;
+};
 
 export type AbsencesEntry = {
-  success: boolean
-  data: AbsenceData[]
-}
+    success: boolean;
+    data: AbsenceData[];
+};
 
 export async function fetchAbsences(): Promise<AbsencesEntry | null> {
-  const session = getSession()
-  if (!session) return null
+    const session = getSession();
+    if (!session) return null;
 
-  const response = await fetch(`${API_URL}/absences`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: session.email,
-      password: session.password,
-    }),
-  })
+    const response = await fetch(`${API_URL}/absences`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            email: session.email,
+            password: session.password,
+        }),
+    });
 
-  if (!response.ok) {
-    return null
-  }
+    if (!response.ok) {
+        return null;
+    }
 
-  const data = (await response.json() as AbsencesEntry)
-  localStorage.setItem("absences", JSON.stringify(data.data))
-  return data
+    const data = (await response.json()) as AbsencesEntry;
+    localStorage.setItem("absences", JSON.stringify(data.data));
+    return data;
 }
 
 export function getAbsences() {
-  const data = localStorage.getItem("absences")
-  return data ? JSON.parse(data) : null
+    const data = localStorage.getItem("absences");
+    return data ? JSON.parse(data) : null;
 }
 
 export async function fetchFirstName() {
-  const name = deriveFirstName(localStorage.getItem("email"))
-  localStorage.setItem("name", name)
-  return name
+    const name = deriveFirstName(localStorage.getItem("email"));
+    localStorage.setItem("name", name);
+    return name;
 }
 
 export function getFirstName() {
-  return localStorage.getItem("name")
+    return localStorage.getItem("name");
 }
 
 function deriveFirstName(email: string | null) {
-  if (!email) return ""
+    if (!email) return "";
 
-  const match = email.match(/^([\w+-]*)([.-])/)
-  if (!match) return ""
+    const match = email.match(/^([\w+-]*)([.-])/);
+    if (!match) return "";
 
-  return match[1]
-    .split(/[-.]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join("-")
+    return match[1]
+        .split(/[-.]/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join("-");
 }
 
 export type AssociationData = {
-  name: string
-  description: string
-  contact: string
-  image: string
-}
+    name: string;
+    description: string;
+    contact: string;
+    image: string;
+};
 
 export async function fetchAssos(): Promise<AssociationData[] | null> {
-  const response = await fetch(`${API_URL}/associations`)
+    const response = await fetch(`${API_URL}/associations`);
 
-  if (!response.ok) {
-    return null
-  }
+    if (!response.ok) {
+        return null;
+    }
 
-  const data = (await response.json() as AssociationData[])
-  localStorage.setItem("associations", JSON.stringify(data))
-  return data
+    const data = (await response.json()) as AssociationData[];
+    localStorage.setItem("associations", JSON.stringify(data));
+    return data;
 }
 
 export type MessageEntry = {
-  title: string
-  message: string
-}
+    title: string;
+    message: string;
+};
 
 export async function fetchImportantMessage(): Promise<MessageEntry> {
-  const response = await fetch(`${API_URL}/messages`)
+    const response = await fetch(`${API_URL}/messages`);
 
-  if (!response.ok) {
-    return {
-      title: "Erreur",
-      message: "Une erreur est survenue, rechargez la page plus tard",
+    if (!response.ok) {
+        return {
+            title: "Erreur",
+            message: "Une erreur est survenue, rechargez la page plus tard",
+        };
     }
-  }
 
-  return response.json()
+    return response.json();
 }
 
 export type UpdatesEntry = {
-  version: string
-  date: string
-  titleVisu: string
-  contentVisu: string
-  titleDev: string
-  contentDev: string
-}
+    version: string;
+    date: string;
+    titleVisu: string;
+    contentVisu: string;
+    titleDev: string;
+    contentDev: string;
+};
 
 export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
-  const response = await fetch(`${API_URL}/updates`)
+    const response = await fetch(`${API_URL}/updates`);
 
-  if (!response.ok) {
-    localStorage.setItem("updates-log", "[]")
-    return null
-  }
+    if (!response.ok) {
+        localStorage.setItem("updates-log", "[]");
+        return null;
+    }
 
-  const data = (await response.json()) as UpdatesEntry[]
-  localStorage.setItem("updates-log", JSON.stringify(data))
-  return data
+    const data = (await response.json()) as UpdatesEntry[];
+    localStorage.setItem("updates-log", JSON.stringify(data));
+    return data;
 }
 
 type ToolData = {
-  buttonTitle: string
-  description: string
-  url: string
-}
+    buttonTitle: string;
+    description: string;
+    url: string;
+};
 
 export async function fetchTools(): Promise<ToolData[]> {
-  try {
-    const response = await fetch(`${API_URL}/tools`)
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch tools")
-    }
-
-    const data = (await response.json() as ToolData[])
-    localStorage.setItem("tools", JSON.stringify(data))
-    return data
-  } catch {
     try {
-      const cached = localStorage.getItem("tools")
-      return cached ? JSON.parse(cached) : []
+        const response = await fetch(`${API_URL}/tools`);
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch tools");
+        }
+
+        const data = (await response.json()) as ToolData[];
+        localStorage.setItem("tools", JSON.stringify(data));
+        return data;
     } catch {
-      return []
+        try {
+            const cached = localStorage.getItem("tools");
+            return cached ? JSON.parse(cached) : [];
+        } catch {
+            return [];
+        }
     }
-  }
 }
 
 export function clearStorage() {
-  localStorage.removeItem("email")
-  localStorage.removeItem("password")
-  localStorage.removeItem("planning")
-  localStorage.removeItem("notes")
-  localStorage.removeItem("newNotes")
-  localStorage.removeItem("userStats")
-  localStorage.removeItem("absences")
-  localStorage.removeItem("name")
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    localStorage.removeItem("planning");
+    localStorage.removeItem("notes");
+    localStorage.removeItem("newNotes");
+    localStorage.removeItem("userStats");
+    localStorage.removeItem("absences");
+    localStorage.removeItem("name");
 }
 
 function formatDate(date: Date) {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-  return `${year}-${month}-${day}`
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 }

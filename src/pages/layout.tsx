@@ -8,32 +8,30 @@ import FirstLaunchDrawer from "@/components/first-launch-drawer";
 import NewUpdateDrawer from "@/components/new-update-drawer";
 
 export default function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <ThemeProvider defaultTheme="light">
-      <div className="flex flex-col min-h-screen bg-mauria-light-bg dark:bg-mauria-dark-bg">
-        <FirstLaunchDrawer />
-        <NewUpdateDrawer />
-        {/* Header */}
-        <header className="flex items-center justify-between p-4 bg-mauria-light-purple dark:bg-mauria-dark-bg">
-          <h1 className="text-2xl font-bold text-white">Mauria</h1>
-          {/* <Button variant="ghost" size="icon" className="text-white">
-            <MenuIcon className="h-6 w-6" />
-          </Button> */}
-          <ThemeToggle />
-        </header>
+    return (
+        <ThemeProvider defaultTheme="light">
+            <div className="flex flex-col min-h-screen bg-mauria-light-bg dark:bg-mauria-dark-bg">
+                <FirstLaunchDrawer />
+                <NewUpdateDrawer />
+                {/* Header */}
+                <header className="flex items-center justify-between p-4 bg-mauria-light-purple dark:bg-mauria-dark-bg">
+                    <h1 className="text-2xl font-bold text-white">Mauria</h1>
+                    {/* <Button variant="ghost" size="icon" className="text-white">
+			<MenuIcon className="h-6 w-6" />
+		  </Button> */}
+                    <ThemeToggle />
+                </header>
 
-        {/* Main Content */}
-        <main className="flex-1 px-4 pb-20">
-          {children}
-        </main>
+                {/* Main Content */}
+                <main className="flex-1 px-4 pb-20">{children}</main>
 
-        {/* Bottom Navigation */}
-        <BottomNavigation />
-      </div>
-    </ThemeProvider>
-  );
+                {/* Bottom Navigation */}
+                <BottomNavigation />
+            </div>
+        </ThemeProvider>
+    );
 }
