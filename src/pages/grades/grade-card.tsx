@@ -1,11 +1,37 @@
 import { Card } from "@/components/ui/card";
 import { Grade } from "@/utils/grades";
+import { motion } from "framer-motion";
+
+const MotionCard = motion(Card);
+
+const gradeVariants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const },
+    },
+    exit: {
+        opacity: 0,
+        y: -14,
+        scale: 0.98,
+        transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] as const },
+    },
+};
 
 export function GradeCard({ note }: { note: Grade }) {
     return (
-        <Card className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex">
-                <div className="w-20 mr-4">
+        <MotionCard
+            layout
+            variants={gradeVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="transition-shadow hover:shadow-md"
+        >
+            <div className="flex p-4">
+                <div className="mr-4 w-20">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {note.grade}
                     </div>
@@ -22,6 +48,6 @@ export function GradeCard({ note }: { note: Grade }) {
                     </div>
                 </div>
             </div>
-        </Card>
+        </MotionCard>
     );
 }

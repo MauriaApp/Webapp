@@ -1,9 +1,35 @@
 import { Card } from "@/components/ui/card";
 import { Absence } from "@/utils/absences";
+import { motion } from "framer-motion";
 
+const MotionCard = motion(Card);
+
+const absenceVariants = {
+    hidden: { opacity: 0, y: 18, scale: 0.98 },
+    show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const },
+    },
+    exit: {
+        opacity: 0,
+        y: -16,
+        scale: 0.98,
+        transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] as const },
+    },
+};
 export function AbsenceCard({ absence }: { absence: Absence }) {
     return (
-        <Card className="bg-white dark:bg-mauria-dark-card border-none shadow-md p-4">
+        <MotionCard
+            layout
+            variants={absenceVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="border-none bg-white p-4 shadow-md transition-shadow dark:bg-mauria-dark-card"
+        >
+            {" "}
             <div className="flex">
                 <div className="w-20 mr-4">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
@@ -31,6 +57,6 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     </div>
                 </div>
             </div>
-        </Card>
+        </MotionCard>
     );
 }

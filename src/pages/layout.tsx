@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import FirstLaunchDrawer from "@/components/first-launch-drawer";
 import NewUpdateDrawer from "@/components/new-update-drawer";
+import { PageTransition } from "@/components/page-transition";
 
 export default function RootLayout({
     children,
@@ -27,7 +28,9 @@ export default function RootLayout({
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 px-4 pb-20">{children}</main>
+                <PageTransition as="main" className="flex-1 px-4 pb-20">
+                    {children}
+                </PageTransition>
 
                 {/* Bottom Navigation */}
                 <BottomNavigation />

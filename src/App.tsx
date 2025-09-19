@@ -1,13 +1,29 @@
+import { AnimatePresence } from "framer-motion";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+
+import { ModalContextProvider } from "./contexts/modalContext";
+import { ToastContextProvider } from "./contexts/toastContent";
+import { AbsencesPage } from "./pages/absences/page";
 import Home from "./pages/page";
 import PlanningPage from "./pages/planning/page";
-import { GradesPage } from "./pages/grades/page";
-import { AbsencesPage } from "./pages/absences/page";
-import { ToastContextProvider } from "./contexts/toastContent";
-import { ModalContextProvider } from "./contexts/modalContext";
-
-import { BrowserRouter, Route, Routes } from "react-router";
-import RootLayout from "./pages/layout";
 import { CurrentYearProvider } from "./contexts/currentYearContext";
+import RootLayout from "./pages/layout";
+import { GradesPage } from "./pages/grades/page";
+
+function AppRoutes() {
+    const location = useLocation();
+
+    return (
+        <AnimatePresence mode="wait" initial={false}>
+            <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/planning" element={<PlanningPage />} />
+                <Route path="/grades" element={<GradesPage />} />
+                <Route path="/absences" element={<AbsencesPage />} />
+            </Routes>
+        </AnimatePresence>
+    );
+}
 
 function App() {
     return (
@@ -16,21 +32,7 @@ function App() {
                 <BrowserRouter>
                     <RootLayout>
                         <CurrentYearProvider>
-                            <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route
-                                    path="/planning"
-                                    element={<PlanningPage />}
-                                />
-                                <Route
-                                    path="/grades"
-                                    element={<GradesPage />}
-                                />
-                                <Route
-                                    path="/absences"
-                                    element={<AbsencesPage />}
-                                />
-                            </Routes>
+                            <AppRoutes />
                         </CurrentYearProvider>
                     </RootLayout>
                 </BrowserRouter>
