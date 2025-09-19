@@ -3,36 +3,42 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router";
 
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
-import AbsencesPage from "./pages/absences/page";
+import { AbsencesPage } from "./pages/absences/page";
 import Home from "./pages/page";
 import PlanningPage from "./pages/planning/page";
-import NotesPage from "./pages/notes/page";
+import { CurrentYearProvider } from "./contexts/currentYearContext";
+import RootLayout from "./pages/layout";
+import { GradesPage } from "./pages/grades/page";
 
 function AppRoutes() {
-  const location = useLocation();
+    const location = useLocation();
 
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/planning" element={<PlanningPage />} />
-        <Route path="/notes" element={<NotesPage />} />
-        <Route path="/absences" element={<AbsencesPage />} />
-      </Routes>
-    </AnimatePresence>
-  );
+    return (
+        <AnimatePresence mode="wait" initial={false}>
+            <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Home />} />
+                <Route path="/planning" element={<PlanningPage />} />
+                <Route path="/grades" element={<GradesPage />} />
+                <Route path="/absences" element={<AbsencesPage />} />
+            </Routes>
+        </AnimatePresence>
+    );
 }
 
 function App() {
-  return (
-    <ToastContextProvider>
-      <ModalContextProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </ModalContextProvider>
-    </ToastContextProvider>
-  );
+    return (
+        <ToastContextProvider>
+            <ModalContextProvider>
+                <BrowserRouter>
+                    <RootLayout>
+                        <CurrentYearProvider>
+                            <AppRoutes />
+                        </CurrentYearProvider>
+                    </RootLayout>
+                </BrowserRouter>
+            </ModalContextProvider>
+        </ToastContextProvider>
+    );
 }
 
 export default App;
