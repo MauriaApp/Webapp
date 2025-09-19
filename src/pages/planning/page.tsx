@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -184,14 +185,21 @@ export default function PlanningPage() {
 
     return (
         <RootLayout>
-            {/* Main Content */}
-            <main className="flex-1 px-4 pb-20">
-                {/* Title */}
-                <h2 className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6">
+            <motion.h2
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6"
+                >
                     Planning
-                </h2>
+                </motion.h2>
 
-                <section className="rounded-lg overflow-hidden shadow-lg">
+            <motion.section
+                    className="rounded-lg overflow-hidden shadow-lg"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                >
                     <FullCalendar
                         datesSet={() => {
                             window.dispatchEvent(new Event("resize"));
@@ -235,8 +243,7 @@ export default function PlanningPage() {
                         {/* Dernière actualisation : {dayjs().fromNow()} */}
                         Dernière actualisation : il y a ///// minutes
                     </div>
-                </section>
-            </main>
+            </motion.section>
         </RootLayout>
     );
 }

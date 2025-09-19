@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Info } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -11,11 +15,35 @@ import {
     getUnjustifiedAbsencesDuration,
 } from "@/utils/absences";
 import { AbsenceData, fetchAbsences } from "@/utils/api";
-import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Info } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { mockAbsences } from "../mock";
+
+const MotionCard = motion(Card);
+
+const listVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.08, delayChildren: 0.06 },
+    },
+};
+
+const absenceVariants = {
+    hidden: { opacity: 0, y: 18, scale: 0.98 },
+    show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+    },
+    exit: {
+        opacity: 0,
+        y: -16,
+        scale: 0.98,
+        transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
+    },
+};
 
 function dateKey(s: string): number {
     const parts = (s || "")
@@ -30,7 +58,6 @@ function dateKey(s: string): number {
 
 export default function AbsencesPage() {
     const [onlyThisYear, setOnlyThisYear] = useState(true);
-    const [refreshKey, setRefreshKey] = useState(0);
     const [, setLoading] = useState(false);
     const [, setLastUpdated] = useState<Date | null>(null);
 
@@ -40,14 +67,13 @@ export default function AbsencesPage() {
             .catch(() => {})
             .finally(() => {
                 setLastUpdated(new Date());
-                setRefreshKey((k) => k + 1);
                 setLoading(false);
             });
     }, []);
 
     // const allAbsences = useMemo<AbsenceData[] | null>(() => {
     //     return getAbsences() as AbsenceData[] | null;
-    // }, [refreshKey]);
+    // }, []);
     const allAbsences = mockAbsences.data as AbsenceData[];
 
     const list = useMemo<AbsenceData[]>(() => {
@@ -73,8 +99,13 @@ export default function AbsencesPage() {
 
     return (
         <RootLayout>
-            <main className="max-w-3xl mx-auto p-4 space-y-4">
-                <div className="flex items-center gap-2">
+            <div className="mx-auto max-w-3xl space-y-4 pt-4">
+                <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="flex items-center gap-2"
+                >
                     <Switch
                         id="onlyThisYear"
                         checked={onlyThisYear}
@@ -83,97 +114,120 @@ export default function AbsencesPage() {
                     <Label htmlFor="onlyThisYear">
                         Afficher uniquement cette année
                     </Label>
-                </div>
+                </motion.div>
 
-                <Card className="mb-6">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Total
-                        </CardTitle>
-                        <div className="text-4xl font-bold tracking-tight text-primary">
-                            {total}
-                        </div>
-                    </CardHeader>
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+                >
+                    <Card className="mb-6">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Total
+                            </CardTitle>
+                            <div className="text-4xl font-bold tracking-tight text-primary">
+                                {total}
+                            </div>
+                        </CardHeader>
 
-                    <Separator />
+                        <Separator />
 
-                    <CardContent className="pt-4">
-                        <div className="flex items-start gap-6">
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-muted-foreground">
-                                    Justifiées
+                        <CardContent className="pt-4">
+                            <div className="flex items-start gap-6">
+                                <div className="flex-1">
+                                    <div className="text-sm font-medium text-muted-foreground">
+                                        Justifiées
+                                    </div>
+                                    <div className="mt-1 text-2xl font-semibold text-green-600">
+                                        {justified}
+                                    </div>
                                 </div>
-                                <div className="mt-1 text-2xl font-semibold text-green-600">
-                                    {justified}
+
+                                <div className="h-10 w-px bg-border" />
+
+                                <div className="flex-1">
+                                    <div className="text-sm font-medium text-muted-foreground">
+                                        Non-justifiées
+                                    </div>
+                                    <div className="mt-1 text-2xl font-semibold text-amber-600">
+                                        {unjustified}
+                                    </div>
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                            <div className="h-10 w-px bg-border" />
-
-                            <div className="flex-1">
-                                <div className="text-sm font-medium text-muted-foreground">
-                                    Non-justifiées
-                                </div>
-                                <div className="mt-1 text-2xl font-semibold text-amber-600">
-                                    {unjustified}
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <div className="space-y-4">
+                <AnimatePresence mode="popLayout">
                     {list.length === 0 ? (
-                        <Alert className="mb-4">
-                            <Info className="h-4 w-4" />
-                            <AlertTitle>Aucune absence trouvée</AlertTitle>
-                        </Alert>
+                        <motion.div
+                            key="empty-state"
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -12 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                        >
+                            <Alert className="mb-4">
+                                <Info className="h-4 w-4" />
+                                <AlertTitle>Aucune absence trouvée</AlertTitle>
+                            </Alert>
+                        </motion.div>
                     ) : (
-                        list.map((a, i) => {
-                            const key = (a as any).id ?? `${a.date ?? ""}-${i}`;
-                            return (
-                                <AbsenceCard
-                                    key={key}
-                                    duration={
-                                        (a as any).duration ??
-                                        (a as any).length ??
-                                        ""
-                                    }
-                                    type={
-                                        (a as any).type ??
-                                        ((a as any).justified
-                                            ? "Absence excusée"
-                                            : "Absence non excusée")
-                                    }
-                                    course={
-                                        (a as any).course ??
-                                        (a as any).subject ??
-                                        (a as any).module ??
-                                        ""
-                                    }
-                                    time={
-                                        (a as any).time ??
-                                        ((a as any).start && (a as any).end
-                                            ? `${(a as any).start} - ${
-                                                  (a as any).end
-                                              }`
-                                            : "")
-                                    }
-                                    date={
-                                        (a as any).date ?? (a as any).day ?? ""
-                                    }
-                                    excused={
-                                        !!(
-                                            (a as any).excused ??
-                                            (a as any).justified
-                                        )
-                                    }
-                                />
-                            );
-                        })
+                        <motion.div
+                            key="list"
+                            className="space-y-4"
+                            variants={listVariants}
+                            initial="hidden"
+                            animate="show"
+                            exit="hidden"
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {list.map((a, i) => {
+                                    const key = (a as any).id ?? `${a.date ?? ""}-${i}`;
+                                    return (
+                                        <AbsenceCard
+                                            key={key}
+                                            duration={
+                                                (a as any).duration ??
+                                                (a as any).length ??
+                                                ""
+                                            }
+                                            type={
+                                                (a as any).type ??
+                                                ((a as any).justified
+                                                    ? "Absence excusée"
+                                                    : "Absence non excusée")
+                                            }
+                                            course={
+                                                (a as any).course ??
+                                                (a as any).subject ??
+                                                (a as any).module ??
+                                                ""
+                                            }
+                                            time={
+                                                (a as any).time ??
+                                                ((a as any).start && (a as any).end
+                                                    ? `${(a as any).start} - ${(a as any).end}`
+                                                    : "")
+                                            }
+                                            date={
+                                                (a as any).date ?? (a as any).day ?? ""
+                                            }
+                                            excused={
+                                                !!(
+                                                    (a as any).excused ??
+                                                    (a as any).justified
+                                                )
+                                            }
+                                        />
+                                    );
+                                })}
+                            </AnimatePresence>
+                        </motion.div>
                     )}
-                </div>
-            </main>
+                </AnimatePresence>
+            </div>
         </RootLayout>
     );
 }
@@ -194,9 +248,16 @@ function AbsenceCard({
     excused?: boolean;
 }) {
     return (
-        <Card className="bg-white dark:bg-mauria-dark-card border-none shadow-md p-4">
+        <MotionCard
+            layout
+            variants={absenceVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="border-none bg-white p-4 shadow-md transition-shadow dark:bg-mauria-dark-card"
+        >
             <div className="flex">
-                <div className="w-20 mr-4">
+                <div className="mr-4 w-20">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {duration}
                     </div>
@@ -222,6 +283,6 @@ function AbsenceCard({
                     </div>
                 </div>
             </div>
-        </Card>
+        </MotionCard>
     );
 }

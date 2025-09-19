@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Info } from "lucide-react";
+
 import RootLayout from "@/pages/layout";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -8,7 +11,32 @@ import { Label } from "@/components/ui/label";
 import { fetchNotes } from "@/utils/api";
 import { mergeNotesData } from "@/utils/notes";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+
+const MotionCard = motion(Card);
+
+const listVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.06, delayChildren: 0.05 },
+    },
+};
+
+const gradeVariants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    show: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+    },
+    exit: {
+        opacity: 0,
+        y: -14,
+        scale: 0.98,
+        transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+    },
+};
 
 export default function NotesPage() {
     const now = new Date();
@@ -30,8 +58,13 @@ export default function NotesPage() {
 
     return (
         <RootLayout>
-            <main className="max-w-3xl mx-auto p-4 space-y-4">
-                <div className="flex items-center gap-2">
+            <div className="mx-auto max-w-3xl space-y-4 pt-4">
+                <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="flex items-center gap-2"
+                >
                     <Switch
                         id="onlyThisYear"
                         checked={onlyThisYear}
@@ -40,27 +73,41 @@ export default function NotesPage() {
                     <Label htmlFor="onlyThisYear">
                         Afficher uniquement cette année
                     </Label>
-                </div>
+                </motion.div>
 
                 {merged.length === 0 ? (
-                    <Alert className="mb-4">
-                        <Info className="h-4 w-4" />
-                        <AlertTitle>Aucune note pour l'instant</AlertTitle>
-                    </Alert>
+                    <motion.div
+                        key="empty-state"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut", delay: 0.05 }}
+                    >
+                        <Alert className="mb-4">
+                            <Info className="h-4 w-4" />
+                            <AlertTitle>Aucune note pour l'instant</AlertTitle>
+                        </Alert>
+                    </motion.div>
                 ) : (
-                    <div className="space-y-2">
-                        {merged.map(({ note }) => (
-                            <GradeCard
-                                key={(note as any).code}
-                                grade={(note as any).grade}
-                                course={(note as any).course}
-                                coef={(note as any).coef}
-                                date={(note as any).date}
-                            />
-                        ))}
-                    </div>
+                    <motion.div
+                        className="space-y-2"
+                        variants={listVariants}
+                        initial="hidden"
+                        animate="show"
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {merged.map(({ note }) => (
+                                <GradeCard
+                                    key={(note as any).code}
+                                    grade={(note as any).grade}
+                                    course={(note as any).course}
+                                    coef={(note as any).coef}
+                                    date={(note as any).date}
+                                />
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
                 )}
-            </main>
+            </div>
         </RootLayout>
     );
 }
@@ -77,9 +124,16 @@ function GradeCard({
     date: string;
 }) {
     return (
-        <Card className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex">
-                <div className="w-20 mr-4">
+        <MotionCard
+            layout
+            variants={gradeVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="transition-shadow hover:shadow-md"
+        >
+            <div className="flex p-4">
+                <div className="mr-4 w-20">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {grade}
                     </div>
@@ -96,6 +150,6 @@ function GradeCard({
                     </div>
                 </div>
             </div>
-        </Card>
+        </MotionCard>
     );
 }
