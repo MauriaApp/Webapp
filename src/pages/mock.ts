@@ -1,7 +1,7 @@
 import { Absence } from "@/utils/absences";
 import { Grade } from "@/utils/grades";
 
-export const mockNotes: { success: boolean; data: Grade[] } = {
+export const mockGrades: { success: boolean; data: Grade[] } = {
     success: true,
     data: [
         {
