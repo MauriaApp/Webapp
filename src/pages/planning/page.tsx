@@ -5,27 +5,27 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
-import { mockPlanning } from "../mock";
+import { getPlanning } from "@/utils/planning";
 
 export default function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
 
-    // Example data
-    const data = mockPlanning.data;
+    // getPlanning(useMockData: boolean)
+    const lessons = getPlanning(true);
 
     // Example personal events
     const userEvents = {
         events: [
             {
                 title: "Complexe sportif d'Ennetières",
-                start: "2025-03-05T10:10:00",
-                end: "2025-03-05T12:30:00",
+                start: "2025-09-21T10:10:00",
+                end: "2025-09-21T12:30:00",
                 classNames: ["est-perso"],
             },
             {
                 title: "TD Auto Géré\nISEN A906 Anglais",
-                start: "2025-03-06T10:20:00",
-                end: "2025-03-06T12:20:00",
+                start: "2025-09-21T13:20:00",
+                end: "2025-09-21T16:20:00",
                 classNames: ["TD_AUTO_GERE_PLANIFIE"],
             },
         ],
@@ -35,145 +35,145 @@ export default function PlanningPage() {
     useEffect(() => {
         const style = document.createElement("style");
         style.innerHTML = `
-      .fc .fc-button {
-        color: #2D1E43 !important;
-        background-color: white !important;
-        border-radius: 100px !important;
-        box-shadow: 0 12px 32px rgba(45, 30, 67, 0.2);
-        font-weight: 600 !important;
-        font-size: 0.88rem !important;
-        border: none !important;
-      }
-      
-      .fc .fc-button-active {
-        background: linear-gradient(45deg, #F27935, #B25B43) !important;
-        box-shadow: 0 12px 24px rgba(242, 121, 53, 0.24);
-        color: white !important;
-      }
-      
-      .fc .fc-timegrid {
-        border: 0 !important;
-        outline: 0 !important;
-        background-color: rgba(255, 255, 255, 0.24);
-        backdrop-filter: blur(12px);
-        opacity: 0;
-        animation: appear 0.5s ease forwards;
-      }
-      
-      .fc .fc-timegrid-event {
-        border-radius: 6px;
-        line-height: 1.3;
-        padding: 2px;
-        border: 0;
-      }
-      
-      .fc .fc-timegrid-slot-minor {
-        border-top-style: dashed;
-        border-top-color: #afa6a244;
-      }
-      
-      .fc .fc-timegrid-slot-label-cushion {
-        font-size: 0.8rem;
-        font-weight: 600;
-      }
-      
-      .fc .fc-timegrid-col.fc-day-today {
-        background-color: hsla(16, 70%, 80%, 0.25);
-      }
-      
-      .fc-timegrid-event,
-      .fc-timegrid-more-link {
-        background: linear-gradient(45deg, #2D1E43, #3D2A53) !important;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 16px 32px rgba(45, 30, 67, 0.24);
-        color: white !important;
-      }
-      
-      .est-epreuve {
-        color: white !important;
-        background: linear-gradient(45deg, #F27935, #B25B43) !important;
-        box-shadow: 0 16px 32px rgba(242, 121, 53, 0.24) !important;
-      }
-      
-      .est-perso {
-        color: white !important;
-        background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
-        box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
-      }
-      
-      .TD_AUTO_GERE_PLANIFIE,
-      .TP_AUTO_GERE_PLANIFIE,
-      .CM_AUTO_GERE_PLANIFIE,
-      .PROJET_AUTO_GERE {
-        color: white !important;
-        background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
-        box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
-      }
-      
-      @keyframes appear {
-        0% {
-          opacity: 0;
+        .fc .fc-button {
+            color: #2D1E43 !important;
+            background-color: white !important;
+            border-radius: 100px !important;
+            box-shadow: 0 12px 32px rgba(45, 30, 67, 0.2);
+            font-weight: 600 !important;
+            font-size: 0.88rem !important;
+            border: none !important;
         }
-        100% {
-          opacity: 1;
+        
+        .fc .fc-button-active {
+            background: linear-gradient(45deg, #F27935, #B25B43) !important;
+            box-shadow: 0 12px 24px rgba(242, 121, 53, 0.24);
+            color: white !important;
         }
-      }
-      
-      .dark .fc-timegrid {
-        background-color: rgba(255, 255, 255, 0.08);
-      }
-      
-      .dark .fc-timegrid-event:not(.est-epreuve),
-      .dark .fc-timegrid-more-link:not(.est-epreuve) {
-        background: linear-gradient(45deg, #3D2A53, #2D1E43) !important;
-        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
-      }
-      
-      .dark .fc-timegrid-event.TD_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-more-link.TD_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-event.TP_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-more-link.TP_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-event.CM_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-more-link.CM_AUTO_GERE_PLANIFIE,
-      .dark .fc-timegrid-event.PROJET_AUTO_GERE,
-      .dark .fc-timegrid-more-link.PROJET_AUTO_GERE {
-        color: white !important;
-        background: linear-gradient(45deg, #81C784, #4CAF50) !important;
-        box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
-      }
-      
-      .dark .fc-timegrid-event.est-perso {
-        color: white !important;
-        background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
-        box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
-      }
-      
-      .fc-col-header,
-      .fc-daygrid-body,
-      .fc-scrollgrid-sync-table,
-      .fc-timegrid-body, 
-      .fc-timegrid-body table {
-        width: 100% !important;
-      }
-      
-      .fc .fc-button-group {
-        display: flex;
-        flex: 1 !important;
-        width: unset !important;
-        justify-content: flex-end;
-        gap: 8px;
-      }
-      
-      .fc .fc-header-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      
-      .fc .fc-event-time {
-        white-space: normal !important;
-        margin-bottom: 8px !important;
-      }
+        
+        .fc .fc-timegrid {
+            border: 0 !important;
+            outline: 0 !important;
+            background-color: rgba(255, 255, 255, 0.24);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            animation: appear 0.5s ease forwards;
+        }
+        
+        .fc .fc-timegrid-event {
+            border-radius: 6px;
+            line-height: 1.3;
+            padding: 2px;
+            border: 0;
+        }
+        
+        .fc .fc-timegrid-slot-minor {
+            border-top-style: dashed;
+            border-top-color: #afa6a244;
+        }
+        
+        .fc .fc-timegrid-slot-label-cushion {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .fc .fc-timegrid-col.fc-day-today {
+            background-color: hsla(16, 70%, 80%, 0.25);
+        }
+        
+        .fc-timegrid-event,
+        .fc-timegrid-more-link {
+            background: linear-gradient(45deg, #2D1E43, #3D2A53) !important;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 16px 32px rgba(45, 30, 67, 0.24);
+            color: white !important;
+        }
+        
+        .est-epreuve {
+            color: white !important;
+            background: linear-gradient(45deg, #F27935, #B25B43) !important;
+            box-shadow: 0 16px 32px rgba(242, 121, 53, 0.24) !important;
+        }
+        
+        .est-perso {
+            color: white !important;
+            background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
+            box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
+        }
+        
+        .TD_AUTO_GERE_PLANIFIE,
+        .TP_AUTO_GERE_PLANIFIE,
+        .CM_AUTO_GERE_PLANIFIE,
+        .PROJET_AUTO_GERE {
+            color: white !important;
+            background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
+            box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
+        }
+        
+        @keyframes appear {
+            0% {
+            opacity: 0;
+            }
+            100% {
+            opacity: 1;
+            }
+        }
+        
+        .dark .fc-timegrid {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .dark .fc-timegrid-event:not(.est-epreuve),
+        .dark .fc-timegrid-more-link:not(.est-epreuve) {
+            background: linear-gradient(45deg, #3D2A53, #2D1E43) !important;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+        }
+        
+        .dark .fc-timegrid-event.TD_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-more-link.TD_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-event.TP_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-more-link.TP_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-event.CM_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-more-link.CM_AUTO_GERE_PLANIFIE,
+        .dark .fc-timegrid-event.PROJET_AUTO_GERE,
+        .dark .fc-timegrid-more-link.PROJET_AUTO_GERE {
+            color: white !important;
+            background: linear-gradient(45deg, #81C784, #4CAF50) !important;
+            box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
+        }
+        
+        .dark .fc-timegrid-event.est-perso {
+            color: white !important;
+            background: linear-gradient(45deg, #4CAF50, #2E7D32) !important;
+            box-shadow: 0 16px 32px rgba(76, 175, 80, 0.24) !important;
+        }
+        
+        .fc-col-header,
+        .fc-daygrid-body,
+        .fc-scrollgrid-sync-table,
+        .fc-timegrid-body, 
+        .fc-timegrid-body table {
+            width: 100% !important;
+        }
+        
+        .fc .fc-button-group {
+            display: flex;
+            flex: 1 !important;
+            width: unset !important;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        .fc .fc-header-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .fc .fc-event-time {
+            white-space: normal !important;
+            margin-bottom: 8px !important;
+        }
     `;
         document.head.appendChild(style);
 
@@ -222,7 +222,7 @@ export default function PlanningPage() {
                     allDaySlot={false}
                     firstDay={0}
                     hiddenDays={[0]}
-                    eventSources={[data, userEvents]}
+                    eventSources={[lessons, userEvents]}
                     eventColor="#3f2a56"
                     contentHeight="auto"
                     nowIndicator={true}

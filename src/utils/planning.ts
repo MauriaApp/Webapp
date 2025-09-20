@@ -1,3 +1,5 @@
+import { mockPlanning } from "@/pages/mock";
+
 export type Lesson = {
     id: string;
     title: string;
@@ -7,3 +9,13 @@ export type Lesson = {
     editable: boolean;
     className: string;
 };
+
+export const getPlanning = (
+    useMockData: boolean
+): Lesson[] => {
+    if (useMockData) return mockPlanning.data;
+
+    const lessons = mockPlanning.data;
+
+    return lessons;
+}
