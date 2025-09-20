@@ -74,8 +74,8 @@ export const mockPlanning = {
         {
             id: "67235640",
             title: "ALG Salle 222 H\n\nUrbanisation et Gestion des Services IT\nCOURS_TD\nMonsieur VAN MOERKERCKE",
-            start: "2025-09-19T08:30:00+0200",
-            end: "2025-09-19T12:15:00+0200",
+            start: "2025-09-20T08:30:00+0200",
+            end: "2025-09-20T12:15:00+0200",
             allDay: false,
             editable: true,
             className: "COURS_TD",
@@ -83,8 +83,8 @@ export const mockPlanning = {
         {
             id: "67235317",
             title: "IC2 B506     (H)\n\nUrbanisation et Gestion des Services IT\nCOURS_TD\nMonsieur MARIAGE",
-            start: "2025-09-19T13:30:00+0200",
-            end: "2025-09-19T17:15:00+0200",
+            start: "2025-09-20T13:30:00+0200",
+            end: "2025-09-20T17:15:00+0200",
             allDay: false,
             editable: true,
             className: "COURS_TD",
