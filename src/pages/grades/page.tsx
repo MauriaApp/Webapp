@@ -64,8 +64,8 @@ export function GradesPage() {
                     animate="show"
                 >
                     <AnimatePresence mode="popLayout">
-                        {grades.map((note, index) => (
-                            <GradeCard key={index} note={note} />
+                        {grades.map((grade, index) => (
+                            <GradeCard key={index} grade={grade} />
                         ))}
                     </AnimatePresence>
                 </motion.div>

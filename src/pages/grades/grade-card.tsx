@@ -20,7 +20,7 @@ const gradeVariants = {
     },
 };
 
-export function GradeCard({ note }: { note: Grade }) {
+export function GradeCard({ grade }: { grade: Grade }) {
     return (
         <MotionCard
             layout
@@ -33,18 +33,18 @@ export function GradeCard({ note }: { note: Grade }) {
             <div className="flex p-4">
                 <div className="mr-4 w-20">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
-                        {note.grade}
+                        {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Coef {note.coefficient}
+                        Coef {grade.coefficient}
                     </div>
                 </div>
                 <div className="flex-1">
                     <div className="text-lg font-medium text-mauria-light-purple dark:text-white">
-                        {note.name}
+                        {grade.name}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {note.date}
+                        {grade.date}
                     </div>
                 </div>
             </div>

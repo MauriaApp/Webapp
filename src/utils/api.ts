@@ -1,3 +1,6 @@
+import { Absence } from "./absences";
+import { Grade } from "./grades";
+
 const API_URL = "https://mauria-api.fly.dev";
 
 export function getSession() {
@@ -93,31 +96,18 @@ export async function fetchPlanning(
     return null;
 }
 
-type NoteData = {
-    date: string;
-    code: string;
-    epreuve: string;
-    note: string;
-    coefficient: string;
-    moyenne: string;
-    min: string;
-    mediane: string;
-    ecartType: string;
-    commentaire: string;
-};
-
-export type NotesEntry = {
+export type GradesEntry = {
     success: boolean;
-    data: NoteData[];
+    data: Grade[];
 };
 
-export async function fetchNotes(): Promise<NotesEntry | null> {
+export async function fetchGrades(): Promise<GradesEntry | null> {
     const session = getSession();
     if (!session) return null;
 
-    localStorage.setItem("newNotes", JSON.stringify([]));
+    localStorage.setItem("newGrades", JSON.stringify([]));
 
-    const response = await fetch(`${API_URL}/notes`, {
+    const response = await fetch(`${API_URL}/grades`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -129,37 +119,28 @@ export async function fetchNotes(): Promise<NotesEntry | null> {
     });
 
     if (!response.ok) {
-        localStorage.setItem("notes", JSON.stringify([]));
+        localStorage.setItem("grades", JSON.stringify([]));
         return null;
     }
 
-    const data = (await response.json()) as NotesEntry;
-    const oldNotes = JSON.parse(
-        localStorage.getItem("notes") ?? "[]"
+    const data = (await response.json()) as GradesEntry;
+    const oldGrades = JSON.parse(
+        localStorage.getItem("grades") ?? "[]"
     ) as Array<{ code: string }>;
-    const newNotes = data.data.filter(
-        (note: { code: string }) =>
-            !oldNotes.some((old) => old.code === note.code)
+    const newGrades = data.data.filter(
+        (grade: { code: string }) =>
+            !oldGrades.some((old) => old.code === grade.code)
     );
 
-    localStorage.setItem("notes", JSON.stringify(data.data));
-    localStorage.setItem("newNotes", JSON.stringify(newNotes));
+    localStorage.setItem("grades", JSON.stringify(data.data));
+    localStorage.setItem("newGrades", JSON.stringify(newGrades));
 
     return data;
 }
 
-export type AbsenceData = {
-    date: string;
-    type: string;
-    duree: string;
-    heure: string;
-    classe: string;
-    prof: string;
-};
-
 export type AbsencesEntry = {
     success: boolean;
-    data: AbsenceData[];
+    data: Absence[];
 };
 
 export async function fetchAbsences(): Promise<AbsencesEntry | null> {
@@ -303,8 +284,8 @@ export function clearStorage() {
     localStorage.removeItem("email");
     localStorage.removeItem("password");
     localStorage.removeItem("planning");
-    localStorage.removeItem("notes");
-    localStorage.removeItem("newNotes");
+    localStorage.removeItem("grades");
+    localStorage.removeItem("newGrades");
     localStorage.removeItem("userStats");
     localStorage.removeItem("absences");
     localStorage.removeItem("name");

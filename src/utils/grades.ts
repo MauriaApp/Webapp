@@ -1,4 +1,4 @@
-import { mockNotes } from "@/pages/mock";
+import { mockGrades } from "@/pages/mock";
 
 export type Grade = {
     date: string;
@@ -17,7 +17,7 @@ export type Grade = {
 export function getGrades({
     showCurrentYearOnly,
 }: { showCurrentYearOnly?: boolean } = {}) {
-    return mockNotes.data.filter((grade) => {
+    return mockGrades.data.filter((grade) => {
         if (showCurrentYearOnly) {
             const now = new Date();
             const currentMonth = now.getMonth();
