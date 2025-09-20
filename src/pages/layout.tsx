@@ -22,8 +22,8 @@ export default function RootLayout({
                 <header className="flex items-center justify-between p-4 bg-mauria-light-purple dark:bg-mauria-dark-bg">
                     <h1 className="text-2xl font-bold text-white">Mauria</h1>
                     {/* <Button variant="ghost" size="icon" className="text-white">
-			<MenuIcon className="h-6 w-6" />
-		  </Button> */}
+                        <MenuIcon className="h-6 w-6" />
+                        </Button> */}
                     <ThemeToggle />
                 </header>
 

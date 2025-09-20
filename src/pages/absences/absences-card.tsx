@@ -43,8 +43,8 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     <div
                         className={`text-lg font-medium ${
                             absence.type.toLowerCase().includes("non")
-                                ? "text-mauria-light-purple"
-                                : "text-mauria-light-accent"
+                                ? "text-mauria-light-accent"
+                                : "text-mauria-light-purple"
                         } dark:text-white`}
                     >
                         {absence.type}

@@ -46,7 +46,7 @@ export const getAbsencesDurations = (
         : absences;
 
     if (!targetAbsences)
-        return { total: "0:00", justified: "0:00", unjustified: "0:00" };
+        return { total: "0h00", justified: "0h00", unjustified: "0h00" };
 
     let totalMinutes = 0;
     let justifiedMinutes = 0;
@@ -69,7 +69,7 @@ export const getAbsencesDurations = (
     const formatDuration = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
-        return `${hours}:${remainingMinutes.toString().padStart(2, "0")}`;
+        return `${hours}h${remainingMinutes.toString().padStart(2, "0")}`;
     };
 
     return {
