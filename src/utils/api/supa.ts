@@ -7,16 +7,16 @@ import {
 import { apiRequest, APIResponse } from "./helper";
 
 export async function fetchAssos(): Promise<AssociationData[] | null> {
-    const response = await apiRequest<APIResponse<AssociationData[]>>(
+    const response = await apiRequest<AssociationData[]>(
         "/associations",
         "GET"
     );
 
-    if (!response?.success) {
+    if (!response) {
         return null;
     }
 
-    return response.data ?? null;
+    return response;
 }
 
 export async function fetchImportantMessage(): Promise<MessageEntry> {

@@ -19,6 +19,7 @@ import LoginPage from "./pages/login";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./utils/api/aurion";
 import { ThemeProvider } from "./components/theme-provider";
+import { AssociationsPage } from "./pages/secondary/associations";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -50,6 +51,11 @@ function AppRoutes() {
                     <Route path="/planning" element={<PlanningPage />} />
                     <Route path="/grades" element={<GradesPage />} />
                     <Route path="/absences" element={<AbsencesPage />} />
+
+                    <Route
+                        path="/associations"
+                        element={<AssociationsPage />}
+                    />
                 </Route>
             </Routes>
         </AnimatePresence>

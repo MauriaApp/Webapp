@@ -15,11 +15,19 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { useTheme } from "@/components/theme-provider";
+import { useNavigate } from "react-router";
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
     const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
+
+    const navigate = useNavigate();
+
+    const handleNavigate = (path: string) => {
+        setOpen(false);
+        navigate(path);
+    };
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -76,7 +84,7 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => setOpen(false)}
+                            onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
                             Associations
