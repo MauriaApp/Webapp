@@ -3,10 +3,10 @@ import type React from "react";
 // import { Button } from "@/components/ui/button";
 import BottomNavigation from "@/components/bottom-navigation";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import FirstLaunchDrawer from "@/components/first-launch-drawer";
 import NewUpdateDrawer from "@/components/new-update-drawer";
 import { PageTransition } from "@/components/page-transition";
+import Sidebar from "@/components/sidebar";
 
 export default function RootLayout({
     children,
@@ -24,7 +24,7 @@ export default function RootLayout({
                     {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />
                         </Button> */}
-                    <ThemeToggle />
+                    <Sidebar />
                 </header>
 
                 {/* Main Content */}
