@@ -18,6 +18,7 @@ import { GradesPage } from "./pages/grades/page";
 import LoginPage from "./pages/login";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./utils/api/aurion";
+import { ThemeProvider } from "./components/theme-provider";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -59,13 +60,15 @@ function App() {
     return (
         <ToastContextProvider>
             <ModalContextProvider>
-                <BrowserRouter>
-                    <ReactQueryProvider>
-                        <CurrentYearProvider>
-                            <AppRoutes />
-                        </CurrentYearProvider>
-                    </ReactQueryProvider>
-                </BrowserRouter>
+                <ThemeProvider defaultTheme="light">
+                    <BrowserRouter>
+                        <ReactQueryProvider>
+                            <CurrentYearProvider>
+                                <AppRoutes />
+                            </CurrentYearProvider>
+                        </ReactQueryProvider>
+                    </BrowserRouter>
+                </ThemeProvider>
             </ModalContextProvider>
         </ToastContextProvider>
     );
