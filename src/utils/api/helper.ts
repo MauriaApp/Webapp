@@ -36,7 +36,9 @@ export async function fetchFirstName() {
 }
 
 export function getFirstName() {
-    return localStorage.getItem("name");
+    const name = localStorage.getItem("name");
+    if (name) return name;
+    return fetchFirstName();
 }
 
 function deriveFirstName(email: string | null) {

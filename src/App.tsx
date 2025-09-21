@@ -15,7 +15,7 @@ import PlanningPage from "./pages/planning/page";
 import { CurrentYearProvider } from "./contexts/currentYearContext";
 import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
-import LoginPage from "./pages/login";
+import LoginPage from "./pages/secondary/login";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./utils/api/aurion";
 import { ThemeProvider } from "./components/theme-provider";
