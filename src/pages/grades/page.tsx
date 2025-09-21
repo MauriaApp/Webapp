@@ -12,6 +12,16 @@ import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
 import { Grade } from "@/types/aurion";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+} from "@/components/ui/drawer";
+import { useState } from "react";
+import { Separator } from "@/components/ui/separator";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -23,6 +33,8 @@ const listVariants = {
 
 export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
+    const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const {
         data: grades = [],
@@ -92,11 +104,119 @@ export function GradesPage() {
                 >
                     <AnimatePresence mode="popLayout">
                         {filteredGrades.map((grade, index) => (
-                            <GradeCard key={index} grade={grade} />
+                            <GradeCard
+                                key={index}
+                                grade={grade}
+                                onGradeClick={(grade) => {
+                                    setSelectedGrade(grade);
+                                    setDrawerOpen(true);
+                                }}
+                            />
                         ))}
                     </AnimatePresence>
                 </motion.div>
             )}
+            <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+                <DrawerContent aria-describedby={undefined}>
+                    <DrawerHeader>
+                        <DrawerTitle>Détails de la note</DrawerTitle>
+                    </DrawerHeader>
+                    {selectedGrade && (
+                        <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto mb-6">
+                            <div>
+                                <h3 className="font-semibold text-lg">
+                                    {selectedGrade.name}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    {selectedGrade.code}
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 ">
+                                <div>
+                                    <p className="text-sm font-medium">Note</p>
+                                    <p className="text-2xl font-bold">
+                                        {selectedGrade.grade}
+                                    </p>
+                                </div>
+                            </div>
+                            <Separator />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Moyenne
+                                    </p>
+                                    <p>{selectedGrade.average}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Médiane
+                                    </p>
+                                    <p>{selectedGrade.median}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-sm font-medium">Min</p>
+                                    <p>{selectedGrade.min}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium">Max</p>
+                                    <p>{selectedGrade.max}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Écart-type
+                                    </p>
+                                    <p>{selectedGrade.standardDeviation}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Coefficient
+                                    </p>
+                                    <p className="text-lg">
+                                        {selectedGrade.coefficient}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium">Date</p>
+                                <p>
+                                    {selectedGrade.date
+                                        ? format(
+                                              new Date(
+                                                  selectedGrade.date
+                                                      .split("/")
+                                                      .reverse()
+                                                      .join("-")
+                                              ),
+                                              "EEEE d MMM yyyy",
+                                              { locale: fr }
+                                          )
+                                        : "Non spécifiée"}
+                                </p>
+                            </div>
+
+                            {selectedGrade.comment && (
+                                <div>
+                                    <p className="text-sm font-medium">
+                                        Commentaire
+                                    </p>
+                                    <p className="text-sm">
+                                        {selectedGrade.comment}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </DrawerContent>
+            </Drawer>
         </ReactPullToRefresh>
     );
 }

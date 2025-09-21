@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Grade } from "@/types/aurion";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 
 const MotionCard = motion(Card);
@@ -20,7 +22,13 @@ const gradeVariants = {
     },
 };
 
-export function GradeCard({ grade }: { grade: Grade }) {
+export function GradeCard({
+    grade,
+    onGradeClick,
+}: {
+    grade: Grade;
+    onGradeClick: (grade: Grade) => void;
+}) {
     return (
         <MotionCard
             layout
@@ -29,6 +37,7 @@ export function GradeCard({ grade }: { grade: Grade }) {
             animate="show"
             exit="exit"
             className="transition-shadow hover:shadow-md"
+            onClick={onGradeClick.bind(null, grade)}
         >
             <div className="flex p-4">
                 <div className="mr-4 w-20">
@@ -44,7 +53,20 @@ export function GradeCard({ grade }: { grade: Grade }) {
                         {grade.name}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {grade.date}
+                        <p>
+                            {grade.date
+                                ? format(
+                                      new Date(
+                                          grade.date
+                                              .split("/")
+                                              .reverse()
+                                              .join("-")
+                                      ),
+                                      "EEEE d MMM yyyy",
+                                      { locale: fr }
+                                  )
+                                : "Non spécifiée"}
+                        </p>
                     </div>
                 </div>
             </div>
