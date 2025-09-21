@@ -1,23 +1,13 @@
-import { mockGrades } from "@/pages/mock";
-
-export type Grade = {
-    date: string;
-    code: string;
-    name: string;
-    grade: string;
-    coefficient: string;
-    average: string;
-    min: string;
-    max: string;
-    median: string;
-    standardDeviation: string;
-    comment: string;
-};
+import { Grade } from "@/types/aurion";
 
 export function getGrades({
     showCurrentYearOnly,
-}: { showCurrentYearOnly?: boolean } = {}) {
-    return mockGrades.data.filter((grade) => {
+    grades,
+}: {
+    showCurrentYearOnly?: boolean;
+    grades: Grade[];
+}): Grade[] {
+    return grades.filter((grade) => {
         if (showCurrentYearOnly) {
             const now = new Date();
             const currentMonth = now.getMonth();

@@ -6,12 +6,16 @@ import { Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { getAbsences, getAbsencesDurations } from "@/utils/absences";
+import { getAbsencesDurations } from "@/utils/absences";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { AbsenceCard } from "./absences-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { fetchAbsences } from "@/utils/api/aurion";
+import { useQuery } from "@tanstack/react-query";
+import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { Absence } from "@/types/aurion";
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -23,14 +27,32 @@ const listVariants = {
 export function AbsencesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
 
-    const absences = getAbsences({ showCurrentYearOnly });
+    const {
+        data: absences = [],
+        refetch,
+        isLoading,
+    } = useQuery<Absence[], Error>({
+        queryKey: ["absences"],
+        queryFn: () => fetchAbsences().then((res) => res?.data || []),
+        staleTime: 1000 * 60 * 5, // 5 min frais
+        gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        refetchOnWindowFocus: true, // refresh background si focus fenêtre
+    });
 
-    const { total, justified, unjustified } = useMemo(() => {
+    const handleRefresh = async () => {
+        await refetch();
+    };
+
+    const { total, justified, unjustified, filteredAbsences } = useMemo(() => {
         return getAbsencesDurations(absences, showCurrentYearOnly);
     }, [absences, showCurrentYearOnly]);
 
     return (
-        <div className="mx-auto max-w-3xl space-y-4 pt-4">
+        <ReactPullToRefresh
+            onRefresh={handleRefresh}
+            className="mx-auto max-w-3xl space-y-4 pt-4"
+            isPullable={!isLoading}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -46,7 +68,6 @@ export function AbsencesPage() {
                     Afficher uniquement cette année
                 </Label>
             </motion.div>
-
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -93,9 +114,8 @@ export function AbsencesPage() {
                     </CardContent>
                 </Card>
             </motion.div>
-
             <AnimatePresence mode="popLayout">
-                {absences.length === 0 ? (
+                {filteredAbsences.length === 0 ? (
                     <motion.div
                         key="empty-state"
                         initial={{ opacity: 0, y: 12 }}
@@ -118,13 +138,13 @@ export function AbsencesPage() {
                         exit="hidden"
                     >
                         <AnimatePresence mode="popLayout">
-                            {absences.map((absence, index) => (
+                            {filteredAbsences.map((absence, index) => (
                                 <AbsenceCard key={index} absence={absence} />
                             ))}
                         </AnimatePresence>
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </ReactPullToRefresh>
     );
 }

@@ -8,6 +8,10 @@ import { GradeCard } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { getGrades } from "@/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
+import { fetchGrades } from "@/utils/api/aurion";
+import { useQuery } from "@tanstack/react-query";
+import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { Grade } from "@/types/aurion";
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -20,10 +24,33 @@ const listVariants = {
 export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
 
-    const grades = getGrades({ showCurrentYearOnly });
+    const {
+        data: grades = [],
+        refetch,
+        isLoading,
+    } = useQuery<Grade[], Error>({
+        queryKey: ["grades"],
+        queryFn: () => fetchGrades().then((res) => res?.data || []),
+        staleTime: 1000 * 60 * 5, // 5 min frais
+        gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        refetchOnWindowFocus: true, // refresh background si focus fenêtre
+    });
+
+    const handleRefresh = async () => {
+        await refetch();
+    };
+
+    const filteredGrades = getGrades({
+        showCurrentYearOnly,
+        grades: grades,
+    });
 
     return (
-        <div className="mx-auto max-w-3xl space-y-4 pt-4">
+        <ReactPullToRefresh
+            onRefresh={handleRefresh}
+            className="mx-auto max-w-3xl space-y-4 pt-4"
+            isPullable={!isLoading}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -40,7 +67,7 @@ export function GradesPage() {
                 </Label>
             </motion.div>
 
-            {grades.length === 0 ? (
+            {filteredGrades.length === 0 ? (
                 <motion.div
                     key="empty-state"
                     initial={{ opacity: 0, y: 12 }}
@@ -64,12 +91,12 @@ export function GradesPage() {
                     animate="show"
                 >
                     <AnimatePresence mode="popLayout">
-                        {grades.map((grade, index) => (
+                        {filteredGrades.map((grade, index) => (
                             <GradeCard key={index} grade={grade} />
                         ))}
                     </AnimatePresence>
                 </motion.div>
             )}
-        </div>
+        </ReactPullToRefresh>
     );
 }

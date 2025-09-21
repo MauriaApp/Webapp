@@ -1,5 +1,11 @@
 import { AnimatePresence } from "framer-motion";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import {
+    BrowserRouter,
+    Navigate,
+    Route,
+    Routes,
+    useLocation,
+} from "react-router";
 
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
@@ -9,6 +15,21 @@ import PlanningPage from "./pages/planning/page";
 import { CurrentYearProvider } from "./contexts/currentYearContext";
 import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
+import LoginPage from "./pages/login";
+import { ReactQueryProvider } from "./contexts/reactQueryContext";
+import { getSession } from "./utils/api/aurion";
+
+const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
+    const location = useLocation();
+    const connected = !!getSession();
+
+    if (!connected) {
+        // redirige vers /login mais garde la route demandée en state
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
+};
 
 function AppRoutes() {
     const location = useLocation();
@@ -16,10 +37,19 @@ function AppRoutes() {
     return (
         <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route path="/planning" element={<PlanningPage />} />
-                <Route path="/grades" element={<GradesPage />} />
-                <Route path="/absences" element={<AbsencesPage />} />
+                <Route path="/login/*" element={<LoginPage />} />
+                <Route
+                    element={
+                        <RequireAuth>
+                            <RootLayout />
+                        </RequireAuth>
+                    }
+                >
+                    <Route path="/" element={<Home />} />
+                    <Route path="/planning" element={<PlanningPage />} />
+                    <Route path="/grades" element={<GradesPage />} />
+                    <Route path="/absences" element={<AbsencesPage />} />
+                </Route>
             </Routes>
         </AnimatePresence>
     );
@@ -30,11 +60,11 @@ function App() {
         <ToastContextProvider>
             <ModalContextProvider>
                 <BrowserRouter>
-                    <RootLayout>
+                    <ReactQueryProvider>
                         <CurrentYearProvider>
                             <AppRoutes />
                         </CurrentYearProvider>
-                    </RootLayout>
+                    </ReactQueryProvider>
                 </BrowserRouter>
             </ModalContextProvider>
         </ToastContextProvider>

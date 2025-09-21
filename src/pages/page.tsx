@@ -1,12 +1,15 @@
 import { motion, Variants } from "framer-motion";
-import { useEffect, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { getHomeUpcoming } from "@/utils/home";
-import { getFirstName, fetchImportantMessage } from "@/utils/api";
-import type { MessageEntry } from "@/utils/api";
 import { Info } from "lucide-react";
+import { getFirstName } from "@/utils/api/helper";
+import { fetchImportantMessage } from "@/utils/api/supa";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPlanning } from "@/utils/api/aurion";
+import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { Lesson } from "@/types/aurion";
 
 const MotionCard = motion(Card);
 
@@ -35,33 +38,39 @@ const itemVariants: Variants = {
 };
 
 export default function Home() {
-    const { current, today, tomorrow } = getHomeUpcoming(true);
-    const firstName = getFirstName() || "et bienvenu sur Mauria";
-    const [importantMessage, setImportantMessage] =
-        useState<MessageEntry | null>(null);
+    const {
+        data: lessons = [],
+        refetch,
+        isLoading,
+    } = useQuery<Lesson[], Error>({
+        queryKey: ["planning"],
+        queryFn: () => fetchPlanning().then((res) => res?.data || []),
+        staleTime: 1000 * 60 * 5, // 5 min frais
+        gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        refetchIntervalInBackground: true,
+        refetchInterval: 1000 * 60 * 5, // 5 min
+    });
 
-    useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const msg = await fetchImportantMessage();
-                if (mounted) setImportantMessage(msg);
-            } catch {
-                if (mounted)
-                    setImportantMessage({
-                        title: "Erreur",
-                        message:
-                            "Une erreur est survenue, rechargez la page plus tard",
-                    });
-            }
-        })();
-        return () => {
-            mounted = false;
-        };
-    }, []);
+    const handleRefresh = async () => {
+        await refetch();
+    };
+
+    const { data: importantMessage } = useQuery({
+        queryKey: ["importantMessage"],
+        queryFn: fetchImportantMessage,
+        staleTime: 1000 * 60 * 5, // 5 min
+        gcTime: 1000 * 60 * 5, // 5 min
+        refetchOnMount: true,
+        refetchOnWindowFocus: true,
+        refetchIntervalInBackground: true,
+        refetchInterval: 1000 * 60 * 5, // 5 min
+    });
+
+    const { current, today, tomorrow } = getHomeUpcoming({ lessons });
+    const firstName = getFirstName() || "et bienvenue sur Mauria";
 
     return (
-        <>
+        <ReactPullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
             {/* Welcome headline */}{" "}
             <motion.h2
                 className="mt-4 mb-6 text-3xl font-bold text-mauria-light-purple dark:text-white"
@@ -220,6 +229,6 @@ export default function Home() {
                     </motion.div>
                 </motion.section>
             )}
-        </>
+        </ReactPullToRefresh>
     );
 }
