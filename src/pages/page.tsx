@@ -1,7 +1,12 @@
 import { motion, Variants } from "framer-motion";
+import { useEffect, useState } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
+import { getHomeUpcoming } from "@/utils/home";
+import { getFirstName, fetchImportantMessage } from "@/utils/api";
+import type { MessageEntry } from "@/utils/api";
+import { Info } from "lucide-react";
 
 const MotionCard = motion(Card);
 
@@ -30,38 +35,43 @@ const itemVariants: Variants = {
 };
 
 export default function Home() {
-    const upcomingCourses = [
-        {
-            title: "Développement Web",
-            time: "08:00 - 10:00",
-            location: "ISEN C402 - Amphi Prépa",
-            type: "COURS_TD",
-        },
-        {
-            title: "Physique des Ondes",
-            time: "10:20 - 12:20",
-            location: "ISEN C953 - Salle de TP",
-            type: "COURS_TD",
-        },
-        {
-            title: "Mathématiques 7: Mathématiques Discrètes",
-            time: "15:30",
-            location: "ISEN B804 (H)",
-            type: "COURS_TD",
-        },
-    ];
+    const { current, today, tomorrow } = getHomeUpcoming(true);
+    const firstName = getFirstName() || "et bienvenu sur Mauria";
+    const [importantMessage, setImportantMessage] =
+        useState<MessageEntry | null>(null);
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const msg = await fetchImportantMessage();
+                if (mounted) setImportantMessage(msg);
+            } catch {
+                if (mounted)
+                    setImportantMessage({
+                        title: "Erreur",
+                        message:
+                            "Une erreur est survenue, rechargez la page plus tard",
+                    });
+            }
+        })();
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     return (
         <>
-            {" "}
+            {/* Welcome headline */}{" "}
             <motion.h2
                 className="mt-4 mb-6 text-3xl font-bold text-mauria-light-purple dark:text-white"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
             >
-                Hello Mauria !
+                Hello {firstName} !
             </motion.h2>
+            {/* Announcement / important message */}
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -69,47 +79,147 @@ export default function Home() {
             >
                 <Alert className="mb-8 border-none bg-[#FFE5D9] dark:bg-mauria-dark-alert">
                     <AlertTitle className="font-bold text-mauria-light-accent dark:text-white">
-                        Message Important !
+                        {importantMessage?.title ?? "Aucun message important"}
                     </AlertTitle>
                     <AlertDescription className="text-mauria-light-accent/90 dark:text-white/90">
-                        Bienvenue sur Mauria ! N'hésitez pas à l'installer, ça
-                        va être ton meilleur ami!
+                        {importantMessage?.message ?? "Bonne journée !"}
                     </AlertDescription>
                 </Alert>
             </motion.div>
-            <motion.section
-                className="mb-8"
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-            >
-                <motion.h2
-                    className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
-                    variants={itemVariants}
+            {/* Current lesson */}
+            {current && (
+                <motion.section
+                    className="mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
                 >
-                    À venir demain
-                </motion.h2>
-
-                {upcomingCourses.map(({ title, time, location, type }) => (
+                    <motion.h2
+                        className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
+                        variants={itemVariants}
+                    >
+                        En cours
+                    </motion.h2>
                     <MotionCard
-                        key={title}
+                        key={`${current.title}-${current.time}-current`}
                         className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-dark-card"
                         variants={itemVariants}
                     >
                         <h3 className="text-lg font-bold text-mauria-light-purple dark:text-white">
-                            {title}
+                            {current.title}
                         </h3>
                         <div className="mt-1 flex items-center text-gray-600 dark:text-gray-300">
-                            <span>{time}</span>
+                            <span>{current.time}</span>
                             <span className="mx-2">—</span>
                             <span className="text-mauria-light-accent dark:text-mauria-dark-accent">
-                                {location}
+                                {current.location}
                             </span>
                         </div>
-                        <div className="mt-1 text-xs text-gray-400">{type}</div>
+                        <div className="mt-1 text-xs text-gray-400">
+                            {current.type}
+                        </div>
                     </MotionCard>
-                ))}
-            </motion.section>
+                </motion.section>
+            )}
+            {/* Today's remaining lessons */}
+            {today.length > 0 && (
+                <motion.section
+                    className="mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <motion.h2
+                        className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
+                        variants={itemVariants}
+                    >
+                        Aujourd'hui
+                    </motion.h2>
+                    {today.map(({ title, time, location, type }) => (
+                        <MotionCard
+                            key={`${title}-${time}-today`}
+                            className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-dark-card"
+                            variants={itemVariants}
+                        >
+                            <h3 className="text-lg font-bold text-mauria-light-purple dark:text-white">
+                                {title}
+                            </h3>
+                            <div className="mt-1 flex items-center text-gray-600 dark:text-gray-300">
+                                <span>{time}</span>
+                                <span className="mx-2">—</span>
+                                <span className="text-mauria-light-accent dark:text-mauria-dark-accent">
+                                    {location}
+                                </span>
+                            </div>
+                            <div className="mt-1 text-xs text-gray-400">
+                                {type}
+                            </div>
+                        </MotionCard>
+                    ))}
+                </motion.section>
+            )}
+            {/* Tomorrow's lessons (only if no current and none left today) */}
+            {!current && today.length === 0 && tomorrow.length > 0 && (
+                <motion.section
+                    className="mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <motion.h2
+                        className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
+                        variants={itemVariants}
+                    >
+                        Demain
+                    </motion.h2>
+                    {tomorrow.map(({ title, time, location, type }) => (
+                        <MotionCard
+                            key={`${title}-${time}-tomorrow`}
+                            className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-dark-card"
+                            variants={itemVariants}
+                        >
+                            <h3 className="text-lg font-bold text-mauria-light-purple dark:text-white">
+                                {title}
+                            </h3>
+                            <div className="mt-1 flex items-center text-gray-600 dark:text-gray-300">
+                                <span>{time}</span>
+                                <span className="mx-2">—</span>
+                                <span className="text-mauria-light-accent dark:text-mauria-dark-accent">
+                                    {location}
+                                </span>
+                            </div>
+                            <div className="mt-1 text-xs text-gray-400">
+                                {type}
+                            </div>
+                        </MotionCard>
+                    ))}
+                </motion.section>
+            )}
+            {/* Empty state: nothing current, today, or tomorrow */}
+            {!current && today.length === 0 && tomorrow.length === 0 && (
+                <motion.section
+                    className="mb-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <motion.h2
+                        className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
+                        variants={itemVariants}
+                    >
+                        À venir
+                    </motion.h2>
+                    <motion.div variants={itemVariants}>
+                        <Alert className="mb-4">
+                            <Info className="h-4 w-4" />
+                            <AlertTitle>
+                                Rien à venir pour aujourd'hui ni demain, profite
+                                bien de ton repos et de ton temps libre !
+                            </AlertTitle>
+                        </Alert>
+                    </motion.div>
+                </motion.section>
+            )}
         </>
     );
 }
