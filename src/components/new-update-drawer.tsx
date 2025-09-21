@@ -13,8 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { formatUpdateContentList } from "@/utils/updates";
-import { fetchUpdates } from "@/utils/api/supa";
+import { formatUpdateContentList } from "@/lib/utils/updates";
+import { fetchUpdates } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
 import { UpdatesEntry } from "@/types/supa";
 

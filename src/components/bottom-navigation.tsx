@@ -2,7 +2,7 @@
 
 import { Home, Calendar, GraduationCap, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/cn";
 import { useNavigate } from "react-router";
 
 export default function BottomNavigation() {

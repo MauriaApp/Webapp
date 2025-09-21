@@ -13,7 +13,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import { fetchAssos } from "@/utils/api/supa";
+import { fetchAssos } from "@/lib/api/supa";
 import { AssociationData } from "@/types/supa";
 import { useQuery } from "@tanstack/react-query";
 

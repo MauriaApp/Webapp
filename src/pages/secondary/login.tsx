@@ -10,7 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { fetchUser, setSession } from "@/utils/api/aurion";
+import { fetchUser, setSession } from "@/lib/api/aurion";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");

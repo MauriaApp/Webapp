@@ -2,12 +2,12 @@ import { motion, Variants } from "framer-motion";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
-import { getHomeUpcoming } from "@/utils/home";
+import { getHomeUpcoming } from "@/lib/utils/home";
 import { Info } from "lucide-react";
-import { getFirstName } from "@/utils/api/helper";
-import { fetchImportantMessage } from "@/utils/api/supa";
+import { getFirstName } from "@/lib/api/helper";
+import { fetchImportantMessage } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPlanning } from "@/utils/api/aurion";
+import { fetchPlanning } from "@/lib/api/aurion";
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
 import { Lesson } from "@/types/aurion";
 

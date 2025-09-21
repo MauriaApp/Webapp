@@ -15,7 +15,7 @@ const normalizeOffset = (iso: string) =>
 
 const toDate = (s: string) => new Date(normalizeOffset(s));
 
-const parseFromTitle = (lesson: Lesson) => {
+export const parseFromTitle = (lesson: Lesson) => {
     const lines = lesson.title
         .split("\n")
         .map((l) => l.trim())
@@ -23,68 +23,11 @@ const parseFromTitle = (lesson: Lesson) => {
 
     const location = lines[0] ?? "";
     const courseTitle = lines[1] ?? lines[0] ?? lesson.title;
-    const inferredType = lines[2] ?? lesson.className ?? ""; // often like "COURS_TD"
+    const inferredType = lines[2] ?? lesson.className ?? "";
+    const teacher = lines[3] ?? "";
 
-    return { courseTitle, location, type: inferredType };
+    return { courseTitle, location, type: inferredType, teacher };
 };
-
-export const getUpcomingCourses = ({
-    lessons,
-}: {
-    lessons: Lesson[];
-}): UpcomingCourse[] => {
-    const now = new Date();
-
-    const enriched = lessons
-        .map((l) => ({
-            lesson: l,
-            start: toDate(l.start),
-            end: toDate(l.end),
-        }))
-        // keep only events from today or tomorrow
-        .filter(
-            ({ start }) =>
-                isSameDay(start, now) || isSameDay(start, addDays(now, 1))
-        );
-
-    // Current event (if any)
-    const current = enriched.find(({ start, end }) =>
-        isWithinInterval(now, { start, end })
-    );
-
-    // Remaining events today (strictly after now)
-    const todaysUpcoming = enriched
-        .filter(({ start }) => isSameDay(start, now) && isAfter(start, now))
-        .sort((a, b) => a.start.getTime() - b.start.getTime());
-
-    // All events tomorrow
-    const tomorrows = enriched
-        .filter(({ start }) => isSameDay(start, addDays(now, 1)))
-        .sort((a, b) => a.start.getTime() - b.start.getTime());
-
-    const formatCourse = ({
-        lesson,
-        start,
-        end,
-    }: {
-        lesson: Lesson;
-        start: Date;
-        end: Date;
-    }): UpcomingCourse => {
-        const { courseTitle, location, type } = parseFromTitle(lesson);
-        const time = `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`;
-        return { title: courseTitle, time, location, type };
-    };
-
-    const result: UpcomingCourse[] = [];
-    if (current) result.push(formatCourse(current));
-    result.push(...todaysUpcoming.map(formatCourse));
-    result.push(...tomorrows.map(formatCourse));
-
-    return result;
-};
-
-export default getUpcomingCourses;
 
 export const getHomeUpcoming = ({
     lessons,
