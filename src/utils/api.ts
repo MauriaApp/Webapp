@@ -107,7 +107,7 @@ export async function fetchGrades(): Promise<GradesEntry | null> {
 
     localStorage.setItem("newGrades", JSON.stringify([]));
 
-    const response = await fetch(`${API_URL}/grades`, {
+    const response = await fetch(`${API_URL}/aurion/grades`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -147,7 +147,7 @@ export async function fetchAbsences(): Promise<AbsencesEntry | null> {
     const session = getSession();
     if (!session) return null;
 
-    const response = await fetch(`${API_URL}/absences`, {
+    const response = await fetch(`${API_URL}/aurion/absences`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
