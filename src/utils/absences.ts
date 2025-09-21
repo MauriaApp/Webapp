@@ -1,20 +1,13 @@
-import { mockAbsences } from "@/pages/mock";
-
-export type Absence = {
-    date: string;
-    type: string;
-    duration: string;
-    time: string;
-    class: string;
-    teacher: string;
-};
+import { Absence } from "@/types/aurion";
 
 export const getAbsences = ({
     showCurrentYearOnly,
-}: { showCurrentYearOnly?: boolean } = {}): Absence[] => {
-    if (!showCurrentYearOnly) return mockAbsences.data;
-
-    const absences = mockAbsences.data;
+    absences,
+}: {
+    showCurrentYearOnly?: boolean;
+    absences: Absence[];
+}): Absence[] => {
+    if (!showCurrentYearOnly) return absences || [];
 
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -32,21 +25,27 @@ export const getAbsences = ({
             : new Date(currentYear, 7, 31, 23, 59, 59, 999); // August 31st of current year
 
     return absences.filter((absence) => {
-        const absenceDate = new Date(absence.date);
+        const [day, month, year] = absence.date.split("/").map(Number);
+        const absenceDate = new Date(year, month - 1, day); // month is 0-indexed
         return absenceDate >= schoolYearStart && absenceDate <= schoolYearEnd;
     });
 };
 
 export const getAbsencesDurations = (
-    absences: Absence[] | null,
+    absences: Absence[],
     thisYear?: boolean
 ) => {
     const targetAbsences = thisYear
-        ? getAbsences({ showCurrentYearOnly: true })
+        ? getAbsences({ showCurrentYearOnly: true, absences: absences })
         : absences;
 
     if (!targetAbsences)
-        return { total: "0h00", justified: "0h00", unjustified: "0h00" };
+        return {
+            total: "0h00",
+            justified: "0h00",
+            unjustified: "0h00",
+            filteredAbsences: [],
+        };
 
     let totalMinutes = 0;
     let justifiedMinutes = 0;
@@ -76,5 +75,6 @@ export const getAbsencesDurations = (
         total: formatDuration(totalMinutes),
         justified: formatDuration(justifiedMinutes),
         unjustified: formatDuration(unjustifiedMinutes),
+        filteredAbsences: targetAbsences || [],
     };
 };

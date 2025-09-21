@@ -9,6 +9,8 @@ import PlanningPage from "./pages/planning/page";
 import { CurrentYearProvider } from "./contexts/currentYearContext";
 import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
+import LoginPage from "./pages/login";
+import { ReactQueryProvider } from "./contexts/reactQueryContext";
 
 function AppRoutes() {
     const location = useLocation();
@@ -16,10 +18,13 @@ function AppRoutes() {
     return (
         <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Home />} />
-                <Route path="/planning" element={<PlanningPage />} />
-                <Route path="/grades" element={<GradesPage />} />
-                <Route path="/absences" element={<AbsencesPage />} />
+                <Route path="/login/*" element={<LoginPage />} />
+                <Route element={<RootLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/planning" element={<PlanningPage />} />
+                    <Route path="/grades" element={<GradesPage />} />
+                    <Route path="/absences" element={<AbsencesPage />} />
+                </Route>
             </Routes>
         </AnimatePresence>
     );
@@ -30,11 +35,11 @@ function App() {
         <ToastContextProvider>
             <ModalContextProvider>
                 <BrowserRouter>
-                    <RootLayout>
+                    <ReactQueryProvider>
                         <CurrentYearProvider>
                             <AppRoutes />
                         </CurrentYearProvider>
-                    </RootLayout>
+                    </ReactQueryProvider>
                 </BrowserRouter>
             </ModalContextProvider>
         </ToastContextProvider>

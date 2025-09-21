@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Grade } from "@/utils/grades";
+import { Grade } from "@/types/aurion";
 import { motion } from "framer-motion";
 
 const MotionCard = motion(Card);

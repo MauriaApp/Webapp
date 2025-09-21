@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Absence } from "@/utils/absences";
+import { Absence } from "@/types/aurion";
 import { motion } from "framer-motion";
 
 const MotionCard = motion(Card);

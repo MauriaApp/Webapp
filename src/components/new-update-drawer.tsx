@@ -13,8 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { fetchUpdates, UpdatesEntry } from "@/utils/api";
 import { formatUpdateContentList } from "@/utils/updates";
+import { fetchUpdates } from "@/utils/api/supa";
+import { useQuery } from "@tanstack/react-query";
+import { UpdatesEntry } from "@/types/supa";
 
 const LAST_SEEN_UPDATE_KEY = "lastSeenUpdate";
 
@@ -22,11 +24,17 @@ export default function NewUpdateDrawer() {
     const [open, setOpen] = useState(false);
     const [update, setUpdate] = useState<UpdatesEntry | null>(null);
 
-    useEffect(() => {
-        (async () => {
-            const data = await fetchUpdates();
+    const { data: updates } = useQuery({
+        queryKey: ["updates"],
+        queryFn: fetchUpdates,
+        staleTime: 1000 * 60 * 5, // 5 min
+        gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        refetchOnMount: true,
+    });
 
-            const last = data?.[0]?.version ?? null;
+    useEffect(() => {
+        if (updates?.length) {
+            const last = updates[0]?.version ?? null;
             if (last) {
                 const seen = localStorage.getItem(LAST_SEEN_UPDATE_KEY);
                 if (seen !== last) {
@@ -35,10 +43,9 @@ export default function NewUpdateDrawer() {
                     setOpen(true);
                 }
             }
-            
-            setUpdate(data?.[0] ?? null);
-        })();
-    }, []);
+            setUpdate(updates[0] ?? null);
+        }
+    }, [updates]);
 
     return (
         <Drawer open={open} onOpenChange={setOpen}>
