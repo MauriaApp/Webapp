@@ -1,5 +1,11 @@
 import { AnimatePresence } from "framer-motion";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router";
+import {
+    BrowserRouter,
+    Navigate,
+    Route,
+    Routes,
+    useLocation,
+} from "react-router";
 
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
@@ -11,6 +17,19 @@ import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
 import LoginPage from "./pages/login";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
+import { getSession } from "./utils/api/aurion";
+
+const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
+    const location = useLocation();
+    const connected = !!getSession();
+
+    if (!connected) {
+        // redirige vers /login mais garde la route demandée en state
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    return children;
+};
 
 function AppRoutes() {
     const location = useLocation();
@@ -19,7 +38,13 @@ function AppRoutes() {
         <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
                 <Route path="/login/*" element={<LoginPage />} />
-                <Route element={<RootLayout />}>
+                <Route
+                    element={
+                        <RequireAuth>
+                            <RootLayout />
+                        </RequireAuth>
+                    }
+                >
                     <Route path="/" element={<Home />} />
                     <Route path="/planning" element={<PlanningPage />} />
                     <Route path="/grades" element={<GradesPage />} />
