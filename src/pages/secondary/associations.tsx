@@ -14,7 +14,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer";
 import { fetchAssos } from "@/lib/api/supa";
-import { AssociationData } from "@/types/supa";
+import { AssociationData } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
 
 export function AssociationsPage() {

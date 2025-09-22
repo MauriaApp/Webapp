@@ -21,6 +21,7 @@ import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { BubbleBackground } from "./components/ui/shadcn-io/bubble-background";
+import { AgendaPage } from "./pages/secondary/agenda";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -57,6 +58,7 @@ function AppRoutes() {
                         path="/associations"
                         element={<AssociationsPage />}
                     />
+                    <Route path="/agenda" element={<AgendaPage />} />
                 </Route>
             </Routes>
         </AnimatePresence>
@@ -69,7 +71,7 @@ function App() {
             <ModalContextProvider>
                 <ThemeProvider defaultTheme="light">
                     <BubbleBackground interactive={true} />
-                    
+
                     <BrowserRouter>
                         <ReactQueryProvider>
                             <CurrentYearProvider>

@@ -1,6 +1,12 @@
 "use client";
 
-import { Home, Calendar, GraduationCap, User, Menu } from "lucide-react";
+import {
+    Home,
+    Calendar,
+    GraduationCap,
+    User,
+    ListChecksIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useNavigate } from "react-router";
@@ -14,7 +20,7 @@ export default function BottomNavigation() {
         { id: "calendar", icon: Calendar, path: "/planning" },
         { id: "education", icon: GraduationCap, path: "/grades" },
         { id: "profile", icon: User, path: "/absences" },
-        { id: "menu", icon: Menu, path: "/menu" },
+        { id: "agenda", icon: ListChecksIcon, path: "/agenda" },
     ];
 
     const getActive = () => {
@@ -22,14 +28,14 @@ export default function BottomNavigation() {
         if (pathname === "/planning") return "calendar";
         if (pathname === "/grades") return "education";
         if (pathname === "/absences") return "profile";
-        if (pathname === "/menu") return "menu";
+        if (pathname === "/agenda") return "agenda";
         return "home";
     };
 
     const active = getActive();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-mauria-dark-bg border-t border-gray-200 dark:border-mauria-dark-border flex justify-around py-2">
+        <div className="fixed z-20 bottom-0 left-0 right-0 bg-white dark:bg-mauria-dark-bg border-t border-gray-200 dark:border-mauria-dark-border flex justify-around py-2">
             {items.map((item) => (
                 <Button
                     key={item.id}

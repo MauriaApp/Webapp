@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatUpdateContentList } from "@/lib/utils/updates";
 import { fetchUpdates } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
-import { UpdatesEntry } from "@/types/supa";
+import { UpdatesEntry } from "@/types/data";
 
 const LAST_SEEN_UPDATE_KEY = "lastSeenUpdate";
 

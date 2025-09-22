@@ -3,7 +3,7 @@ import {
     MessageEntry,
     UpdatesEntry,
     ToolData,
-} from "@/types/supa";
+} from "@/types/data";
 import { apiRequest, APIResponse } from "./helper";
 
 export async function fetchAssos(): Promise<AssociationData[] | null> {

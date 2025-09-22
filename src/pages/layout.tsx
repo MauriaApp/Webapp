@@ -10,7 +10,7 @@ export default function RootLayout() {
     return (
         <div className="flex flex-col min-h-screen bg-mauria-light-bg dark:bg-mauria-dark-bg">
             <Particles
-                className="absolute inset-0 opacity-50"
+                className="absolute inset-0 opacity-50 z-0"
                 staticity={10}
                 color="#ef6b41"
                 quantity={100}
@@ -28,7 +28,7 @@ export default function RootLayout() {
                 <Sidebar />
             </header>
             {/* Main Content */}
-            <PageTransition as="main" className="flex-1 px-4 pb-20">
+            <PageTransition as="main" className="flex-1 px-4 pb-20 z-10">
                 <Outlet />
             </PageTransition>
 

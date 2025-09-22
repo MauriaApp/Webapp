@@ -24,3 +24,9 @@ export type ToolData = {
     description: string;
     url: string;
 };
+
+export type TaskData = {
+    id: string;
+    task: string;
+    date: Date;
+};

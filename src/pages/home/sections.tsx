@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { UpcomingCourse } from "@/types/home";
-import { MessageEntry } from "@/types/supa";
+import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
 import { Info } from "lucide-react";
 
