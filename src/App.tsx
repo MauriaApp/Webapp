@@ -20,6 +20,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
+import { BubbleBackground } from "./components/ui/shadcn-io/bubble-background";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -67,6 +68,8 @@ function App() {
         <ToastContextProvider>
             <ModalContextProvider>
                 <ThemeProvider defaultTheme="light">
+                    <BubbleBackground interactive={true} />
+                    
                     <BrowserRouter>
                         <ReactQueryProvider>
                             <CurrentYearProvider>

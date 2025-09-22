@@ -113,7 +113,7 @@ export default function Sidebar() {
                         </Button>
 
                         <p className="mt-4 text-center text-xs text-muted-foreground">
-                            Projet développé et maintenu par Milo Montuori
+                            Projet développé et maintenu par Milo Montuori, Louis Lecouturier ainsi que Louis Soltysiak
                         </p>
                     </div>
                 </div>
