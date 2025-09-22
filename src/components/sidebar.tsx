@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Moon, Sun, Menu, Settings, Info, HeartHandshake } from "lucide-react";
+import {
+    Moon,
+    Sun,
+    Menu,
+    Settings,
+    Info,
+    HeartHandshake,
+    BadgeX,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -27,6 +35,11 @@ export default function Sidebar() {
     const handleNavigate = (path: string) => {
         setOpen(false);
         navigate(path);
+    };
+
+    const signOut = () => {
+        localStorage.clear();
+        handleNavigate("/login");
     };
 
     return (
@@ -92,20 +105,16 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => setOpen(false)}
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7 text-red-500"
+                            onClick={() => signOut()}
                         >
-                            <Settings className="h-5 w-5" />
-                            Paramètres
+                            <BadgeX className="h-5 w-5" />
+                            Se déconnecter
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => setOpen(false)}
-                        >
-                            <Info className="h-5 w-5" />À propos
-                        </Button>
+
+                        <p className="mt-4 text-center text-xs text-muted-foreground">
+                            Projet développé et maintenu par Milo Montuori
+                        </p>
                     </div>
                 </div>
             </SheetContent>
