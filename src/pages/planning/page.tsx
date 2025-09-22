@@ -20,7 +20,7 @@ import { fr } from "date-fns/locale";
 type CalendarEvent = Lesson &
     UpcomingCourse & { courseTitle: string; teacher: string };
 
-export default function PlanningPage() {
+export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [eventInfo, setEventInfo] = useState<CalendarEvent | null>(null);

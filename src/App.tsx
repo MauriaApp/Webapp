@@ -10,16 +10,16 @@ import {
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
 import { AbsencesPage } from "./pages/absences/page";
-import Home from "./pages/page";
-import PlanningPage from "./pages/planning/page";
+import { HomePage } from "./pages/home/page";
 import { CurrentYearProvider } from "./contexts/currentYearContext";
 import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
-import LoginPage from "./pages/secondary/login";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./lib/api/aurion";
 import { ThemeProvider } from "./components/theme-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
+import { PlanningPage } from "./pages/planning/page";
+import { LoginPage } from "./pages/secondary/login";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -47,7 +47,7 @@ function AppRoutes() {
                         </RequireAuth>
                     }
                 >
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/planning" element={<PlanningPage />} />
                     <Route path="/grades" element={<GradesPage />} />
                     <Route path="/absences" element={<AbsencesPage />} />

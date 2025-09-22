@@ -36,11 +36,11 @@ export function GradeCard({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="transition-shadow hover:shadow-md"
+            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <div className="flex p-4">
-                <div className="mr-4 w-20">
+            <div className="flex p-4 items-center h-full">
+                <div className="mr-4 w-20 ">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {grade.grade}
                     </div>

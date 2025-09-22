@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { fetchUser, setSession } from "@/lib/api/aurion";
 
-export default function LoginPage() {
+export function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 

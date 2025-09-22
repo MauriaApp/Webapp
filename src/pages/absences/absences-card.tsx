@@ -27,10 +27,9 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white p-4 shadow-md transition-shadow dark:bg-mauria-dark-card"
+            className="border-none bg-white p-4  shadow-md transition-shadow dark:bg-mauria-dark-card"
         >
-            {" "}
-            <div className="flex">
+            <div className="flex h-full items-center">
                 <div className="w-20 mr-4">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {absence.duration}
