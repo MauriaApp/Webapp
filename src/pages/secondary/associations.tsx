@@ -41,7 +41,7 @@ export function AssociationsPage() {
     }, [associations, searchTerm]);
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
             {/* Search and Filters */}
             <div className="space-y-6">
                 <div className="relative max-w-md mx-auto">
