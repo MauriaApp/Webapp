@@ -16,14 +16,24 @@ import {
 import { fetchAssos } from "@/lib/api/supa";
 import { AssociationData } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
+import { useLoadingToast } from "@/hooks/useLoadingToast";
 
 export function AssociationsPage() {
-    const { data: associations = [] } = useQuery<AssociationData[], Error>({
+    const { data: associations = [], isLoading, isFetching } = useQuery<
+        AssociationData[],
+        Error
+    >({
         queryKey: ["associations"],
         queryFn: () => fetchAssos().then((res) => res || []),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
     });
+
+    useLoadingToast(
+        isLoading || isFetching,
+        "Associations en cours de chargement…",
+        "associations-loading"
+    );
 
     const [searchTerm, setSearchTerm] = useState("");
 

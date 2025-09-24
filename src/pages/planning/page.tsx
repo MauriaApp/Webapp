@@ -7,6 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
+import { useLoadingToast } from "@/hooks/useLoadingToast";
 import "./planning.css";
 
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
@@ -29,6 +30,7 @@ export function PlanningPage() {
         data: lessons = [],
         refetch,
         isLoading,
+        isFetching,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
         queryFn: () => fetchPlanning().then((res) => res?.data || []),
@@ -36,6 +38,12 @@ export function PlanningPage() {
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
     });
+
+    useLoadingToast(
+        isLoading || isFetching,
+        "Données du planning en cours de chargement…",
+        "planning-loading"
+    );
 
     const handleRefresh = async () => {
         await refetch();

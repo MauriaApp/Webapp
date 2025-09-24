@@ -16,6 +16,7 @@ import { fetchAbsences } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
 import { Absence } from "@/types/aurion";
+import { useLoadingToast } from "@/hooks/useLoadingToast";
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -31,6 +32,7 @@ export function AbsencesPage() {
         data: absences = [],
         refetch,
         isLoading,
+        isFetching,
     } = useQuery<Absence[], Error>({
         queryKey: ["absences"],
         queryFn: () => fetchAbsences().then((res) => res?.data || []),
@@ -38,6 +40,12 @@ export function AbsencesPage() {
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
     });
+
+    useLoadingToast(
+        isLoading || isFetching,
+        "Absences en cours de chargement…",
+        "absences-loading"
+    );
 
     const handleRefresh = async () => {
         await refetch();

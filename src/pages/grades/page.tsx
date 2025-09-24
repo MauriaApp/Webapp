@@ -19,6 +19,7 @@ import {
     DrawerTitle,
 } from "@/components/ui/drawer";
 import { useState } from "react";
+import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -40,6 +41,7 @@ export function GradesPage() {
         data: grades = [],
         refetch,
         isLoading,
+        isFetching,
     } = useQuery<Grade[], Error>({
         queryKey: ["grades"],
         queryFn: () => fetchGrades().then((res) => res?.data || []),
@@ -47,6 +49,12 @@ export function GradesPage() {
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
     });
+
+    useLoadingToast(
+        isLoading || isFetching,
+        "Notes en cours de chargement…",
+        "grades-loading"
+    );
 
     const handleRefresh = async () => {
         await refetch();
