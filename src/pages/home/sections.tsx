@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
-import { UpcomingCourse } from "@/types/home";
+import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
 import { Info } from "lucide-react";
@@ -44,17 +44,20 @@ export const SectionHeader = ({ title }: { title: string }) => (
 export const LessonCard = ({
     lesson,
     keyPrefix,
+    onClick,
 }: {
-    lesson: UpcomingCourse;
+    lesson: PreparedLesson;
     keyPrefix: string;
+    onClick: (lesson: PreparedLesson) => () => void;
 }) => (
     <MotionCard
-        key={`${lesson.title}-${lesson.time}-${keyPrefix}`}
+        key={`${lesson.courseTitle}-${lesson.time}-${keyPrefix}`}
         className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-dark-card"
         variants={itemVariants}
+        onClick={onClick(lesson)}
     >
         <h3 className="text-lg font-bold text-mauria-light-purple dark:text-white">
-            {lesson.title}
+            {lesson.courseTitle}
         </h3>
         <div className="mt-1 flex items-center text-gray-600 dark:text-gray-300">
             <span>{lesson.time}</span>
@@ -72,10 +75,12 @@ export const LessonsSection = ({
     title,
     lessons,
     keyPrefix,
+    onClick,
 }: {
     title: string;
-    lessons: UpcomingCourse[];
+    lessons: PreparedLesson[];
     keyPrefix: string;
+    onClick: (lesson: PreparedLesson) => () => void;
 }) => (
     <motion.section
         className="mb-8 mx-2"
@@ -86,9 +91,10 @@ export const LessonsSection = ({
         <SectionHeader title={title} />
         {lessons.map((lesson) => (
             <LessonCard
-                key={`${lesson.title}-${lesson.time}`}
+                key={`${lesson.courseTitle}-${lesson.time}`}
                 lesson={lesson}
                 keyPrefix={keyPrefix}
+                onClick={onClick}
             />
         ))}
     </motion.section>

@@ -9,7 +9,10 @@ type PageTransitionProps<T extends AllowedTags> = {
     as?: T;
     children: ReactNode;
     className?: string;
-} & Omit<HTMLMotionProps<T>, "className" | "children">;
+} & Omit<
+    HTMLMotionProps<T>,
+    "className" | "children" | "initial" | "animate" | "exit" | "transition"
+>;
 
 export function PageTransition<T extends AllowedTags = "div">({
     as = "div" as T,

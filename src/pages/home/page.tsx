@@ -13,8 +13,15 @@ import {
     LessonsSection,
     WelcomeHeader,
 } from "./sections";
+import { DrawerPlanningContent } from "@/components/drawer-planning-content";
+import { PreparedLesson } from "@/types/home";
 
 export function HomePage() {
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [currentLesson, setCurrentLesson] = useState<PreparedLesson | null>(
+        null
+    );
+
     const {
         data: lessons = [],
         refetch,
@@ -73,6 +80,10 @@ export function HomePage() {
                     title="En cours"
                     lessons={[current]}
                     keyPrefix="current"
+                    onClick={(lesson) => () => {
+                        setDrawerOpen(true);
+                        setCurrentLesson(lesson);
+                    }}
                 />
             )}
             {today.length > 0 && (
@@ -80,6 +91,10 @@ export function HomePage() {
                     title="Aujourd'hui"
                     lessons={today}
                     keyPrefix="today"
+                    onClick={(lesson) => () => {
+                        setDrawerOpen(true);
+                        setCurrentLesson(lesson);
+                    }}
                 />
             )}
             {!current && today.length === 0 && tomorrow.length > 0 && (
@@ -87,11 +102,20 @@ export function HomePage() {
                     title="Demain"
                     lessons={tomorrow}
                     keyPrefix="tomorrow"
+                    onClick={(lesson) => () => {
+                        setDrawerOpen(true);
+                        setCurrentLesson(lesson);
+                    }}
                 />
             )}
             {!current && today.length === 0 && tomorrow.length === 0 && (
                 <EmptyState />
             )}
+            <DrawerPlanningContent
+                drawerOpen={drawerOpen}
+                setDrawerOpen={setDrawerOpen}
+                eventInfo={currentLesson}
+            />
         </ReactPullToRefresh>
     );
 }

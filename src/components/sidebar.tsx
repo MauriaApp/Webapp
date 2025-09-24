@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-    Moon,
-    Sun,
-    Menu,
-    Settings,
-    Info,
-    HeartHandshake,
-    BadgeX,
-} from "lucide-react";
+import { Moon, Sun, Menu, HeartHandshake, BadgeX } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -113,7 +105,8 @@ export default function Sidebar() {
                         </Button>
 
                         <p className="mt-4 text-center text-xs text-muted-foreground">
-                            Projet développé et maintenu par Milo Montuori, Louis Lecouturier ainsi que Louis Soltysiak
+                            Projet développé et maintenu par Milo Montuori,
+                            Louis Lecouturier ainsi que Louis Soltysiak
                         </p>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import { Lesson } from "@/types/aurion";
-import { UpcomingCourse, HomeUpcoming } from "@/types/home";
+import { PreparedLesson, HomeUpcoming } from "@/types/home";
 import {
     addDays,
     format,
@@ -63,10 +63,10 @@ export const getHomeUpcoming = ({
         lesson: Lesson;
         start: Date;
         end: Date;
-    }): UpcomingCourse => {
-        const { courseTitle, location, type } = parseFromTitle(lesson);
+    }): PreparedLesson => {
+        const { courseTitle, location, type, teacher } = parseFromTitle(lesson);
         const time = `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`;
-        return { title: courseTitle, time, location, type };
+        return { courseTitle, time, location, type, details: lesson, teacher };
     };
 
     return {
