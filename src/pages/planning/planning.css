@@ -130,8 +130,7 @@
 .fc .fc-header-toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    padding: 0 5px;
+    padding: 8px 8px 0 8px;
 }
 
 .fc .fc-event-time {

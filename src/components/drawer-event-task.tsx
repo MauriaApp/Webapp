@@ -14,6 +14,8 @@ import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
 import { useState } from "react";
 import { TimePicker } from "./ui/time-picker/time-picker";
 import { saveTaskToLocalStorage } from "@/lib/utils/agenda";
+import { Lesson } from "@/types/aurion";
+import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 
 export function DrawerEventTask({
     type,
@@ -34,11 +36,34 @@ export function DrawerEventTask({
             return;
 
         switch (type) {
-            case "event":
-                console.log({ date, startTime, endTime });
+            case "event": {
+                if (!endTime) return;
+                const newUserEvent: Lesson = {
+                    id: crypto.randomUUID(),
+                    title: title,
+                    start: new Date(
+                        date.getFullYear(),
+                        date.getMonth(),
+                        date.getDate(),
+                        startTime.getHours(),
+                        startTime.getMinutes()
+                    ).toISOString(),
+                    end: new Date(
+                        date.getFullYear(),
+                        date.getMonth(),
+                        date.getDate(),
+                        endTime.getHours(),
+                        endTime.getMinutes()
+                    ).toISOString(),
+                    allDay: false,
+                    editable: true,
+                    className: "est-perso",
+                };
+                saveUserEventToLocalStorage({ userEvent: newUserEvent });
                 break;
+            }
 
-            case "task":
+            case "task": {
                 saveTaskToLocalStorage({
                     task: {
                         id: crypto.randomUUID(),
@@ -47,6 +72,7 @@ export function DrawerEventTask({
                     },
                 });
                 break;
+            }
             default:
                 break;
         }
@@ -65,8 +91,8 @@ export function DrawerEventTask({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild className="z-50">
-                <Button className="fixed z-50 bottom-12 right-6 bg-accent text-white rounded-full p-4 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent/50 transition">
-                    <Plus />
+                <Button className="fixed z-50 bottom-20 right-6 bg-accent text-white rounded-full size-10 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent/50 transition">
+                    <Plus className="scale-150" />
                 </Button>
             </DrawerTrigger>
 
@@ -93,7 +119,7 @@ export function DrawerEventTask({
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="flex w-full justify-between items-center px-10">
                         <div>
                             <DatePickerComponent
                                 onChange={(date) => setDate(date)}
@@ -102,14 +128,17 @@ export function DrawerEventTask({
                         <div>
                             {type === "task" ? (
                                 <TimePickerComponent
+                                    label="Heure"
                                     onChange={(time) => setStartTime(time)}
                                 />
                             ) : (
                                 <>
                                     <TimePickerComponent
+                                        label="Heure de début"
                                         onChange={(time) => setStartTime(time)}
                                     />
                                     <TimePickerComponent
+                                        label="Heure de fin"
                                         onChange={(time) => setEndTime(time)}
                                     />
                                 </>
@@ -187,8 +216,10 @@ const DatePickerComponent = ({
 };
 
 const TimePickerComponent = ({
+    label,
     onChange,
 }: {
+    label: string;
     onChange: (time: Date) => void;
 }) => {
     const [time, setTime] = useState<Date | undefined>(new Date());
@@ -202,7 +233,7 @@ const TimePickerComponent = ({
     return (
         <div className="flex flex-col gap-3">
             <Label htmlFor="time-picker" className="px-1">
-                Heure
+                {label}
             </Label>
             <TimePicker date={time} setDate={handleTimeChange} />
         </div>

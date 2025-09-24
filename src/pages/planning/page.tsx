@@ -16,6 +16,8 @@ import { UpcomingCourse } from "@/types/home";
 import { parseFromTitle } from "@/lib/utils/home";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { DrawerEventTask } from "@/components/drawer-event-task";
+import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 
 type CalendarEvent = Lesson &
     UpcomingCourse & { courseTitle: string; teacher: string };
@@ -24,6 +26,9 @@ export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [eventInfo, setEventInfo] = useState<CalendarEvent | null>(null);
+    const [userEvents, setUserEvents] = useState<Lesson[]>(
+        getUserEventsFromLocalStorage()
+    );
 
     const {
         data: lessons = [],
@@ -41,11 +46,6 @@ export function PlanningPage() {
         await refetch();
     };
 
-    // Example personal events
-    const userEvents = {
-        events: [],
-    };
-
     return (
         <ReactPullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
             <motion.h2
@@ -58,7 +58,7 @@ export function PlanningPage() {
             </motion.h2>
 
             <motion.section
-                className="rounded-lg overflow-hidden shadow-lg"
+                className="rounded-lg overflow-hidden shadow-lg "
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -240,6 +240,12 @@ export function PlanningPage() {
                     )}
                 </DrawerContent>
             </Drawer>
+            <DrawerEventTask
+                type="event"
+                onClose={() => {
+                    setUserEvents(getUserEventsFromLocalStorage());
+                }}
+            />
         </ReactPullToRefresh>
     );
 }
