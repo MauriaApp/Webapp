@@ -6,7 +6,7 @@ import {
     Routes,
     useLocation,
 } from "react-router";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";

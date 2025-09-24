@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 import { getHomeUpcoming } from "@/lib/utils/home";
 import { getFirstName } from "@/lib/api/helper";
@@ -26,6 +27,7 @@ export function HomePage() {
         data: lessons = [],
         refetch,
         isLoading,
+        isFetching,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
         queryFn: () => fetchPlanning().then((res) => res?.data || []),
@@ -34,6 +36,50 @@ export function HomePage() {
         refetchIntervalInBackground: true,
         refetchInterval: 1000 * 60 * 5, // 5 min
     });
+
+    const toastTimeoutRef = useRef<number | null>(null);
+    const toastShownRef = useRef(false);
+
+    useEffect(() => {
+        const TOAST_ID = "planning-loading";
+
+        if (isLoading || isFetching) {
+            // Avoid flashing toasts: only show if fetch lasts > 250ms
+            if (toastTimeoutRef.current == null) {
+                toastTimeoutRef.current = window.setTimeout(() => {
+                    console.log("Showing toast");
+                    toast.loading(
+                        "Données du planning en cours de chargement…",
+                        { id: TOAST_ID }
+                    );
+                    toastShownRef.current = true;
+                    toastTimeoutRef.current = null;
+                }, 250);
+            }
+        } else {
+            // Clear any pending show and dismiss if visible
+            if (toastTimeoutRef.current != null) {
+                window.clearTimeout(toastTimeoutRef.current);
+                toastTimeoutRef.current = null;
+            }
+            if (toastShownRef.current) {
+                console.log("Hiding toast");
+                toast.dismiss(TOAST_ID);
+                toastShownRef.current = false;
+            }
+        }
+
+        return () => {
+            if (toastTimeoutRef.current != null) {
+                window.clearTimeout(toastTimeoutRef.current);
+                toastTimeoutRef.current = null;
+            }
+            if (toastShownRef.current) {
+                toast.dismiss(TOAST_ID);
+                toastShownRef.current = false;
+            }
+        };
+    }, [isLoading, isFetching]);
 
     const handleRefresh = async () => {
         await refetch();
@@ -49,6 +95,7 @@ export function HomePage() {
         refetchIntervalInBackground: true,
         refetchInterval: 1000 * 60 * 5, // 5 min
     });
+
     const { current, today, tomorrow } = getHomeUpcoming({ lessons });
     const [firstName, setFirstName] = useState<string>(
         "et bienvenue sur Mauria"
