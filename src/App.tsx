@@ -6,6 +6,7 @@ import {
     Routes,
     useLocation,
 } from "react-router";
+import { Toaster } from "sonner";
 
 import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
@@ -28,10 +29,8 @@ const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const connected = !!getSession();
 
     if (!connected) {
-        // redirige vers /login mais garde la route demandée en state
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
-
     return children;
 };
 
@@ -53,11 +52,7 @@ function AppRoutes() {
                     <Route path="/planning" element={<PlanningPage />} />
                     <Route path="/grades" element={<GradesPage />} />
                     <Route path="/absences" element={<AbsencesPage />} />
-
-                    <Route
-                        path="/associations"
-                        element={<AssociationsPage />}
-                    />
+                    <Route path="/associations" element={<AssociationsPage />} />
                     <Route path="/agenda" element={<AgendaPage />} />
                 </Route>
             </Routes>
@@ -71,7 +66,8 @@ function App() {
             <ModalContextProvider>
                 <ThemeProvider defaultTheme="light">
                     <BubbleBackground interactive={true} />
-
+                    {/* Toaster global pour sonner */}
+                    <Toaster richColors position="top-center" />
                     <BrowserRouter>
                         <ReactQueryProvider>
                             <CurrentYearProvider>

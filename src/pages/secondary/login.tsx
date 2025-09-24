@@ -1,4 +1,6 @@
+// pages/secondary/login.tsx
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,15 +17,31 @@ import { fetchUser, setSession } from "@/lib/api/aurion";
 export function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await fetchUser({ email, password }).then((response) => {
+        if (loading) return;
+        setLoading(true);
+        try {
+            const response = await fetchUser({ email, password });
+
             if (response?.success) {
                 setSession(email, password);
                 window.location.href = "/";
+            } else {
+                toast.error("Identifiants invalides", {
+                    description:
+                        "Vérifie l’email et le mot de passe, puis réessaie.",
+                });
             }
-        });
+        } catch (err) {
+            toast.error("Erreur serveur", {
+                description: `Impossible de se connecter pour le moment.\n${err}`,
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -46,6 +64,7 @@ export function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                disabled={loading}
                             />
                         </div>
                         <div className="space-y-2">
@@ -57,12 +76,13 @@ export function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                disabled={loading}
                             />
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button type="submit" className="w-full">
-                            Se connecter
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Connexion..." : "Se connecter"}
                         </Button>
                     </CardFooter>
                 </form>
