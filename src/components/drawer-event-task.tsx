@@ -16,6 +16,7 @@ import { TimePicker } from "./ui/time-picker/time-picker";
 import { saveTaskToLocalStorage } from "@/lib/utils/agenda";
 import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
+import { toast } from "sonner";
 
 export function DrawerEventTask({
     type,
@@ -60,6 +61,10 @@ export function DrawerEventTask({
                     className: "est-perso",
                 };
                 saveUserEventToLocalStorage({ userEvent: newUserEvent });
+                toast.success("Événement ajouté", {
+                    description: "L’événement a été ajouté au planning.",
+                    duration: 3000,
+                });
                 break;
             }
 
@@ -70,6 +75,10 @@ export function DrawerEventTask({
                         task: title,
                         date: new Date(startTime),
                     },
+                });
+                toast.success("Tâche ajoutée", {
+                    description: "La tâche a été ajoutée à l’agenda.",
+                    duration: 3000,
                 });
                 break;
             }

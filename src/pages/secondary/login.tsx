@@ -45,7 +45,10 @@ export function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="relative min-h-screen flex items-center justify-center">
+            <h1 className="absolute top-16 md:top-20 w-full text-center text-white font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none">
+                Mauria
+            </h1>
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>Connexion</CardTitle>
