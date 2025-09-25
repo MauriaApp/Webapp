@@ -137,3 +137,7 @@
     white-space: normal !important;
     margin-bottom: 8px !important;
 }
+
+.fc-timegrid-col-events {
+    margin: 0 !important;
+}

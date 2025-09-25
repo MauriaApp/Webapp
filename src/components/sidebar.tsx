@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Moon, Sun, Menu, HeartHandshake, BadgeX, ThumbsDown, Book, Printer } from "lucide-react";
+import {
+    Moon,
+    Sun,
+    Menu,
+    HeartHandshake,
+    BadgeX,
+    ThumbsDown,
+    Book,
+    Printer,
+    MailQuestionMark,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -10,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import {
     Sheet,
     SheetContent,
+    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -46,11 +57,12 @@ export default function Sidebar() {
                     <span className="sr-only">Ouvrir le menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85%] sm:max-w-sm p-0">
-                <div className="p-5">
-                    <SheetHeader>
-                        <SheetTitle>Menu</SheetTitle>
-                    </SheetHeader>
+            <SheetContent
+                side="right"
+                className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between"
+            >
+                <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
 
                     <div className="mt-4 space-y-4">
                         {/* Thème */}
@@ -121,22 +133,42 @@ export default function Sidebar() {
                             <Printer className="h-5 w-5" />
                             Imprimer
                         </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7 text-red-500"
-                            onClick={() => signOut()}
-                        >
-                            <BadgeX className="h-5 w-5" />
-                            Se déconnecter
-                        </Button>
-
-                        <p className="mt-4 text-center text-xs text-muted-foreground">
-                            Projet développé et maintenu par Milo Montuori,
-                            Louis Lecouturier ainsi que Louis Soltysiak
-                        </p>
                     </div>
-                </div>
+                </SheetHeader>
+
+                <SheetFooter className="relative !flex-col gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                        onClick={() =>
+                            window.open(
+                                "mailto:milo.montuori@student.junia.com",
+                                "_blank"
+                            )
+                        }
+                    >
+                        <MailQuestionMark className="h-5 w-5" />
+                        Une question ? Un problème ?
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7 text-red-500"
+                        onClick={() => signOut()}
+                    >
+                        <BadgeX className="h-5 w-5" />
+                        Se déconnecter
+                    </Button>
+                    <Separator />
+                    <p className="mt-4 text-center text-xs text-muted-foreground">
+                        Projet développé et maintenu par Milo Montuori, <br />
+                        Louis Lecouturier et Louis Soltysiak
+                    </p>
+                    <div className="w-full text-center text-xs text-muted-foreground">
+                        <span>Version 2.3.0</span>
+                    </div>
+                </SheetFooter>
             </SheetContent>
         </Sheet>
     );
