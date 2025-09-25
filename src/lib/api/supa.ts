@@ -2,7 +2,6 @@ import {
     AssociationData,
     MessageEntry,
     UpdatesEntry,
-    ToolData,
 } from "@/types/data";
 import { apiRequest, APIResponse } from "./helper";
 
@@ -43,21 +42,3 @@ export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
     return response.data;
 }
 
-export async function fetchTools(): Promise<ToolData[]> {
-    const response = await apiRequest<APIResponse<ToolData[]> | ToolData[]>(
-        "/tools",
-        "GET"
-    );
-
-    if (!response) return [];
-
-    if (Array.isArray(response)) return response;
-
-    if (typeof response === "object" && "success" in response) {
-        return response.success && Array.isArray(response.data)
-            ? response.data
-            : [];
-    }
-
-    return [];
-}

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Moon, Sun, Menu, HeartHandshake, BadgeX, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Moon, Sun, Menu, HeartHandshake, BadgeX, ThumbsDown, Book, Printer } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -16,8 +16,6 @@ import {
 } from "@/components/ui/sheet";
 import { useTheme } from "@/components/theme-provider";
 import { useNavigate } from "react-router";
-import { fetchTools } from "@/lib/api/supa";
-import type { ToolData } from "@/types/data";
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
@@ -25,19 +23,6 @@ export default function Sidebar() {
     const isDark = theme === "dark";
 
     const navigate = useNavigate();
-    const [tools, setTools] = useState<ToolData[]>([]);
-
-    useEffect(() => {
-        const loadTools = async () => {
-            try {
-                const data = await fetchTools();
-                if (Array.isArray(data)) setTools(data);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        loadTools();
-    }, []);
 
     const handleNavigate = (path: string) => {
         setOpen(false);
@@ -109,26 +94,33 @@ export default function Sidebar() {
                             <HeartHandshake className="h-5 w-5" />
                             Associations
                         </Button>
-                        {tools.map((tool) => (
-                            <Button
-                                key={tool.url}
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                                asChild
-                            >
-                                <a
-                                    href={tool.url}
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                    aria-label={tool.description || tool.buttonTitle}
-                                    title={tool.description || tool.buttonTitle}
-                                >
-                                    <ExternalLink className="h-5 w-5" />
-                                    {tool.buttonTitle}
-                                </a>
-                            </Button>
-                        ))}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            onClick={() => handleNavigate("/associations")}
+                        >
+                            <ThumbsDown className="h-5 w-5" />
+                            Aurion
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            onClick={() => handleNavigate("/associations")}
+                        >
+                            <Book className="h-5 w-5" />
+                            Junia Learning
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            onClick={() => handleNavigate("/associations")}
+                        >
+                            <Printer className="h-5 w-5" />
+                            Imprimer
+                        </Button>
                         <Button
                             variant="ghost"
                             size="sm"

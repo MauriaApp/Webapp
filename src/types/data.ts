@@ -19,12 +19,6 @@ export type UpdatesEntry = {
     contentDev: string;
 };
 
-export type ToolData = {
-    buttonTitle: string;
-    description: string;
-    url: string;
-};
-
 export type TaskData = {
     id: string;
     task: string;
