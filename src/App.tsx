@@ -52,7 +52,10 @@ function AppRoutes() {
                     <Route path="/planning" element={<PlanningPage />} />
                     <Route path="/grades" element={<GradesPage />} />
                     <Route path="/absences" element={<AbsencesPage />} />
-                    <Route path="/associations" element={<AssociationsPage />} />
+                    <Route
+                        path="/associations"
+                        element={<AssociationsPage />}
+                    />
                     <Route path="/agenda" element={<AgendaPage />} />
                 </Route>
             </Routes>

@@ -17,6 +17,7 @@ import { saveTaskToLocalStorage } from "@/lib/utils/agenda";
 import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 export function DrawerEventTask({
     type,
@@ -201,7 +202,7 @@ const DatePickerComponent = ({
                             id="date-picker"
                             className="w-32 justify-between font-normal"
                         >
-                            {date ? date.toLocaleDateString() : "Select date"}
+                            {date ? format(date, "dd/MM/yyyy") : "Select date"}
                             <ChevronDownIcon />
                         </Button>
                     </PopoverTrigger>
