@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -31,6 +31,7 @@ export function PlanningPage() {
         refetch,
         isLoading,
         isFetching,
+        dataUpdatedAt,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
         queryFn: () => fetchPlanning().then((res) => res?.data || []),
@@ -48,6 +49,21 @@ export function PlanningPage() {
     const handleRefresh = async () => {
         await refetch();
     };
+
+    // Refresh relative time display every 30s
+    const [now, setNow] = useState<number>(() => Date.now());
+    useEffect(() => {
+        const id = window.setInterval(() => setNow(Date.now()), 30_000);
+        return () => window.clearInterval(id);
+    }, []);
+
+    const lastUpdatedText = (() => {
+        if (!dataUpdatedAt) return "—";
+        const diffMs = now - dataUpdatedAt;
+        if (diffMs < 60_000) return "à l’instant";
+        const minutes = Math.floor(diffMs / 60_000);
+        return `il y a ${minutes} minute${minutes > 1 ? "s" : ""}`;
+    })();
 
     return (
         <ReactPullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
@@ -118,8 +134,7 @@ export function PlanningPage() {
                     }}
                 />
                 <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
-                    {/* Dernière actualisation : {dayjs().fromNow()} */}
-                    Dernière actualisation : il y a ///// minutes
+                    Dernière actualisation : {lastUpdatedText}
                 </div>
             </motion.section>
             <DrawerPlanningContent

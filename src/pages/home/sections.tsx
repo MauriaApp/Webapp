@@ -5,6 +5,7 @@ import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
 import { Clock, Info, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { formatLessonType } from "@/lib/utils/home";
 
 const MotionCard = motion(Card);
 
@@ -65,7 +66,7 @@ export const LessonCard = ({
                 <Badge
                     className={`px-2 py-1 rounded-md text-xs font-medium bg-mauria-light-accent/20 text-mauria-light-accent whitespace-nowrap`}
                 >
-                    {lesson.type}
+                    {formatLessonType(lesson.type)}
                 </Badge>
             </div>
 

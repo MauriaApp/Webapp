@@ -75,3 +75,8 @@ export const getHomeUpcoming = ({
         tomorrow: tomorrows.map(toCourse),
     };
 };
+
+export const formatLessonType = (lessonType: string) => {
+    if (lessonType === "COURS_TD") return "Cours"
+    if (lessonType === "DS_SURV") return "DS"
+} 
