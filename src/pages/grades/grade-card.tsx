@@ -56,15 +56,15 @@ export function GradeCard({
                         <p>
                             {grade.date
                                 ? format(
-                                      new Date(
-                                          grade.date
-                                              .split("/")
-                                              .reverse()
-                                              .join("-")
-                                      ),
-                                      "EEEE d MMM yyyy",
-                                      { locale: fr }
-                                  )
+                                    new Date(
+                                        grade.date
+                                            .split("/")
+                                            .reverse()
+                                            .join("-")
+                                    ),
+                                    "EEEE d MMM yyyy",
+                                    { locale: fr }
+                                )
                                 : "Non spécifiée"}
                         </p>
                     </div>

@@ -8,6 +8,10 @@ export function getGrades({
     grades: Grade[];
 }): Grade[] {
     return grades.filter((grade) => {
+        const values = Object.values(grade).map((v) => (v ?? "").toString().trim());
+        const isArtifact = values.every((v) => v === "");
+        if (isArtifact) return false;
+
         if (showCurrentYearOnly) {
             const now = new Date();
             const currentMonth = now.getMonth();
