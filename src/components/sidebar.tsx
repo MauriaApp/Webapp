@@ -110,7 +110,12 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => handleNavigate("/associations")}
+                            onClick={() =>
+                                window.open(
+                                    "https://aurion.junia.com",
+                                    "_blank"
+                                )
+                            }
                         >
                             <ThumbsDown className="h-5 w-5" />
                             Aurion
@@ -119,7 +124,12 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => handleNavigate("/associations")}
+                            onClick={() =>
+                                window.open(
+                                    "https://junia-learning.com",
+                                    "_blank"
+                                )
+                            }
                         >
                             <Book className="h-5 w-5" />
                             Junia Learning
@@ -128,7 +138,12 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
-                            onClick={() => handleNavigate("/associations")}
+                            onClick={() =>
+                                window.open(
+                                    "https://print.junia.com/end-user/ui/dashboard",
+                                    "_blank"
+                                )
+                            }
                         >
                             <Printer className="h-5 w-5" />
                             Imprimer
