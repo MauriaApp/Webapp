@@ -3,7 +3,8 @@ import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
-import { Info } from "lucide-react";
+import { Clock, Info, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const MotionCard = motion(Card);
 
@@ -56,17 +57,29 @@ export const LessonCard = ({
         variants={itemVariants}
         onClick={onClick(lesson)}
     >
-        <h3 className="text-lg font-bold text-mauria-light-purple dark:text-white">
-            {lesson.courseTitle}
-        </h3>
-        <div className="mt-1 flex items-center text-gray-600 dark:text-gray-300">
-            <span>{lesson.time}</span>
-            <span className="mx-2">—</span>
-            <span className="text-mauria-light-accent dark:text-mauria-dark-accent">
-                {lesson.location}
-            </span>
+        <div className="space-y-2">
+            <div className="flex items-start justify-between">
+                <h4 className="font-semibold text-balance leading-tight pr-2">
+                    {lesson.courseTitle}
+                </h4>
+                <Badge
+                    className={`px-2 py-1 rounded-md text-xs font-medium bg-mauria-light-accent/20 text-mauria-light-accent whitespace-nowrap`}
+                >
+                    {lesson.type}
+                </Badge>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-medium">{lesson.time}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{lesson.location}</span>
+                </div>
+            </div>
         </div>
-        <div className="mt-1 text-xs text-gray-400">{lesson.type}</div>
     </MotionCard>
 );
 
@@ -139,8 +152,9 @@ export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
+        className="bg-white rounded-lg"
     >
-        <Alert className="mb-8 border-none bg-[#FFE5D9] dark:bg-mauria-dark-alert">
+        <Alert className="mb-8 border-none bg-mauria-light-accent/20 dark:bg-mauria-dark-alert">
             <AlertTitle className="font-bold text-mauria-light-accent dark:text-white">
                 {message?.title ?? "Aucun message important"}
             </AlertTitle>
