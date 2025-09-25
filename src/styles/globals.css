@@ -48,10 +48,10 @@
     --primary: 210 40% 98%;
     --primary-foreground: 222 47% 11%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 210 0% 50%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
+    --muted: 210 0% 50%;
     --muted-foreground: 215 20% 65%;
 
     --accent: 24 88% 58%;
@@ -60,8 +60,8 @@
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --border: 210 0% 50%;
+    --input: 210 0% 50%;
     --ring: 212.7 26.8% 83.9%;
   }
   .theme {

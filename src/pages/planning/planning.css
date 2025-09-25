@@ -88,8 +88,9 @@
 
 .dark .fc-timegrid-event:not(.est-epreuve),
 .dark .fc-timegrid-more-link:not(.est-epreuve) {
-    background: linear-gradient(45deg, #3d2a53, #2d1e43) !important;
+    background: linear-gradient(45deg, #4f3c7a, #6a54a3) !important;
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+    color: #ffffff !important;
 }
 
 .dark .fc-timegrid-event.TD_AUTO_GERE_PLANIFIE,
