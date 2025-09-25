@@ -44,11 +44,20 @@ export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
 }
 
 export async function fetchTools(): Promise<ToolData[]> {
-    const response = await apiRequest<APIResponse<ToolData[]>>("/tools", "GET");
+    const response = await apiRequest<APIResponse<ToolData[]> | ToolData[]>(
+        "/tools",
+        "GET"
+    );
 
-    if (!response?.success || !response.data) {
-        return [];
+    if (!response) return [];
+
+    if (Array.isArray(response)) return response;
+
+    if (typeof response === "object" && "success" in response) {
+        return response.success && Array.isArray(response.data)
+            ? response.data
+            : [];
     }
 
-    return response.data;
+    return [];
 }
