@@ -10,7 +10,7 @@ import { getGrades } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
-import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Grade } from "@/types/aurion";
 import {
     Drawer,
@@ -66,7 +66,7 @@ export function GradesPage() {
     });
 
     return (
-        <ReactPullToRefresh
+        <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
             isPullable={!isLoading}
@@ -225,6 +225,6 @@ export function GradesPage() {
                     )}
                 </DrawerContent>
             </Drawer>
-        </ReactPullToRefresh>
+        </PullToRefresh>
     );
 }

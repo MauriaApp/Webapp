@@ -14,7 +14,7 @@ import { useCurrentYear } from "@/contexts/currentYearContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchAbsences } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
-import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
 
@@ -56,7 +56,7 @@ export function AbsencesPage() {
     }, [absences, showCurrentYearOnly]);
 
     return (
-        <ReactPullToRefresh
+        <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
             isPullable={!isLoading}
@@ -153,6 +153,6 @@ export function AbsencesPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </ReactPullToRefresh>
+        </PullToRefresh>
     );
 }

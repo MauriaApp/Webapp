@@ -78,6 +78,8 @@
   }
 }
 
+ 
+
 @theme inline {
   @keyframes meteor {
   0% {
@@ -92,4 +94,13 @@
     opacity: 0;
     }
   }
+}
+
+/*
+  react-simple-pull-to-refresh: prevent content from appearing under an invisible layer
+  when the children are translated during pull. Allow the wrapper to overflow visibly
+  so the translated content isn’t clipped by the container.
+*/
+.ptr {
+  overflow: visible !important;
 }

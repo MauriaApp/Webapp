@@ -6,7 +6,7 @@ import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
-import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Lesson } from "@/types/aurion";
 import {
     EmptyState,
@@ -114,7 +114,7 @@ export function HomePage() {
     }, []);
 
     return (
-        <ReactPullToRefresh
+        <PullToRefresh
             onRefresh={handleRefresh}
             isPullable={!isLoading}
             className="min-h-[80vh]"
@@ -163,6 +163,6 @@ export function HomePage() {
                 setDrawerOpen={setDrawerOpen}
                 eventInfo={currentLesson}
             />
-        </ReactPullToRefresh>
+        </PullToRefresh>
     );
 }

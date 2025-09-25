@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
 import "./planning.css";
 
-import ReactPullToRefresh from "react-simple-pull-to-refresh";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Lesson } from "@/types/aurion";
 import { parseFromTitle } from "@/lib/utils/home";
 import { DrawerEventTask } from "@/components/drawer-event-task";
@@ -66,7 +66,7 @@ export function PlanningPage() {
     })();
 
     return (
-        <ReactPullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
+        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
             <motion.h2
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -148,6 +148,6 @@ export function PlanningPage() {
                     setUserEvents(getUserEventsFromLocalStorage());
                 }}
             />
-        </ReactPullToRefresh>
+        </PullToRefresh>
     );
 }
