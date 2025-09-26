@@ -47,6 +47,8 @@ export default function NewUpdateDrawer() {
         }
     }, [updates]);
 
+    if (update === null) return null;
+
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerContent className="p-0 max-h-[85vh] flex flex-col overflow-hidden">
