@@ -77,6 +77,12 @@ export const getHomeUpcoming = ({
 };
 
 export const formatLessonType = (lessonType: string) => {
-    if (lessonType === "COURS_TD") return "Cours"
-    if (lessonType === "DS_SURV") return "DS"
-} 
+    switch (lessonType) {
+        case "COURS_TD":
+            return "Cours";
+        case "DS_SURV":
+            return "DS";
+        default:
+            return lessonType;
+    }
+};
