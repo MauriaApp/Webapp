@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Info } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { getAbsencesDurations } from "@/lib/utils/absences";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { AbsenceCard } from "./absences-card";
+import { AbsenceCard, AbsenceCardAnimate } from "./absences-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchAbsences } from "@/lib/api/aurion";
@@ -17,6 +17,9 @@ import { useQuery } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
+
+const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
+const StaticAbsenceCard = memo(AbsenceCard);
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -146,9 +149,19 @@ export function AbsencesPage() {
                         exit="hidden"
                     >
                         <AnimatePresence mode="popLayout">
-                            {filteredAbsences.map((absence, index) => (
-                                <AbsenceCard key={index} absence={absence} />
-                            ))}
+                            {filteredAbsences.map((absence, index) =>
+                                index < 8 ? (
+                                    <AnimatedAbsenceCard
+                                        key={index}
+                                        absence={absence}
+                                    />
+                                ) : (
+                                    <StaticAbsenceCard
+                                        key={index}
+                                        absence={absence}
+                                    />
+                                )
+                            )}
                         </AnimatePresence>
                     </motion.div>
                 )}

@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { GradeCard } from "./grade-card";
+import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { getGrades } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,11 +18,14 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+
+const AnimatedGradeCard = memo(GradeCardAnimate);
+const StaticGradeCard = memo(GradeCard);
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -111,16 +114,27 @@ export function GradesPage() {
                     animate="show"
                 >
                     <AnimatePresence mode="popLayout">
-                        {filteredGrades.map((grade, index) => (
-                            <GradeCard
-                                key={index}
-                                grade={grade}
-                                onGradeClick={(grade) => {
-                                    setSelectedGrade(grade);
-                                    setDrawerOpen(true);
-                                }}
-                            />
-                        ))}
+                        {filteredGrades.map((grade, index) =>
+                            index < 8 ? (
+                                <AnimatedGradeCard
+                                    key={index}
+                                    grade={grade}
+                                    onGradeClick={(grade) => {
+                                        setSelectedGrade(grade);
+                                        setDrawerOpen(true);
+                                    }}
+                                />
+                            ) : (
+                                <StaticGradeCard
+                                    key={index}
+                                    grade={grade}
+                                    onGradeClick={(grade) => {
+                                        setSelectedGrade(grade);
+                                        setDrawerOpen(true);
+                                    }}
+                                />
+                            )
+                        )}
                     </AnimatePresence>
                 </motion.div>
             )}

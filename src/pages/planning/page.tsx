@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -19,6 +19,8 @@ import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+
+const Calendar = memo(FullCalendar);
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
@@ -73,7 +75,7 @@ export function PlanningPage() {
                     delay: 0.1,
                 }}
             >
-                <FullCalendar
+                <Calendar
                     datesSet={() => {
                         window.dispatchEvent(new Event("resize"));
                     }}
