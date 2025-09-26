@@ -101,8 +101,12 @@ export const Particles: React.FC<ParticlesProps> = ({
     }, [refresh]);
 
     const initCanvas = () => {
-        resizeCanvas();
-        drawParticles();
+        try {
+            resizeCanvas();
+            drawParticles();
+        } catch (error) {
+            console.warn("Error initializing canvas:", error);
+        }
     };
 
     const onMouseMove = () => {
