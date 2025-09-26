@@ -79,7 +79,7 @@ export const LessonCard = ({
                     <MapPin className="h-4 w-4" />
                     <span>{formatLessonLocation(lesson.location)}</span>
                 </div>
-                <div className="mb-0 flex items-end justify-end">
+                <div className="mb-0 flex items-center justify-end">
                     <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
                 </div>
             </div>
@@ -100,7 +100,7 @@ export const LessonsSection = ({
     onClick: (lesson: PreparedLesson) => () => void;
 }) => (
     <motion.section
-        className="mb-8 mx-2"
+        className="mb-8"
         variants={containerVariants}
         initial="hidden"
         animate="show"
