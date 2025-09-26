@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
-import { Clock, Info, MapPin } from "lucide-react";
+import { Clock, Info, MapPin, SquareArrowOutDownRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatLessonLocation, formatLessonType } from "@/lib/utils/home";
 
@@ -70,14 +70,17 @@ export const LessonCard = ({
                 </Badge>
             </div>
 
-            <div className="flex items-center justify-between gap-4 text-sm text-muted-foreground">
+            <div className="grid grid-cols-[1fr,1fr,auto] text-sm text-muted-foreground ">
                 <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
                     <span className="font-medium">{lesson.time}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 ml-4">
                     <MapPin className="h-4 w-4" />
                     <span>{formatLessonLocation(lesson.location)}</span>
+                </div>
+                <div className="mb-0 flex items-end justify-end">
+                    <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
                 </div>
             </div>
         </div>

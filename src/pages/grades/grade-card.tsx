@@ -3,6 +3,7 @@ import { Grade } from "@/types/aurion";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { SquareArrowOutDownRightIcon } from "lucide-react";
 
 const MotionCard = motion(Card);
 
@@ -36,10 +37,10 @@ export function GradeCard({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card"
+            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card p-4 h-full"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <div className="flex p-4 items-center h-full">
+            <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {grade.grade}
@@ -52,7 +53,7 @@ export function GradeCard({
                     <div className="text-lg font-medium text-mauria-light-purple dark:text-white">
                         {grade.name}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                         <p>
                             {grade.date
                                 ? format(
@@ -67,6 +68,9 @@ export function GradeCard({
                                   )
                                 : "Non spécifiée"}
                         </p>
+                        <div className="mb-0 flex items-end justify-end">
+                            <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
+                        </div>
                     </div>
                 </div>
             </div>
