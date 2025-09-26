@@ -21,8 +21,9 @@ import { ThemeProvider } from "./components/theme-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
-import { BubbleBackground } from "./components/ui/shadcn-io/bubble-background";
 import { AgendaPage } from "./pages/secondary/agenda";
+import { Meteors } from "@/components/ui/shadcn-io/meteors";
+import { BubbleBackground } from "./components/ui/shadcn-io/bubble-background";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -68,8 +69,11 @@ function App() {
         <ToastContextProvider>
             <ModalContextProvider>
                 <ThemeProvider defaultTheme="light">
-                    <BubbleBackground interactive={true} />
-                    {/* Toaster global pour sonner */}
+                    <BubbleBackground interactive={false} />
+
+                    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+                        <Meteors number={30} />
+                    </div>
                     <Toaster richColors position="top-center" />
                     <BrowserRouter>
                         <ReactQueryProvider>
