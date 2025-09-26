@@ -42,7 +42,7 @@ export default function BottomNavigation() {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                        "rounded-full h-12 w-12 flex items-center justify-center [&_svg]:!size-9",
+                        "rounded-full h-12 w-12 flex items-center justify-center [&_svg]:size-9!",
                         active === item.id
                             ? "text-mauria-light-purple dark:text-white"
                             : "text-gray-400 dark:text-gray-500"

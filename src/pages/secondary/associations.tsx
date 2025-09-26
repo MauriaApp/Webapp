@@ -77,9 +77,9 @@ export function AssociationsPage() {
                 {filteredAssociations.map((association, index) => (
                     <Drawer key={index}>
                         <DrawerTrigger asChild>
-                            <Card className="group cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg bg-card border-border w-[150px] flex-shrink-0">
+                            <Card className="group cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg bg-card border-border w-[150px] shrink-0">
                                 <CardContent className="p-0">
-                                    <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg">
+                                    <div className="aspect-4/3 relative overflow-hidden rounded-t-lg">
                                         <img
                                             src={
                                                 association.image ||
@@ -105,7 +105,7 @@ export function AssociationsPage() {
                             <div className="mx-auto w-full max-w-2xl">
                                 <DrawerHeader className="text-left ml-10">
                                     <div className="flex gap-4">
-                                        <div className="w-24 h-24 relative overflow-hidden rounded-lg flex-shrink-0">
+                                        <div className="w-24 h-24 relative overflow-hidden rounded-lg shrink-0">
                                             <img
                                                 src={
                                                     association.image ||

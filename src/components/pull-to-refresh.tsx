@@ -26,13 +26,13 @@ export function PullToRefresh({
             isPullable={isPullable}
             className={className}
             pullingContent={
-                <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:!size-5">
+                <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:size-5!">
                     <ArrowUpToLine />
                     <span>{pullingText}</span>
                 </div>
             }
             refreshingContent={
-                <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:!size-5">
+                <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:size-5!">
                     <Loader2 className="animate-spin" />
                     <span>{refreshingText}</span>
                 </div>

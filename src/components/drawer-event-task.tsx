@@ -101,7 +101,7 @@ export function DrawerEventTask({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild className="z-50">
-                <Button className="fixed z-50 bottom-20 right-6 bg-accent text-white rounded-full size-10 shadow-lg hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent/50 transition">
+                <Button className="fixed z-50 bottom-20 right-6 bg-accent text-white rounded-full size-10 shadow-lg hover:bg-accent/90 focus:outline-hidden focus:ring-2 focus:ring-accent/50 transition">
                     <Plus className="scale-150" />
                 </Button>
             </DrawerTrigger>

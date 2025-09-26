@@ -51,7 +51,7 @@ export default function Sidebar() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white [&_svg]:!size-7"
+                    className="text-white [&_svg]:size-7!"
                 >
                     <Menu />
                     <span className="sr-only">Ouvrir le menu</span>
@@ -67,7 +67,7 @@ export default function Sidebar() {
                     <div className="mt-4 space-y-4">
                         {/* Thème */}
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3 [&_svg]:!size-7">
+                            <div className="flex items-center gap-3 [&_svg]:size-7!">
                                 {isDark ? (
                                     <Moon className="h-5 w-5" />
                                 ) : (
@@ -80,7 +80,7 @@ export default function Sidebar() {
                                     >
                                         Thème
                                     </Label>
-                                    <span className="text-xs text-muted-foreground">
+                                    <span className="text-xs text-muted-foreground text-left">
                                         {isDark ? "Sombre" : "Clair"}
                                     </span>
                                 </div>
@@ -100,7 +100,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
                             onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
@@ -109,7 +109,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
                             onClick={() =>
                                 window.open(
                                     "https://aurion.junia.com",
@@ -123,7 +123,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
                             onClick={() =>
                                 window.open(
                                     "https://junia-learning.com",
@@ -137,7 +137,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
                             onClick={() =>
                                 window.open(
                                     "https://print.junia.com/end-user/ui/dashboard",
@@ -151,12 +151,12 @@ export default function Sidebar() {
                     </div>
                 </SheetHeader>
 
-                <SheetFooter className="relative !flex-col gap-2 px-0">
+                <SheetFooter className="relative flex-col! gap-2 px-0">
                     <div className="w-full mt-4 space-y-4">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
                             onClick={() =>
                                 window.open(
                                     "mailto:milo.montuori@student.junia.com",
@@ -170,7 +170,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:!size-7 text-red-500"
+                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7! text-red-500"
                             onClick={() => signOut()}
                         >
                             <BadgeX className="h-5 w-5" />

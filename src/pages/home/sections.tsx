@@ -70,7 +70,7 @@ export const LessonCard = ({
                 </Badge>
             </div>
 
-            <div className="grid grid-cols-[1fr,1fr,auto] text-sm text-muted-foreground ">
+            <div className="grid grid-cols-[1fr_1fr_auto] text-sm text-muted-foreground ">
                 <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
                     <span className="font-medium">{lesson.time}</span>
