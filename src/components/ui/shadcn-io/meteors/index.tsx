@@ -3,65 +3,68 @@
 import React, { useEffect, useState } from "react";
 
 function cn(...cls: Array<string | undefined | false>) {
-  return cls.filter(Boolean).join(" ");
+    return cls.filter(Boolean).join(" ");
 }
 
 export interface MeteorsProps {
-  number?: number;
-  minDelay?: number;
-  maxDelay?: number;
-  minDuration?: number;
-  maxDuration?: number;
-  angle?: number;            // degrees. 215 = top-right to bottom-left
-  className?: string;
+    number?: number;
+    minDelay?: number;
+    maxDelay?: number;
+    minDuration?: number;
+    maxDuration?: number;
+    angle?: number; // degrees. 215 = top-right to bottom-left
+    className?: string;
 }
 
 export const Meteors: React.FC<MeteorsProps> = ({
-  number = 20,
-  minDelay = 0.2,
-  maxDelay = 1.2,
-  minDuration = 2,
-  maxDuration = 10,
-  angle = 215,
-  className,
+    number = 20,
+    minDelay = 0.2,
+    maxDelay = 1.2,
+    minDuration = 2,
+    maxDuration = 10,
+    angle = 215,
+    className,
 }) => {
-  const [meteorStyles, setMeteorStyles] = useState<Array<React.CSSProperties>>([]);
+    const [meteorStyles, setMeteorStyles] = useState<
+        Array<React.CSSProperties>
+    >([]);
 
-  useEffect(() => {
-    const styles = Array.from({ length: number }, () => {
-      const delay = Math.random() * (maxDelay - minDelay) + minDelay;
-      const dur = Math.random() * (maxDuration - minDuration) + minDuration;
-      const leftPx = Math.floor(Math.random() * window.innerWidth);
-      const topPct = Math.random() * 120 - 10; // distribute meteors across and slightly beyond the viewport
+    useEffect(() => {
+        const styles = Array.from({ length: number }, () => {
+            const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+            const dur =
+                Math.random() * (maxDuration - minDuration) + minDuration;
+            const leftPx = Math.floor(Math.random() * window.innerWidth);
+            const topPct = Math.random() * 120 - 10; // distribute meteors across and slightly beyond the viewport
 
-      return {
-        ["--angle" as any]: `${angle}deg`,
-        top: `${topPct}%`,
-        left: `calc(0% + ${leftPx}px)`,
-        animationDelay: `${delay}s`,
-        animationDuration: `${dur}s`,
-      } as React.CSSProperties;
-    });
+            return {
+                ["--angle" as any]: `${angle}deg`,
+                top: `${topPct}%`,
+                left: `calc(0% + ${leftPx}px)`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${dur}s`,
+            } as React.CSSProperties;
+        });
 
-    setMeteorStyles(styles);
-  }, [number, minDelay, maxDelay, minDuration, maxDuration, angle]);
+        setMeteorStyles(styles);
+    }, [number, minDelay, maxDelay, minDuration, maxDuration, angle]);
 
-  return (
-    <>
-      {meteorStyles.map((style, idx) => (
-        <span
-          key={idx}
-          style={style}
-          className={cn(
-            "pointer-events-none absolute size-0.5 rotate-[var(--angle)] animate-meteor rounded-full bg-zinc-500 shadow-[0_0_0_1px_#ffffff10]",
-            className
-          )}
-        >
-          <div className="pointer-events-none absolute top-1/2 -z-10 h-px w-[50px] -translate-y-1/2 bg-gradient-to-r from-zinc-500 to-transparent" />
-        </span>
-      ))}
-    </>
-  );
+    return (
+        <>
+            {meteorStyles.map((style, idx) => (
+                <span
+                    key={idx}
+                    style={style}
+                    className={cn(
+                        "pointer-events-none absolute size-0.5 rotate-[var(--angle)] animate-meteor rounded-full bg-mauria-dark-accent shadow-[0_0_0_1px_#ffffff10]",
+                        className
+                    )}
+                >
+                    <div className="pointer-events-none absolute top-1/2 -z-10 h-px w-[50px] -translate-y-1/2 bg-gradient-to-r from-mauria-dark-accent to-transparent" />
+                </span>
+            ))}
+        </>
+    );
 };
 
 export default Meteors;

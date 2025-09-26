@@ -105,7 +105,7 @@ export function GradesPage() {
                 </motion.div>
             ) : (
                 <motion.div
-                    className="space-y-4 px-1"
+                    className="space-y-4 p-1"
                     variants={listVariants}
                     initial="hidden"
                     animate="show"

@@ -40,7 +40,7 @@ export function GradeCard({
             onClick={onGradeClick.bind(null, grade)}
         >
             <div className="flex p-4 items-center h-full">
-                <div className="mr-4 w-20 ">
+                <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
                         {grade.grade}
                     </div>
@@ -56,15 +56,15 @@ export function GradeCard({
                         <p>
                             {grade.date
                                 ? format(
-                                    new Date(
-                                        grade.date
-                                            .split("/")
-                                            .reverse()
-                                            .join("-")
-                                    ),
-                                    "EEEE d MMM yyyy",
-                                    { locale: fr }
-                                )
+                                      new Date(
+                                          grade.date
+                                              .split("/")
+                                              .reverse()
+                                              .join("-")
+                                      ),
+                                      "EEEE d MMM yyyy",
+                                      { locale: fr }
+                                  )
                                 : "Non spécifiée"}
                         </p>
                     </div>

@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Absence } from "@/types/aurion";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 
 const MotionCard = motion(Card);
@@ -27,15 +29,12 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white p-4  shadow-md transition-shadow dark:bg-mauria-dark-card"
+            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card"
         >
-            <div className="flex h-full items-center">
-                <div className="w-20 mr-4">
+            <div className="flex p-4 items-center h-full">
+                <div className="w-20 mr-4 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
-                        {absence.duration}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {absence.time}
+                        {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
                 <div className="flex-1">
@@ -48,11 +47,19 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     >
                         {absence.type}
                     </div>
-                    <div className="text-gray-700 dark:text-gray-300">
-                        {absence.class}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {absence.date}
+                    <div className="text-foreground">{absence.class}</div>
+                    <div className="text-sm text-muted-foreground">
+                        {(() => {
+                            const [day, month, year] = absence.date.split("/");
+                            const date = new Date(
+                                parseInt(year),
+                                parseInt(month) - 1,
+                                parseInt(day)
+                            );
+                            return format(date, "EEEE d MMM", { locale: fr });
+                        })()}
+                        {", "}
+                        {absence.time}
                     </div>
                 </div>
             </div>

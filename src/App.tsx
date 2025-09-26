@@ -22,8 +22,6 @@ import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
-import { Meteors } from "@/components/ui/shadcn-io/meteors";
-import { BubbleBackground } from "./components/ui/shadcn-io/bubble-background";
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
@@ -66,14 +64,9 @@ function AppRoutes() {
 
 function App() {
     return (
-        <ToastContextProvider>
-            <ModalContextProvider>
-                <ThemeProvider defaultTheme="light">
-                    <BubbleBackground interactive={false} />
-
-                    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
-                        <Meteors number={30} />
-                    </div>
+        <ThemeProvider defaultTheme="light">
+            <ToastContextProvider>
+                <ModalContextProvider>
                     <Toaster richColors position="top-center" />
                     <BrowserRouter>
                         <ReactQueryProvider>
@@ -82,9 +75,9 @@ function App() {
                             </CurrentYearProvider>
                         </ReactQueryProvider>
                     </BrowserRouter>
-                </ThemeProvider>
-            </ModalContextProvider>
-        </ToastContextProvider>
+                </ModalContextProvider>
+            </ToastContextProvider>
+        </ThemeProvider>
     );
 }
 

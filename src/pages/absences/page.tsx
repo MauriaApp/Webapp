@@ -139,7 +139,7 @@ export function AbsencesPage() {
                 ) : (
                     <motion.div
                         key="list"
-                        className="space-y-4 px-1"
+                        className="space-y-4 p-1"
                         variants={listVariants}
                         initial="hidden"
                         animate="show"
