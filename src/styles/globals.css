@@ -17,6 +17,8 @@
 
 @layer base {
     :root {
+        --mauria-scale: 1;
+
         --background: 40 33% 98%;
         --foreground: 222 47% 11%;
 
@@ -54,6 +56,8 @@
         --mauria-border: 220 13% 91%;
         --mauria-purple: 262 38% 19%;
         --mauria-text: 220 26% 18%;
+
+        font-size: calc(16px * var(--mauria-scale));
     }
 
     .dark {

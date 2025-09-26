@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Moon,
     Sun,
@@ -11,6 +11,7 @@ import {
     Book,
     Printer,
     MailQuestionMark,
+    ImageUpscale,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -27,11 +28,20 @@ import {
 } from "@/components/ui/sheet";
 import { useTheme } from "@/components/theme-provider";
 import { useNavigate } from "react-router";
+import { applyScale, readInitialSize } from "@/lib/utils/scale";
+import type { SizeOption } from "@/lib/utils/scale";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
     const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
+
+    const [size, setSize] = useState<SizeOption>(readInitialSize);
+
+    useEffect(() => {
+        applyScale(size);
+    }, [size]);
 
     const navigate = useNavigate();
 
@@ -92,6 +102,53 @@ export default function Sidebar() {
                                     setTheme(checked ? "dark" : "light")
                                 }
                             />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 [&_svg]:size-7!">
+                                <ImageUpscale className="h-5 w-5" />
+                                <div className="flex flex-col">
+                                    <Label className="cursor-default">
+                                        Taille
+                                    </Label>
+                                    <span className="text-xs text-muted-foreground text-left">
+                                        {size === "petit"
+                                            ? "Petit"
+                                            : size === "moyen"
+                                            ? "Moyen"
+                                            : "Grand"}
+                                    </span>
+                                </div>
+                            </div>
+                            <ToggleGroup
+                                size="sm"
+                                type="single"
+                                value={size}
+                                onValueChange={(v) =>
+                                    v && setSize(v as SizeOption)
+                                }
+                                className="inline-flex gap-0 rounded-md border border-border/50 overflow-hidden"
+                                aria-label="Choisir la taille"
+                            >
+                                <ToggleGroupItem
+                                    value="petit"
+                                    className="rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                >
+                                    Petit
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="moyen"
+                                    className="rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                >
+                                    Moyen
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="grand"
+                                    className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                                >
+                                    Grand
+                                </ToggleGroupItem>
+                            </ToggleGroup>
                         </div>
 
                         <Separator />
