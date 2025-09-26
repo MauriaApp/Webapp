@@ -12,6 +12,7 @@ import {
     Printer,
     MailQuestionMark,
     ImageUpscale,
+    ArrowDownRightFromSquare,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -157,16 +158,19 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
+                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
                             Associations
+                            <div className="justify-end flex-1 flex text-muted-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
+                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://aurion.junia.com",
@@ -176,11 +180,14 @@ export default function Sidebar() {
                         >
                             <ThumbsDown className="h-5 w-5" />
                             Aurion
+                            <div className="justify-end flex-1 flex text-muted-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
+                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://junia-learning.com",
@@ -190,11 +197,14 @@ export default function Sidebar() {
                         >
                             <Book className="h-5 w-5" />
                             Junia Learning
+                            <div className="justify-end flex-1 flex text-muted-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
+                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://print.junia.com/end-user/ui/dashboard",
@@ -204,6 +214,9 @@ export default function Sidebar() {
                         >
                             <Printer className="h-5 w-5" />
                             Imprimer
+                            <div className="justify-end flex-1 flex text-muted-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                     </div>
                 </SheetHeader>
