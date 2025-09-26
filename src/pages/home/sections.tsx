@@ -35,7 +35,7 @@ const itemVariants: Variants = {
 // Section Header Component
 export const SectionHeader = ({ title }: { title: string }) => (
     <motion.h2
-        className="mb-4 text-2xl font-bold text-mauria-light-purple dark:text-white"
+        className="mb-4 text-2xl font-bold text-mauria-purple dark:text-white"
         variants={itemVariants}
     >
         {title}
@@ -54,7 +54,7 @@ export const LessonCard = ({
 }) => (
     <MotionCard
         key={`${lesson.courseTitle}-${lesson.time}-${keyPrefix}`}
-        className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-dark-card"
+        className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-card"
         variants={itemVariants}
         onClick={onClick(lesson)}
     >
@@ -64,7 +64,7 @@ export const LessonCard = ({
                     {lesson.courseTitle}
                 </h4>
                 <Badge
-                    className={`px-2 py-1 rounded-md text-xs font-medium bg-mauria-light-accent/20 text-mauria-light-accent whitespace-nowrap`}
+                    className={`px-2 py-1 rounded-md text-xs font-medium bg-mauria-accent/20 text-mauria-accent whitespace-nowrap`}
                 >
                     {formatLessonType(lesson.type)}
                 </Badge>
@@ -141,7 +141,7 @@ export const EmptyState = () => (
 // Welcome Header Component
 export const WelcomeHeader = ({ firstName }: { firstName: string }) => (
     <motion.h2
-        className="mt-4 mb-6 text-3xl font-bold text-mauria-light-purple dark:text-white"
+        className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
@@ -158,11 +158,11 @@ export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
         transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
         className="bg-white rounded-lg"
     >
-        <Alert className="mb-8 border-none bg-mauria-light-accent/20 dark:bg-mauria-dark-alert">
-            <AlertTitle className="font-bold text-mauria-light-accent dark:text-white">
+        <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
+            <AlertTitle className="font-bold text-mauria-accent dark:text-white">
                 {message?.title ?? "Aucun message important"}
             </AlertTitle>
-            <AlertDescription className="text-mauria-light-accent/90 dark:text-white/90">
+            <AlertDescription className="text-mauria-accent/90 dark:text-white/90">
                 {message?.message ?? "Bonne journée !"}
             </AlertDescription>
         </Alert>

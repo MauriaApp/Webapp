@@ -85,8 +85,8 @@ export function AbsencesPage() {
                     delay: 0.05,
                 }}
             >
-                <Card className="mb-6">
-                    <CardHeader className="pb-2">
+                <Card className="mb-6 border-mauria-border">
+                    <CardHeader className=" flex-row items-center space-y-0 space-x-4">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
                             Total
                         </CardTitle>
@@ -95,7 +95,7 @@ export function AbsencesPage() {
                         </div>
                     </CardHeader>
 
-                    <Separator />
+                    <Separator className="w-[90%] mx-auto" />
 
                     <CardContent className="pt-4">
                         <div className="flex items-start gap-6">

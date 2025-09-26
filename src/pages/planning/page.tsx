@@ -58,7 +58,7 @@ export function PlanningPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="text-3xl font-bold text-mauria-light-purple dark:text-white mt-4 mb-6"
+                className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
             >
                 Planning
             </motion.h2>
@@ -120,7 +120,7 @@ export function PlanningPage() {
                         setDrawerOpen(true);
                     }}
                 />
-                <div className="text-sm font-semibold mt-2 ml-2 text-mauria-light-purple dark:text-gray-300">
+                <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
                     Dernière actualisation :{" "}
                     {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
                         locale: fr,

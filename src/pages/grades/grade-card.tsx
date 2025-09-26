@@ -37,12 +37,12 @@ export function GradeCard({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card p-4 h-full"
+            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full"
             onClick={onGradeClick.bind(null, grade)}
         >
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
+                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
                         {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -50,7 +50,7 @@ export function GradeCard({
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium text-mauria-light-purple dark:text-white">
+                    <div className="text-lg font-medium text-mauria-purple dark:text-white">
                         {grade.name}
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">

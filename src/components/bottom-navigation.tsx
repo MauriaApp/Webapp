@@ -35,7 +35,7 @@ export default function BottomNavigation() {
     const active = getActive();
 
     return (
-        <div className="fixed z-20 bottom-0 left-0 right-0 bg-white dark:bg-mauria-dark-bg border-t border-gray-200 dark:border-mauria-dark-border flex justify-around py-2">
+        <div className="fixed z-20 bottom-0 left-0 right-0 bg-mauria-bg dark:bg-mauria-purple flex justify-around py-2 border-t border-mauria-border">
             {items.map((item) => (
                 <Button
                     key={item.id}
@@ -44,7 +44,7 @@ export default function BottomNavigation() {
                     className={cn(
                         "rounded-full h-12 w-12 flex items-center justify-center [&_svg]:size-9!",
                         active === item.id
-                            ? "text-mauria-light-purple dark:text-white"
+                            ? "text-mauria-purple dark:text-white"
                             : "text-gray-400 dark:text-gray-500"
                     )}
                     onClick={() => navigate(item.path)}

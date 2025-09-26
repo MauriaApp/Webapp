@@ -163,6 +163,9 @@ export function DrawerEventTask({
                             !title ||
                             !date ||
                             !startTime ||
+                            (endTime &&
+                                (startTime.getTime() === endTime.getTime() ||
+                                    startTime.getTime() > endTime.getTime())) ||
                             (type === "event" && !endTime)
                         }
                     >

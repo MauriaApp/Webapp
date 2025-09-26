@@ -15,6 +15,107 @@
     }
 }
 
+@layer base {
+    :root {
+        --background: 40 33% 98%;
+        --foreground: 222 47% 11%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+
+        --primary: 262 38% 19%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 222 47% 11%;
+
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+
+        --accent: 24 88% 58%;
+        --accent-foreground: 222 47% 11%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 222 84% 4%;
+
+        --radius: 0.5rem;
+
+        --mauria-bg: 50 43% 97%;
+        --mauria-card: 0 0% 100%;
+        --mauria-accent: 24 88% 58%;
+        --mauria-alert: 0 100% 95%;
+        --mauria-border: 220 13% 91%;
+        --mauria-purple: 262 38% 19%;
+        --mauria-text: 220 26% 18%;
+    }
+
+    .dark {
+        --background: 262 38% 19%;
+        --foreground: 210 40% 98%;
+
+        --card: 262 32% 25%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 262 32% 25%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222 47% 11%;
+
+        --secondary: 210 0% 50%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 210 0% 50%;
+        --muted-foreground: 215 20% 65%;
+
+        --accent: 24 88% 58%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 210 0% 50%;
+        --input: 210 0% 50%;
+        --ring: 212.7 26.8% 83.9%;
+
+        --mauria-bg: 261 38% 19%;
+        --mauria-card: 261 32% 25%;
+        --mauria-accent: 24 88% 58%;
+        --mauria-alert: 15 42% 48%;
+        --mauria-border: 261 32% 25%;
+        --mauria-purple: 262 38% 30%;
+        --mauria-text: 220 14% 96%;
+    }
+    .theme {
+        --animate-meteor-effect: meteor 5s linear infinite;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-mauria-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/*
+  react-simple-pull-to-refresh: prevent content from appearing under an invisible layer
+  when the children are translated during pull. Allow the wrapper to overflow visibly
+  so the translated content isn’t clipped by the container.
+*/
+.ptr {
+    overflow: visible !important;
+}
+
 @theme {
     --color-border: hsl(var(--border));
     --color-input: hsl(var(--input));
@@ -43,19 +144,13 @@
     --color-card: hsl(var(--card));
     --color-card-foreground: hsl(var(--card-foreground));
 
-    --color-mauria-dark-bg: #2d1e43;
-    --color-mauria-dark-card: #3d2a53;
-    --color-mauria-dark-accent: #f27935;
-    --color-mauria-dark-alert: #b25b43;
-    --color-mauria-dark-border: #3d2a53;
-
-    --color-mauria-light-bg: #faf9f6;
-    --color-mauria-light-card: #ffffff;
-    --color-mauria-light-accent: #f27935;
-    --color-mauria-light-alert: #ffe5e5;
-    --color-mauria-light-border: #e5e7eb;
-    --color-mauria-light-purple: #2d1e43;
-    --color-mauria-light-text: #1f2937;
+    --color-mauria-bg: hsl(var(--mauria-bg));
+    --color-mauria-card: hsl(var(--mauria-card));
+    --color-mauria-accent: hsl(var(--mauria-accent));
+    --color-mauria-alert: hsl(var(--mauria-alert));
+    --color-mauria-border: hsl(var(--mauria-border));
+    --color-mauria-purple: hsl(var(--mauria-purple));
+    --color-mauria-text: hsl(var(--mauria-text));
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -115,89 +210,4 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentcolor);
     }
-}
-
-@layer base {
-    :root {
-        --background: 40 33% 98%;
-        --foreground: 222 47% 11%;
-
-        --card: 0 0% 100%;
-        --card-foreground: 222 47% 11%;
-
-        --popover: 0 0% 100%;
-        --popover-foreground: 222 47% 11%;
-
-        --primary: 262 38% 19%;
-        --primary-foreground: 210 40% 98%;
-
-        --secondary: 210 40% 96%;
-        --secondary-foreground: 222 47% 11%;
-
-        --muted: 210 40% 96%;
-        --muted-foreground: 215 16% 47%;
-
-        --accent: 24 88% 58%;
-        --accent-foreground: 222 47% 11%;
-
-        --destructive: 0 84% 60%;
-        --destructive-foreground: 210 40% 98%;
-
-        --border: 214 32% 91%;
-        --input: 214 32% 91%;
-        --ring: 222 84% 4%;
-
-        --radius: 0.5rem;
-    }
-
-    .dark {
-        --background: 262 38% 19%;
-        --foreground: 210 40% 98%;
-
-        --card: 262 32% 25%;
-        --card-foreground: 210 40% 98%;
-
-        --popover: 262 32% 25%;
-        --popover-foreground: 210 40% 98%;
-
-        --primary: 210 40% 98%;
-        --primary-foreground: 222 47% 11%;
-
-        --secondary: 210 0% 50%;
-        --secondary-foreground: 210 40% 98%;
-
-        --muted: 210 0% 50%;
-        --muted-foreground: 215 20% 65%;
-
-        --accent: 24 88% 58%;
-        --accent-foreground: 210 40% 98%;
-
-        --destructive: 0 63% 31%;
-        --destructive-foreground: 210 40% 98%;
-
-        --border: 210 0% 50%;
-        --input: 210 0% 50%;
-        --ring: 212.7 26.8% 83.9%;
-    }
-    .theme {
-        --animate-meteor-effect: meteor 5s linear infinite;
-    }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-}
-
-/*
-  react-simple-pull-to-refresh: prevent content from appearing under an invisible layer
-  when the children are translated during pull. Allow the wrapper to overflow visibly
-  so the translated content isn’t clipped by the container.
-*/
-.ptr {
-    overflow: visible !important;
 }

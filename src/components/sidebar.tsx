@@ -59,7 +59,7 @@ export default function Sidebar() {
             </SheetTrigger>
             <SheetContent
                 side="right"
-                className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between"
+                className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between border-none"
             >
                 <SheetHeader>
                     <SheetTitle>Menu</SheetTitle>

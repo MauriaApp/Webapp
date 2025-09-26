@@ -51,7 +51,7 @@ export function LoginPage() {
                 <Meteors number={50} />
             </div>
             <div className="relative min-h-screen flex items-center justify-center px-3">
-                <h1 className="absolute top-16 md:top-20 w-full text-center text-mauria-light-purple font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none">
+                <h1 className="absolute top-16 md:top-20 w-full text-center text-mauria-purple font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none">
                     Mauria
                 </h1>
                 <Card className="w-full max-w-md">

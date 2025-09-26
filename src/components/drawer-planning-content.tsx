@@ -2,6 +2,16 @@ import { fr } from "date-fns/locale";
 import { DrawerContent, DrawerTitle, Drawer } from "./ui/drawer";
 import { format } from "date-fns";
 import { PreparedLesson } from "@/types/home";
+import {
+    BookOpen,
+    MapPin,
+    Tag,
+    User,
+    Clock,
+    Timer,
+    Info,
+    ChevronDownIcon,
+} from "lucide-react";
 
 export function DrawerPlanningContent({
     drawerOpen,
@@ -16,114 +26,155 @@ export function DrawerPlanningContent({
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent aria-describedby={undefined}>
                 {eventInfo && (
-                    <div className="p-4 mb-4">
-                        <DrawerTitle className="text-2xl font-bold mb-4 text-mauria-light-purple dark:text-white">
+                    <div className="p-6">
+                        <DrawerTitle className="text-2xl font-bold mb-6 text-mauria-purple dark:text-white flex items-center gap-2">
+                            <BookOpen className="w-6 h-6" />
                             {eventInfo.courseTitle}
                         </DrawerTitle>
 
-                        {eventInfo.courseTitle && (
-                            <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                <p className="mb-2">
-                                    <span className="font-semibold">
-                                        Cours :
-                                    </span>{" "}
-                                    {eventInfo.courseTitle}
-                                </p>
-                                {eventInfo.location && (
-                                    <p className="mb-2">
-                                        <span className="font-semibold">
-                                            Lieu :
-                                        </span>{" "}
-                                        {eventInfo.location}
-                                    </p>
-                                )}
-                                {eventInfo.type && (
-                                    <p className="mb-2">
-                                        <span className="font-semibold">
-                                            Type :
-                                        </span>{" "}
-                                        {eventInfo.type}
-                                    </p>
-                                )}
-                                {eventInfo.teacher && (
-                                    <p className="mb-2">
-                                        <span className="font-semibold">
-                                            Enseignant(e) :
-                                        </span>{" "}
-                                        {eventInfo.teacher}
-                                    </p>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="space-y-2">
-                            <p>
-                                <span className="font-semibold">Début :</span>{" "}
-                                {format(
-                                    new Date(eventInfo.details.start),
-                                    "EEEE d MMM HH'h'mm",
-                                    { locale: fr }
-                                )}
-                            </p>
-                            <p>
-                                <span className="font-semibold">Fin :</span>{" "}
-                                {format(
-                                    new Date(eventInfo.details.end),
-                                    "EEEE d MMM HH'h'mm",
-                                    { locale: fr }
-                                )}
-                            </p>
-                            <p>
-                                <span className="font-semibold">Durée :</span>{" "}
-                                {(() => {
-                                    const start = new Date(
-                                        eventInfo.details.start
-                                    );
-                                    const end = new Date(eventInfo.details.end);
-                                    const diffMs =
-                                        end.getTime() - start.getTime();
-                                    const hours = Math.floor(
-                                        diffMs / (1000 * 60 * 60)
-                                    );
-                                    const minutes = Math.floor(
-                                        (diffMs % (1000 * 60 * 60)) /
-                                            (1000 * 60)
-                                    );
-
-                                    if (hours === 0) {
-                                        return `${minutes} min`;
-                                    } else if (minutes === 0) {
-                                        return `${hours}h`;
-                                    } else {
-                                        return `${hours}h${minutes
-                                            .toString()
-                                            .padStart(2, "0")}`;
-                                    }
-                                })()}
-                            </p>
+                        <div className="mb-2 bg-mauria-card rounded-2xl">
+                            {eventInfo.location && (
+                                <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
+                                    <MapPin className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <div>
+                                        <span className="font-semibold text-muted-foreground text-sm">
+                                            Lieu
+                                        </span>
+                                        <p className="text-gray-900 dark:text-white">
+                                            {eventInfo.location}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                            {eventInfo.type && (
+                                <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
+                                    <Tag className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <div>
+                                        <span className="font-semibold text-muted-foreground text-sm">
+                                            Type
+                                        </span>
+                                        <p className="text-gray-900 dark:text-white">
+                                            {eventInfo.type}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                            {eventInfo.teacher && (
+                                <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
+                                    <User className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <div>
+                                        <span className="font-semibold text-muted-foreground text-sm">
+                                            Enseignant(e)
+                                        </span>
+                                        <p className="text-gray-900 dark:text-white">
+                                            {eventInfo.teacher}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        <details className="mt-4">
-                            <summary className="font-semibold cursor-pointer text-mauria-light-purple dark:text-gray-300">
-                                Détails
+                        <div className=" p-4 rounded-lg">
+                            <div className="flex items-center gap-3">
+                                <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
+                                <div>
+                                    <span className="font-semibold text-muted-foreground text-sm">
+                                        Début
+                                    </span>
+                                    <p className="text-gray-900 dark:text-white">
+                                        {format(
+                                            new Date(eventInfo.details.start),
+                                            "EEEE d MMM HH'h'mm",
+                                            { locale: fr }
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Clock className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                <div>
+                                    <span className="font-semibold text-muted-foreground text-sm">
+                                        Fin
+                                    </span>
+                                    <p className="text-gray-900 dark:text-white">
+                                        {format(
+                                            new Date(eventInfo.details.end),
+                                            "EEEE d MMM HH'h'mm",
+                                            { locale: fr }
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Timer className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                <div>
+                                    <span className="font-semibold text-muted-foreground text-sm">
+                                        Durée
+                                    </span>
+                                    <p className="text-gray-900 dark:text-white">
+                                        {(() => {
+                                            const start = new Date(
+                                                eventInfo.details.start
+                                            );
+                                            const end = new Date(
+                                                eventInfo.details.end
+                                            );
+                                            const diffMs =
+                                                end.getTime() - start.getTime();
+                                            const hours = Math.floor(
+                                                diffMs / (1000 * 60 * 60)
+                                            );
+                                            const minutes = Math.floor(
+                                                (diffMs % (1000 * 60 * 60)) /
+                                                    (1000 * 60)
+                                            );
+
+                                            if (hours === 0) {
+                                                return `${minutes} min`;
+                                            } else if (minutes === 0) {
+                                                return `${hours}h`;
+                                            } else {
+                                                return `${hours}h${minutes
+                                                    .toString()
+                                                    .padStart(2, "0")}`;
+                                            }
+                                        })()}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <details className="mt-6">
+                            <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 flex items-center gap-2 hover:text-mauria-purple/80 transition-colors">
+                                <Info className="w-4 h-4" />
+                                Détails techniques
+                                <ChevronDownIcon className="w-4 h-4 ml-auto" />
                             </summary>
-                            <div className="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                                <p>
-                                    <span className="font-medium">ID :</span>{" "}
-                                    {eventInfo.details.id}
-                                </p>
-                                <p>
+                            <div className="mt-3 space-y-2 p-3 rounded-lg">
+                                <div className="flex items-center gap-2 text-sm">
+                                    <span className="font-medium">ID :</span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        {eventInfo.details.id}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
                                     <span className="font-medium">
                                         Titre complet :
-                                    </span>{" "}
-                                    {eventInfo.details.title}
-                                </p>
-                                <p>
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        {eventInfo.details.title}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
                                     <span className="font-medium">
                                         Toute la journée :
-                                    </span>{" "}
-                                    {eventInfo.details.allDay ? "Oui" : "Non"}
-                                </p>
+                                    </span>
+                                    <span className="text-gray-600 dark:text-gray-400">
+                                        {eventInfo.details.allDay
+                                            ? "Oui"
+                                            : "Non"}
+                                    </span>
+                                </div>
                             </div>
                         </details>
                     </div>

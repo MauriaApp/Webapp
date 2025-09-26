@@ -29,11 +29,11 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-dark-card"
+            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card"
         >
             <div className="flex p-4 items-center h-full">
                 <div className="w-20 mr-4 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-light-accent dark:text-mauria-dark-accent">
+                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
                         {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
@@ -41,8 +41,8 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     <div
                         className={`text-lg font-medium ${
                             absence.type.toLowerCase().includes("non")
-                                ? "text-mauria-light-accent"
-                                : "text-mauria-light-purple"
+                                ? "text-mauria-accent"
+                                : "text-mauria-purple"
                         } dark:text-white`}
                     >
                         {absence.type}

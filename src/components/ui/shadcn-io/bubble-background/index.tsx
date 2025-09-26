@@ -75,7 +75,7 @@ const BubbleBackground = React.forwardRef<
                 aria-hidden
                 className={cn(
                     // Plein écran, derrière tout
-                    "fixed inset-0 -z-10 overflow-hidden bg-mauria-light-purple",
+                    "fixed inset-0 -z-10 overflow-hidden bg-mauria-purple",
                     interactive ? "pointer-events-auto" : "pointer-events-none",
                     className
                 )}

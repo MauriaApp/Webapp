@@ -8,7 +8,7 @@ import { Outlet } from "react-router";
 
 export default function RootLayout() {
     return (
-        <div className="flex flex-col min-h-screen bg-mauria-light-bg dark:bg-mauria-dark-bg">
+        <div className="flex flex-col min-h-screen bg-mauria-bg ">
             <Particles
                 className="absolute inset-0 opacity-50 z-0"
                 staticity={10}
@@ -20,7 +20,7 @@ export default function RootLayout() {
             <FirstLaunchDrawer />
             <NewUpdateDrawer />
             {/* Header */}
-            <header className="flex items-center justify-between p-4 bg-mauria-light-purple dark:bg-mauria-dark-bg z-10 ">
+            <header className="flex items-center justify-between p-4 bg-mauria-purple z-10 ">
                 <h1 className="text-2xl font-bold text-white">Mauria</h1>
                 {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />

@@ -24,7 +24,7 @@ export function AgendaPage() {
                 {/* Header Section */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold  mb-4">Mon Agenda</h1>
-                    <div className="bg-white/80 backdrop-blur-xs rounded-lg p-4 border">
+                    <div className="bg-mauria-card backdrop-blur-xs rounded-lg p-4 border border-mauria-border">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-accent rounded-full"></div>
                             <p className="text-sm">
@@ -43,7 +43,7 @@ export function AgendaPage() {
                                 className="group cursor-pointer transform transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
                                 key={index}
                             >
-                                <div className="bg-white rounded-xl shadow-md border  p-6 hover:border-accent transition-colors">
+                                <div className="bg-mauria-card rounded-xl shadow-md border border-mauria-border  p-6 hover:border-accent transition-colors">
                                     <div className="flex items-center justify-between">
                                         <div className="flex-1">
                                             <h3 className="text-lg font-semibold  mb-2 group-hover:text-accent transition-colors">
@@ -81,7 +81,7 @@ export function AgendaPage() {
                     </div>
                 ) : (
                     <div className="text-center py-12">
-                        <div className="bg-white rounded-xl shadow-md p-8 max-w-md mx-auto">
+                        <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
                             <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <ClipboardListIcon className="w-8 h-8 text-muted-foreground" />
                             </div>
