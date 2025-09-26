@@ -14,11 +14,13 @@ import {
 } from "@/components/ui/card";
 import { fetchUser, setSession } from "@/lib/api/aurion";
 import Meteors from "@/components/ui/shadcn-io/meteors";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -77,17 +79,39 @@ export function LoginPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password">Mot de passe</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    required
-                                    disabled={loading}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
+                                        required
+                                        disabled={loading}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        aria-label={
+                                            showPassword
+                                                ? "Masquer le mot de passe"
+                                                : "Afficher le mot de passe"
+                                        }
+                                        onClick={() =>
+                                            setShowPassword((prev) => !prev)
+                                        }
+                                        disabled={loading}
+                                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </CardContent>
                         <CardFooter>

@@ -43,6 +43,8 @@ export const Meteors: React.FC<MeteorsProps> = ({
                 left: `calc(0% + ${leftPx}px)`,
                 animationDelay: `${delay}s`,
                 animationDuration: `${dur}s`,
+                animationFillMode: "both",
+                transform: `rotate(${angle}deg)`,
             } as React.CSSProperties;
         });
 
