@@ -5,7 +5,7 @@ import { MessageEntry } from "@/types/data";
 import { motion, Variants } from "framer-motion";
 import { Clock, Info, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatLessonType } from "@/lib/utils/home";
+import { formatLessonLocation, formatLessonType } from "@/lib/utils/home";
 
 const MotionCard = motion(Card);
 
@@ -77,7 +77,7 @@ export const LessonCard = ({
                 </div>
                 <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
-                    <span>{lesson.location}</span>
+                    <span>{formatLessonLocation(lesson.location)}</span>
                 </div>
             </div>
         </div>

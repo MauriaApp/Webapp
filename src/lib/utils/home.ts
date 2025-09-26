@@ -86,3 +86,7 @@ export const formatLessonType = (lessonType: string) => {
             return lessonType;
     }
 };
+
+export const formatLessonLocation = (location: string) => {
+    return location.split(" - ")[0].trim();
+}
