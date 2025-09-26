@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils/cn";
 import { ArrowUpToLine, Loader2 } from "lucide-react";
 import React from "react";
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
@@ -24,7 +25,7 @@ export function PullToRefresh({
         <ReactPullToRefresh
             onRefresh={() => Promise.resolve(onRefresh())}
             isPullable={isPullable}
-            className={className}
+            className={cn("min-h-[calc(100vh-9rem)]", className)}
             pullingContent={
                 <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:size-5!">
                     <ArrowUpToLine />

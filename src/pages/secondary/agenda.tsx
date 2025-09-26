@@ -24,7 +24,7 @@ export function AgendaPage() {
                 {/* Header Section */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold  mb-4">Mon Agenda</h1>
-                    <div className="bg-mauria-card backdrop-blur-xs rounded-lg p-4 border border-mauria-border">
+                    <div className="bg-mauria-card rounded-lg p-4 border border-mauria-border">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-accent rounded-full"></div>
                             <p className="text-sm">

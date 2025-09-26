@@ -17,10 +17,10 @@
 .fc .fc-timegrid {
     border: 0 !important;
     outline: 0 !important;
-    background-color: rgba(255, 255, 255, 0.24);
-    backdrop-filter: blur(12px);
-    opacity: 0;
-    animation: appear 0.5s ease forwards;
+    background-color: rgb(255, 255, 255);
+    /* backdrop-filter: blur(12px); */
+    opacity: 1;
+    /* animation: appear 0.5s ease forwards; */
 }
 
 .fc .fc-timegrid-event {
@@ -47,7 +47,7 @@
 .fc-timegrid-event,
 .fc-timegrid-more-link {
     background: linear-gradient(45deg, #2d1e43, #3d2a53) !important;
-    backdrop-filter: blur(12px);
+    /* backdrop-filter: blur(12px); */
     box-shadow: 0 16px 32px rgba(45, 30, 67, 0.24);
     color: white !important;
 }

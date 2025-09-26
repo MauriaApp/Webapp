@@ -114,11 +114,7 @@ export function HomePage() {
     }, []);
 
     return (
-        <PullToRefresh
-            onRefresh={handleRefresh}
-            isPullable={!isLoading}
-            className="min-h-[80vh]"
-        >
+        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
             <WelcomeHeader firstName={firstName} />
             <ImportantMessage message={importantMessage} />
 

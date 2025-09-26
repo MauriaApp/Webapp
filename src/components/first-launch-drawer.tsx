@@ -28,7 +28,7 @@ export default function FirstLaunchDrawer() {
         try {
             const alreadyLaunched = localStorage.getItem(FIRST_LAUNCH_KEY);
             if (alreadyLaunched !== "true") {
-                console.log("First launch, showing the first launch modal.")
+                console.log("First launch, showing the first launch modal.");
                 localStorage.setItem(FIRST_LAUNCH_KEY, "true");
                 setOpen(true);
             }
@@ -40,7 +40,7 @@ export default function FirstLaunchDrawer() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerContent className="p-0 max-h-[85vh] flex flex-col overflow-hidden">
-                <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60 border-b">
+                <div className="sticky top-0 z-10 bg-background/95 supports-backdrop-filter:bg-background/60 border-b">
                     <DrawerHeader className="px-6 pt-6 pb-3 items-center text-center">
                         <DrawerTitle className="flex items-center justify-center gap-2">
                             Bienvenue sur Mauria !

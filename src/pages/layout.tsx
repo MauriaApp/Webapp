@@ -8,7 +8,7 @@ import { Outlet } from "react-router";
 
 export default function RootLayout() {
     return (
-        <div className="flex flex-col min-h-screen bg-mauria-bg ">
+        <div className="flex flex-col min-h-full bg-mauria-bg ">
             <Particles
                 className="absolute inset-0 opacity-50 z-0"
                 staticity={10}
