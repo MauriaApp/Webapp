@@ -22,6 +22,24 @@ import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
+import * as Sentry from "@sentry/react";
+
+if (import.meta.env.PROD) {
+    console.log("Initializing Sentry in production mode...");
+    Sentry.init({
+        dsn: "https://43f1e4d5385f6aac1b8e60ececf90921@o4510087561412608.ingest.us.sentry.io/4510087561740288",
+        // Setting this option to true will send default PII data to Sentry.
+        // For example, automatic IP address collection on events
+        sendDefaultPii: true,
+        integrations: [
+            Sentry.replayIntegration(),
+            Sentry.browserTracingIntegration(),
+        ],
+        replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+        replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+        tracesSampleRate: 1.0, // Adjust this value in production as needed
+    });
+}
 
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();

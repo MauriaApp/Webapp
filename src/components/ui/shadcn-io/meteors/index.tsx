@@ -38,7 +38,7 @@ export const Meteors: React.FC<MeteorsProps> = ({
             const topPct = Math.random() * 120 - 10; // distribute meteors across and slightly beyond the viewport
 
             return {
-                ["--angle" as any]: `${angle}deg`,
+                "--angle": `${angle}deg`,
                 top: `${topPct}%`,
                 left: `calc(0% + ${leftPx}px)`,
                 animationDelay: `${delay}s`,

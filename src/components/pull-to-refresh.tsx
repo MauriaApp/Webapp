@@ -22,7 +22,7 @@ export function PullToRefresh({
 }: Props) {
     return (
         <ReactPullToRefresh
-            onRefresh={onRefresh}
+            onRefresh={() => Promise.resolve(onRefresh())}
             isPullable={isPullable}
             className={className}
             pullingContent={

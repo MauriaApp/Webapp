@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
+import * as Sentry from "@sentry/react";
 
 type Props = {
     children: React.ReactNode;
@@ -16,12 +17,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
     }
 
     static getDerivedStateFromError(error: unknown) {
+        console.log("ErrorBoundary getDerivedStateFromError", error);
         return { hasError: true };
     }
 
     componentDidCatch(error: unknown, errorInfo: unknown) {
         // Tu peux aussi logger ou envoyer l’erreur ici si besoin
         console.error("ErrorBoundary caught an error", error, errorInfo);
+        Sentry.captureException(error);
     }
 
     render() {
