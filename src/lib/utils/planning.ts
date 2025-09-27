@@ -1,4 +1,5 @@
 import { Lesson } from "@/types/aurion";
+import { getFromStorage, saveToStorage } from "./storage";
 
 export function saveUserEventToLocalStorage({
     userEvent,
@@ -6,15 +7,15 @@ export function saveUserEventToLocalStorage({
     userEvent: Lesson;
 }) {
     const existingUserEvents = JSON.parse(
-        localStorage.getItem("userEvents") || "[]"
+        getFromStorage("userEvents") || "[]"
     ) as Lesson[];
     existingUserEvents.push(userEvent);
-    localStorage.setItem("userEvents", JSON.stringify(existingUserEvents));
+    saveToStorage("userEvents", JSON.stringify(existingUserEvents));
 }
 
 export function getUserEventsFromLocalStorage(): Lesson[] {
     const userEvents = JSON.parse(
-        localStorage.getItem("userEvents") || "[]"
+        getFromStorage("userEvents") || "[]"
     ) as Lesson[];
     return userEvents.map((ue) => ({
         ...ue,
@@ -29,10 +30,10 @@ export function removeUserEventFromLocalStorage({
     userEventId: string;
 }) {
     const existingUserEvents = JSON.parse(
-        localStorage.getItem("userEvents") || "[]"
+        getFromStorage("userEvents") || "[]"
     ) as Lesson[];
     const updatedUserEvents = existingUserEvents.filter(
         (ue) => ue.id !== userEventId
     );
-    localStorage.setItem("userEvents", JSON.stringify(updatedUserEvents));
+    saveToStorage("userEvents", JSON.stringify(updatedUserEvents));
 }

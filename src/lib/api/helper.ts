@@ -1,3 +1,5 @@
+import { getFromStorage, saveToStorage } from "../utils/storage";
+
 const API_URL = "https://mauria-api.fly.dev";
 
 export interface APIResponse<T> {
@@ -30,13 +32,13 @@ export async function apiRequest<APIResponse>(
 }
 
 export async function fetchFirstName() {
-    const name = deriveFirstName(localStorage.getItem("email"));
-    localStorage.setItem("name", name);
+    const name = deriveFirstName(getFromStorage("email"));
+    saveToStorage("name", name);
     return name;
 }
 
 export function getFirstName() {
-    const name = localStorage.getItem("name");
+    const name = getFromStorage("name");
     if (name) return name;
     return fetchFirstName();
 }

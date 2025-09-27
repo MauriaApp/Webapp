@@ -1,3 +1,5 @@
+import { getFromStorage, saveToStorage } from "./storage";
+
 export type SizeOption = "petit" | "moyen" | "grand";
 
 export const SCALE_STORAGE_KEY = "mauria-scale";
@@ -23,7 +25,7 @@ export const readInitialSize = (): SizeOption => {
         return "grand";
     }
 
-    const stored = window.localStorage.getItem(SCALE_STORAGE_KEY);
+    const stored = getFromStorage(SCALE_STORAGE_KEY);
     const storedScale = stored ? Number.parseFloat(stored) : Number.NaN;
 
     if (!Number.isNaN(storedScale)) {
@@ -52,5 +54,5 @@ export const applyScale = (size: SizeOption) => {
     const root = window.document.documentElement;
 
     root.style.setProperty("--mauria-scale", scale.toString());
-    window.localStorage.setItem(SCALE_STORAGE_KEY, scale.toString());
+    saveToStorage(SCALE_STORAGE_KEY, scale.toString());
 };

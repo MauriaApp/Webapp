@@ -32,6 +32,7 @@ import { useNavigate } from "react-router";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import type { SizeOption } from "@/lib/utils/scale";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { clearStorage } from "@/lib/utils/storage";
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function Sidebar() {
     };
 
     const signOut = () => {
-        localStorage.clear();
+        clearStorage();
         handleNavigate("/login");
     };
 

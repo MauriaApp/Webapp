@@ -1,5 +1,4 @@
 import BottomNavigation from "@/components/bottom-navigation";
-import FirstLaunchDrawer from "@/components/first-launch-drawer";
 import NewUpdateDrawer from "@/components/new-update-drawer";
 import { PageTransition } from "@/components/page-transition";
 import Sidebar from "@/components/sidebar";
@@ -23,7 +22,6 @@ export default function RootLayout() {
                 ease={70}
                 size={1.5}
             />
-            <FirstLaunchDrawer />
             <NewUpdateDrawer />
             {/* Header */}
             <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple z-10">
