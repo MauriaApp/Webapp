@@ -1,9 +1,6 @@
-import {
-    AssociationData,
-    MessageEntry,
-    UpdatesEntry,
-} from "@/types/data";
+import { AssociationData, MessageEntry, UpdatesEntry } from "@/types/data";
 import { apiRequest, APIResponse } from "./helper";
+import { saveToStorage } from "../utils/storage";
 
 export async function fetchAssos(): Promise<AssociationData[] | null> {
     const response = await apiRequest<AssociationData[]>(
@@ -35,10 +32,9 @@ export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
     );
 
     if (!response?.success || !response.data) {
-        localStorage.setItem("updates-log", "[]");
+        saveToStorage("updates-log", "[]");
         return null;
     }
 
     return response.data;
 }
-

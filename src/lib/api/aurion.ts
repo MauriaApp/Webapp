@@ -1,19 +1,20 @@
 import { Lesson, Grade, Absence } from "@/types/aurion";
 import { apiRequest, APIResponse } from "./helper";
+import { getFromStorage, saveToStorage } from "../utils/storage";
 
 type PlanningEntry = APIResponse<Lesson[]>;
 type GradeEntry = APIResponse<Grade[]>;
 type AbsenceEntry = APIResponse<Absence[]>;
 
 export function getSession() {
-    const email = localStorage.getItem("email");
-    const password = localStorage.getItem("password");
+    const email = getFromStorage("email");
+    const password = getFromStorage("password");
     return email && password ? { email, password } : null;
 }
 
 export function setSession(email: string, password: string) {
-    localStorage.setItem("email", email);
-    localStorage.setItem("password", password);
+    saveToStorage("email", email);
+    saveToStorage("password", password);
 }
 
 export function fetchUser({

@@ -2,6 +2,11 @@ import { ReactNode } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import {
+    getFromStorage,
+    removeFromStorage,
+    saveToStorage,
+} from "@/lib/utils/storage";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -14,10 +19,9 @@ const queryClient = new QueryClient({
 
 const localStorageAsyncPersister = createAsyncStoragePersister({
     storage: {
-        getItem: (key) => Promise.resolve(localStorage.getItem(key)),
-        setItem: (key, value) =>
-            Promise.resolve(localStorage.setItem(key, value)),
-        removeItem: (key) => Promise.resolve(localStorage.removeItem(key)),
+        getItem: (key) => Promise.resolve(getFromStorage(key)),
+        setItem: (key, value) => Promise.resolve(saveToStorage(key, value)),
+        removeItem: (key) => Promise.resolve(removeFromStorage(key)),
     },
 });
 

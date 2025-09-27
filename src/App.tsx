@@ -22,7 +22,11 @@ import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
+import { WelcomePage } from "./pages/secondary/welcome";
 import * as Sentry from "@sentry/react";
+import { useEffect, useState } from "react";
+import { overrideStorage, saveFromApp } from "./lib/utils/storage";
+import { Loader } from "lucide-react";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -59,6 +63,14 @@ function AppRoutes() {
             <Routes location={location} key={location.pathname}>
                 <Route path="/login/*" element={<LoginPage />} />
                 <Route
+                    path="/welcome"
+                    element={
+                        <RequireAuth>
+                            <WelcomePage />
+                        </RequireAuth>
+                    }
+                />
+                <Route
                     element={
                         <RequireAuth>
                             <RootLayout />
@@ -81,6 +93,58 @@ function AppRoutes() {
 }
 
 function App() {
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2500);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, []);
+
+    useEffect(() => {
+        // Écouter la réponse d'Ionic pour récupérer une donnée
+        const handleMessage = (event: MessageEvent) => {
+            const { type, key, payload } = event.data;
+            if (type === "DATA_RESPONSE" && key) {
+                console.log(`Donnée reçue pour ${key}: `, payload);
+                saveFromApp(key, payload);
+            }
+            if (type === "ALL_DATA_RESPONSE" && payload) {
+                console.log("Toutes les données reçues: ", payload);
+                for (const [k, v] of Object.entries(payload)) {
+                    overrideStorage({ [k]: v } as Record<string, string>);
+                }
+                setIsLoading(false);
+            }
+        };
+
+        console.log("Requesting all data from parent...");
+        window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
+
+        window.addEventListener("message", handleMessage);
+
+        return () => {
+            window.removeEventListener("message", handleMessage);
+        };
+    }, []);
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center text-center justify-center h-screen space-y-4">
+                <p>
+                    Chargement...
+                    <br />
+                    Si vous êtes en version web, veuillez patienter.
+                </p>
+                <Loader className="w-12 h-12 text-muted-foreground animate-spin" />
+            </div>
+        );
+    }
+
     return (
         <ThemeProvider defaultTheme="light">
             <ToastContextProvider>
