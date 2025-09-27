@@ -15,6 +15,7 @@ import {
 import { fetchUser, setSession } from "@/lib/api/aurion";
 import Meteors from "@/components/ui/shadcn-io/meteors";
 import { Eye, EyeOff } from "lucide-react";
+import { getFromStorage } from "@/lib/utils/storage";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -36,9 +37,7 @@ export function LoginPage() {
 
                 let shouldShowWelcome = false;
                 try {
-                    const alreadyLaunched = localStorage.getItem(
-                        FIRST_LAUNCH_KEY
-                    );
+                    const alreadyLaunched = getFromStorage(FIRST_LAUNCH_KEY);
                     shouldShowWelcome = alreadyLaunched !== "true";
                 } catch (error) {
                     console.error(
@@ -98,7 +97,9 @@ export function LoginPage() {
                                 <div className="relative">
                                     <Input
                                         id="password"
-                                        type={showPassword ? "text" : "password"}
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) =>

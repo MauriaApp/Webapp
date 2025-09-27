@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
+import { saveToStorage } from "@/lib/utils/storage";
 
 type WelcomeSection = {
     title: string;
@@ -98,7 +99,7 @@ export function WelcomePage() {
 
     useEffect(() => {
         try {
-            localStorage.setItem(FIRST_LAUNCH_KEY, "true");
+            saveToStorage(FIRST_LAUNCH_KEY, "true");
         } catch (error) {
             console.error(
                 "Impossible d'enregistrer l'état de premier lancement",
