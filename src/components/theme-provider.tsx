@@ -1,5 +1,6 @@
 "use client";
 
+import { getFromStorage, saveToStorage } from "@/lib/utils/storage";
 import type React from "react";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -24,14 +25,14 @@ export function ThemeProvider({
     defaultTheme = "dark",
 }: ThemeProviderProps) {
     const [theme, setTheme] = useState<Theme>(
-        (window.localStorage.getItem("theme") as Theme) || defaultTheme
+        (getFromStorage("theme") as Theme) || defaultTheme
     );
 
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.remove("light", "dark");
         root.classList.add(theme);
-        window.localStorage.setItem("theme", theme);
+        saveToStorage("theme", theme);
     }, [theme]);
 
     return (
@@ -41,6 +42,7 @@ export function ThemeProvider({
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
     const context = useContext(ThemeProviderContext);
     if (context === undefined)
