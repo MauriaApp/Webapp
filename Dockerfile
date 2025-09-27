@@ -42,6 +42,7 @@ RUN pnpm prune --prod
 FROM nginx
 
 # Copy built application
+COPY nginx.conf /etc/nginx/conf.d/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Start the server by default, this can be overwritten at runtime
