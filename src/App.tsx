@@ -26,6 +26,7 @@ import { WelcomePage } from "./pages/secondary/welcome";
 import * as Sentry from "@sentry/react";
 import { useEffect, useState } from "react";
 import { overrideStorage, saveFromApp } from "./lib/utils/storage";
+import { Loader } from "lucide-react";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -95,6 +96,16 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 2500);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, []);
+
+    useEffect(() => {
         // Écouter la réponse d'Ionic pour récupérer une donnée
         const handleMessage = (event: MessageEvent) => {
             const { type, key, payload } = event.data;
@@ -122,7 +133,16 @@ function App() {
     }, []);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex flex-col items-center text-center justify-center h-screen space-y-4">
+                <p>
+                    Chargement...
+                    <br />
+                    Si vous êtes en version web, veuillez patienter.
+                </p>
+                <Loader className="w-12 h-12 text-muted-foreground animate-spin" />
+            </div>
+        );
     }
 
     return (
