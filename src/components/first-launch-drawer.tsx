@@ -39,7 +39,7 @@ export default function FirstLaunchDrawer() {
 
     return (
         <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerContent className="p-0 max-h-[85vh] flex flex-col overflow-hidden">
+            <DrawerContent className="p-0 pb-safe max-h-[85vh] flex flex-col overflow-hidden">
                 <div className="sticky top-0 z-10 bg-background/95 supports-backdrop-filter:bg-background/60 border-b">
                     <DrawerHeader className="px-6 pt-6 pb-3 items-center text-center">
                         <DrawerTitle className="flex items-center justify-center gap-2">
@@ -102,7 +102,7 @@ export default function FirstLaunchDrawer() {
                     </Alert>
                 </div>
 
-                <DrawerFooter className="px-6 pb-6 border-t">
+                <DrawerFooter className="px-6 pb-safe-offset-6 border-t">
                     <DrawerClose asChild>
                         <Button>C'est parti !</Button>
                     </DrawerClose>

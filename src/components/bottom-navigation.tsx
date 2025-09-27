@@ -56,7 +56,7 @@ export default function BottomNavigation() {
     const active = getActive();
 
     return (
-        <div className="fixed z-20 bottom-0 left-0 right-0 bg-mauria-bg dark:bg-mauria-purple flex w-full justify-between pb-0 pt-0 border-t border-mauria-border">
+        <div className="fixed z-20 bottom-0 left-0 right-0 bg-mauria-bg dark:bg-mauria-purple flex w-full justify-between pb-safe pt-0 border-t border-mauria-border">
             {items.map((item) => {
                 const isActive = active === item.id;
 

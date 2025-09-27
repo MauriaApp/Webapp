@@ -26,7 +26,7 @@ export default function RootLayout() {
             <FirstLaunchDrawer />
             <NewUpdateDrawer />
             {/* Header */}
-            <header className="flex items-center justify-between p-4 bg-mauria-purple z-10 ">
+            <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple z-10">
                 <h1 className="text-2xl font-bold text-white">Mauria</h1>
                 {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />
@@ -34,7 +34,10 @@ export default function RootLayout() {
                 <SidebarMemo />
             </header>
             {/* Main Content */}
-            <PageTransitionMemo as="main" className="flex-1 px-4 pb-20 z-10">
+            <PageTransitionMemo
+                as="main"
+                className="flex-1 px-4 pb-safe-offset-20 z-10"
+            >
                 <Outlet />
             </PageTransitionMemo>
 

@@ -101,7 +101,7 @@ export function AssociationsPage() {
                             </Card>
                         </DrawerTrigger>
 
-                        <DrawerContent className="bg-card border-border max-h-[70vh]">
+                        <DrawerContent className="bg-card border-border max-h-[70vh] pb-safe">
                             <div className="mx-auto w-full max-w-2xl">
                                 <DrawerHeader className="text-left ml-10">
                                     <div className="flex gap-4">
