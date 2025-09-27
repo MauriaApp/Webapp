@@ -16,6 +16,8 @@ import { fetchUser, setSession } from "@/lib/api/aurion";
 import Meteors from "@/components/ui/shadcn-io/meteors";
 import { Eye, EyeOff } from "lucide-react";
 
+const FIRST_LAUNCH_KEY = "firstLaunch";
+
 export function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,7 +33,21 @@ export function LoginPage() {
 
             if (response?.success) {
                 setSession(email, password);
-                window.location.href = "/";
+
+                let shouldShowWelcome = false;
+                try {
+                    const alreadyLaunched = localStorage.getItem(
+                        FIRST_LAUNCH_KEY
+                    );
+                    shouldShowWelcome = alreadyLaunched !== "true";
+                } catch (error) {
+                    console.error(
+                        "Impossible de récupérer l'état de premier lancement",
+                        error
+                    );
+                }
+
+                window.location.href = shouldShowWelcome ? "/welcome" : "/";
             } else {
                 toast.error("Identifiants invalides", {
                     description:

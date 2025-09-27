@@ -22,6 +22,7 @@ import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
+import { WelcomePage } from "./pages/secondary/welcome";
 import * as Sentry from "@sentry/react";
 
 if (import.meta.env.PROD) {
@@ -58,6 +59,14 @@ function AppRoutes() {
         <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
                 <Route path="/login/*" element={<LoginPage />} />
+                <Route
+                    path="/welcome"
+                    element={
+                        <RequireAuth>
+                            <WelcomePage />
+                        </RequireAuth>
+                    }
+                />
                 <Route
                     element={
                         <RequireAuth>
