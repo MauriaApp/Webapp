@@ -179,6 +179,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.13)
+      tailwindcss-safe-area:
+        specifier: ^1.1.0
+        version: 1.1.0(tailwindcss@4.1.13)
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -2691,6 +2694,12 @@ packages:
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
+
+  tailwindcss-safe-area@1.1.0:
+    resolution: {integrity: sha512-wuPUeW5BhWNv9yr3OzaGgpqImQG9FBM4mQIQh2C6yjHmOOZsJ3gh5RfNHt+TM16TMtpQs/8k2TWx8yQTFG7Fcw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      tailwindcss: ^4.0.0
 
   tailwindcss@4.1.13:
     resolution: {integrity: sha512-i+zidfmTqtwquj4hMEwdjshYYgMbOrPzb9a0M3ZgNa0JMoZeFC6bxZvO8yr8ozS6ix2SDz0+mvryPeBs2TFE+w==}
@@ -5224,6 +5233,10 @@ snapshots:
   tailwind-merge@3.3.1: {}
 
   tailwindcss-animate@1.0.7(tailwindcss@4.1.13):
+    dependencies:
+      tailwindcss: 4.1.13
+
+  tailwindcss-safe-area@1.1.0(tailwindcss@4.1.13):
     dependencies:
       tailwindcss: 4.1.13
 
