@@ -23,6 +23,8 @@ import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import * as Sentry from "@sentry/react";
+import { useEffect, useState } from "react";
+import { overrideStorage, saveFromApp } from "./lib/utils/storage";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -81,6 +83,39 @@ function AppRoutes() {
 }
 
 function App() {
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Écouter la réponse d'Ionic pour récupérer une donnée
+        const handleMessage = (event: MessageEvent) => {
+            const { type, key, payload } = event.data;
+            if (type === "DATA_RESPONSE" && key) {
+                console.log(`Donnée reçue pour ${key}: `, payload);
+                saveFromApp(key, payload);
+            }
+            if (type === "ALL_DATA_RESPONSE" && payload) {
+                console.log("Toutes les données reçues: ", payload);
+                for (const [k, v] of Object.entries(payload)) {
+                    overrideStorage({ [k]: v } as Record<string, string>);
+                }
+                setIsLoading(false);
+            }
+        };
+
+        console.log("Requesting all data from parent...");
+        window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
+
+        window.addEventListener("message", handleMessage);
+
+        return () => {
+            window.removeEventListener("message", handleMessage);
+        };
+    }, []);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <ThemeProvider defaultTheme="light">
             <ToastContextProvider>

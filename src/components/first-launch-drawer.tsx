@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { getFromStorage, saveToStorage } from "@/lib/utils/storage";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -26,10 +27,10 @@ export default function FirstLaunchDrawer() {
 
     useEffect(() => {
         try {
-            const alreadyLaunched = localStorage.getItem(FIRST_LAUNCH_KEY);
+            const alreadyLaunched = getFromStorage(FIRST_LAUNCH_KEY);
             if (alreadyLaunched !== "true") {
                 console.log("First launch, showing the first launch modal.");
-                localStorage.setItem(FIRST_LAUNCH_KEY, "true");
+                saveToStorage(FIRST_LAUNCH_KEY, "true");
                 setOpen(true);
             }
         } catch {
