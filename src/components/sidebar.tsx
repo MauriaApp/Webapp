@@ -32,6 +32,7 @@ import { useNavigate } from "react-router";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import type { SizeOption } from "@/lib/utils/scale";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { clearStorage } from "@/lib/utils/storage";
 
 export default function Sidebar() {
     const [open, setOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function Sidebar() {
     };
 
     const signOut = () => {
-        localStorage.clear();
+        clearStorage();
         handleNavigate("/login");
     };
 
@@ -158,19 +159,19 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
                             Associations
-                            <div className="justify-end flex-1 flex text-muted-foreground">
+                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://aurion.junia.com",
@@ -180,14 +181,14 @@ export default function Sidebar() {
                         >
                             <ThumbsDown className="h-5 w-5" />
                             Aurion
-                            <div className="justify-end flex-1 flex text-muted-foreground">
+                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://junia-learning.com",
@@ -197,14 +198,14 @@ export default function Sidebar() {
                         >
                             <Book className="h-5 w-5" />
                             Junia Learning
-                            <div className="justify-end flex-1 flex text-muted-foreground">
+                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://print.junia.com/end-user/ui/dashboard",
@@ -214,7 +215,7 @@ export default function Sidebar() {
                         >
                             <Printer className="h-5 w-5" />
                             Imprimer
-                            <div className="justify-end flex-1 flex text-muted-foreground">
+                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -226,7 +227,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7!"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "mailto:milo.montuori@student.junia.com",
@@ -236,15 +237,21 @@ export default function Sidebar() {
                         >
                             <MailQuestionMark className="h-5 w-5" />
                             Une question ? Un problème ?
+                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full justify-start gap-2 px-3 h-10 [&_svg]:size-7! text-red-500"
+                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7 text-red-500"
                             onClick={() => signOut()}
                         >
                             <BadgeX className="h-5 w-5" />
                             Se déconnecter
+                            <div className="justify-end flex-1 flex text-red-500 transition-colors group-hover:text-accent-foreground">
+                                <ArrowDownRightFromSquare className="size-4!" />
+                            </div>
                         </Button>
                     </div>
 

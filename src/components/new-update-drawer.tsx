@@ -17,6 +17,7 @@ import { formatUpdateContentList } from "@/lib/utils/updates";
 import { fetchUpdates } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
 import { UpdatesEntry } from "@/types/data";
+import { getFromStorage, saveToStorage } from "@/lib/utils/storage";
 
 const LAST_SEEN_UPDATE_KEY = "lastSeenUpdate";
 
@@ -36,10 +37,10 @@ export default function NewUpdateDrawer() {
         if (updates?.length) {
             const last = updates[0]?.version ?? null;
             if (last) {
-                const seen = localStorage.getItem(LAST_SEEN_UPDATE_KEY);
+                const seen = getFromStorage(LAST_SEEN_UPDATE_KEY);
                 if (seen !== last) {
                     console.log("New update, showing the new update modal.");
-                    localStorage.setItem(LAST_SEEN_UPDATE_KEY, last);
+                    saveToStorage(LAST_SEEN_UPDATE_KEY, last);
                     setOpen(true);
                 }
             }
