@@ -55,10 +55,10 @@ const sheetSafePadding: Record<
     NonNullable<SheetContentProps["side"]>,
     string
 > = {
-    top: "px-6 pt-safe-offset-6 pb-6",
-    bottom: "px-6 pb-safe-offset-6 pt-6",
-    left: "px-6 py-safe-offset-6",
-    right: "px-6 py-safe-offset-6",
+    top: "px-safe-or-6 pt-safe-or-6 pb-6",
+    bottom: "px-safe-or-6 pb-safe-or-6 pt-6",
+    left: "py-safe-or-6 pl-safe-or-6 pr-6",
+    right: "py-safe-or-6 pr-safe-or-6 pl-6",
 };
 
 const SheetContent = React.forwardRef<
@@ -80,7 +80,7 @@ const SheetContent = React.forwardRef<
                 {...props}
             >
                 {children}
-                <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                <SheetPrimitive.Close className="absolute right-4 top-safe-or-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
                     <X className="h-4 w-4" />
                     <span className="sr-only">Close</span>
                 </SheetPrimitive.Close>
