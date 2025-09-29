@@ -1,4 +1,11 @@
 {
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "pullToRefresh": "Tirez pour rafraîchir",
+    "refreshing": "Actualisation…"
+  },
   "sidebar": {
     "openMenu": "Ouvrir le menu",
     "title": "Menu",
@@ -41,11 +48,39 @@
   "homePage": {
     "title": "Hello, {firstname} !",
     "nextClasses": "À venir",
-    "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !"
+    "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !",
+    "loadingSchedule": "Données du planning en cours de chargement…"
+
   },
   "schedulePage": {
     "title": "Planning",
     "lastUpdate": "Dernière mise à jour :",
-    "exportSchedule": "Exporter le planning"
+    "exportSchedule": "Exporter le planning",
+    "loadingSchedule": "Données du planning en cours de chargement…"
+  },
+  "gradesPage": {
+    "noGrades": "Aucune note pour l'instant.",
+    "onlyCurrentYear": "Afficher uniquement cette année"
+  },
+  "absencesPage": {
+    "noAbsences": "Aucune absence trouvée.",
+    "onlyCurrentYear": "Afficher uniquement cette année",
+    "justified": "Justifiées",
+    "unjustified": "Injustifiées"
+  },
+  "agendaPage": {
+    "title": "Mon agenda",
+    "notifications": "Une notification sera envoyée 24h avant et 1h avant chaque tâche.",
+    "noTasks": "Aucune tâche.",
+    "noTaskPlaceholder": "Aucune tâche n'a été ajoutée pour le moment.",
+    "addTask": "Ajouter une tâche",
+    "taskTitle": "Titre",
+    "taskDescription": "Entrez le titre",
+    "date": "Date",
+    "hour": "Heure",
+    "createTaskBtn": "Créer la tâche"
+  },
+  "associationsPage": {
+    "search": "Rechercher une association"
   }
 }

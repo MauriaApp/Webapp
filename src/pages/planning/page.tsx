@@ -49,7 +49,7 @@ export function PlanningPage() {
 
     useLoadingToast(
         isLoading || isFetching,
-        "Données du planning en cours de chargement…",
+        t("schedulePage.loadingSchedule"),
         "planning-loading"
     );
 
@@ -65,7 +65,7 @@ export function PlanningPage() {
     };
 
     return (
-        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
+        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading} pullingText={t("common.pullToRefresh")} refreshingText={t("common.refreshing")}>
             <motion.h2
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -76,7 +76,7 @@ export function PlanningPage() {
             </motion.h2>
 
             <motion.section
-                className="rounded-lg overflow-hidden shadow-lg "
+                className="rounded-lg overflow-hidden shadow-lg"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{

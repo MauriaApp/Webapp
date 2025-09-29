@@ -16,12 +16,14 @@ import {
 } from "./sections";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { PreparedLesson } from "@/types/home";
+import { useTranslation } from 'react-i18next';
 
 export function HomePage() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [currentLesson, setCurrentLesson] = useState<PreparedLesson | null>(
         null
     );
+    const { t } = useTranslation();
 
     const {
         data: lessons = [],
@@ -49,7 +51,7 @@ export function HomePage() {
                 toastTimeoutRef.current = window.setTimeout(() => {
                     console.log("Showing toast");
                     toast.loading(
-                        "Données du planning en cours de chargement…",
+                        t("homePage.loadingSchedule"),
                         { id: TOAST_ID }
                     );
                     toastShownRef.current = true;
@@ -114,7 +116,7 @@ export function HomePage() {
     }, []);
 
     return (
-        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
+        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading} pullingText={t("common.pullToRefresh")} refreshingText={t("common.refreshing")}>
             <WelcomeHeader firstName={firstName} />
             <ImportantMessage message={importantMessage} />
 

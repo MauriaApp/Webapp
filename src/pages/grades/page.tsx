@@ -23,6 +23,7 @@ import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useTranslation } from 'react-i18next';
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -39,6 +40,7 @@ export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const { t } = useTranslation();
 
     const {
         data: grades = [],
@@ -73,6 +75,8 @@ export function GradesPage() {
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
             isPullable={!isLoading}
+            pullingText={t("common.pullToRefresh")}
+            refreshingText={t("common.refreshing")}
         >
             <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -86,7 +90,7 @@ export function GradesPage() {
                     onCheckedChange={toggleCurrentYearFilter}
                 />
                 <Label htmlFor="onlyThisYear">
-                    Afficher uniquement cette année
+                    {t("gradesPage.onlyCurrentYear")}
                 </Label>
             </motion.div>
 
@@ -103,7 +107,7 @@ export function GradesPage() {
                 >
                     <Alert className="mb-4">
                         <Info className="h-4 w-4" />
-                        <AlertTitle>Aucune note pour l'instant</AlertTitle>
+                        <AlertTitle>{t("gradesPage.noGrades")}</AlertTitle>
                     </Alert>
                 </motion.div>
             ) : (

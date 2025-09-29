@@ -17,8 +17,8 @@ export function PullToRefresh({
     onRefresh,
     isPullable = true,
     className,
-    pullingText = "Tirez pour actualiser",
-    refreshingText = "Actualisation…",
+    pullingText,
+    refreshingText,
     ...rest
 }: Props) {
     return (

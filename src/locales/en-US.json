@@ -1,4 +1,11 @@
 {
+  "common": {
+    "loading": "Loading…",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "pullToRefresh": "Pull to refresh",
+    "refreshing": "Refreshing…"
+  },
   "sidebar": {
     "openMenu": "Ouvrir le menu",
     "title": "Menu",
@@ -41,11 +48,38 @@
   "homePage": {
     "welcome": "Hello, {firstname} !",
     "nextClasses": "Upcoming",
-    "nextClassesEmptyState": "Nothing planned for today or tomorrow, enjoy your rest and free time!"
+    "nextClassesEmptyState": "Nothing planned for today or tomorrow, enjoy your rest and free time!",
+    "loadingSchedule": "Loading schedule data…"
   },
   "schedulePage": {
     "title": "Schedule",
-    "lastUpdate": "Last update:",
-    "exportSchedule": "Export schedule"
+    "lastUpdate": "Last updated:",
+    "exportSchedule": "Export schedule",
+    "loadingSchedule": "Loading schedule data…"
+  },
+  "gradesPage": {
+    "noGrades": "No grades available for now.",
+    "onlyCurrentYear": "Display only current year"
+  },
+  "absencesPage": {
+    "noAbsences": "No absences found.",
+    "onlyCurrentYear": "Display only current year",
+    "justified": "Justified",
+    "unjustified": "Unjustified"
+  },
+  "agendaPage": {
+    "title": "My Agenda",
+    "notifications": "A notification will be sent 24 hours before and 1 hour before each task.",
+    "noTasks": "No tasks.",
+    "noTaskPlaceholder": "No tasks have been added yet.",
+    "addTask": "Add a task",
+    "taskTitle": "Title",
+    "taskDescription": "Enter the title",
+    "date": "Date",
+    "hour": "Hour",
+    "createTaskBtn": "Create task"
+  },
+  "associationsPage": {
+    "search": "Find an association"
   }
 }
