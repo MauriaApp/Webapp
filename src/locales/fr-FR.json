@@ -39,8 +39,13 @@
     "agenda": "Agenda"
   },
   "homePage": {
-    "welcome": "Hello, {firstname} !",
+    "title": "Hello, {firstname} !",
     "nextClasses": "À venir",
     "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !"
+  },
+  "schedulePage": {
+    "title": "Planning",
+    "lastUpdate": "Dernière mise à jour :",
+    "exportSchedule": "Exporter le planning"
   }
 }

@@ -20,11 +20,13 @@ import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 
 const Calendar = memo(FullCalendar);
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
+    const { t } = useTranslation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [eventInfo, setEventInfo] = useState<PreparedLesson | null>(null);
     const [userEvents, setUserEvents] = useState<Lesson[]>(
@@ -70,7 +72,7 @@ export function PlanningPage() {
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
             >
-                Planning
+                {t('schedulePage.title')}
             </motion.h2>
 
             <motion.section
@@ -131,7 +133,7 @@ export function PlanningPage() {
                     }}
                 />
                 <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
-                    Dernière actualisation :{" "}
+                    {t("schedulePage.lastUpdate")}{" "}
                     {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
                         locale: fr,
                     })}
@@ -141,7 +143,7 @@ export function PlanningPage() {
                     onClick={handleExport}
                     disabled={lessons.length === 0 || isLoading || isFetching}
                 >
-                    Exporter le planning
+                    {t('schedulePage.exportSchedule')}
                 </Button>
             </motion.section>
             <DrawerPlanningContent

@@ -42,5 +42,10 @@
     "welcome": "Hello, {firstname} !",
     "nextClasses": "Upcoming",
     "nextClassesEmptyState": "Nothing planned for today or tomorrow, enjoy your rest and free time!"
+  },
+  "schedulePage": {
+    "title": "Schedule",
+    "lastUpdate": "Last update:",
+    "exportSchedule": "Export schedule"
   }
 }
