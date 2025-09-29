@@ -1,0 +1,46 @@
+{
+  "sidebar": {
+    "openMenu": "Ouvrir le menu",
+    "title": "Menu",
+    "themeParameter": {
+      "title": "Thème",
+      "dark": "Sombre",
+      "light": "Clair"
+    },
+    "sizeParameter": {
+      "title": "Taille",
+      "small": "Petit",
+      "medium": "Moyen",
+      "large": "Grand"
+    },
+    "languageParameter": {
+      "title": "Langue",
+      "english": "Anglais",
+      "french": "Français",
+      "fr-FR": "Français",
+      "en-US": "Anglais"
+    },
+    "actions": {
+      "associations": "Associations",
+      "aurion": "Aurion",
+      "juniaLearning": "Junia Learning",
+      "print": "Imprimer"
+    },
+    "help": "Une question, un problème ?",
+    "logOut": "Se déconnecter",
+    "credits": "Projet développé et maintenu par Milo Montuori, Louis Lecouturier et Louis Soltysiak",
+    "contribute": "Contribuer à Mauria"
+  },
+  "bottomNavigation": {
+    "home": "Accueil",
+    "schedule": "Planning",
+    "grades": "Notes",
+    "absences": "Absences",
+    "agenda": "Agenda"
+  },
+  "homePage": {
+    "welcome": "Hello, {firstname} !",
+    "nextClasses": "À venir",
+    "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !"
+  }
+}
