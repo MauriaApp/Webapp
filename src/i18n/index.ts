@@ -5,16 +5,18 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // On importe directement les fichiers statiques
 import fr from "@/locales/fr-FR.json";
 import en from "@/locales/en-US.json";
+import es from "@/locales/es-ES.json";
 
 void i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en"],
+    supportedLngs: ["fr", "en", "es"],
     resources: {
       fr: { translation: fr },
-      en: { translation: en }
+      en: { translation: en },
+      es: { translation: es }
     },
     interpolation: { escapeValue: false },
     react: { useSuspense: false },

@@ -24,8 +24,10 @@
       "title": "Langue",
       "english": "Anglais",
       "french": "Français",
+      "spanish": "Espagnol",
       "fr-FR": "Français",
-      "en-US": "Anglais"
+      "en-US": "Anglais",
+      "es-ES": "Espagnol"
     },
     "actions": {
       "associations": "Associations",

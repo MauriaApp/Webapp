@@ -1,0 +1,87 @@
+{
+  "common": {
+    "loading": "Cargando…",
+    "error": "Ha ocurrido un error",
+    "retry": "Reintentar",
+    "pullToRefresh": "Desliza para refrescar",
+    "refreshing": "Actualizando…"
+  },
+  "sidebar": {
+    "openMenu": "Abrir el menú",
+    "title": "Menú",
+    "themeParameter": {
+      "title": "Tema",
+      "dark": "Oscuro",
+      "light": "Claro"
+    },
+    "sizeParameter": {
+      "title": "Tamaño",
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande"
+    },
+    "languageParameter": {
+      "title": "Idioma",
+      "english": "Inglés",
+      "french": "Francés",
+      "spanish": "Español",
+      "fr-FR": "Francés",
+      "en-US": "Inglés",
+      "es-ES": "Español"
+    },
+    "actions": {
+      "associations": "Asociaciones",
+      "aurion": "Aurion",
+      "juniaLearning": "Junia Learning",
+      "print": "Imprimir"
+    },
+    "help": "¿Tienes una pregunta o un problema?",
+    "logOut": "Cerrar sesión",
+    "credits": "Proyecto desarrollado y mantenido por Milo Montuori, Louis Lecouturier y Louis Soltysiak",
+    "contribute": "Contribuir a Mauria"
+  },
+  "bottomNavigation": {
+    "home": "Inicio",
+    "schedule": "Horario",
+    "grades": "Notas",
+    "absences": "Ausencias",
+    "agenda": "Agenda"
+  },
+  "homePage": {
+    "title": "¡Hola, {firstname}!",
+    "nextClasses": "Próximas clases",
+    "nextClassesEmptyState": "Nada por hoy ni mañana, ¡disfruta de tu descanso y tiempo libre!",
+    "loadingSchedule": "Cargando datos del horario…"
+  },
+  "schedulePage": {
+    "title": "Horario",
+    "lastUpdate": "Última actualización:",
+    "exportSchedule": "Exportar el horario",
+    "loadingSchedule": "Cargando datos del horario…"
+  },
+  "gradesPage": {
+    "noGrades": "Todavía no hay notas.",
+    "onlyCurrentYear": "Mostrar solo este año"
+  },
+  "absencesPage": {
+    "noAbsences": "No se encontraron ausencias.",
+    "onlyCurrentYear": "Mostrar solo este año",
+    "justified": "Justificadas",
+    "unjustified": "Injustificadas"
+  },
+  "agendaPage": {
+    "title": "Mi agenda",
+    "notifications": "Se enviará una notificación 24h antes y 1h antes de cada tarea.",
+    "noTasks": "No hay tareas.",
+    "noTaskPlaceholder": "No se ha añadido ninguna tarea por el momento.",
+    "addTask": "Añadir tarea",
+    "taskTitle": "Título",
+    "taskDescription": "Introduce el título",
+    "date": "Fecha",
+    "hour": "Hora",
+    "createTaskBtn": "Crear tarea"
+  },
+  "associationsPage": {
+    "search": "Buscar una asociación"
+  }
+}

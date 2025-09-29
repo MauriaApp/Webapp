@@ -173,6 +173,12 @@ export default function Sidebar() {
                 >
                   {t("sidebar.languageParameter.en-US")}
                 </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="es-ES"
+                  className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  {t("sidebar.languageParameter.es-ES")}
+                </ToggleGroupItem>
               </ToggleGroup>
             </div>
 

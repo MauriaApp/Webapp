@@ -23,9 +23,11 @@
     "languageParameter": {
       "title": "Language",
       "english": "English",
+      "spanish": "Spanish",
       "french": "French",
       "fr-FR": "French",
-      "en-US": "English"
+      "en-US": "English",
+      "es-ES": "Spanish"
     },
     "actions": {
       "associations": "Associations",
