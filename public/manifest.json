@@ -1,0 +1,20 @@
+{
+    "name": "Mauria Webapp",
+    "short_name": "Mauria",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3f2a56",
+    "icons": [
+        {
+            "src": "/icon.webp",
+            "sizes": "192x192",
+            "type": "image/webp"
+        },
+        {
+            "src": "/icon.webp",
+            "sizes": "512x512",
+            "type": "image/webp"
+        }
+    ]
+}

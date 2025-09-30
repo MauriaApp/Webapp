@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Vous êtes hors ligne</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 2em;
+                text-align: center;
+                background-color: #f5f5f7;
+                color: #333;
+            }
+            h1 {
+                font-size: 2rem;
+                color: #3f2a56;
+            }
+            p {
+                margin: 1.5em 0;
+                font-size: 1.2rem;
+            }
+            button {
+                font-size: 1rem;
+                padding: 0.75em 1.5em;
+                color: white;
+                background-color: #3f2a56;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.25s ease-in-out;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Vous êtes hors ligne</h1>
+        <p>
+            Impossible de charger la page. Veuillez vérifier votre connexion
+            Internet.
+        </p>
+        <button onclick="window.location.reload();">Réessayer</button>
+        <script>
+            window.addEventListener("online", () => {
+                window.location.reload();
+            });
+        </script>
+    </body>
+</html>
