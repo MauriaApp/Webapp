@@ -79,6 +79,11 @@
     "current": "Currently",
     "today": "Today",
     "tomorrow": "Tomorrow",
+    "lessonTypes": {
+      "COURS_TD": "Class",
+      "DS_SURV": "Exam",
+      "AUTO_GERE": "Self-managed class"
+    },
     "welcomeMessage": ", Welcome to Mauria!"
   },
   "schedulePage": {

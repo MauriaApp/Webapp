@@ -79,6 +79,11 @@
     "current": "En ce moment",
     "today": "Aujourd'hui",
     "tomorrow": "Demain",
+    "lessonTypes": {
+      "COURS_TD": "Cours",
+      "DS_SURV": "DS",
+      "AUTO_GERE": "Cours auto-géré"
+    },
     "welcome": ", Bienvenue sur Mauria !"
   },
   "schedulePage": {
