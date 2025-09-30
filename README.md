@@ -1,86 +1,80 @@
-# React + Vite + TypeScript Template (react-vite-ui)
+# Mauria Webapp
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Dan5py/react-vite-ui/blob/main/LICENSE)
+Interface web de Mauria, le tableau de bord étudiant Junia.
 
-A React + Vite template powered by shadcn/ui.
+## Technologies utilisées
 
-## 🎉 Features
+- React `v19` et Vite `v6` pour une SPA moderne et rapide
+- TypeScript `v5.7` pour la sécurité de typage
+- Tailwind CSS `v4`, `tailwindcss-safe-area` et `tailwindcss-animate` pour le design réactif
+- shadcn/ui, Radix UI et Lucide pour la bibliothèque de composants
+- TanStack Query `v5` (persistance locale) et React Query Devtools
+- FullCalendar `v6` pour la visualisation du planning
+- Framer Motion / Motion pour les animations
+- Sonner pour les notifications in-app
+- Docker + Nginx + Fly.io pour le déploiement
+- Sentry pour l’observabilité en production
+- Supabase (via l’API Mauria) pour les contenus dynamiques
 
-- **React** - A JavaScript library for building user interfaces.
-- **Vite** - A fast, opinionated frontend build tool.
-- **TypeScript** - A typed superset of JavaScript that compiles to plain JavaScript.
-- **Tailwind CSS** - A utility-first CSS framework.
-- **Tailwind Prettier Plugin** - A Prettier plugin for formatting Tailwind CSS classes.
-- **ESLint** - A pluggable linting utility for JavaScript and TypeScript.
-- **PostCSS** - A tool for transforming CSS with JavaScript.
-- **Autoprefixer** - A PostCSS plugin to parse CSS and add vendor prefixes.
-- **shadcn/ui** - Beautifully designed components that you can copy and paste into your apps.
+## Structure du projet
 
-## ⚙️ Prerequisites
+Nous avons séparé le projet en plusieurs dossiers :
 
-Make sure you have the following installed on your development machine:
+- `public` : assets statiques (icône, manifestes, etc.)
+- `src/components` : composants transverses (navigation, tiroirs, UI shadcn)
+- `src/pages` : pages routées (accueil, planning, notes, absences, agenda, secondaires)
+- `src/contexts` : providers (thème, année scolaire, modales, React Query)
+- `src/lib/api` : clients Aurion & Supabase, helpers et stockage
+- `src/lib/utils` : utilitaires (planning, agenda, parsing des cours, mises à jour…)
+- `src/hooks` : hooks personnalisés (mobile, toasts…)
+- `src/styles` : feuille Tailwind globale et configuration thème
+- `src/types` : définitions TypeScript partagées
+- `components.json` : configuration shadcn/ui
+- `vite.config.ts`, `tsconfig*.json`, `eslint.config.js` : configuration build & lint
+- `Dockerfile`, `nginx.conf`, `fly.toml` : infrastructure de déploiement
 
-- Node.js (version 16 or above)
-- pnpm (package manager)
+## Fonctionnalités
 
-## 🚀 Getting Started
+### Intégration Aurion & Supabase
 
-Follow these steps to get started with the react-vite-ui template:
+L’application utilise l’API Fastify `API-v2` pour diriger Aurion et les contenus Supabase. Les informations de session sont stockées côté client et synchronisées avec l’app Ionic via `postMessage`.
 
-1. Clone the repository:
+### Planification & agenda
 
-   ```bash
-   git clone https://github.com/dan5py/react-vite-ui.git
-   ```
+Le planning s’appuie sur FullCalendar, combine les cours Aurion et les événements saisis par l’utilisateur, et permet un export vers l’app mobile. Un agenda léger complète l’expérience avec des rappels locaux.
 
-2. Navigate to the project directory:
+### Expérience utilisateur
 
-   ```bash
-   cd react-vite-ui
-   ```
+Transitions animées (Framer Motion), pull-to-refresh, toasts différés, tiroirs contextuels et navigation adaptative mobile/desktop offrent une UX proche de l’application native.
 
-3. Install the dependencies:
+### Personnalisation & stockage
 
-   ```bash
-   pnpm install
-   ```
+Thème clair/sombre, mise à l’échelle de l’UI et cache React Query gérés via `localStorage`, permettant un fonctionnement hors ligne partiel et une restitution rapide des données.
 
-4. Start the development server:
+## Installation
 
-   ```bash
-   pnpm dev
-   ```
+### Prérequis
 
-## 📜 Available Scripts
+- Node.js `v20+`
+- pnpm
+- Accès à l’API Mauria (`https://mauria-api.fly.dev` par défaut dans `src/lib/api/helper.ts`)
 
-- pnpm dev - Starts the development server.
-- pnpm build - Builds the production-ready code.
-- pnpm lint - Runs ESLint to analyze and lint the code.
-- pnpm preview - Starts the Vite development server in preview mode.
+### Installation
 
-## 📂 Project Structure
+1. Cloner le dépôt
+2. Se placer dans le dossier du projet : `cd Webapp`
+3. Installer les dépendances : `pnpm install`
+4. Lancer le serveur de développement : `pnpm dev`
+5. Accéder à l’application : `http://localhost:5173`
 
-The project structure follows a standard React application layout:
+## Contribution
 
-```python
-react-vite-ui/
-  ├── node_modules/      # Project dependencies
-  ├── public/            # Public assets
-  ├── src/               # Application source code
-  │   ├── components/    # React components
-  │   │   └── ui/        # shadc/ui components
-  │   ├── styles/        # CSS stylesheets
-  │   ├── lib/           # Utility functions
-  │   ├── App.tsx        # Application entry point
-  │   └── index.tsx      # Main rendering file
-  ├── eslint.config.js     # ESLint configuration
-  ├── index.html         # HTML entry point
-  ├── postcss.config.js  # PostCSS configuration
-  ├── tailwind.config.ts # Tailwind CSS configuration
-  ├── tsconfig.json      # TypeScript configuration
-  └── vite.config.ts     # Vite configuration
-```
+- Créer une branche depuis `main` et utiliser `pnpm` pour la gestion des packages
+- Respecter les conventions existantes (TypeScript strict, import alias `@/`)
+- Vérifier le formatage Tailwind et lancer `pnpm lint` avant toute PR
+- Tester les parcours clés (planning, notes, absences, agenda) avec l’API `API-v2`
+- Aligner la communication avec la Landing Page et les autres apps Mauria
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://choosealicense.com/licenses/mit/) file for details.
+Ce projet est sous licence GNU v3. Pour plus d’informations, voir le fichier `LICENSE` à la racine du projet.
