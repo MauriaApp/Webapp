@@ -6,6 +6,7 @@ import { motion, Variants } from "framer-motion";
 import { Clock, Info, MapPin, SquareArrowOutDownRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatLessonLocation, formatLessonType } from "@/lib/utils/home";
+import { useTranslation } from "react-i18next";
 
 const MotionCard = motion(Card);
 
@@ -118,37 +119,44 @@ export const LessonsSection = ({
 );
 
 // Empty State Component
-export const EmptyState = () => (
-    <motion.section
-        className="mb-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
+export const EmptyState = () => {
+    const { t } = useTranslation();
+
+    return (
+        <motion.section
+            className="mb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
     >
-        <SectionHeader title="À venir" />
+        <SectionHeader title={t("homePage.nextClasses")} />
         <motion.div variants={itemVariants}>
             <Alert className="mb-4">
                 <Info className="h-4 w-4" />
                 <AlertTitle>
-                    Rien à venir pour aujourd'hui ni demain, profite bien de ton
-                    repos et de ton temps libre !
+                    {t("homePage.nextClassesEmptyState")}
                 </AlertTitle>
             </Alert>
         </motion.div>
     </motion.section>
-);
+    );
+};
 
 // Welcome Header Component
-export const WelcomeHeader = ({ firstName }: { firstName: string }) => (
-    <motion.h2
-        className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-    >
-        Hello {firstName} !
-    </motion.h2>
-);
+export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
+    const { t } = useTranslation();
+
+    return (
+        <motion.h2
+            className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+        >
+            {t("homePage.title")} {firstName} !
+        </motion.h2>
+    );
+};
 
 // Important Message Component
 export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (

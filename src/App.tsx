@@ -27,6 +27,7 @@ import * as Sentry from "@sentry/react";
 import { useEffect, useState } from "react";
 import { overrideStorage, saveFromApp } from "./lib/utils/storage";
 import { Loader } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -94,6 +95,7 @@ function AppRoutes() {
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -136,9 +138,9 @@ function App() {
         return (
             <div className="flex flex-col items-center text-center justify-center h-screen space-y-4">
                 <p>
-                    Chargement...
+                    {t("common.loading")}
                     <br />
-                    Si vous êtes en version web, veuillez patienter.
+                    {t("common.loadingWeb")}
                 </p>
                 <Loader className="w-12 h-12 text-muted-foreground animate-spin" />
             </div>

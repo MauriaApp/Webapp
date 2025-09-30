@@ -12,6 +12,8 @@ import {
     Info,
     ChevronDownIcon,
 } from "lucide-react";
+import { formatLessonType } from "@/lib/utils/home";
+import { useTranslation } from "react-i18next";
 
 export function DrawerPlanningContent({
     drawerOpen,
@@ -22,6 +24,7 @@ export function DrawerPlanningContent({
     setDrawerOpen: (open: boolean) => void;
     eventInfo: PreparedLesson | null;
 }) {
+    const { t } = useTranslation();
     return (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent aria-describedby={undefined}>
@@ -35,10 +38,10 @@ export function DrawerPlanningContent({
                         <div className="mb-2 bg-mauria-card rounded-2xl">
                             {eventInfo.location && (
                                 <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
-                                    <MapPin className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <MapPin className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
-                                            Lieu
+                                            {t("drawerPlanningContent.place")}
                                         </span>
                                         <p className="text-gray-900 dark:text-white">
                                             {eventInfo.location}
@@ -48,23 +51,23 @@ export function DrawerPlanningContent({
                             )}
                             {eventInfo.type && (
                                 <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
-                                    <Tag className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <Tag className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
-                                            Type
+                                            {t("drawerPlanningContent.type")}
                                         </span>
                                         <p className="text-gray-900 dark:text-white">
-                                            {eventInfo.type}
+                                            {formatLessonType(eventInfo.type)}
                                         </p>
                                     </div>
                                 </div>
                             )}
                             {eventInfo.teacher && (
                                 <div className="flex items-center gap-3 px-3 py-1 rounded-lg">
-                                    <User className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
+                                    <User className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
-                                            Enseignant(e)
+                                            {t("drawerPlanningContent.teacher")}
                                         </span>
                                         <p className="text-gray-900 dark:text-white">
                                             {eventInfo.teacher}
@@ -74,44 +77,46 @@ export function DrawerPlanningContent({
                             )}
                         </div>
 
-                        <div className=" p-4 rounded-lg">
-                            <div className="flex items-center gap-3">
-                                <Clock className="w-5 h-5 text-green-600 dark:text-green-400" />
-                                <div>
-                                    <span className="font-semibold text-muted-foreground text-sm">
-                                        Début
+                        <div className="p-4 rounded-lg grid w-full grid-cols-3 gap-2 min-w-0">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <Clock className="w-4 h-4 shrink-0 text-green-600 dark:text-green-400" />
+                                <div className="min-w-0">
+                                    <span className="font-semibold text-muted-foreground text-xs">
+                                        {t("drawerPlanningContent.starting")}
                                     </span>
-                                    <p className="text-gray-900 dark:text-white">
+                                    <p className="text-gray-900 dark:text-white truncate">
                                         {format(
                                             new Date(eventInfo.details.start),
-                                            "EEEE d MMM HH'h'mm",
+                                            "HH'h'mm",
                                             { locale: fr }
                                         )}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <Clock className="w-5 h-5 text-red-600 dark:text-red-400" />
-                                <div>
-                                    <span className="font-semibold text-muted-foreground text-sm">
-                                        Fin
+
+                            <div className="flex items-center gap-2 min-w-0">
+                                <Clock className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400" />
+                                <div className="min-w-0">
+                                    <span className="font-semibold text-muted-foreground text-xs">
+                                        {t("drawerPlanningContent.ending")}
                                     </span>
-                                    <p className="text-gray-900 dark:text-white">
+                                    <p className="text-gray-900 dark:text-white truncate">
                                         {format(
                                             new Date(eventInfo.details.end),
-                                            "EEEE d MMM HH'h'mm",
+                                            "HH'h'mm",
                                             { locale: fr }
                                         )}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <Timer className="w-5 h-5 text-mauria-purple dark:text-gray-300" />
-                                <div>
-                                    <span className="font-semibold text-muted-foreground text-sm">
-                                        Durée
+
+                            <div className="flex items-center gap-2 min-w-0">
+                                <Timer className="w-4 h-4 shrink-0 text-mauria-purple dark:text-gray-300" />
+                                <div className="min-w-0">
+                                    <span className="font-semibold text-muted-foreground text-xs">
+                                        {t("drawerPlanningContent.duration")}
                                     </span>
-                                    <p className="text-gray-900 dark:text-white">
+                                    <p className="text-gray-900 dark:text-white truncate">
                                         {(() => {
                                             const start = new Date(
                                                 eventInfo.details.start
@@ -147,19 +152,19 @@ export function DrawerPlanningContent({
                         <details className="mt-6">
                             <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 flex items-center gap-2 hover:text-mauria-purple/80 transition-colors">
                                 <Info className="w-4 h-4" />
-                                Détails techniques
+                                    {t("drawerPlanningContent.technicalDetails")}
                                 <ChevronDownIcon className="w-4 h-4 ml-auto" />
                             </summary>
                             <div className="mt-3 space-y-2 p-3 rounded-lg">
                                 <div className="flex items-center gap-2 text-sm">
-                                    <span className="font-medium">ID :</span>
+                                    <span className="font-medium">{t("common.id")} :</span>
                                     <span className="text-gray-600 dark:text-gray-400">
                                         {eventInfo.details.id}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm">
                                     <span className="font-medium">
-                                        Titre complet :
+                                        {t("drawerPlanningContent.formerTitle")} :
                                     </span>
                                     <span className="text-gray-600 dark:text-gray-400">
                                         {eventInfo.details.title}
@@ -167,7 +172,7 @@ export function DrawerPlanningContent({
                                 </div>
                                 <div className="flex items-center gap-2 text-sm">
                                     <span className="font-medium">
-                                        Toute la journée :
+                                        {t("drawerPlanningContent.allDay")} :
                                     </span>
                                     <span className="text-gray-600 dark:text-gray-400">
                                         {eventInfo.details.allDay

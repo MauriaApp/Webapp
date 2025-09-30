@@ -10,9 +10,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useNavigate, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export default function BottomNavigation() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const location = useLocation();
     const pathname = location.pathname;
 
@@ -21,26 +23,26 @@ export default function BottomNavigation() {
             id: "home",
             icon: Home,
             path: "/",
-            label: "Accueil",
+            label: t("bottomNavigation.home"),
         },
         {
             id: "calendar",
             icon: Calendar,
             path: "/planning",
-            label: "Planning",
+            label: t("bottomNavigation.schedule"),
         },
         {
             id: "education",
             icon: GraduationCap,
             path: "/grades",
-            label: "Notes",
+            label: t("bottomNavigation.grades"),
         },
-        { id: "profile", icon: User, path: "/absences", label: "Absences" },
+        { id: "profile", icon: User, path: "/absences", label: t("bottomNavigation.absences") },
         {
             id: "agenda",
             icon: ListChecksIcon,
             path: "/agenda",
-            label: "Agenda",
+            label: t("bottomNavigation.agenda"),
         },
     ];
 

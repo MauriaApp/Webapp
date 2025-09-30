@@ -17,15 +17,15 @@ export function PullToRefresh({
     onRefresh,
     isPullable = true,
     className,
-    pullingText = "Tirez pour actualiser",
-    refreshingText = "Actualisation…",
+    pullingText,
+    refreshingText,
     ...rest
 }: Props) {
     return (
         <ReactPullToRefresh
             onRefresh={() => Promise.resolve(onRefresh())}
             isPullable={isPullable}
-            className={cn("min-h-[calc(100vh-9rem)]", className)}
+            className={cn("min-h-[calc(100vh-16rem)]", className)}
             pullingContent={
                 <div className="w-full py-2 text-left text-sm text-muted-foreground flex items-center gap-2 [&_svg]:size-5!">
                     <ArrowUpToLine />

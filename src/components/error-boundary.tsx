@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "./ui/button";
 import * as Sentry from "@sentry/react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     children: React.ReactNode;
@@ -29,11 +30,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
     render() {
         if (this.state.hasError) {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const { t } = useTranslation();
             return (
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <h1>Oups, une erreur est survenue.</h1>
+                    <h1>{t("common.error")}</h1>
                     <Button onClick={() => window.location.reload()}>
-                        Retour à l’accueil
+                        {t("common.goBackHome")}
                     </Button>
                 </div>
             );

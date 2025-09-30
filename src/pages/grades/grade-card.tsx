@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { SquareArrowOutDownRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const MotionCard = motion(Card);
 
@@ -30,6 +31,7 @@ export function GradeCardAnimate({
     grade: Grade;
     onGradeClick: (grade: Grade) => void;
 }) {
+    const { t } = useTranslation();
     return (
         <MotionCard
             layout
@@ -46,7 +48,7 @@ export function GradeCardAnimate({
                         {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Coef {grade.coefficient}
+                        {t("common.coef")} {grade.coefficient}
                     </div>
                 </div>
                 <div className="flex-1">
@@ -85,6 +87,8 @@ export function GradeCard({
     grade: Grade;
     onGradeClick: (grade: Grade) => void;
 }) {
+    const { t } = useTranslation();
+
     return (
         <Card
             className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full"
@@ -96,7 +100,7 @@ export function GradeCard({
                         {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Coef {grade.coefficient}
+                        {t("common.coef")} {grade.coefficient}
                     </div>
                 </div>
                 <div className="flex-1">
