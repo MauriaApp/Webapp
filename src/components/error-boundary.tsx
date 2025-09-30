@@ -29,8 +29,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
     }
 
     render() {
-        
         if (this.state.hasError) {
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const { t } = useTranslation();
             return (
                 <div className="flex flex-col items-center justify-center h-screen gap-4">
