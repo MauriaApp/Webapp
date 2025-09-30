@@ -17,6 +17,9 @@
 }
 
 @layer base {
+    html {
+        overscroll-behavior: none;
+    }
     :root {
         --safe-area-top: 40px;
         --safe-area-bottom: 30px;
@@ -114,6 +117,7 @@
     }
     body {
         @apply bg-background text-foreground;
+        overscroll-behavior: none;
     }
 }
 
