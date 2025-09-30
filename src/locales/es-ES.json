@@ -131,6 +131,7 @@
   "drawerPlanningContent": {
     "place": "Lugar",
     "type": "Tipo",
+    "date": "Fecha",
     "teacher": "Profesor(a)",
     "starting": "Inicio",
     "ending": "Fin",
