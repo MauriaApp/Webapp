@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
+import { useTranslation } from 'react-i18next';
 
 const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
 const StaticAbsenceCard = memo(AbsenceCard);
@@ -30,6 +31,7 @@ const listVariants = {
 };
 export function AbsencesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
+    const { t } = useTranslation();
 
     const {
         data: absences = [],
@@ -63,6 +65,8 @@ export function AbsencesPage() {
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
             isPullable={!isLoading}
+            pullingText={t("common.pullToRefresh")}
+            refreshingText={t("common.refreshing")}
         >
             <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -76,7 +80,7 @@ export function AbsencesPage() {
                     onCheckedChange={toggleCurrentYearFilter}
                 />
                 <Label htmlFor="onlyThisYear">
-                    Afficher uniquement cette année
+                    {t("absencesPage.onlyCurrentYear")}
                 </Label>
             </motion.div>
             <motion.div
@@ -91,7 +95,7 @@ export function AbsencesPage() {
                 <Card className="mb-6 border-mauria-border">
                     <CardHeader className=" flex-row items-center space-y-0 space-x-4">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Total
+                            {t("absencesPage.total")}
                         </CardTitle>
                         <div className="text-4xl font-bold tracking-tight text-primary">
                             {total}
@@ -104,7 +108,7 @@ export function AbsencesPage() {
                         <div className="flex items-start gap-6">
                             <div className="flex-1">
                                 <div className="text-sm font-medium text-muted-foreground">
-                                    Justifiées
+                                    {t("absencesPage.justified")}
                                 </div>
                                 <div className="mt-1 text-2xl font-semibold text-green-600">
                                     {justified}
@@ -115,7 +119,7 @@ export function AbsencesPage() {
 
                             <div className="flex-1">
                                 <div className="text-sm font-medium text-muted-foreground">
-                                    Non-justifiées
+                                    {t("absencesPage.unjustified")}
                                 </div>
                                 <div className="mt-1 text-2xl font-semibold text-amber-600">
                                     {unjustified}
@@ -136,7 +140,7 @@ export function AbsencesPage() {
                     >
                         <Alert className="mb-4">
                             <Info className="h-4 w-4" />
-                            <AlertTitle>Aucune absence trouvée</AlertTitle>
+                            <AlertTitle>{t("absencesPage.noAbsences")}</AlertTitle>
                         </Alert>
                     </motion.div>
                 ) : (

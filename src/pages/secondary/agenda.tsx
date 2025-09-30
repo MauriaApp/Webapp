@@ -9,9 +9,11 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar, Check, ClipboardListIcon } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 export function AgendaPage() {
     const [tasks, setTasks] = useState<TaskData[]>(getTasksFromLocalStorage());
+    const { t } = useTranslation();
 
     const handleTaskComplete = (taskId: string) => {
         removeTaskFromLocalStorage({ taskId });
@@ -23,13 +25,12 @@ export function AgendaPage() {
             <div className="max-w-4xl mx-auto">
                 {/* Header Section */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold  mb-4">Mon Agenda</h1>
+                    <h1 className="text-3xl font-bold  mb-4">{t("agendaPage.title")}</h1>
                     <div className="bg-mauria-card rounded-lg p-4 border border-mauria-border">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-accent rounded-full"></div>
                             <p className="text-sm">
-                                Une notification sera envoyée 24h avant et 1h
-                                avant chaque tâche.
+                                {t("agendaPage.notifications")}
                             </p>
                         </div>
                     </div>
@@ -86,10 +87,10 @@ export function AgendaPage() {
                                 <ClipboardListIcon className="w-8 h-8 text-muted-foreground" />
                             </div>
                             <h3 className="text-lg font-semibold  mb-2">
-                                Aucune tâche
+                                {t("agendaPage.noTasks")}
                             </h3>
                             <p className="text-muted-foreground">
-                                Aucune tâche n'a été ajoutée pour le moment.
+                                {t("agendaPage.noTaskPlaceholder")}
                             </p>
                         </div>
                     </div>

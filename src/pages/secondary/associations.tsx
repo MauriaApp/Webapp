@@ -17,6 +17,7 @@ import { fetchAssos } from "@/lib/api/supa";
 import { AssociationData } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
+import { useTranslation } from "react-i18next";
 
 export function AssociationsPage() {
     const { data: associations = [], isLoading, isFetching } = useQuery<
@@ -36,6 +37,7 @@ export function AssociationsPage() {
     );
 
     const [searchTerm, setSearchTerm] = useState("");
+    const { t } = useTranslation();
 
     const filteredAssociations = useMemo(() => {
         return associations.filter((association) => {
@@ -57,7 +59,7 @@ export function AssociationsPage() {
                 <div className="relative max-w-md mx-auto">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
-                        placeholder="Rechercher une association..."
+                        placeholder={t("associationsPage.search")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground"
@@ -67,8 +69,8 @@ export function AssociationsPage() {
 
             {/* Results count */}
             <div className="text-center text-muted-foreground">
-                {filteredAssociations.length} association
-                {filteredAssociations.length > 1 ? "s" : ""} trouvée
+                {filteredAssociations.length} {t("associationsPage.association")}
+                {filteredAssociations.length > 1 ? "s" : ""} {t("associationsPage.find")}
                 {filteredAssociations.length > 1 ? "s" : ""}
             </div>
 
@@ -141,7 +143,7 @@ export function AssociationsPage() {
                                                 rel="noopener noreferrer"
                                             >
                                                 <ExternalLink className="h-4 w-4 mr-2" />
-                                                Nous contacter !
+                                                {t("associationsPage.contactUs")}
                                             </a>
                                         </Button>
                                     </div>
@@ -164,7 +166,7 @@ export function AssociationsPage() {
                         }}
                         className="mt-4"
                     >
-                        Réinitialiser
+                        {t("associationsPage.reinitialize")}
                     </Button>
                 </div>
             )}

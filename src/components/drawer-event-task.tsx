@@ -18,6 +18,7 @@ import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { useTranslation } from 'react-i18next';
 
 export function DrawerEventTask({
     type,
@@ -27,6 +28,7 @@ export function DrawerEventTask({
     onClose: () => void;
 }) {
     const [open, setOpen] = useState(false);
+    const { t } = useTranslation();
 
     const [title, setTitle] = useState<string>("");
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -118,12 +120,12 @@ export function DrawerEventTask({
                 <div className="p-4 space-y-4">
                     <div>
                         <Label className="block text-sm font-medium mb-2">
-                            Titre
+                            {t('agendaPage.taskTitle')}
                         </Label>
                         <Input
                             type="text"
                             className="w-full p-2 border rounded-md"
-                            placeholder="Entrez le titre..."
+                            placeholder={t('agendaPage.taskDescription')}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                         />
@@ -138,7 +140,7 @@ export function DrawerEventTask({
                         <div>
                             {type === "task" ? (
                                 <TimePickerComponent
-                                    label="Heure"
+                                    label={t('agendaPage.hour')}
                                     onChange={(time) => setStartTime(time)}
                                 />
                             ) : (
@@ -186,6 +188,7 @@ const DatePickerComponent = ({
 }) => {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [open, setOpen] = useState(false);
+    const { t } = useTranslation();
 
     const handleDateChange = (selectedDate: Date | undefined) => {
         setDate(selectedDate);
@@ -196,7 +199,7 @@ const DatePickerComponent = ({
         <div className="flex gap-4">
             <div className="flex flex-col gap-3">
                 <Label htmlFor="date-picker" className="px-1">
-                    Date
+                    {t("agendaPage.date")}
                 </Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>

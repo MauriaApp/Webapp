@@ -1,0 +1,148 @@
+{
+  "login": {
+    "mauria": "Mauria",
+    "login": "Iniciar sesión",
+    "enterAurionCredentials": "Introduce tus credenciales de Aurion para acceder a la app",
+    "email": "Correo electrónico",
+    "password": "Contraseña"
+  },
+  "welcome": {
+    "mauria": "Mauria",
+    "welcome": "¡Bienvenido a Mauria!",
+    "getStarted": "Aquí tienes algunas referencias útiles para empezar:"
+  },
+  "common": {
+    "id": "ID",
+    "loading": "Cargando…",
+    "error": "Vaya, ha ocurrido un error",
+    "goBackHome": "Volver a la página de inicio",
+    "retry": "Reintentar",
+    "pullToRefresh": "Desliza para refrescar",
+    "refreshing": "Actualizando…",
+    "loadingWeb": "Si estás en la versión web, por favor espera.",
+    "more": "Más",
+    "close": "Cerrar",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "morePages": "Más páginas"
+  },
+  "carousel": {
+    "previousSlide": "Ver anterior",
+    "nextSlide": "Ver siguiente"
+  },
+  "sidebar": {
+    "openMenu": "Abrir el menú",
+    "title": "Menú",
+    "themeParameter": {
+      "title": "Tema",
+      "dark": "Oscuro",
+      "light": "Claro"
+    },
+    "sizeParameter": {
+      "title": "Tamaño",
+      "small": "Pequeño",
+      "medium": "Mediano",
+      "large": "Grande"
+    },
+    "languageParameter": {
+      "title": "Idioma",
+      "english": "Inglés",
+      "french": "Francés",
+      "spanish": "Español",
+      "fr-FR": "Francés",
+      "en-US": "Inglés",
+      "es-ES": "Español"
+    },
+    "actions": {
+      "associations": "Asociaciones",
+      "aurion": "Aurion",
+      "juniaLearning": "Junia Learning",
+      "print": "Imprimir"
+    },
+    "help": "¿Tienes una pregunta o un problema?",
+    "logOut": "Cerrar sesión",
+    "credits": "Proyecto desarrollado y mantenido por Milo Montuori, Louis Lecouturier y Louis Soltysiak",
+    "contribute": "Contribuir a Mauria"
+  },
+  "bottomNavigation": {
+    "home": "Inicio",
+    "schedule": "Horario",
+    "grades": "Notas",
+    "absences": "Ausencias",
+    "agenda": "Agenda"
+  },
+  "homePage": {
+    "title": "¡Hola",
+    "nextClasses": "Próximas clases",
+    "nextClassesEmptyState": "Nada por hoy ni mañana, ¡disfruta de tu descanso y tiempo libre!",
+    "loadingSchedule": "Cargando datos del horario…",
+    "current": "En este momento",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "welcome": ", ¡Bienvenido a Mauria!"
+  },
+  "schedulePage": {
+    "title": "Horario",
+    "lastUpdate": "Última actualización:",
+    "exportSchedule": "Exportar el horario",
+    "loadingSchedule": "Cargando datos del horario…"
+  },
+  "gradesPage": {
+    "noGrades": "Todavía no hay notas.",
+    "onlyCurrentYear": "Mostrar solo este año",
+    "details": "Detalles de la nota",
+    "grade": "Nota",
+    "average": "Media",
+    "median": "Mediana",
+    "min": "Min",
+    "max": "Max",
+    "standardDeviation": "desviación estándar",
+    "coefficient": "Coeficiente",
+    "date": "Fecha",
+    "comment": "Comentario"
+  },
+  "absencesPage": {
+    "noAbsences": "No se encontraron ausencias.",
+    "onlyCurrentYear": "Mostrar solo este año",
+    "justified": "Justificadas",
+    "unjustified": "Injustificadas",
+    "total": "Total"
+  },
+  "agendaPage": {
+    "title": "Mi agenda",
+    "notifications": "Se enviará una notificación 24h antes y 1h antes de cada tarea.",
+    "noTasks": "No hay tareas.",
+    "noTaskPlaceholder": "No se ha añadido ninguna tarea por el momento.",
+    "addTask": "Añadir tarea",
+    "taskTitle": "Título",
+    "taskDescription": "Introduce el título",
+    "date": "Fecha",
+    "hour": "Hora",
+    "createTaskBtn": "Crear tarea"
+  },
+  "associationsPage": {
+    "search": "Buscar una asociación",
+    "association": "asociación",
+    "find": "encontrada",
+    "contactUs": "Contáctanos",
+    "reinitialize": "Reiniciar"
+  },
+  "drawerPlanningContent": {
+    "place": "Lugar",
+    "type": "Tipo",
+    "teacher": "Profesor(a)",
+    "starting": "Inicio",
+    "ending": "Fin",
+    "duration": "Duración",
+    "technicalDetails": "Detalles técnicos",
+    "formerTitle": "Título completo",
+    "allDay": "Todo el día"
+  },
+  "update": {
+    "somethingNew": "¡Hay novedades en Mauria!",
+    "seeEnhancements": "Estas son las mejoras aportadas por la actualización",
+    "visualImprovements": "Mejoras visuales",
+    "technicalImprovements": "Mejoras técnicas",
+    "discardButton": "De acuerdo"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "login": {
+    "mauria": "Mauria",
+    "login": "Login",
+    "enterAurionCredentials": "Enter your Aurion credentials to access the app",
+    "email": "Email",
+    "password": "Password"
+  },
+  "welcome": {
+    "mauria": "Mauria",
+    "welcome": "Welcome to Mauria!",
+    "getStarted": "Here are some useful references to get started:"
+  },
+  "common": {
+    "id": "ID",
+    "loading": "Loading…",
+    "error": "Oops, an error occurred",
+    "goBackHome": "Go back home",
+    "retry": "Retry",
+    "pullToRefresh": "Pull to refresh",
+    "refreshing": "Refreshing…",
+    "loadingWeb": "If you are on the web version, please wait.",
+    "more": "More",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "morePages": "More pages"
+  },
+  "carousel": {
+    "previousSlide": "See previous",
+    "nextSlide": "See next"
+  },
+  "sidebar": {
+    "openMenu": "Open menu",
+    "title": "Menu",
+    "themeParameter": {
+      "title": "Theme",
+      "dark": "Dark",
+      "light": "Light"
+    },
+    "sizeParameter": {
+      "title": "Size",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "languageParameter": {
+      "title": "Language",
+      "english": "English",
+      "spanish": "Spanish",
+      "french": "French",
+      "fr-FR": "French",
+      "en-US": "English",
+      "es-ES": "Spanish"
+    },
+    "actions": {
+      "associations": "Associations",
+      "aurion": "Aurion",
+      "juniaLearning": "Junia Learning",
+      "print": "Print"
+    },
+    "help": "A question, a problem?",
+    "logOut": "Log Out",
+    "credits": "Project developed and maintained by Milo Montuori, Louis Lecouturier and Louis Soltysiak",
+    "contribute": "Contribute to Mauria"
+  },
+  "bottomNavigation": {
+    "home": "Home",
+    "schedule": "Schedule",
+    "grades": "Grades",
+    "absences": "Absences",
+    "agenda": "Agenda"
+  },
+  "homePage": {
+    "welcome": "Hello ",
+    "nextClasses": "Upcoming",
+    "nextClassesEmptyState": "Nothing planned for today or tomorrow, enjoy your rest and free time!",
+    "loadingSchedule": "Loading schedule data…",
+    "current": "Currently",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "welcomeMessage": ", Welcome to Mauria!"
+  },
+  "schedulePage": {
+    "title": "Schedule",
+    "lastUpdate": "Last updated:",
+    "exportSchedule": "Export schedule",
+    "loadingSchedule": "Loading schedule data…"
+  },
+  "gradesPage": {
+    "noGrades": "No grades available for now.",
+    "onlyCurrentYear": "Display only current year",
+    "details": "Grade details",
+    "grade": "Grade",
+    "average": "Average",
+    "median": "Median",
+    "min": "Min",
+    "max": "Max",
+    "standardDeviation": "Standard deviation",
+    "coefficient": "Coefficient",
+    "date": "Date",
+    "comment": "Comment"
+  },
+  "absencesPage": {
+    "noAbsences": "No absences found.",
+    "onlyCurrentYear": "Display only current year",
+    "justified": "Justified",
+    "unjustified": "Unjustified",
+    "total": "Total"
+  },
+  "agendaPage": {
+    "title": "My Agenda",
+    "notifications": "A notification will be sent 24 hours before and 1 hour before each task.",
+    "noTasks": "No tasks.",
+    "noTaskPlaceholder": "No tasks have been added yet.",
+    "addTask": "Add a task",
+    "taskTitle": "Title",
+    "taskDescription": "Enter the title",
+    "date": "Date",
+    "hour": "Hour",
+    "createTaskBtn": "Create task"
+  },
+  "associationsPage": {
+    "search": "Find an association",
+    "association": "association",
+    "find": "found",
+    "contactUs": "Contact us",
+    "reinitialize": "Reinitialize"
+  },
+  "drawerPlanningContent": {
+    "place": "Place",
+    "type": "Type",
+    "teacher": "Teacher",
+    "starting": "Starting",
+    "ending": "Ending",
+    "duration": "Duration",
+    "technicalDetails": "Technical details",
+    "formerTitle": "Full title",
+    "allDay": "All day"
+  },
+  "update": {
+    "somethingNew": "There's something new on Mauria!",
+    "seeEnhancements": "Here are the improvements brought by the update",
+    "visualImprovements": "Visual improvements",
+    "technicalImprovements": "Technical improvements",
+    "discardButton": "Okay"
+  }
+}

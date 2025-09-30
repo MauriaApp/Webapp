@@ -16,12 +16,14 @@ import {
 } from "./sections";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { PreparedLesson } from "@/types/home";
+import { useTranslation } from "react-i18next";
 
 export function HomePage() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [currentLesson, setCurrentLesson] = useState<PreparedLesson | null>(
         null
     );
+    const { t } = useTranslation();
 
     const {
         data: lessons = [],
@@ -48,10 +50,9 @@ export function HomePage() {
             if (toastTimeoutRef.current == null) {
                 toastTimeoutRef.current = window.setTimeout(() => {
                     console.log("Showing toast");
-                    toast.loading(
-                        "Données du planning en cours de chargement…",
-                        { id: TOAST_ID }
-                    );
+                    toast.loading(t("homePage.loadingSchedule"), {
+                        id: TOAST_ID,
+                    });
                     toastShownRef.current = true;
                     toastTimeoutRef.current = null;
                 }, 250);
@@ -97,30 +98,33 @@ export function HomePage() {
     });
 
     const { current, today, tomorrow } = getHomeUpcoming({ lessons });
-    const [firstName, setFirstName] = useState<string>(
-        "et bienvenue sur Mauria"
-    );
+    const [firstName, setFirstName] = useState<string>(t("homePage.welcome"));
 
     useEffect(() => {
         const loadFirstName = async () => {
             try {
                 const name = await getFirstName();
-                setFirstName(name || "et bienvenue sur Mauria");
+                setFirstName(name || t("homePage.welcome"));
             } catch {
-                setFirstName("et bienvenue sur Mauria");
+                setFirstName(t("homePage.welcome"));
             }
         };
         loadFirstName();
-    }, []);
+    }, [t]);
 
     return (
-        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading}>
+        <PullToRefresh
+            onRefresh={handleRefresh}
+            isPullable={!isLoading}
+            pullingText={t("common.pullToRefresh")}
+            refreshingText={t("common.refreshing")}
+        >
             <WelcomeHeader firstName={firstName} />
             <ImportantMessage message={importantMessage} />
 
             {current && (
                 <LessonsSection
-                    title="En cours"
+                    title={t("homePage.current")}
                     lessons={[current]}
                     keyPrefix="current"
                     onClick={(lesson) => () => {
@@ -131,7 +135,7 @@ export function HomePage() {
             )}
             {today.length > 0 && (
                 <LessonsSection
-                    title="Aujourd'hui"
+                    title={t("homePage.today")}
                     lessons={today}
                     keyPrefix="today"
                     onClick={(lesson) => () => {
@@ -142,7 +146,7 @@ export function HomePage() {
             )}
             {!current && today.length === 0 && tomorrow.length > 0 && (
                 <LessonsSection
-                    title="Demain"
+                    title={t("homePage.tomorrow")}
                     lessons={tomorrow}
                     keyPrefix="tomorrow"
                     onClick={(lesson) => () => {

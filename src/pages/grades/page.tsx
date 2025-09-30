@@ -23,6 +23,7 @@ import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useTranslation } from 'react-i18next';
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -39,6 +40,7 @@ export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const { t } = useTranslation();
 
     const {
         data: grades = [],
@@ -73,6 +75,8 @@ export function GradesPage() {
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
             isPullable={!isLoading}
+            pullingText={t("common.pullToRefresh")}
+            refreshingText={t("common.refreshing")}
         >
             <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -86,7 +90,7 @@ export function GradesPage() {
                     onCheckedChange={toggleCurrentYearFilter}
                 />
                 <Label htmlFor="onlyThisYear">
-                    Afficher uniquement cette année
+                    {t("gradesPage.onlyCurrentYear")}
                 </Label>
             </motion.div>
 
@@ -103,7 +107,7 @@ export function GradesPage() {
                 >
                     <Alert className="mb-4">
                         <Info className="h-4 w-4" />
-                        <AlertTitle>Aucune note pour l'instant</AlertTitle>
+                        <AlertTitle>{t("gradesPage.noGrades")}</AlertTitle>
                     </Alert>
                 </motion.div>
             ) : (
@@ -141,7 +145,7 @@ export function GradesPage() {
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
                     <DrawerHeader>
-                        <DrawerTitle>Détails de la note</DrawerTitle>
+                        <DrawerTitle>{t("gradesPage.details")}</DrawerTitle>
                     </DrawerHeader>
                     {selectedGrade && (
                         <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto mb-6">
@@ -156,7 +160,7 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4 ">
                                 <div>
-                                    <p className="text-sm font-medium">Note</p>
+                                    <p className="text-sm font-medium">{t("gradesPage.grade")}</p>
                                     <p className="text-2xl font-bold">
                                         {selectedGrade.grade}
                                     </p>
@@ -167,13 +171,13 @@ export function GradesPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Moyenne
+                                        {t("gradesPage.average")}
                                     </p>
                                     <p>{selectedGrade.average}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Médiane
+                                        {t("gradesPage.median")}
                                     </p>
                                     <p>{selectedGrade.median}</p>
                                 </div>
@@ -181,11 +185,11 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm font-medium">Min</p>
+                                    <p className="text-sm font-medium">{t("gradesPage.min")}</p>
                                     <p>{selectedGrade.min}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Max</p>
+                                    <p className="text-sm font-medium">{t("gradesPage.max")}</p>
                                     <p>{selectedGrade.max}</p>
                                 </div>
                             </div>
@@ -193,13 +197,13 @@ export function GradesPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Écart-type
+                                        {t("gradesPage.standardDeviation")}
                                     </p>
                                     <p>{selectedGrade.standardDeviation}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Coefficient
+                                        {t("gradesPage.coefficient")}
                                     </p>
                                     <p className="text-lg">
                                         {selectedGrade.coefficient}
@@ -208,7 +212,7 @@ export function GradesPage() {
                             </div>
 
                             <div>
-                                <p className="text-sm font-medium">Date</p>
+                                <p className="text-sm font-medium">{t("gradesPage.date")}</p>
                                 <p>
                                     {selectedGrade.date
                                         ? format(
@@ -228,7 +232,7 @@ export function GradesPage() {
                             {selectedGrade.comment && (
                                 <div>
                                     <p className="text-sm font-medium">
-                                        Commentaire
+                                        {t("gradesPage.comment")}
                                     </p>
                                     <p className="text-sm">
                                         {selectedGrade.comment}
