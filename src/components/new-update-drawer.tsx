@@ -18,12 +18,14 @@ import { fetchUpdates } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
 import { UpdatesEntry } from "@/types/data";
 import { getFromStorage, saveToStorage } from "@/lib/utils/storage";
+import { useTranslation } from "react-i18next";
 
 const LAST_SEEN_UPDATE_KEY = "lastSeenUpdate";
 
 export default function NewUpdateDrawer() {
     const [open, setOpen] = useState(false);
     const [update, setUpdate] = useState<UpdatesEntry | null>(null);
+    const { t } = useTranslation();
 
     const { data: updates } = useQuery({
         queryKey: ["updates"],
@@ -56,11 +58,10 @@ export default function NewUpdateDrawer() {
                 <div className="sticky top-0 z-10 bg-background/95 supports-backdrop-filter:bg-background/60 border-b">
                     <DrawerHeader className="px-6 pt-6 pb-3 items-center text-center">
                         <DrawerTitle className="flex items-center justify-center gap-2">
-                            Y'a du nouveau sur Mauria !
+                            {t("update.somethingNew")}
                         </DrawerTitle>
                         <p className="text-sm text-muted-foreground mb-3 text-center">
-                            Voici les améliorations apportées par la mise à jour{" "}
-                            {update?.version}
+                            {t("update.seeEnhancements")} {update?.version}
                             <br />
                             <br />
                             <Badge variant="secondary">{update?.date}</Badge>
@@ -71,7 +72,7 @@ export default function NewUpdateDrawer() {
                 <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 touch-pan-y [-webkit-overflow-scrolling:touch]">
                     <Alert className="mb-4">
                         <Eye className="h-4 w-4" />
-                        <AlertTitle>Améliorations visuelles</AlertTitle>
+                        <AlertTitle>{t("update.visualImprovements")}</AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5 space-y-1 text-sm mb-4">
                                 {formatUpdateContentList(
@@ -85,7 +86,7 @@ export default function NewUpdateDrawer() {
 
                     <Alert className="mb-4">
                         <CodeXml className="h-4 w-4" />
-                        <AlertTitle>Améliorations techniques</AlertTitle>
+                        <AlertTitle>{t("update.technicalImprovements")}</AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5 space-y-1 text-sm mb-4">
                                 {formatUpdateContentList(
@@ -100,7 +101,7 @@ export default function NewUpdateDrawer() {
 
                 <DrawerFooter className="px-6 pb-safe-offset-6 border-t">
                     <DrawerClose asChild>
-                        <Button>D'accord !</Button>
+                        <Button>{t("update.discardButton")}</Button>
                     </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>

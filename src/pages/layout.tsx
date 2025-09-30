@@ -5,6 +5,7 @@ import Sidebar from "@/components/sidebar";
 import { Particles } from "@/components/ui/shadcn-io/particles";
 import { memo } from "react";
 import { Outlet } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const BottomNav = memo(BottomNavigation);
 const ParticlesMemo = memo(Particles);
@@ -12,6 +13,7 @@ const SidebarMemo = memo(Sidebar);
 const PageTransitionMemo = memo(PageTransition);
 
 export default function RootLayout() {
+    const { t } = useTranslation();
     return (
         <div className="flex flex-col min-h-full bg-mauria-bg overflow-hidden relative">
             <ParticlesMemo
@@ -25,7 +27,7 @@ export default function RootLayout() {
             <NewUpdateDrawer />
             {/* Header */}
             <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple z-10">
-                <h1 className="text-2xl font-bold text-white">Mauria</h1>
+                <h1 className="text-2xl font-bold text-white">{t("welcome.mauria")}</h1>
                 {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />
                         </Button> */}

@@ -13,6 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { saveToStorage } from "@/lib/utils/storage";
+import { useTranslation } from "react-i18next";
 
 type WelcomeSection = {
     title: string;
@@ -59,6 +60,7 @@ const WELCOME_SECTIONS: WelcomeSection[] = [
 
 export function WelcomePage() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const { isLoading, isFetching } = useQuery({
         queryKey: ["planning"],
         queryFn: () => fetchPlanning().then((res) => res?.data || []),
@@ -112,11 +114,11 @@ export function WelcomePage() {
         <div className="min-h-screen bg-mauria-bg flex flex-col">
             <div className="px-6 pt-16 pb-6 text-center space-y-3">
                 <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.3em] text-primary">
-                    Mauria
+                    {t("welcome.mauria")}
                 </span>
-                <h1 className="text-3xl font-bold">Bienvenue sur Mauria !</h1>
+                <h1 className="text-3xl font-bold">{t("welcome.welcome")}</h1>
                 <p className="text-sm text-muted-foreground">
-                    Voici quelques repères utiles pour démarrer
+                    {t("welcome.getStarted")}
                 </p>
             </div>
             <div className="flex-1 px-6 pb-8 space-y-4">

@@ -188,6 +188,7 @@ const DatePickerComponent = ({
 }) => {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [open, setOpen] = useState(false);
+    const { t } = useTranslation();
 
     const handleDateChange = (selectedDate: Date | undefined) => {
         setDate(selectedDate);
@@ -198,7 +199,7 @@ const DatePickerComponent = ({
         <div className="flex gap-4">
             <div className="flex flex-col gap-3">
                 <Label htmlFor="date-picker" className="px-1">
-                    Date
+                    {t("agendaPage.date")}
                 </Label>
                 <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>

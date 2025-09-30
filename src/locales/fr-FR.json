@@ -1,10 +1,34 @@
 {
+  "login": {
+    "mauria": "Mauria",
+    "login": "Connexion",
+    "enterAurionCredentials": "Entrez vos identifiants Aurion pour accéder à l'app",
+    "email": "Email",
+    "password": "Mot de passe"
+  },
+  "welcome": {
+    "mauria": "Mauria",
+    "welcome": "Bienvenue sur Mauria !",
+    "getStarted": "Voici quelques repères utiles pour démarrer :"
+  },
   "common": {
+    "id": "ID",
     "loading": "Chargement…",
-    "error": "Une erreur est survenue",
+    "error": "Oups, une erreur est survenue",
+    "goBackHome": "Retour à l'accueil",
     "retry": "Réessayer",
     "pullToRefresh": "Tirez pour rafraîchir",
-    "refreshing": "Actualisation…"
+    "refreshing": "Actualisation…",
+    "loadingWeb": "Si vous êtes en version web, veuillez patienter.",
+    "more": "Plus",
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "morePages": "Plus de pages"
+  },
+  "carousel": {
+    "previousSlide": "Voir avant",
+    "nextSlide": "Voir après"
   },
   "sidebar": {
     "openMenu": "Ouvrir le menu",
@@ -48,7 +72,7 @@
     "agenda": "Agenda"
   },
   "homePage": {
-    "title": "Hello, {firstname} !",
+    "title": "Hello ",
     "nextClasses": "À venir",
     "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !",
     "loadingSchedule": "Données du planning en cours de chargement…"
@@ -62,13 +86,24 @@
   },
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
-    "onlyCurrentYear": "Afficher uniquement cette année"
+    "onlyCurrentYear": "Afficher uniquement cette année",
+    "details": "Détails de la note",
+    "grade": "Note",
+    "average": "Moyenne",
+    "median": "Médiane",
+    "min": "Min",
+    "max": "Max",
+    "standardDeviation": "Écart-type",
+    "coefficient": "Coefficient",
+    "date": "Date",
+    "comment": "Commentaire"
   },
   "absencesPage": {
     "noAbsences": "Aucune absence trouvée.",
     "onlyCurrentYear": "Afficher uniquement cette année",
     "justified": "Justifiées",
-    "unjustified": "Injustifiées"
+    "unjustified": "Injustifiées",
+    "total": "Total"
   },
   "agendaPage": {
     "title": "Mon agenda",
@@ -83,6 +118,28 @@
     "createTaskBtn": "Créer la tâche"
   },
   "associationsPage": {
-    "search": "Rechercher une association"
+    "search": "Rechercher une association",
+    "association": "association",
+    "find": "trouvée",
+    "contactUs": "Nous contacter",
+    "reinitialize": "Réinitialiser"
+  },
+  "drawerPlanningContent": {
+    "place": "Lieu",
+    "type": "Type",
+    "teacher": "Enseignant(e)",
+    "starting": "Début",
+    "ending": "Fin",
+    "duration": "Durée",
+    "technicalDetails": "Détails techniques",
+    "formerTitle": "Titre complet",
+    "allDay": "Toute la journée"
+  },
+  "update": {
+    "somethingNew": "Y'a du nouveau sur Mauria !",
+    "seeEnhancements": "Voici les améliorations apportées par la mise à jour",
+    "visualImprovements": "Améliorations visuelles",
+    "technicalImprovements": "Améliorations techniques",
+    "discardButton": "D'accord !"
   }
 }

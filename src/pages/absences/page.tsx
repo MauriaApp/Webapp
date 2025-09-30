@@ -95,7 +95,7 @@ export function AbsencesPage() {
                 <Card className="mb-6 border-mauria-border">
                     <CardHeader className=" flex-row items-center space-y-0 space-x-4">
                         <CardTitle className="text-sm font-medium text-muted-foreground">
-                            Total
+                            {t("absencesPage.total")}
                         </CardTitle>
                         <div className="text-4xl font-bold tracking-tight text-primary">
                             {total}

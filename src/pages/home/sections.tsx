@@ -143,16 +143,20 @@ export const EmptyState = () => {
 };
 
 // Welcome Header Component
-export const WelcomeHeader = ({ firstName }: { firstName: string }) => (
-    <motion.h2
-        className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-    >
-        Hello {firstName} !
-    </motion.h2>
-);
+export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
+    const { t } = useTranslation();
+
+    return (
+        <motion.h2
+            className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+        >
+            {t("homePage.title")} {firstName} !
+        </motion.h2>
+    );
+};
 
 // Important Message Component
 export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (

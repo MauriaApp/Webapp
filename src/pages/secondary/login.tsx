@@ -16,6 +16,7 @@ import { fetchUser, setSession } from "@/lib/api/aurion";
 import Meteors from "@/components/ui/shadcn-io/meteors";
 import { Eye, EyeOff } from "lucide-react";
 import { getFromStorage } from "@/lib/utils/storage";
+import { useTranslation } from "react-i18next";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -24,6 +25,7 @@ export function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -69,19 +71,19 @@ export function LoginPage() {
             </div>
             <div className="relative min-h-screen flex items-center justify-center px-3 py-safe">
                 <h1 className="absolute top-safe-offset-16 md:top-safe-offset-20 w-full text-center text-mauria-purple font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none">
-                    Mauria
+                    {t("login.mauria")}
                 </h1>
                 <Card className="w-full max-w-md">
                     <CardHeader>
-                        <CardTitle>Connexion</CardTitle>
+                        <CardTitle>{t("login.login")}</CardTitle>
                         <CardDescription>
-                            Entrez vos identifiants Aurion pour accéder à l'app
+                            {t("login.enterAurionCredentials")}
                         </CardDescription>
                     </CardHeader>
                     <form onSubmit={handleSubmit}>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">{t("login.email")}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -93,7 +95,7 @@ export function LoginPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password">Mot de passe</Label>
+                                <Label htmlFor="password">{t("login.password")}</Label>
                                 <div className="relative">
                                     <Input
                                         id="password"

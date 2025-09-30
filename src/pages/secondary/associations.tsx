@@ -69,8 +69,8 @@ export function AssociationsPage() {
 
             {/* Results count */}
             <div className="text-center text-muted-foreground">
-                {filteredAssociations.length} association
-                {filteredAssociations.length > 1 ? "s" : ""} trouvée
+                {filteredAssociations.length} {t("associationsPage.association")}
+                {filteredAssociations.length > 1 ? "s" : ""} {t("associationsPage.find")}
                 {filteredAssociations.length > 1 ? "s" : ""}
             </div>
 
@@ -143,7 +143,7 @@ export function AssociationsPage() {
                                                 rel="noopener noreferrer"
                                             >
                                                 <ExternalLink className="h-4 w-4 mr-2" />
-                                                Nous contacter !
+                                                {t("associationsPage.contactUs")}
                                             </a>
                                         </Button>
                                     </div>
@@ -166,7 +166,7 @@ export function AssociationsPage() {
                         }}
                         className="mt-4"
                     >
-                        Réinitialiser
+                        {t("associationsPage.reinitialize")}
                     </Button>
                 </div>
             )}
