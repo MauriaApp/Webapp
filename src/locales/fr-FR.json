@@ -75,8 +75,11 @@
     "title": "Hello ",
     "nextClasses": "À venir",
     "nextClassesEmptyState": "Rien à venir pour aujourd'hui ni demain, profite bien de ton repos et de ton temps libre !",
-    "loadingSchedule": "Données du planning en cours de chargement…"
-
+    "loadingSchedule": "Données du planning en cours de chargement…",
+    "current": "En ce moment",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "welcome": ", Bienvenue sur Mauria !"
   },
   "schedulePage": {
     "title": "Planning",

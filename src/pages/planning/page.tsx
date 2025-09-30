@@ -20,18 +20,22 @@ import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Calendar = memo(FullCalendar);
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [eventInfo, setEventInfo] = useState<PreparedLesson | null>(null);
     const [userEvents, setUserEvents] = useState<Lesson[]>(
         getUserEventsFromLocalStorage()
     );
+
+    i18n.on("languageChanged", () => {
+        calendarRef.current?.getApi().setOption("locale", i18n.language);
+    });
 
     const {
         data: lessons = [],
@@ -65,14 +69,19 @@ export function PlanningPage() {
     };
 
     return (
-        <PullToRefresh onRefresh={handleRefresh} isPullable={!isLoading} pullingText={t("common.pullToRefresh")} refreshingText={t("common.refreshing")}>
+        <PullToRefresh
+            onRefresh={handleRefresh}
+            isPullable={!isLoading}
+            pullingText={t("common.pullToRefresh")}
+            refreshingText={t("common.refreshing")}
+        >
             <motion.h2
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
             >
-                {t('schedulePage.title')}
+                {t("schedulePage.title")}
             </motion.h2>
 
             <motion.section
@@ -143,7 +152,7 @@ export function PlanningPage() {
                     onClick={handleExport}
                     disabled={lessons.length === 0 || isLoading || isFetching}
                 >
-                    {t('schedulePage.exportSchedule')}
+                    {t("schedulePage.exportSchedule")}
                 </Button>
             </motion.section>
             <DrawerPlanningContent

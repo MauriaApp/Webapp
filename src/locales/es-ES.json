@@ -75,7 +75,11 @@
     "title": "¡Hola",
     "nextClasses": "Próximas clases",
     "nextClassesEmptyState": "Nada por hoy ni mañana, ¡disfruta de tu descanso y tiempo libre!",
-    "loadingSchedule": "Cargando datos del horario…"
+    "loadingSchedule": "Cargando datos del horario…",
+    "current": "En este momento",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "welcome": ", ¡Bienvenido a Mauria!"
   },
   "schedulePage": {
     "title": "Horario",
