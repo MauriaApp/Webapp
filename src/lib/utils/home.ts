@@ -1,5 +1,6 @@
 import { Lesson } from "@/types/aurion";
 import { PreparedLesson, HomeUpcoming } from "@/types/home";
+import i18n from "@/i18n";
 import {
     addDays,
     format,
@@ -77,11 +78,13 @@ export const getHomeUpcoming = ({
 };
 
 export const formatLessonType = (lessonType: string) => {
-    switch (lessonType) {
+    switch (lessonType.toUpperCase()) {
         case "COURS_TD":
-            return "Cours";
+            return i18n.t("homePage.lessonTypes.COURS_TD");
         case "DS_SURV":
-            return "DS";
+            return i18n.t("homePage.lessonTypes.DS_SURV");
+        case "AUTO_GERE":
+            return i18n.t("homePage.lessonTypes.AUTO_GERE");
         default:
             return lessonType;
     }

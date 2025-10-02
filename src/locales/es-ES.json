@@ -79,6 +79,11 @@
     "current": "En este momento",
     "today": "Hoy",
     "tomorrow": "Mañana",
+    "lessonTypes": {
+      "COURS_TD": "Clase",
+      "DS_SURV": "Examen",
+      "AUTO_GERE": "Clase autogestionada"
+    },
     "welcome": ", ¡Bienvenido a Mauria!"
   },
   "schedulePage": {
@@ -131,6 +136,7 @@
   "drawerPlanningContent": {
     "place": "Lugar",
     "type": "Tipo",
+    "date": "Fecha",
     "teacher": "Profesor(a)",
     "starting": "Inicio",
     "ending": "Fin",
