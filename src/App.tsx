@@ -109,7 +109,7 @@ function App() {
 
     useEffect(() => {
         // Écouter la réponse d'Ionic pour récupérer une donnée
-        const handleMessage = (event: MessageEvent) => {
+        const handleMessage = async (event: MessageEvent) => {
             const { type, key, payload } = event.data;
             if (type === "DATA_RESPONSE" && key) {
                 console.log(`Donnée reçue pour ${key}: `, payload);
@@ -118,7 +118,15 @@ function App() {
             if (type === "ALL_DATA_RESPONSE" && payload) {
                 console.log("Toutes les données reçues: ", payload);
                 for (const [k, v] of Object.entries(payload)) {
-                    overrideStorage({ [k]: v } as Record<string, string>);
+                    await new Promise<void>((resolve) => {
+                        setTimeout(() => {
+                            overrideStorage({ [k]: v } as Record<
+                                string,
+                                string
+                            >);
+                            resolve();
+                        }, 0);
+                    });
                 }
                 setIsLoading(false);
             }
