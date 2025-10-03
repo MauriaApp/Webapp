@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger,
 } from "@/components/ui/sheet";
@@ -73,11 +72,11 @@ export default function Sidebar() {
           <SheetTitle>{t("sidebar.title")}</SheetTitle>
 
           <div className="mt-4 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 [&_svg]:size-7!">
                 {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                 <div className="flex flex-col">
-                  <Label htmlFor="theme-toggle" className="cursor-pointer">
+                  <Label className="cursor-default">
                     {t("sidebar.themeParameter.title")}
                   </Label>
                   <span className="text-xs text-muted-foreground text-left">
@@ -87,11 +86,27 @@ export default function Sidebar() {
                   </span>
                 </div>
               </div>
-              <Switch
-                id="theme-toggle"
-                checked={isDark}
-                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-              />
+              <ToggleGroup
+                size="sm"
+                type="single"
+                value={theme}
+                onValueChange={(value) => value && setTheme(value as typeof theme)}
+                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
+                aria-label={t("sidebar.themeParameter.title") ?? "Choose theme"}
+              >
+                <ToggleGroupItem
+                  value="light"
+                  className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                >
+                  {t("sidebar.themeParameter.light")}
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="dark"
+                  className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                >
+                  {t("sidebar.themeParameter.dark")}
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
 
             <div className="flex items-center justify-between gap-4">
