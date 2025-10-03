@@ -94,8 +94,8 @@ export default function Sidebar() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 [&_svg]:size-7!">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
                 <ImageUpscale className="h-5 w-5" />
                 <div className="flex flex-col">
                   <Label className="cursor-default">
@@ -115,32 +115,32 @@ export default function Sidebar() {
                 type="single"
                 value={size}
                 onValueChange={(v) => v && setSize(v as SizeOption)}
-                className="inline-flex gap-0 rounded-md border border-border/50 overflow-hidden"
+                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
                 aria-label={t("sidebar.sizeParameter.aria") ?? "Choose size"}
               >
                 <ToggleGroupItem
                   value="petit"
-                  className="rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.sizeParameter.small")}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="moyen"
-                  className="rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.sizeParameter.medium")}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="grand"
-                  className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.sizeParameter.large")}
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 [&_svg]:size-7!">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
                 <Languages className="h-5 w-5" />
                 <div className="flex flex-col">
                   <Label className="cursor-default">
@@ -158,24 +158,24 @@ export default function Sidebar() {
                 type="single"
                 value={locale}
                 onValueChange={(v) => v && setLocale(v as LocaleOption)}
-                className="inline-flex gap-0 rounded-md border border-border/50 overflow-hidden"
+                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
                 aria-label="Choose language"
               >
                 <ToggleGroupItem
                   value="fr-FR"
-                  className="rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.languageParameter.fr-FR")}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="en-US"
-                  className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.languageParameter.en-US")}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="es-ES"
-                  className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                  className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.languageParameter.es-ES")}
                 </ToggleGroupItem>
