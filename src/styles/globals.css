@@ -66,6 +66,90 @@
         --mauria-purple: 262 38% 19%;
         --mauria-text: 220 26% 18%;
 
+        --mauria-white: 0 0% 100%;
+        --mauria-black: 0 0% 0%;
+        --mauria-accent-dark: 13 45% 48%;
+        --mauria-purple-soft: 268 33% 25%;
+        --mauria-purple-bright: 258 34% 36%;
+        --mauria-purple-light: 257 32% 48%;
+        --mauria-green: 123 39% 49%;
+        --mauria-green-dark: 123 46% 34%;
+        --mauria-green-soft: 123 38% 64%;
+        --mauria-planning-slot-border: 18 8% 66% / 0.27;
+        --mauria-planning-today: 16 70% 80% / 0.25;
+        --mauria-particles: 14 84% 60%;
+        --mauria-meteor-glow: 0 0% 100% / 0.06;
+        --mauria-chart-line: 210 16% 84%;
+
+        --planning-button-text: hsl(var(--mauria-purple));
+        --planning-button-background: hsl(var(--mauria-card));
+        --planning-button-shadow: 0 12px 32px hsl(var(--mauria-purple) / 0.2);
+        --planning-button-active-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-button-active-shadow: 0 12px 24px hsl(
+            var(--mauria-accent) / 0.24
+        );
+        --planning-button-active-text: hsl(var(--mauria-white));
+
+        --planning-grid-background: hsl(var(--mauria-card));
+        --planning-slot-border-color: hsl(var(--mauria-planning-slot-border));
+        --planning-today-background: hsl(var(--mauria-planning-today));
+
+        --planning-event-default-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-purple)),
+            hsl(var(--mauria-purple-soft))
+        );
+        --planning-event-default-shadow: 0 16px 32px hsl(
+            var(--mauria-purple) / 0.24
+        );
+        --planning-event-default-text: hsl(var(--mauria-white));
+        --planning-event-default-solid: hsl(var(--mauria-purple-soft));
+
+        --planning-event-epreuve-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-event-epreuve-shadow: 0 16px 32px hsl(
+            var(--mauria-accent) / 0.24
+        );
+        --planning-event-epreuve-text: hsl(var(--mauria-white));
+
+        --planning-event-personal-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-personal-shadow: 0 16px 32px hsl(
+            var(--mauria-green) / 0.24
+        );
+        --planning-event-personal-text: hsl(var(--mauria-white));
+
+        --planning-event-autogere-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-autogere-shadow: 0 16px 32px hsl(
+            var(--mauria-green) / 0.24
+        );
+        --planning-event-autogere-text: hsl(var(--mauria-white));
+
+        --particles-color: hsl(var(--mauria-particles));
+        --meteors-trail-glow: hsl(var(--mauria-meteor-glow));
+        --chart-grid-stroke: hsl(var(--mauria-chart-line));
+        --chart-dot-stroke: transparent;
+        --bubble-color-first: 119, 60, 221;
+        --bubble-color-second: 165, 92, 214;
+        --bubble-color-third: 75, 36, 143;
+        --bubble-color-fourth: 242, 129, 54;
+        --bubble-color-fifth: 252, 194, 156;
+        --bubble-color-sixth: 135, 90, 242;
+
         font-size: calc(16px * var(--mauria-scale));
     }
 
@@ -105,6 +189,40 @@
         --mauria-border: 261 32% 25%;
         --mauria-purple: 262 38% 30%;
         --mauria-text: 220 14% 96%;
+
+        --mauria-white: 0 0% 100%;
+        --mauria-black: 0 0% 0%;
+        --mauria-accent-dark: 13 45% 48%;
+        --mauria-purple-soft: 257 32% 35%;
+        --mauria-purple-bright: 258 34% 45%;
+        --mauria-purple-light: 256 32% 55%;
+        --mauria-green: 123 45% 45%;
+        --mauria-green-dark: 123 46% 34%;
+        --mauria-green-soft: 123 38% 58%;
+        --mauria-planning-slot-border: 264 19% 38% / 0.35;
+        --mauria-planning-today: 16 70% 80% / 0.18;
+        --mauria-particles: 14 84% 60%;
+        --mauria-meteor-glow: 0 0% 100% / 0.12;
+        --mauria-chart-line: 262 20% 40%;
+
+        --planning-button-text: hsl(var(--mauria-white));
+        --planning-grid-background: hsl(var(--mauria-white) / 0.08);
+
+        --planning-event-default-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-purple-bright)),
+            hsl(var(--mauria-purple-light))
+        );
+        --planning-event-default-shadow: 0 16px 32px hsl(
+            var(--mauria-black) / 0.24
+        );
+        --planning-event-default-solid: hsl(var(--mauria-purple-bright));
+
+        --planning-event-autogere-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green-soft)),
+            hsl(var(--mauria-green))
+        );
     }
     .theme {
         --animate-meteor-effect: meteor 5s linear infinite;
@@ -165,6 +283,22 @@
     --color-mauria-border: hsl(var(--mauria-border));
     --color-mauria-purple: hsl(var(--mauria-purple));
     --color-mauria-text: hsl(var(--mauria-text));
+    --color-mauria-white: hsl(var(--mauria-white));
+    --color-mauria-black: hsl(var(--mauria-black));
+    --color-mauria-accent-dark: hsl(var(--mauria-accent-dark));
+    --color-mauria-purple-soft: hsl(var(--mauria-purple-soft));
+    --color-mauria-purple-bright: hsl(var(--mauria-purple-bright));
+    --color-mauria-purple-light: hsl(var(--mauria-purple-light));
+    --color-mauria-green: hsl(var(--mauria-green));
+    --color-mauria-green-dark: hsl(var(--mauria-green-dark));
+    --color-mauria-green-soft: hsl(var(--mauria-green-soft));
+    --color-mauria-planning-slot-border: hsl(
+        var(--mauria-planning-slot-border)
+    );
+    --color-mauria-planning-today: hsl(var(--mauria-planning-today));
+    --color-mauria-particles: hsl(var(--mauria-particles));
+    --color-mauria-meteor-glow: hsl(var(--mauria-meteor-glow));
+    --color-mauria-chart-line: hsl(var(--mauria-chart-line));
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);

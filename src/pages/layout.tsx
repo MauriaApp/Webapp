@@ -19,7 +19,7 @@ export default function RootLayout() {
             <ParticlesMemo
                 className="absolute inset-0 opacity-50 z-0"
                 staticity={10}
-                color="#ef6b41"
+                color="var(--particles-color)"
                 quantity={100}
                 ease={70}
                 size={1.5}

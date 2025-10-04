@@ -52,7 +52,7 @@ const ChartContainer = React.forwardRef<
                 data-chart={chartId}
                 ref={ref}
                 className={cn(
-                    "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden",
+                    "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden",
                     className
                 )}
                 {...props}
@@ -72,16 +72,24 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
         ([, config]) => config.theme || config.color
     );
 
-    if (!colorConfig.length) {
-        return null;
-    }
-
     return (
         <style
             dangerouslySetInnerHTML={{
-                __html: Object.entries(THEMES)
-                    .map(
-                        ([theme, prefix]) => `
+                __html: `
+[data-chart=${id}] .recharts-cartesian-grid line,
+[data-chart=${id}] .recharts-polar-grid line,
+[data-chart=${id}] .recharts-reference-line line {
+    stroke: var(--chart-grid-stroke);
+}
+[data-chart=${id}] .recharts-dot[stroke],
+[data-chart=${id}] .recharts-sector[stroke] {
+    stroke: var(--chart-dot-stroke);
+}
+${
+    colorConfig.length
+        ? Object.entries(THEMES)
+              .map(
+                  ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
     .map(([key, itemConfig]) => {
@@ -93,8 +101,11 @@ ${colorConfig
     .join("\n")}
 }
 `
-                    )
-                    .join("\n"),
+              )
+              .join("\n")
+        : ""
+}
+`,
             }}
         />
     );
