@@ -91,7 +91,12 @@
     "title": "Schedule",
     "lastUpdate": "Last updated:",
     "exportSchedule": "Export schedule",
-    "loadingSchedule": "Loading schedule data…"
+    "loadingSchedule": "Loading schedule data…",
+    "buttons": {
+      "today": "Today",
+      "week": "Week",
+      "day": "Day"
+    }
   },
   "gradesPage": {
     "noGrades": "No grades available for now.",

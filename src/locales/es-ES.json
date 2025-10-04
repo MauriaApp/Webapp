@@ -91,7 +91,12 @@
     "title": "Horario",
     "lastUpdate": "Última actualización:",
     "exportSchedule": "Exportar el horario",
-    "loadingSchedule": "Cargando datos del horario…"
+    "loadingSchedule": "Cargando datos del horario…",
+    "buttons": {
+      "today": "Hoy",
+      "week": "Semana",
+      "day": "Día"
+    }
   },
   "gradesPage": {
     "noGrades": "Todavía no hay notas.",
