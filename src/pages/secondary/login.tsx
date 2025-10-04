@@ -1,5 +1,5 @@
 // pages/secondary/login.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +14,15 @@ import {
 } from "@/components/ui/card";
 import { fetchUser, setSession } from "@/lib/api/aurion";
 import Meteors from "@/components/ui/shadcn-io/meteors";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Languages } from "lucide-react";
 import { getFromStorage } from "@/lib/utils/storage";
 import { useTranslation } from "react-i18next";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+    applyLocale,
+    readInitialLocale,
+    type LocaleOption,
+} from "@/lib/utils/translations";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -25,7 +31,12 @@ export function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
     const { t } = useTranslation();
+
+    useEffect(() => {
+        applyLocale(locale);
+    }, [locale]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -144,6 +155,39 @@ export function LoginPage() {
                         </CardFooter>
                     </form>
                 </Card>
+                <div className="absolute bottom-safe-offset-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Languages className="h-4 w-4" />
+                        <span>{t("sidebar.languageParameter.title")}</span>
+                    </div>
+                    <ToggleGroup
+                        size="sm"
+                        type="single"
+                        value={locale}
+                        onValueChange={(value) => value && setLocale(value as LocaleOption)}
+                        className="inline-flex gap-0 rounded-md border border-border/50 overflow-hidden"
+                        aria-label={t("sidebar.languageParameter.aria") ?? "Choose language"}
+                    >
+                        <ToggleGroupItem
+                            value="fr-FR"
+                            className="rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                        >
+                            {t("sidebar.languageParameter.fr-FR")}
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                            value="en-US"
+                            className="rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                        >
+                            {t("sidebar.languageParameter.en-US")}
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                            value="es-ES"
+                            className="rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                        >
+                            {t("sidebar.languageParameter.es-ES")}
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </div>
             </div>
         </>
     );
