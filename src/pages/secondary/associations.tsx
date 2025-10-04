@@ -18,6 +18,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { useTranslation } from "react-i18next";
 
+const formLink = "https://forms.office.com/e/Kpx2fP8Gh1";
+
 function AssociationImage({
     src,
     alt,
@@ -107,6 +109,15 @@ export function AssociationsPage() {
                     {t("associationsPage.associationsCount", {
                         count: filteredAssociations.length,
                     })}
+                    {" -"}
+                    <Button
+                        variant="link"
+                        size="sm"
+                        className="ml-2 p-0 align-baseline italic"
+                        onClick={() => window.open(formLink, "_blank")}
+                    >
+                        {t("associationsPage.formLink")}
+                    </Button>
                 </div>
             </div>
             {/* Associations Grid */}

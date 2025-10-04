@@ -131,7 +131,8 @@
     "associationsCount_one": "{{count}} association found",
     "associationsCount_other": "{{count}} associations found",
     "contactUs": "Contact us",
-    "reinitialize": "Reinitialize"
+    "reinitialize": "Reinitialize",
+    "formLink": "Need to make a change?"
   },
   "drawerPlanningContent": {
     "place": "Place",
