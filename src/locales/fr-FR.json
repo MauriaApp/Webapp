@@ -90,7 +90,12 @@
     "title": "Planning",
     "lastUpdate": "Dernière mise à jour :",
     "exportSchedule": "Exporter le planning",
-    "loadingSchedule": "Données du planning en cours de chargement…"
+    "loadingSchedule": "Données du planning en cours de chargement…",
+    "buttons": {
+      "today": "Aujourd'hui",
+      "week": "Semaine",
+      "day": "Jour"
+    }
   },
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
