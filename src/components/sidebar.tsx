@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
-  Moon, Sun, Menu, HeartHandshake, BadgeX, ThumbsDown, Book, Printer,
+  Moon, Sun, MoonStar, Menu, HeartHandshake, BadgeX, ThumbsDown, Book, Printer,
   MailQuestionMark, ImageUpscale, ArrowDownRightFromSquare, Languages,
 } from "lucide-react";
 
@@ -30,7 +30,15 @@ export default function Sidebar() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+
+  const themeDisplay = {
+    light: { Icon: Sun, label: t("sidebar.themeParameter.light") },
+    dark: { Icon: Moon, label: t("sidebar.themeParameter.dark") },
+    oled: { Icon: MoonStar, label: t("sidebar.themeParameter.oled") },
+  } as const;
+
+  const { Icon: ThemeIcon, label: themeLabel } =
+    themeDisplay[theme] ?? themeDisplay.light;
 
   const [size, setSize] = useState<SizeOption>(readInitialSize);
   const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
@@ -66,7 +74,7 @@ export default function Sidebar() {
 
       <SheetContent
         side="right"
-        className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between border-none"
+        className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between border-none oled:bg-black"
       >
         <SheetHeader>
           <SheetTitle>{t("sidebar.title")}</SheetTitle>
@@ -74,15 +82,13 @@ export default function Sidebar() {
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 [&_svg]:size-7!">
-                {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                <ThemeIcon className="h-5 w-5" />
                 <div className="flex flex-col">
                   <Label className="cursor-default">
                     {t("sidebar.themeParameter.title")}
                   </Label>
                   <span className="text-xs text-muted-foreground text-left">
-                    {isDark
-                      ? t("sidebar.themeParameter.dark")
-                      : t("sidebar.themeParameter.light")}
+                    {themeLabel}
                   </span>
                 </div>
               </div>
@@ -102,9 +108,15 @@ export default function Sidebar() {
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="dark"
-                  className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                  className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
                 >
                   {t("sidebar.themeParameter.dark")}
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="oled"
+                  className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                >
+                  {t("sidebar.themeParameter.oled")}
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
@@ -275,12 +287,12 @@ export default function Sidebar() {
             <Button
               variant="ghost"
               size="sm"
-              className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7 text-red-500"
+              className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7 text-red-500 oled:text-gray-200"
               onClick={signOut}
             >
               <BadgeX className="h-5 w-5" />
               {t("sidebar.logOut")}
-              <div className="justify-end flex-1 flex text-red-500 transition-colors group-hover:text-accent-foreground">
+              <div className="justify-end flex-1 flex text-red-500 oled:text-gray-300 transition-colors group-hover:text-accent-foreground oled:group-hover:text-gray-100">
                 <ArrowDownRightFromSquare className="size-4!" />
               </div>
             </Button>

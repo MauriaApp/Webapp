@@ -67,12 +67,12 @@ export function AgendaPage() {
                                             <Button
                                                 variant="secondary"
                                                 size="icon"
-                                                className="bg-green-100 hover:bg-green-200 focus:ring-green-300"
+                                                className="bg-green-100 hover:bg-green-200 focus:ring-green-300 oled:bg-neutral-900 oled:hover:bg-neutral-800 oled:focus:ring-neutral-700"
                                                 onClick={() =>
                                                     handleTaskComplete(task.id)
                                                 }
                                             >
-                                                <Check className="w-5 h-5 text-green-500" />
+                                                <Check className="w-5 h-5 text-green-500 oled:text-gray-200" />
                                             </Button>
                                         </div>
                                     </div>

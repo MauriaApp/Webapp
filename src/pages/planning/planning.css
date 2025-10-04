@@ -77,31 +77,31 @@
     box-shadow: var(--planning-event-autogere-shadow) !important;
 }
 
-.dark .fc-timegrid {
+.fc-timegrid {
     background-color: var(--planning-grid-background) !important;
 }
 
-.dark .fc-timegrid-event:not(.est-epreuve),
-.dark .fc-timegrid-more-link:not(.est-epreuve) {
+.fc-timegrid-event:not(.est-epreuve),
+.fc-timegrid-more-link:not(.est-epreuve) {
     background: var(--planning-event-default-gradient) !important;
     box-shadow: var(--planning-event-default-shadow) !important;
     color: var(--planning-event-default-text) !important;
 }
 
-.dark .fc-timegrid-event.TD_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-more-link.TD_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-event.TP_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-more-link.TP_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-event.CM_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-more-link.CM_AUTO_GERE_PLANIFIE,
-.dark .fc-timegrid-event.PROJET_AUTO_GERE,
-.dark .fc-timegrid-more-link.PROJET_AUTO_GERE {
+.fc-timegrid-event.TD_AUTO_GERE_PLANIFIE,
+.fc-timegrid-more-link.TD_AUTO_GERE_PLANIFIE,
+.fc-timegrid-event.TP_AUTO_GERE_PLANIFIE,
+.fc-timegrid-more-link.TP_AUTO_GERE_PLANIFIE,
+.fc-timegrid-event.CM_AUTO_GERE_PLANIFIE,
+.fc-timegrid-more-link.CM_AUTO_GERE_PLANIFIE,
+.fc-timegrid-event.PROJET_AUTO_GERE,
+.fc-timegrid-more-link.PROJET_AUTO_GERE {
     color: var(--planning-event-autogere-text) !important;
     background: var(--planning-event-autogere-gradient) !important;
     box-shadow: var(--planning-event-autogere-shadow) !important;
 }
 
-.dark .fc-timegrid-event.est-perso {
+.fc-timegrid-event.est-perso {
     color: var(--planning-event-personal-text) !important;
     background: var(--planning-event-personal-gradient) !important;
     box-shadow: var(--planning-event-personal-shadow) !important;
