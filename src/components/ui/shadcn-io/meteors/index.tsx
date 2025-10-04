@@ -58,7 +58,7 @@ export const Meteors: React.FC<MeteorsProps> = ({
                     key={idx}
                     style={style}
                     className={cn(
-                        "pointer-events-none absolute size-0.5 rotate-(--angle) animate-meteor rounded-full bg-mauria-accent shadow-[0_0_0_1px_#ffffff10]",
+                        "pointer-events-none absolute size-0.5 rotate-(--angle) animate-meteor rounded-full bg-mauria-accent shadow-[0_0_0_1px_var(--meteors-trail-glow)]",
                         className
                     )}
                 >

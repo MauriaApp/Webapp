@@ -19,14 +19,14 @@ export default function RootLayout() {
             <ParticlesMemo
                 className="absolute inset-0 opacity-50 z-0"
                 staticity={10}
-                color="#ef6b41"
+                color="var(--particles-color)"
                 quantity={100}
                 ease={70}
                 size={1.5}
             />
             <NewUpdateDrawer />
             {/* Header */}
-            <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple z-10">
+            <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple oled:bg-black z-10">
                 <h1 className="text-2xl font-bold text-white">{t("welcome.mauria")}</h1>
                 {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />

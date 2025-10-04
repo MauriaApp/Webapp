@@ -32,7 +32,7 @@ export function DrawerPlanningContent({
             <DrawerContent aria-describedby={undefined}>
                 {eventInfo && (
                     <div className="p-6">
-                        <DrawerTitle className="text-2xl font-bold mb-6 text-mauria-purple dark:text-white flex items-center gap-2">
+                        <DrawerTitle className="text-2xl font-bold mb-6 text-mauria-purple dark:text-white oled:text-gray-100 flex items-center gap-2">
                             <BookOpen className="w-6 h-6" />
                             {eventInfo.courseTitle}
                         </DrawerTitle>
@@ -40,7 +40,7 @@ export function DrawerPlanningContent({
                         <div className="mb-4 space-y-2">
                             {eventInfo.location && (
                                 <div className="flex items-center gap-3 px-3 py-1">
-                                    <MapPin className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
+                                    <MapPin className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300 oled:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
                                             {t("drawerPlanningContent.place")}
@@ -53,7 +53,7 @@ export function DrawerPlanningContent({
                             )}
                             {eventInfo.type && (
                                 <div className="flex items-center gap-3 px-3 py-1">
-                                    <Tag className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
+                                    <Tag className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300 oled:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
                                             {t("drawerPlanningContent.type")}
@@ -66,7 +66,7 @@ export function DrawerPlanningContent({
                             )}
                             {eventInfo.teacher && (
                                 <div className="flex items-center gap-3 px-3 py-1">
-                                    <User className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300" />
+                                    <User className="w-5 h-5 shrink-0 text-mauria-purple dark:text-gray-300 oled:text-gray-300" />
                                     <div>
                                         <span className="font-semibold text-muted-foreground text-sm">
                                             {t("drawerPlanningContent.teacher")}
@@ -85,7 +85,7 @@ export function DrawerPlanningContent({
 
                         <div className="p-4 rounded-lg grid w-full grid-cols-2 gap-2 min-w-0">
                             <div className="flex items-center gap-2 min-w-0">
-                                <CalendarDays className="w-4 h-4 shrink-0 text-mauria-purple dark:text-gray-300" />
+                                <CalendarDays className="w-4 h-4 shrink-0 text-mauria-purple dark:text-gray-300 oled:text-gray-300" />
                                 <div className="min-w-0">
                                     <span className="font-semibold text-muted-foreground text-xs">
                                         {t("drawerPlanningContent.date")}
@@ -139,7 +139,7 @@ export function DrawerPlanningContent({
                             </div>
 
                             <div className="flex items-center gap-2 min-w-0">
-                                <Clock className="w-4 h-4 shrink-0 text-green-600 dark:text-green-400" />
+                                <Clock className="w-4 h-4 shrink-0 text-green-600 dark:text-green-400 oled:text-gray-300" />
                                 <div className="min-w-0">
                                     <span className="font-semibold text-muted-foreground text-xs">
                                         {t("drawerPlanningContent.starting")}
@@ -155,7 +155,7 @@ export function DrawerPlanningContent({
                             </div>
 
                             <div className="flex items-center gap-2 min-w-0">
-                                <Clock className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400" />
+                                <Clock className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400 oled:text-gray-300" />
                                 <div className="min-w-0">
                                     <span className="font-semibold text-muted-foreground text-xs">
                                         {t("drawerPlanningContent.ending")}
@@ -172,9 +172,9 @@ export function DrawerPlanningContent({
                         </div>
 
                         <details className="mt-6">
-                            <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 flex items-center gap-2 hover:text-mauria-purple/80 transition-colors">
+                            <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 oled:text-gray-200 flex items-center gap-2 hover:text-mauria-purple/80 oled:hover:text-gray-200 transition-colors">
                                 <Info className="w-4 h-4" />
-                                    {t("drawerPlanningContent.technicalDetails")}
+                                {t("drawerPlanningContent.technicalDetails")}
                                 <ChevronDownIcon className="w-4 h-4 ml-auto" />
                             </summary>
                             <div className="mt-3 space-y-2 p-3 rounded-lg">

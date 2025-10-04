@@ -36,7 +36,8 @@
     "themeParameter": {
       "title": "Tema",
       "dark": "Oscuro",
-      "light": "Claro"
+      "light": "Claro",
+      "oled": "OLED"
     },
     "sizeParameter": {
       "title": "Tamaño",

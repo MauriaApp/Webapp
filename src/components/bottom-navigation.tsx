@@ -58,7 +58,7 @@ export default function BottomNavigation() {
     const active = getActive();
 
     return (
-        <div className="fixed z-20 bottom-0 left-0 right-0 bg-mauria-bg dark:bg-mauria-purple flex w-full justify-between pb-safe pt-0 border-t border-mauria-border">
+        <div className="fixed z-20 bottom-0 left-0 right-0 bg-mauria-bg dark:bg-mauria-purple oled:bg-black flex w-full justify-between pb-safe pt-0 border-t border-mauria-border oled:border-neutral-900">
             {items.map((item) => {
                 const isActive = active === item.id;
 
@@ -69,8 +69,8 @@ export default function BottomNavigation() {
                         className={cn(
                             "group flex h-auto flex-1 flex-col items-center gap-1 rounded-full px-4 pb-2 pt-2 text-[0.7rem] font-medium transition-colors hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:size-7 min-w-0",
                             isActive
-                                ? "text-mauria-purple dark:text-white"
-                                : "text-gray-400 dark:text-gray-500 group-hover:text-mauria-purple dark:group-hover:text-white"
+                                ? "text-mauria-purple dark:text-white oled:text-gray-100"
+                                : "text-gray-400 dark:text-gray-500 oled:text-gray-500 group-hover:text-mauria-purple dark:group-hover:text-white oled:group-hover:text-gray-200"
                         )}
                         onClick={() => navigate(item.path)}
                         aria-current={isActive ? "page" : undefined}
@@ -80,8 +80,8 @@ export default function BottomNavigation() {
                                 className={cn(
                                     "absolute inset-0 rounded-full transition-colors duration-200",
                                     isActive
-                                        ? "bg-mauria-purple/10 dark:bg-white/10"
-                                        : "bg-transparent group-hover:bg-mauria-purple/10 dark:group-hover:bg-white/10"
+                                        ? "bg-mauria-purple/10 dark:bg-white/10 oled:bg-white/10"
+                                        : "bg-transparent group-hover:bg-mauria-purple/10 dark:group-hover:bg-white/10 oled:group-hover:bg-white/10"
                                 )}
                             />
                             <item.icon className="relative z-10" />

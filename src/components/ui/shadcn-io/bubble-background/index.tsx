@@ -12,14 +12,12 @@ import { cn } from "@/lib/utils/cn";
 type BubbleBackgroundProps = React.ComponentProps<"div"> & {
     interactive?: boolean;
     transition?: SpringOptions;
-    colors?: {
-        first: string;
-        second: string;
-        third: string;
-        fourth: string;
-        fifth: string;
-        sixth: string;
-    };
+    colors?: Partial<
+        Record<
+            "first" | "second" | "third" | "fourth" | "fifth" | "sixth",
+            string
+        >
+    >;
 };
 
 const BubbleBackground = React.forwardRef<
@@ -32,14 +30,7 @@ const BubbleBackground = React.forwardRef<
             children,
             interactive = false,
             transition = { stiffness: 100, damping: 20 },
-            colors = {
-                first: "119,60,221", // violet lumineux
-                second: "165,92,214", // violet-magenta
-                third: "75,36,143", // violet profond
-                fourth: "242,129,54", // orange accent (≈ hsl(24,88%,58%))
-                fifth: "252,194,156", // orange pâle (glow doux)
-                sixth: "135,90,242", // indigo-violet interactif
-            },
+            colors,
             ...props
         },
         ref
@@ -68,6 +59,37 @@ const BubbleBackground = React.forwardRef<
             return () => el.removeEventListener("mousemove", onMove);
         }, [interactive, mouseX, mouseY]);
 
+        const { style, ...restProps } = props;
+
+        const colorOverrides = React.useMemo(() => {
+            if (!colors) {
+                return undefined;
+            }
+
+            const entries: Record<string, string> = {};
+            if (colors.first)
+                entries["--bubble-color-first"] = colors.first;
+            if (colors.second)
+                entries["--bubble-color-second"] = colors.second;
+            if (colors.third)
+                entries["--bubble-color-third"] = colors.third;
+            if (colors.fourth)
+                entries["--bubble-color-fourth"] = colors.fourth;
+            if (colors.fifth)
+                entries["--bubble-color-fifth"] = colors.fifth;
+            if (colors.sixth)
+                entries["--bubble-color-sixth"] = colors.sixth;
+
+            return entries as React.CSSProperties;
+        }, [colors]);
+
+        const mergedStyle = React.useMemo(() => {
+            if (!colorOverrides && !style) {
+                return undefined;
+            }
+            return { ...colorOverrides, ...style } as React.CSSProperties;
+        }, [colorOverrides, style]);
+
         return (
             <div
                 ref={containerRef}
@@ -75,23 +97,13 @@ const BubbleBackground = React.forwardRef<
                 aria-hidden
                 className={cn(
                     // Plein écran, derrière tout
-                    "fixed inset-0 -z-10 overflow-hidden bg-mauria-purple",
+                    "fixed inset-0 -z-10 overflow-hidden bg-mauria-purple oled:bg-black",
                     interactive ? "pointer-events-auto" : "pointer-events-none",
                     className
                 )}
-                {...props}
+                style={mergedStyle}
+                {...restProps}
             >
-                <style>{`
-          :root{
-            --first-color:${colors.first};
-            --second-color:${colors.second};
-            --third-color:${colors.third};
-            --fourth-color:${colors.fourth};
-            --fifth-color:${colors.fifth};
-            --sixth-color:${colors.sixth};
-          }
-        `}</style>
-
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="absolute top-0 left-0 w-0 h-0"
@@ -119,7 +131,7 @@ const BubbleBackground = React.forwardRef<
                     style={{ filter: "url(#goo) blur(40px)" }}
                 >
                     <motion.div
-                        className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--first-color),0.8)_0%,rgba(var(--first-color),0)_50%)]"
+                        className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-first),0.8)_0%,rgba(var(--bubble-color-first),0)_50%)]"
                         animate={{ y: [-50, 50, -50] }}
                         transition={{
                             duration: 30,
@@ -136,7 +148,7 @@ const BubbleBackground = React.forwardRef<
                             repeat: Infinity,
                         }}
                     >
-                        <div className="rounded-full size-[80%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--second-color),0.8)_0%,rgba(var(--second-color),0)_50%)]" />
+                        <div className="rounded-full size-[80%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-second),0.8)_0%,rgba(var(--bubble-color-second),0)_50%)]" />
                     </motion.div>
                     <motion.div
                         className="absolute inset-0 flex justify-center items-center origin-[calc(50%+400px)]"
@@ -147,10 +159,10 @@ const BubbleBackground = React.forwardRef<
                             repeat: Infinity,
                         }}
                     >
-                        <div className="absolute rounded-full size-[80%] bg-[radial-gradient(circle_at_center,rgba(var(--third-color),0.8)_0%,rgba(var(--third-color),0)_50%)] mix-blend-hard-light top-[calc(50%+200px)] left-[calc(50%-500px)]" />
+                        <div className="absolute rounded-full size-[80%] bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-third),0.8)_0%,rgba(var(--bubble-color-third),0)_50%)] mix-blend-hard-light top-[calc(50%+200px)] left-[calc(50%-500px)]" />
                     </motion.div>
                     <motion.div
-                        className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--fourth-color),0.8)_0%,rgba(var(--fourth-color),0)_50%)] opacity-70"
+                        className="absolute rounded-full size-[80%] top-[10%] left-[10%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-fourth),0.8)_0%,rgba(var(--bubble-color-fourth),0)_50%)] opacity-70"
                         animate={{ x: [-50, 50, -50] }}
                         transition={{
                             duration: 40,
@@ -167,12 +179,12 @@ const BubbleBackground = React.forwardRef<
                             repeat: Infinity,
                         }}
                     >
-                        <div className="absolute rounded-full size-[160%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--fifth-color),0.8)_0%,rgba(var(--fifth-color),0)_50%)] top-[calc(50%-80%)] left-[calc(50%-80%)]" />
+                        <div className="absolute rounded-full size-[160%] mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-fifth),0.8)_0%,rgba(var(--bubble-color-fifth),0)_50%)] top-[calc(50%-80%)] left-[calc(50%-80%)]" />
                     </motion.div>
 
                     {interactive && (
                         <motion.div
-                            className="absolute rounded-full size-full mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--sixth-color),0.8)_0%,rgba(var(--sixth-color),0)_50%)] opacity-70"
+                            className="absolute rounded-full size-full mix-blend-hard-light bg-[radial-gradient(circle_at_center,rgba(var(--bubble-color-sixth),0.8)_0%,rgba(var(--bubble-color-sixth),0)_50%)] opacity-70"
                             style={{ x: springX, y: springY }}
                         />
                     )}

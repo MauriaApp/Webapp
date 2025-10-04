@@ -114,7 +114,7 @@ export function PlanningPage() {
                     firstDay={0}
                     hiddenDays={[0]}
                     eventSources={[lessons, userEvents]}
-                    eventColor="#3f2a56"
+                    eventColor="var(--planning-event-default-solid)"
                     contentHeight="auto"
                     nowIndicator={true}
                     stickyHeaderDates={false}
