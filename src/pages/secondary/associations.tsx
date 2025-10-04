@@ -85,7 +85,7 @@ export function AssociationsPage() {
     }, [associations, searchTerm]);
 
     return (
-        <div className="mt-4 space-y-6 px-4 sm:px-6 lg:px-0">
+        <div className="mt-4 space-y-6 sm:px-6 lg:px-0">
             <div className="mx-auto w-full max-w-4xl space-y-6">
                 <div className="relative w-full">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -106,33 +106,31 @@ export function AssociationsPage() {
             </div>
             {/* Associations Grid */}
             <div className="mx-auto w-full max-w-5xl">
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {filteredAssociations.map((association, index) => (
                         <Drawer key={index}>
                             <DrawerTrigger asChild>
-                                <Card className="group relative flex h-full min-h-[88px] w-full items-center overflow-hidden rounded-lg border border-border bg-card transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[96px]">
-                                    <CardContent className="flex h-full w-full items-start gap-3 p-3 sm:gap-4 sm:p-4">
-                                        <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md sm:h-14 sm:w-14">
-                                            <AssociationImage
-                                                src={association.image}
-                                                alt={association.name}
-                                                className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
-                                                fallbackClassName="h-full w-full rounded-md border border-dashed border-border/60 bg-transparent"
-                                            />
-                                        </div>
-                                        <div className="flex min-h-0 flex-1 flex-col justify-center gap-1 text-left">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <h3 className="line-clamp-1 text-sm font-semibold leading-tight text-foreground sm:text-base">
+                                <Card className="group relative flex h-full min-h-[88px] w-full items-center overflow-hidden rounded-lg border border-border bg-card transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[88px]">
+                                    <CardContent className="flex h-full w-full flex-col p-2 sm:p-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="flex flex-1 items-center gap-2 text-left">
+                                                <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-md sm:h-10 sm:w-10">
+                                                    <AssociationImage
+                                                        src={association.image}
+                                                        alt={association.name}
+                                                        className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                                                        fallbackClassName="h-full w-full rounded-md border border-dashed border-border/60 bg-transparent"
+                                                    />
+                                                </div>
+                                                <h3 className="flex min-h-[2.5rem] flex-1 items-center break-words text-sm font-semibold leading-tight text-foreground">
                                                     {association.name}
                                                 </h3>
-                                                {association.contact && (
-                                                    <ExternalLink className="h-4 w-4 flex-shrink-0 text-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100 sm:opacity-60 sm:group-hover:opacity-100" />
-                                                )}
                                             </div>
-                                            <p className="line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-                                                {association.description}
-                                            </p>
+
                                         </div>
+                                        <p className="line-clamp-2 text-xs text-muted-foreground text-left">
+                                            {association.description}
+                                        </p>
                                     </CardContent>
                                 </Card>
                             </DrawerTrigger>
