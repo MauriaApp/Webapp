@@ -134,10 +134,11 @@
   },
   "associationsPage": {
     "search": "Find an association",
-    "association": "association",
-    "find": "found",
+    "associationsCount_one": "{{count}} association found",
+    "associationsCount_other": "{{count}} associations found",
     "contactUs": "Contact us",
-    "reinitialize": "Reinitialize"
+    "reinitialize": "Reinitialize",
+    "formLink": "Your association missing or changed?"
   },
   "drawerPlanningContent": {
     "place": "Place",
