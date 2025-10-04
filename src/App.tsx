@@ -18,6 +18,7 @@ import { GradesPage } from "./pages/grades/page";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./lib/api/aurion";
 import { ThemeProvider } from "./components/theme-provider";
+import { BackgroundProvider } from "./components/background-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
@@ -149,18 +150,20 @@ function App() {
 
     return (
         <ThemeProvider defaultTheme="light">
-            <ToastContextProvider>
-                <ModalContextProvider>
-                    <Toaster richColors position="top-center" />
-                    <BrowserRouter>
-                        <ReactQueryProvider>
-                            <CurrentYearProvider>
-                                <AppRoutes />
-                            </CurrentYearProvider>
-                        </ReactQueryProvider>
-                    </BrowserRouter>
-                </ModalContextProvider>
-            </ToastContextProvider>
+            <BackgroundProvider defaultBackground="particles">
+                <ToastContextProvider>
+                    <ModalContextProvider>
+                        <Toaster richColors position="top-center" />
+                        <BrowserRouter>
+                            <ReactQueryProvider>
+                                <CurrentYearProvider>
+                                    <AppRoutes />
+                                </CurrentYearProvider>
+                            </ReactQueryProvider>
+                        </BrowserRouter>
+                    </ModalContextProvider>
+                </ToastContextProvider>
+            </BackgroundProvider>
         </ThemeProvider>
     );
 }

@@ -39,6 +39,11 @@
       "light": "Claro",
       "oled": "OLED"
     },
+    "backgroundParameter": {
+      "title": "Fondo",
+      "particles": "Partículas",
+      "grid": "Rejilla"
+    },
     "sizeParameter": {
       "title": "Tamaño",
       "small": "Pequeño",
