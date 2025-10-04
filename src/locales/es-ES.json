@@ -128,8 +128,8 @@
   },
   "associationsPage": {
     "search": "Buscar una asociación",
-    "association": "asociación",
-    "find": "encontrada",
+    "associationsCount_one": "{{count}} asociación encontrada",
+    "associationsCount_other": "{{count}} asociaciones encontradas",
     "contactUs": "Contáctanos",
     "reinitialize": "Reiniciar"
   },
