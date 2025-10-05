@@ -39,6 +39,11 @@
       "light": "Light",
       "oled": "OLED"
     },
+    "backgroundParameter": {
+      "title": "Background",
+      "particles": "Particles",
+      "grid": "Grid"
+    },
     "sizeParameter": {
       "title": "Size",
       "small": "Small",
