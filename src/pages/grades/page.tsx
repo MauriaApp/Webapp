@@ -23,7 +23,7 @@ import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -53,6 +53,7 @@ export function GradesPage() {
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
     useLoadingToast(
@@ -160,7 +161,9 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4 ">
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.grade")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.grade")}
+                                    </p>
                                     <p className="text-2xl font-bold">
                                         {selectedGrade.grade}
                                     </p>
@@ -185,11 +188,15 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.min")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.min")}
+                                    </p>
                                     <p>{selectedGrade.min}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.max")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.max")}
+                                    </p>
                                     <p>{selectedGrade.max}</p>
                                 </div>
                             </div>
@@ -212,7 +219,9 @@ export function GradesPage() {
                             </div>
 
                             <div>
-                                <p className="text-sm font-medium">{t("gradesPage.date")}</p>
+                                <p className="text-sm font-medium">
+                                    {t("gradesPage.date")}
+                                </p>
                                 <p>
                                     {selectedGrade.date
                                         ? format(

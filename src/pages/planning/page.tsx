@@ -49,6 +49,7 @@ export function PlanningPage() {
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
     useLoadingToast(

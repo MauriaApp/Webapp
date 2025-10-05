@@ -37,6 +37,7 @@ export function HomePage() {
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchIntervalInBackground: true,
         refetchInterval: 1000 * 60 * 5, // 5 min
+        placeholderData: (previousData) => previousData,
     });
 
     const toastTimeoutRef = useRef<number | null>(null);
@@ -80,7 +81,7 @@ export function HomePage() {
                 toastShownRef.current = false;
             }
         };
-    }, [isLoading, isFetching]);
+    }, [isLoading, isFetching, t]);
 
     const handleRefresh = async () => {
         await refetch();
