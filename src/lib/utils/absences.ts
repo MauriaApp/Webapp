@@ -25,8 +25,14 @@ export const getAbsences = ({
             : new Date(currentYear, 7, 31, 23, 59, 59, 999); // August 31st of current year
 
     return absences.filter((absence) => {
-        const [day, month, year] = absence.date.split("/").map(Number);
-        const absenceDate = new Date(year, month - 1, day); // month is 0-indexed
+        const [day, month, year] = absence.date.split("/");
+        const fullYear =
+            year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
+        const absenceDate = new Date(
+            fullYear,
+            parseInt(month) - 1,
+            parseInt(day)
+        );
         return absenceDate >= schoolYearStart && absenceDate <= schoolYearEnd;
     });
 };
