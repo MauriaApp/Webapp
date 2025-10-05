@@ -129,7 +129,9 @@ function App() {
                         }, 0);
                     });
                 }
-                setIsLoading(false);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 200);
             }
         };
 
