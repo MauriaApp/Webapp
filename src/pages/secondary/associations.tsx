@@ -61,6 +61,7 @@ export function AssociationsPage() {
         queryFn: () => fetchAssos().then((res) => res || []),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        placeholderData: (previousData) => previousData,
     });
 
     useLoadingToast(

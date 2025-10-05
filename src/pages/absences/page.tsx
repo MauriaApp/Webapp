@@ -17,7 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
 import { useLoadingToast } from "@/hooks/useLoadingToast";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
 const StaticAbsenceCard = memo(AbsenceCard);
@@ -44,6 +44,7 @@ export function AbsencesPage() {
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
     useLoadingToast(
@@ -140,7 +141,9 @@ export function AbsencesPage() {
                     >
                         <Alert className="mb-4">
                             <Info className="h-4 w-4" />
-                            <AlertTitle>{t("absencesPage.noAbsences")}</AlertTitle>
+                            <AlertTitle>
+                                {t("absencesPage.noAbsences")}
+                            </AlertTitle>
                         </Alert>
                     </motion.div>
                 ) : (
