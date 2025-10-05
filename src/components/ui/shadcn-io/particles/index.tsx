@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils/cn";
 import React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface MousePosition {
     x: number;
@@ -42,21 +42,72 @@ export interface ParticlesProps {
     vy?: number;
 }
 
-function hexToRgb(hex: string): number[] {
-    hex = hex.replace("#", "");
+const DEFAULT_RGB: [number, number, number] = [255, 255, 255];
 
-    if (hex.length === 3) {
-        hex = hex
-            .split("")
-            .map((char) => char + char)
-            .join("");
+function hexToRgb(hex: string): [number, number, number] {
+    const normalized = hex.replace("#", "");
+    const value =
+        normalized.length === 3
+            ? normalized
+                  .split("")
+                  .map((char) => char + char)
+                  .join("")
+            : normalized;
+
+    if (value.length !== 6) {
+        return [...DEFAULT_RGB];
     }
 
-    const hexInt = parseInt(hex, 16);
+    const hexInt = parseInt(value, 16);
     const red = (hexInt >> 16) & 255;
     const green = (hexInt >> 8) & 255;
     const blue = hexInt & 255;
     return [red, green, blue];
+}
+
+function parseColorToRgbServer(color: string): [number, number, number] {
+    const trimmed = color?.trim?.() ?? "";
+    if (trimmed.startsWith("#")) {
+        return hexToRgb(trimmed);
+    }
+    return [...DEFAULT_RGB];
+}
+
+function parseColorToRgb(color: string): [number, number, number] {
+    const trimmed = color?.trim?.() ?? "";
+    if (!trimmed || typeof window === "undefined") {
+        return parseColorToRgbServer(trimmed);
+    }
+
+    const body = document.body;
+    if (!body) {
+        return parseColorToRgbServer(trimmed);
+    }
+
+    const element = document.createElement("span");
+    element.style.color = trimmed;
+    element.style.display = "none";
+    body.appendChild(element);
+
+    try {
+        const computedColor = getComputedStyle(element).color;
+        const match = computedColor.match(
+            /rgba?\((\d+)[,\s]*(\d+)[,\s]*(\d+)/i
+        );
+        if (match) {
+            return [Number(match[1]), Number(match[2]), Number(match[3])];
+        }
+    } catch (error) {
+        console.warn("Failed to resolve particle color", error);
+    } finally {
+        element.remove();
+    }
+
+    if (trimmed.startsWith("#")) {
+        return hexToRgb(trimmed);
+    }
+
+    return [...DEFAULT_RGB];
 }
 
 export const Particles: React.FC<ParticlesProps> = ({
@@ -66,7 +117,7 @@ export const Particles: React.FC<ParticlesProps> = ({
     ease = 50,
     size = 0.4,
     refresh = false,
-    color = "#ffffff",
+    color = "var(--particles-color)",
     vx = 0,
     vy = 0,
 }) => {
@@ -78,6 +129,13 @@ export const Particles: React.FC<ParticlesProps> = ({
     const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
     const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
     const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+    const initialResolvedRgb = useMemo<[number, number, number]>(() => {
+        if (typeof window === "undefined") {
+            return parseColorToRgbServer(color);
+        }
+        return parseColorToRgb(color);
+    }, [color]);
+    const resolvedRgbRef = useRef<[number, number, number]>(initialResolvedRgb);
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -90,15 +148,38 @@ export const Particles: React.FC<ParticlesProps> = ({
         return () => {
             window.removeEventListener("resize", initCanvas);
         };
+        // canvas lifecycle helpers are stable across renders
+    }, [color]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return;
+        }
+
+        const updateColor = () => {
+            resolvedRgbRef.current = parseColorToRgb(color);
+        };
+
+        updateColor();
+
+        const observer = new MutationObserver(updateColor);
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["class", "style", "data-theme"],
+        });
+
+        return () => observer.disconnect();
     }, [color]);
 
     useEffect(() => {
         onMouseMove();
-    }, [mousePosition.x, mousePosition.y]);
+        // listener only depends on mouse position refs updated through refs
+    }, [mousePosition.x, mousePosition.y]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         initCanvas();
-    }, [refresh]);
+        // refresh flag deliberately re-runs the initializer
+    }, [refresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const initCanvas = () => {
         try {
@@ -178,15 +259,14 @@ export const Particles: React.FC<ParticlesProps> = ({
         };
     };
 
-    const rgb = hexToRgb(color);
-
     const drawCircle = (circle: Circle, update = false) => {
         if (context.current) {
             const { x, y, translateX, translateY, size, alpha } = circle;
             context.current.translate(translateX, translateY);
             context.current.beginPath();
             context.current.arc(x, y, size, 0, 2 * Math.PI);
-            context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
+            const [red, green, blue] = resolvedRgbRef.current;
+            context.current.fillStyle = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
             context.current.fill();
             context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
 

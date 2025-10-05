@@ -36,7 +36,13 @@
     "themeParameter": {
       "title": "Theme",
       "dark": "Dark",
-      "light": "Light"
+      "light": "Light",
+      "oled": "OLED"
+    },
+    "backgroundParameter": {
+      "title": "Background",
+      "particles": "Particles",
+      "grid": "Grid"
     },
     "sizeParameter": {
       "title": "Size",
@@ -79,13 +85,23 @@
     "current": "Currently",
     "today": "Today",
     "tomorrow": "Tomorrow",
+    "lessonTypes": {
+      "COURS_TD": "Class",
+      "DS_SURV": "Exam",
+      "AUTO_GERE": "Self-managed class"
+    },
     "welcomeMessage": ", Welcome to Mauria!"
   },
   "schedulePage": {
     "title": "Schedule",
     "lastUpdate": "Last updated:",
     "exportSchedule": "Export schedule",
-    "loadingSchedule": "Loading schedule data…"
+    "loadingSchedule": "Loading schedule data…",
+    "buttons": {
+      "today": "Today",
+      "week": "Week",
+      "day": "Day"
+    }
   },
   "gradesPage": {
     "noGrades": "No grades available for now.",
@@ -123,14 +139,16 @@
   },
   "associationsPage": {
     "search": "Find an association",
-    "association": "association",
-    "find": "found",
+    "associationsCount_one": "{{count}} association found",
+    "associationsCount_other": "{{count}} associations found",
     "contactUs": "Contact us",
-    "reinitialize": "Reinitialize"
+    "reinitialize": "Reinitialize",
+    "formLink": "Your association missing or changed?"
   },
   "drawerPlanningContent": {
     "place": "Place",
     "type": "Type",
+    "date": "Date",
     "teacher": "Teacher",
     "starting": "Starting",
     "ending": "Ending",

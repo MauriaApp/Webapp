@@ -36,7 +36,13 @@
     "themeParameter": {
       "title": "Tema",
       "dark": "Oscuro",
-      "light": "Claro"
+      "light": "Claro",
+      "oled": "OLED"
+    },
+    "backgroundParameter": {
+      "title": "Fondo",
+      "particles": "Partículas",
+      "grid": "Rejilla"
     },
     "sizeParameter": {
       "title": "Tamaño",
@@ -79,13 +85,23 @@
     "current": "En este momento",
     "today": "Hoy",
     "tomorrow": "Mañana",
+    "lessonTypes": {
+      "COURS_TD": "Clase",
+      "DS_SURV": "Examen",
+      "AUTO_GERE": "Clase autogestionada"
+    },
     "welcome": ", ¡Bienvenido a Mauria!"
   },
   "schedulePage": {
     "title": "Horario",
     "lastUpdate": "Última actualización:",
     "exportSchedule": "Exportar el horario",
-    "loadingSchedule": "Cargando datos del horario…"
+    "loadingSchedule": "Cargando datos del horario…",
+    "buttons": {
+      "today": "Hoy",
+      "week": "Semana",
+      "day": "Día"
+    }
   },
   "gradesPage": {
     "noGrades": "Todavía no hay notas.",
@@ -123,14 +139,16 @@
   },
   "associationsPage": {
     "search": "Buscar una asociación",
-    "association": "asociación",
-    "find": "encontrada",
+    "associationsCount_one": "{{count}} asociación encontrada",
+    "associationsCount_other": "{{count}} asociaciones encontradas",
     "contactUs": "Contáctanos",
-    "reinitialize": "Reiniciar"
+    "reinitialize": "Reiniciar",
+    "formLink": "¿Tu asociación falta o ha cambiado?"
   },
   "drawerPlanningContent": {
     "place": "Lugar",
     "type": "Tipo",
+    "date": "Fecha",
     "teacher": "Profesor(a)",
     "starting": "Inicio",
     "ending": "Fin",

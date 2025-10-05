@@ -107,6 +107,11 @@ export function PlanningPage() {
                         center: "timeGridWeek,timeGridDay",
                         right: "prev,next",
                     }}
+                    buttonText={{
+                        today: t("schedulePage.buttons.today"),
+                        timeGridWeek: t("schedulePage.buttons.week"),
+                        timeGridDay: t("schedulePage.buttons.day"),
+                    }}
                     slotMinTime="07:00:00"
                     slotMaxTime="22:00:00"
                     titleFormat={{ month: "short", day: "numeric" }}
@@ -114,7 +119,7 @@ export function PlanningPage() {
                     firstDay={0}
                     hiddenDays={[0]}
                     eventSources={[lessons, userEvents]}
-                    eventColor="#3f2a56"
+                    eventColor="var(--planning-event-default-solid)"
                     contentHeight="auto"
                     nowIndicator={true}
                     stickyHeaderDates={false}

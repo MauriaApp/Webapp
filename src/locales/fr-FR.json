@@ -36,7 +36,13 @@
     "themeParameter": {
       "title": "Thème",
       "dark": "Sombre",
-      "light": "Clair"
+      "light": "Clair",
+      "oled": "OLED"
+    },
+    "backgroundParameter": {
+      "title": "Fond",
+      "particles": "Particules",
+      "grid": "Grille"
     },
     "sizeParameter": {
       "title": "Taille",
@@ -79,13 +85,23 @@
     "current": "En ce moment",
     "today": "Aujourd'hui",
     "tomorrow": "Demain",
+    "lessonTypes": {
+      "COURS_TD": "Cours",
+      "DS_SURV": "DS",
+      "AUTO_GERE": "Cours auto-géré"
+    },
     "welcome": ", Bienvenue sur Mauria !"
   },
   "schedulePage": {
     "title": "Planning",
     "lastUpdate": "Dernière mise à jour :",
     "exportSchedule": "Exporter le planning",
-    "loadingSchedule": "Données du planning en cours de chargement…"
+    "loadingSchedule": "Données du planning en cours de chargement…",
+    "buttons": {
+      "today": "Aujourd'hui",
+      "week": "Semaine",
+      "day": "Jour"
+    }
   },
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
@@ -123,14 +139,16 @@
   },
   "associationsPage": {
     "search": "Rechercher une association",
-    "association": "association",
-    "find": "trouvée",
+    "associationsCount_one": "{{count}} association trouvée",
+    "associationsCount_other": "{{count}} associations trouvées",
     "contactUs": "Nous contacter",
-    "reinitialize": "Réinitialiser"
+    "reinitialize": "Réinitialiser",
+    "formLink": "Ton association manque ou a changé ?"
   },
   "drawerPlanningContent": {
     "place": "Lieu",
     "type": "Type",
+    "date": "Date",
     "teacher": "Enseignant(e)",
     "starting": "Début",
     "ending": "Fin",
