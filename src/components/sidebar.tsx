@@ -34,7 +34,13 @@ import { useTheme } from "@/components/theme-provider";
 import { useNavigate } from "react-router";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import type { SizeOption } from "@/lib/utils/scale";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "./ui/select";
 import { clearStorage } from "@/lib/utils/storage";
 import { useTranslation } from "react-i18next";
 
@@ -115,8 +121,8 @@ export default function Sidebar() {
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 [&_svg]:size-7!">
                                 <ThemeIcon className="h-5 w-5" />
-                                <div className="flex flex-col">
-                                    <Label className="cursor-default">
+                                <div className="flex flex-col items-start">
+                                    <Label className="cursor-default text-left">
                                         {t("sidebar.themeParameter.title")}
                                     </Label>
                                     <span className="text-xs text-muted-foreground text-left">
@@ -124,45 +130,47 @@ export default function Sidebar() {
                                     </span>
                                 </div>
                             </div>
-                            <ToggleGroup
-                                size="sm"
-                                type="single"
-                                value={theme}
-                                onValueChange={(value) =>
-                                    value && setTheme(value as typeof theme)
-                                }
-                                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
-                                aria-label={
-                                    t("sidebar.themeParameter.title") ??
-                                    "Choose theme"
-                                }
-                            >
-                                <ToggleGroupItem
-                                    value="light"
-                                    className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
+                                <Select
+                                    value={theme}
+                                    onValueChange={(value) =>
+                                        value && setTheme(value as typeof theme)
+                                    }
                                 >
-                                    {t("sidebar.themeParameter.light")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="dark"
-                                    className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.themeParameter.dark")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="oled"
-                                    className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.themeParameter.oled")}
-                                </ToggleGroupItem>
-                            </ToggleGroup>
+                                    <SelectTrigger
+                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
+                                        aria-label={
+                                            t("sidebar.themeParameter.title") ??
+                                            "Choose theme"
+                                        }
+                                    >
+                                        <SelectValue
+                                            placeholder={
+                                                t("sidebar.themeParameter.title") ??
+                                                "Choose theme"
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                        <SelectItem value="light">
+                                            {t("sidebar.themeParameter.light")}
+                                        </SelectItem>
+                                        <SelectItem value="dark">
+                                            {t("sidebar.themeParameter.dark")}
+                                        </SelectItem>
+                                        <SelectItem value="oled">
+                                            {t("sidebar.themeParameter.oled")}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 [&_svg]:size-7!">
                                 <Wallpaper className="h-5 w-5" />
-                                <div className="flex flex-col">
-                                    <Label className="cursor-default">
+                                <div className="flex flex-col items-start">
+                                    <Label className="cursor-default text-left">
                                         {t("sidebar.backgroundParameter.title")}
                                     </Label>
                                     <span className="text-xs text-muted-foreground text-left">
@@ -170,34 +178,41 @@ export default function Sidebar() {
                                     </span>
                                 </div>
                             </div>
-                            <ToggleGroup
-                                size="sm"
-                                type="single"
-                                value={background}
-                                onValueChange={handleBackgroundChange}
-                                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
-                                aria-label={
-                                    t("sidebar.backgroundParameter.title") ??
-                                    "Choose background"
-                                }
-                            >
-                                {BACKGROUND_OPTIONS.map((option) => (
-                                    <ToggleGroupItem
-                                        key={option}
-                                        value={option}
-                                        className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
+                                <Select
+                                    value={background}
+                                    onValueChange={handleBackgroundChange}
+                                >
+                                    <SelectTrigger
+                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
+                                        aria-label={
+                                            t("sidebar.backgroundParameter.title") ??
+                                            "Choose background"
+                                        }
                                     >
-                                        {t(`sidebar.backgroundParameter.${option}`)}
-                                    </ToggleGroupItem>
-                                ))}
-                            </ToggleGroup>
+                                        <SelectValue
+                                            placeholder={
+                                                t("sidebar.backgroundParameter.title") ??
+                                                "Choose background"
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                        {BACKGROUND_OPTIONS.map((option) => (
+                                            <SelectItem key={option} value={option}>
+                                                {t(`sidebar.backgroundParameter.${option}`)}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
-                        <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center justify-between gap-2">
                             <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
                                 <ImageUpscale className="h-5 w-5" />
-                                <div className="flex flex-col">
-                                    <Label className="cursor-default">
+                                <div className="flex flex-col items-start">
+                                    <Label className="cursor-default text-left">
                                         {t("sidebar.sizeParameter.title")}
                                     </Label>
                                     <span className="text-xs text-muted-foreground text-left">
@@ -209,45 +224,47 @@ export default function Sidebar() {
                                     </span>
                                 </div>
                             </div>
-                            <ToggleGroup
-                                size="sm"
-                                type="single"
-                                value={size}
-                                onValueChange={(v) =>
-                                    v && setSize(v as SizeOption)
-                                }
-                                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
-                                aria-label={
-                                    t("sidebar.sizeParameter.aria") ??
-                                    "Choose size"
-                                }
-                            >
-                                <ToggleGroupItem
-                                    value="petit"
-                                    className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
+                                <Select
+                                    value={size}
+                                    onValueChange={(v) =>
+                                        v && setSize(v as SizeOption)
+                                    }
                                 >
-                                    {t("sidebar.sizeParameter.small")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="moyen"
-                                    className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.sizeParameter.medium")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="grand"
-                                    className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.sizeParameter.large")}
-                                </ToggleGroupItem>
-                            </ToggleGroup>
+                                    <SelectTrigger
+                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
+                                        aria-label={
+                                            t("sidebar.sizeParameter.aria") ??
+                                            "Choose size"
+                                        }
+                                    >
+                                        <SelectValue
+                                            placeholder={
+                                                t("sidebar.sizeParameter.title") ??
+                                                "Choose size"
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                        <SelectItem value="petit">
+                                            {t("sidebar.sizeParameter.small")}
+                                        </SelectItem>
+                                        <SelectItem value="moyen">
+                                            {t("sidebar.sizeParameter.medium")}
+                                        </SelectItem>
+                                        <SelectItem value="grand">
+                                            {t("sidebar.sizeParameter.large")}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <div className="flex items-center justify-between gap-4">
                             <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
                                 <Languages className="h-5 w-5" />
-                                <div className="flex flex-col">
-                                    <Label className="cursor-default">
+                                <div className="flex flex-col items-start">
+                                    <Label className="cursor-default text-left">
                                         {t("sidebar.languageParameter.title")}
                                     </Label>
                                     <span className="text-xs text-muted-foreground text-left">
@@ -261,35 +278,40 @@ export default function Sidebar() {
                                     </span>
                                 </div>
                             </div>
-                            <ToggleGroup
-                                size="sm"
-                                type="single"
-                                value={locale}
-                                onValueChange={(v) =>
-                                    v && setLocale(v as LocaleOption)
-                                }
-                                className="ml-auto inline-flex min-w-0 w-full max-w-[calc(100%-8em)] gap-0 rounded-md border border-border/50 overflow-hidden"
-                                aria-label="Choose language"
-                            >
-                                <ToggleGroupItem
-                                    value="fr-FR"
-                                    className="flex-1 rounded-none first:rounded-l-md h-8 px-2 text-xs border-l border-border/50 first:border-l-0 -ml-px first:ml-0 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
+                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
+                                <Select
+                                    value={locale}
+                                    onValueChange={(v) =>
+                                        v && setLocale(v as LocaleOption)
+                                    }
                                 >
-                                    {t("sidebar.languageParameter.fr-FR")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="en-US"
-                                    className="flex-1 rounded-none h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.languageParameter.en-US")}
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="es-ES"
-                                    className="flex-1 rounded-none last:rounded-r-md h-8 px-2 text-xs border-l border-border/50 -ml-px data-[state=on]:bg-primary data-[state=on]:text-primary-foreground justify-center"
-                                >
-                                    {t("sidebar.languageParameter.es-ES")}
-                                </ToggleGroupItem>
-                            </ToggleGroup>
+                                    <SelectTrigger
+                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
+                                        aria-label={
+                                            t("sidebar.languageParameter.title") ??
+                                            "Choose language"
+                                        }
+                                    >
+                                        <SelectValue
+                                            placeholder={
+                                                t("sidebar.languageParameter.title") ??
+                                                "Choose language"
+                                            }
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                        <SelectItem value="fr-FR">
+                                            {t("sidebar.languageParameter.fr-FR")}
+                                        </SelectItem>
+                                        <SelectItem value="en-US">
+                                            {t("sidebar.languageParameter.en-US")}
+                                        </SelectItem>
+                                        <SelectItem value="es-ES">
+                                            {t("sidebar.languageParameter.es-ES")}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <Separator />
