@@ -319,12 +319,12 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
                             {t("sidebar.actions.associations")}
-                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -332,7 +332,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://aurion.junia.com",
@@ -342,7 +342,7 @@ export default function Sidebar() {
                         >
                             <ThumbsDown className="h-5 w-5" />
                             {t("sidebar.actions.aurion")}
-                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -350,7 +350,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://junia-learning.com",
@@ -360,7 +360,7 @@ export default function Sidebar() {
                         >
                             <Book className="h-5 w-5" />
                             {t("sidebar.actions.juniaLearning")}
-                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -368,7 +368,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "https://print.junia.com/end-user/ui/dashboard",
@@ -378,7 +378,7 @@ export default function Sidebar() {
                         >
                             <Printer className="h-5 w-5" />
                             {t("sidebar.actions.print")}
-                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -390,7 +390,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
                                 window.open(
                                     "mailto:milo.montuori@student.junia.com",
@@ -400,7 +400,7 @@ export default function Sidebar() {
                         >
                             <MailQuestionMark className="h-5 w-5" />
                             {t("sidebar.help")}
-                            <div className="justify-end flex-1 flex text-muted-foreground transition-colors group-hover:text-accent-foreground">
+                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
@@ -408,12 +408,12 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-2 px-0 h-10 [&_svg]:size-7 text-red-500 oled:text-gray-200"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 text-red-500 oled:text-gray-200"
                             onClick={signOut}
                         >
                             <BadgeX className="h-5 w-5" />
                             {t("sidebar.logOut")}
-                            <div className="justify-end flex-1 flex text-red-500 oled:text-gray-300 transition-colors group-hover:text-accent-foreground oled:group-hover:text-gray-100">
+                            <div className="justify-end flex-1 flex pr-2 text-red-500 oled:text-gray-300 transition-colors group-hover:text-accent-foreground oled:group-hover:text-gray-100">
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
