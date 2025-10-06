@@ -19,7 +19,6 @@ import {
     DrawerTitle,
 } from "@/components/ui/drawer";
 import { memo, useState } from "react";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -56,11 +55,7 @@ export function GradesPage() {
         placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        "Notes en cours de chargement…",
-        "grades-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
     const handleRefresh = async () => {
         await refetch();
@@ -75,7 +70,7 @@ export function GradesPage() {
         <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >

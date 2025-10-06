@@ -16,7 +16,6 @@ import { fetchAbsences } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { useTranslation } from "react-i18next";
 
 const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
@@ -47,11 +46,7 @@ export function AbsencesPage() {
         placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        "Absences en cours de chargement…",
-        "absences-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
     const handleRefresh = async () => {
         await refetch();
@@ -65,7 +60,7 @@ export function AbsencesPage() {
         <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >

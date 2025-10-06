@@ -7,7 +7,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -52,11 +51,7 @@ export function PlanningPage() {
         placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        t("schedulePage.loadingSchedule"),
-        "planning-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
     const handleRefresh = async () => {
         await refetch();
@@ -72,7 +67,7 @@ export function PlanningPage() {
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
@@ -156,7 +151,7 @@ export function PlanningPage() {
                 <Button
                     className="mt-2"
                     onClick={handleExport}
-                    disabled={lessons.length === 0 || isLoading || isFetching}
+                    disabled={lessons.length === 0 || isBusy}
                 >
                     {t("schedulePage.exportSchedule")}
                 </Button>
