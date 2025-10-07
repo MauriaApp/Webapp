@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils/cn";
 import { ArrowUpToLine, Loader2 } from "lucide-react";
-import React from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactPullToRefresh from "react-simple-pull-to-refresh";
 
 type Props = {
@@ -21,10 +21,10 @@ export function PullToRefresh({
     refreshingText,
     ...rest
 }: Props) {
-    const [isClosing, setIsClosing] = React.useState(false);
-    const closingTimerRef = React.useRef<number | null>(null);
+    const [isClosing, setIsClosing] = useState(false);
+    const closingTimerRef = useRef<number | null>(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         return () => {
             if (closingTimerRef.current !== null) {
                 window.clearTimeout(closingTimerRef.current);
@@ -32,7 +32,7 @@ export function PullToRefresh({
         };
     }, []);
 
-    const scheduleClosingReset = React.useCallback(() => {
+    const scheduleClosingReset = useCallback(() => {
         setIsClosing(true);
         if (closingTimerRef.current !== null) {
             window.clearTimeout(closingTimerRef.current);
@@ -43,7 +43,7 @@ export function PullToRefresh({
         }, 240);
     }, []);
 
-    const handleRefresh = React.useCallback(() => {
+    const handleRefresh = useCallback(() => {
         const escalateError = (error: unknown) => {
             setTimeout(() => {
                 throw error;

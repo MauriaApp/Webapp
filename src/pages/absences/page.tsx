@@ -48,9 +48,7 @@ export function AbsencesPage() {
 
     const isBusy = isLoading || isFetching;
 
-    const handleRefresh = () => {
-        void refetch();
-    };
+    const handleRefresh = () => refetch();
 
     const { total, justified, unjustified, filteredAbsences } = useMemo(() => {
         return getAbsencesDurations(absences, showCurrentYearOnly);
