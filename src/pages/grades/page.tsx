@@ -57,8 +57,8 @@ export function GradesPage() {
 
     const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const filteredGrades = getGrades({

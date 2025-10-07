@@ -48,8 +48,8 @@ export function AbsencesPage() {
 
     const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const { total, justified, unjustified, filteredAbsences } = useMemo(() => {

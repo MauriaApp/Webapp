@@ -41,8 +41,8 @@ export function HomePage() {
 
     const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const { data: importantMessage } = useQuery({
