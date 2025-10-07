@@ -8,7 +8,7 @@ type ToasterProps = React.ComponentProps<typeof Sonner>
 type OffsetObject = Exclude<ToasterProps["offset"], string | number>
 
 const SAFE_AREA_OFFSET: OffsetObject = {
-  top: "calc(var(--safe-area-top, 40px) + 1rem)",
+  top: "calc(var(--safe-area-top, 50px) + 1rem)",
   right: "calc(var(--safe-area-right, 0px) + 1rem)",
   bottom: "calc(var(--safe-area-bottom, 30px) + 1rem)",
   left: "calc(var(--safe-area-left, 0px) + 1rem)",

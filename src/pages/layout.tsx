@@ -4,7 +4,10 @@ import NewUpdateDrawer from "@/components/new-update-drawer";
 import { PageTransition } from "@/components/page-transition";
 import Sidebar from "@/components/sidebar";
 import { Particles } from "@/components/ui/shadcn-io/particles";
-import { memo, useMemo } from "react";
+import { Loader2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useIsFetching } from "@tanstack/react-query";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Outlet } from "react-router";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -19,6 +22,28 @@ const PageTransitionMemo = memo(PageTransition);
 export default function RootLayout() {
     const { t } = useTranslation();
     const { background } = useBackground();
+    const activeFetches = useIsFetching();
+    const showGlobalSpinner = activeFetches > 0;
+    const [renderSpinner, setRenderSpinner] = useState(showGlobalSpinner);
+
+    useEffect(() => {
+        if (showGlobalSpinner) {
+            setRenderSpinner(true);
+            return;
+        }
+
+        if (!renderSpinner) {
+            return;
+        }
+
+        const timeout = window.setTimeout(() => {
+            setRenderSpinner(false);
+        }, 250);
+
+        return () => {
+            window.clearTimeout(timeout);
+        };
+    }, [showGlobalSpinner, renderSpinner]);
 
     const backgroundElement = useMemo(() => {
         switch (background) {
@@ -64,7 +89,29 @@ export default function RootLayout() {
                 {/* <Button variant="ghost" size="icon" className="text-white">
                         <MenuIcon className="h-6 w-6" />
                         </Button> */}
-                <SidebarMemo />
+                <div className="flex items-center gap-3">
+                    <AnimatePresence initial={false}>
+                        {renderSpinner && (
+                            <motion.div
+                                key="sidebar-global-loader"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                                className="flex items-center text-white origin-center"
+                            >
+                                <Loader2
+                                    aria-hidden
+                                    className="h-7 w-7 animate-spin"
+                                />
+                                <span className="sr-only">
+                                    {t("common.loading")}
+                                </span>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    <SidebarMemo />
+                </div>
             </header>
             {/* Main Content */}
             <PageTransitionMemo
