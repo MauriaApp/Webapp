@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { saveToStorage } from "@/lib/utils/storage";
 import { useTranslation } from "react-i18next";
+import { Lesson } from "@/types/aurion";
 
 type WelcomeSection = {
     title: string;
@@ -61,9 +62,14 @@ const WELCOME_SECTIONS: WelcomeSection[] = [
 export function WelcomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { isLoading, isFetching } = useQuery({
+    const {
+        isLoading,
+        isFetching,
+        data: lessons = [],
+    } = useQuery({
         queryKey: ["planning"],
-        queryFn: () => fetchPlanning().then((res) => res?.data || []),
+        queryFn: (): Promise<Lesson[]> =>
+            fetchPlanning().then((res) => res?.data || lessons),
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 60 * 24,
         refetchOnWindowFocus: false,

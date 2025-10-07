@@ -25,7 +25,7 @@ import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
 import * as Sentry from "@sentry/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { overrideStorage, saveFromApp } from "./lib/utils/storage";
 import { Loader } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -96,6 +96,7 @@ function AppRoutes() {
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
+    const nbTryRef = useRef(0);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -109,6 +110,11 @@ function App() {
     }, []);
 
     useEffect(() => {
+        const requestData = () => {
+            console.log("Requesting all data from parent...");
+            window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
+        };
+
         // Écouter la réponse d'Ionic pour récupérer une donnée
         const handleMessage = async (event: MessageEvent) => {
             const { type, key, payload } = event.data;
@@ -118,25 +124,41 @@ function App() {
             }
             if (type === "ALL_DATA_RESPONSE" && payload) {
                 console.log("Toutes les données reçues: ", payload);
-                for (const [k, v] of Object.entries(payload)) {
-                    await new Promise<void>((resolve) => {
-                        setTimeout(() => {
-                            overrideStorage({ [k]: v } as Record<
-                                string,
-                                string
-                            >);
-                            resolve();
-                        }, 0);
-                    });
-                }
-                setTimeout(() => {
+
+                if (payload["email"]) {
+                    for (const [k, v] of Object.entries(payload)) {
+                        await new Promise<void>((resolve) => {
+                            setTimeout(() => {
+                                overrideStorage({ [k]: v } as Record<
+                                    string,
+                                    string
+                                >);
+                                resolve();
+                            }, 0);
+                        });
+                    }
                     setIsLoading(false);
+                    return;
+                }
+                console.log(
+                    "No email found in payload, not saving data and staying on loading screen."
+                );
+                setTimeout(() => {
+                    requestData();
                 }, 200);
+
+                nbTryRef.current++;
+                if (nbTryRef.current > 3) {
+                    console.log(
+                        "Tried to get data 3 times, stopping to avoid infinite loop."
+                    );
+                    setIsLoading(false);
+                }
+                return;
             }
         };
 
-        console.log("Requesting all data from parent...");
-        window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
+        requestData();
 
         window.addEventListener("message", handleMessage);
 

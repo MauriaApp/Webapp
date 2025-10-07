@@ -48,7 +48,8 @@ export function GradesPage() {
         isFetching,
     } = useQuery<Grade[], Error>({
         queryKey: ["grades"],
-        queryFn: () => fetchGrades().then((res) => res?.data || []),
+        queryFn: (): Promise<Grade[]> =>
+            fetchGrades().then((res) => res?.data || grades),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
