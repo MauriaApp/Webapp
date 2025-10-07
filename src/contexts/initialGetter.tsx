@@ -26,7 +26,7 @@ export const InitialGetter = ({ children }: Props) => {
             const { type, key, payload } = event.data ?? {};
 
             if (type === "DATA_RESPONSE" && key) {
-                console.log(`Data received for ${key}:`, payload);
+                console.log("Data received for %s:", key, payload);
                 saveFromApp(key, payload);
                 return;
             }
