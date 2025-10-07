@@ -13,12 +13,12 @@ jobs:
 
       - name: Deploy main branch (prod app)
         if: github.ref == 'refs/heads/main'
-        run: flyctl deploy --app mauria --config fly.toml
+        run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deploy preprod branch (preprod app)
         if: github.ref == 'refs/heads/preprod'
-        run: flyctl deploy --app mauria-preprod --config fly.preprod.toml
+        run: flyctl deploy --app mauria-preprod --config fly.preprod.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
