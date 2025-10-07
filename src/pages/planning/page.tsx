@@ -44,7 +44,8 @@ export function PlanningPage() {
         dataUpdatedAt,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
-        queryFn: () => fetchPlanning().then((res) => res?.data || []),
+        queryFn: (): Promise<Lesson[]> =>
+            fetchPlanning().then((res) => res?.data || lessons),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre

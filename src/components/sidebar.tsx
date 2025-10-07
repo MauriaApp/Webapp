@@ -197,6 +197,13 @@ export default function Sidebar() {
         handleNavigate("/login");
     };
 
+    const handleModeBeta = () => {
+        window.parent.postMessage(
+            { type: "MODE_BETA", payload: preprodURL },
+            "*"
+        );
+    };
+
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -373,9 +380,7 @@ export default function Sidebar() {
                             variant="link"
                             size="sm"
                             className="p-0 ml-2"
-                            onClick={() =>
-                                window.parent.location.assign(preprodURL)
-                            }
+                            onClick={handleModeBeta}
                         >
                             <span className="text-xs text-muted-foreground">
                                 <span className="">mode Beta</span>

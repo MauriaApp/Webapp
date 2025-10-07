@@ -39,7 +39,8 @@ export function AbsencesPage() {
         isFetching,
     } = useQuery<Absence[], Error>({
         queryKey: ["absences"],
-        queryFn: () => fetchAbsences().then((res) => res?.data || []),
+        queryFn: (): Promise<Absence[]> =>
+            fetchAbsences().then((res) => res?.data || absences),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
