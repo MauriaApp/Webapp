@@ -1,3 +1,4 @@
+/* eslint-disable i18next/no-literal-string */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -368,7 +369,7 @@ export default function Sidebar() {
                         })}
                     </p>
                     <div className="w-full text-center text-xs text-muted-foreground">
-                        <span>Version 2.3.0</span>
+                        <span>Version 3.1.0</span>
                         <span className="mx-1">—</span>
                         <a
                             href="https://github.com/MauriaApp"
@@ -378,6 +379,21 @@ export default function Sidebar() {
                         >
                             {t("sidebar.contribute")}
                         </a>
+                        <span className="ml-1">—</span>
+                        <Button
+                            variant="link"
+                            size="sm"
+                            className="p-0 ml-2"
+                            onClick={() =>
+                                window.parent.location.assign(
+                                    "https://mylow.fr"
+                                )
+                            }
+                        >
+                            <span className="text-xs text-muted-foreground">
+                                <span className="">mode Beta</span>
+                            </span>
+                        </Button>
                     </div>
                 </SheetFooter>
             </SheetContent>
