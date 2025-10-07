@@ -55,6 +55,13 @@ import {
     type LocaleOption,
 } from "@/lib/utils/translations";
 
+const aurionURL = "https://aurion.junia.com";
+const juniaLearningURL = "https://junia-learning.com";
+const printURL = "https://print.junia.com/end-user/ui/dashboard";
+const contactURL = "mailto:milo.montuori@student.junia.com";
+const githubURL = "https://github.com/MauriaApp";
+const preprodURL = "https://mauria-preprod.fly.dev";
+
 export default function Sidebar() {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
@@ -275,12 +282,7 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
-                            onClick={() =>
-                                window.open(
-                                    "https://aurion.junia.com",
-                                    "_blank"
-                                )
-                            }
+                            onClick={() => window.open(aurionURL, "_blank")}
                         >
                             <ThumbsDown className="h-5 w-5" />
                             {t("sidebar.actions.aurion")}
@@ -294,10 +296,7 @@ export default function Sidebar() {
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
                             onClick={() =>
-                                window.open(
-                                    "https://junia-learning.com",
-                                    "_blank"
-                                )
+                                window.open(juniaLearningURL, "_blank")
                             }
                         >
                             <Book className="h-5 w-5" />
@@ -311,12 +310,7 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
-                            onClick={() =>
-                                window.open(
-                                    "https://print.junia.com/end-user/ui/dashboard",
-                                    "_blank"
-                                )
-                            }
+                            onClick={() => window.open(printURL, "_blank")}
                         >
                             <Printer className="h-5 w-5" />
                             {t("sidebar.actions.print")}
@@ -333,12 +327,7 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
-                            onClick={() =>
-                                window.open(
-                                    "mailto:milo.montuori@student.junia.com",
-                                    "_blank"
-                                )
-                            }
+                            onClick={() => window.open(contactURL, "_blank")}
                         >
                             <MailQuestionMark className="h-5 w-5" />
                             {t("sidebar.help")}
@@ -372,7 +361,7 @@ export default function Sidebar() {
                         <span>Version 3.1.0</span>
                         <span className="mx-1">—</span>
                         <a
-                            href="https://github.com/MauriaApp"
+                            href={githubURL}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="underline underline-offset-4"
@@ -385,9 +374,7 @@ export default function Sidebar() {
                             size="sm"
                             className="p-0 ml-2"
                             onClick={() =>
-                                window.parent.location.assign(
-                                    "https://mylow.fr"
-                                )
+                                window.parent.location.assign(preprodURL)
                             }
                         >
                             <span className="text-xs text-muted-foreground">
