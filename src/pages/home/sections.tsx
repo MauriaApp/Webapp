@@ -164,7 +164,7 @@ export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
-        className="bg-white rounded-lg"
+        className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
     >
         <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
             <AlertTitle className="font-bold text-mauria-accent dark:text-white">
