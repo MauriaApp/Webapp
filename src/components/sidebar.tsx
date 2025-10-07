@@ -29,7 +29,11 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { useBackground, BACKGROUND_OPTIONS, type BackgroundName } from "@/components/background-provider";
+import {
+    useBackground,
+    BACKGROUND_OPTIONS,
+    type BackgroundName,
+} from "@/components/background-provider";
 import { useTheme } from "@/components/theme-provider";
 import { useNavigate } from "react-router";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
@@ -56,7 +60,9 @@ export default function Sidebar() {
     const { theme, setTheme } = useTheme();
 
     const { background, setBackground } = useBackground();
-    const selectedBackgroundLabel = t(`sidebar.backgroundParameter.${background}`);
+    const selectedBackgroundLabel = t(
+        `sidebar.backgroundParameter.${background}`
+    );
 
     const handleBackgroundChange = (value: string) => {
         if (!value) return;
@@ -84,6 +90,92 @@ export default function Sidebar() {
     useEffect(() => {
         applyLocale(locale);
     }, [locale]);
+
+    const selectors = [
+        {
+            icon: ThemeIcon,
+            title: t("sidebar.themeParameter.title"),
+            value: themeLabel,
+            selectValue: theme,
+            onValueChange: (value: string) =>
+                value && setTheme(value as typeof theme),
+            options: [
+                {
+                    value: "light",
+                    label: t("sidebar.themeParameter.light"),
+                },
+                {
+                    value: "dark",
+                    label: t("sidebar.themeParameter.dark"),
+                },
+                {
+                    value: "oled",
+                    label: t("sidebar.themeParameter.oled"),
+                },
+            ],
+        },
+        {
+            icon: Wallpaper,
+            title: t("sidebar.backgroundParameter.title"),
+            value: selectedBackgroundLabel,
+            selectValue: background,
+            onValueChange: handleBackgroundChange,
+            options: BACKGROUND_OPTIONS.map((option) => ({
+                value: option,
+                label: t(`sidebar.backgroundParameter.${option}`),
+            })),
+        },
+        {
+            icon: ImageUpscale,
+            title: t("sidebar.sizeParameter.title"),
+            value:
+                size === "petit"
+                    ? t("sidebar.sizeParameter.small")
+                    : size === "moyen"
+                    ? t("sidebar.sizeParameter.medium")
+                    : t("sidebar.sizeParameter.large"),
+            selectValue: size,
+            onValueChange: (v: string) => v && setSize(v as SizeOption),
+            options: [
+                {
+                    value: "petit",
+                    label: t("sidebar.sizeParameter.small"),
+                },
+                {
+                    value: "moyen",
+                    label: t("sidebar.sizeParameter.medium"),
+                },
+                {
+                    value: "grand",
+                    label: t("sidebar.sizeParameter.large"),
+                },
+            ],
+        },
+        {
+            icon: Languages,
+            title: t("sidebar.languageParameter.title"),
+            value:
+                locale === "fr-FR"
+                    ? t("sidebar.languageParameter.fr-FR")
+                    : t("sidebar.languageParameter.en-US"),
+            selectValue: locale,
+            onValueChange: (v: string) => v && setLocale(v as LocaleOption),
+            options: [
+                {
+                    value: "fr-FR",
+                    label: t("sidebar.languageParameter.fr-FR"),
+                },
+                {
+                    value: "en-US",
+                    label: t("sidebar.languageParameter.en-US"),
+                },
+                {
+                    value: "es-ES",
+                    label: t("sidebar.languageParameter.es-ES"),
+                },
+            ],
+        },
+    ];
 
     const navigate = useNavigate();
 
@@ -118,201 +210,50 @@ export default function Sidebar() {
                     <SheetTitle>{t("sidebar.title")}</SheetTitle>
 
                     <div className="mt-4 space-y-4">
-                        <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3 [&_svg]:size-7!">
-                                <ThemeIcon className="h-5 w-5" />
-                                <div className="flex flex-col items-start">
-                                    <Label className="cursor-default text-left">
-                                        {t("sidebar.themeParameter.title")}
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground text-left">
-                                        {themeLabel}
-                                    </span>
+                        {selectors.map((setting, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center justify-between gap-4"
+                            >
+                                <div className="flex items-center gap-3 [&_svg]:size-7!">
+                                    <setting.icon className="h-5 w-5" />
+                                    <div className="flex flex-col items-start">
+                                        <Label className="cursor-default text-left">
+                                            {setting.title}
+                                        </Label>
+                                        <span className="text-xs text-muted-foreground text-left">
+                                            {setting.value}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex w-full justify-end">
+                                    <Select
+                                        value={setting.selectValue}
+                                        onValueChange={setting.onValueChange}
+                                    >
+                                        <SelectTrigger
+                                            className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs "
+                                            aria-label={setting.title}
+                                        >
+                                            <SelectValue
+                                                placeholder={setting.title}
+                                                className="!items-end flex"
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent className="text-xs">
+                                            {setting.options.map((option) => (
+                                                <SelectItem
+                                                    key={option.value}
+                                                    value={option.value}
+                                                >
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
-                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
-                                <Select
-                                    value={theme}
-                                    onValueChange={(value) =>
-                                        value && setTheme(value as typeof theme)
-                                    }
-                                >
-                                    <SelectTrigger
-                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
-                                        aria-label={
-                                            t("sidebar.themeParameter.title") ??
-                                            "Choose theme"
-                                        }
-                                    >
-                                        <SelectValue
-                                            placeholder={
-                                                t("sidebar.themeParameter.title") ??
-                                                "Choose theme"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                        <SelectItem value="light">
-                                            {t("sidebar.themeParameter.light")}
-                                        </SelectItem>
-                                        <SelectItem value="dark">
-                                            {t("sidebar.themeParameter.dark")}
-                                        </SelectItem>
-                                        <SelectItem value="oled">
-                                            {t("sidebar.themeParameter.oled")}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-3 [&_svg]:size-7!">
-                                <Wallpaper className="h-5 w-5" />
-                                <div className="flex flex-col items-start">
-                                    <Label className="cursor-default text-left">
-                                        {t("sidebar.backgroundParameter.title")}
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground text-left">
-                                        {selectedBackgroundLabel}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
-                                <Select
-                                    value={background}
-                                    onValueChange={handleBackgroundChange}
-                                >
-                                    <SelectTrigger
-                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
-                                        aria-label={
-                                            t("sidebar.backgroundParameter.title") ??
-                                            "Choose background"
-                                        }
-                                    >
-                                        <SelectValue
-                                            placeholder={
-                                                t("sidebar.backgroundParameter.title") ??
-                                                "Choose background"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                        {BACKGROUND_OPTIONS.map((option) => (
-                                            <SelectItem key={option} value={option}>
-                                                {t(`sidebar.backgroundParameter.${option}`)}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-2">
-                            <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
-                                <ImageUpscale className="h-5 w-5" />
-                                <div className="flex flex-col items-start">
-                                    <Label className="cursor-default text-left">
-                                        {t("sidebar.sizeParameter.title")}
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground text-left">
-                                        {size === "petit"
-                                            ? t("sidebar.sizeParameter.small")
-                                            : size === "moyen"
-                                            ? t("sidebar.sizeParameter.medium")
-                                            : t("sidebar.sizeParameter.large")}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
-                                <Select
-                                    value={size}
-                                    onValueChange={(v) =>
-                                        v && setSize(v as SizeOption)
-                                    }
-                                >
-                                    <SelectTrigger
-                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
-                                        aria-label={
-                                            t("sidebar.sizeParameter.aria") ??
-                                            "Choose size"
-                                        }
-                                    >
-                                        <SelectValue
-                                            placeholder={
-                                                t("sidebar.sizeParameter.title") ??
-                                                "Choose size"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                        <SelectItem value="petit">
-                                            {t("sidebar.sizeParameter.small")}
-                                        </SelectItem>
-                                        <SelectItem value="moyen">
-                                            {t("sidebar.sizeParameter.medium")}
-                                        </SelectItem>
-                                        <SelectItem value="grand">
-                                            {t("sidebar.sizeParameter.large")}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-4">
-                            <div className="flex shrink-0 items-center gap-3 [&_svg]:size-7!">
-                                <Languages className="h-5 w-5" />
-                                <div className="flex flex-col items-start">
-                                    <Label className="cursor-default text-left">
-                                        {t("sidebar.languageParameter.title")}
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground text-left">
-                                        {locale === "fr-FR"
-                                            ? t(
-                                                  "sidebar.languageParameter.fr-FR"
-                                              )
-                                            : t(
-                                                  "sidebar.languageParameter.en-US"
-                                              )}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="ml-auto w-full max-w-[calc(100%-8em)]">
-                                <Select
-                                    value={locale}
-                                    onValueChange={(v) =>
-                                        v && setLocale(v as LocaleOption)
-                                    }
-                                >
-                                    <SelectTrigger
-                                        className="h-8 w-full justify-between rounded-md border border-border/50 px-2 text-xs"
-                                        aria-label={
-                                            t("sidebar.languageParameter.title") ??
-                                            "Choose language"
-                                        }
-                                    >
-                                        <SelectValue
-                                            placeholder={
-                                                t("sidebar.languageParameter.title") ??
-                                                "Choose language"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                        <SelectItem value="fr-FR">
-                                            {t("sidebar.languageParameter.fr-FR")}
-                                        </SelectItem>
-                                        <SelectItem value="en-US">
-                                            {t("sidebar.languageParameter.en-US")}
-                                        </SelectItem>
-                                        <SelectItem value="es-ES">
-                                            {t("sidebar.languageParameter.es-ES")}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                        ))}
 
                         <Separator />
 
