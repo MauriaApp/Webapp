@@ -63,7 +63,7 @@ export function PullToRefresh({
         try {
             const maybePromise = onRefresh();
             if (isPromiseLike(maybePromise)) {
-                void maybePromise.catch(escalateError);
+                Promise.resolve(maybePromise).catch(escalateError);
             }
         } catch (error) {
             escalateError(error);
