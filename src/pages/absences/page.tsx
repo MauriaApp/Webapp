@@ -16,8 +16,7 @@ import { fetchAbsences } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
 const StaticAbsenceCard = memo(AbsenceCard);
@@ -40,21 +39,17 @@ export function AbsencesPage() {
         isFetching,
     } = useQuery<Absence[], Error>({
         queryKey: ["absences"],
-        queryFn: () => fetchAbsences().then((res) => res?.data || []),
+        queryFn: (): Promise<Absence[]> =>
+            fetchAbsences().then((res) => res?.data || absences),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        "Absences en cours de chargement…",
-        "absences-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
-    };
+    const handleRefresh = () => refetch();
 
     const { total, justified, unjustified, filteredAbsences } = useMemo(() => {
         return getAbsencesDurations(absences, showCurrentYearOnly);
@@ -64,7 +59,7 @@ export function AbsencesPage() {
         <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
@@ -140,7 +135,9 @@ export function AbsencesPage() {
                     >
                         <Alert className="mb-4">
                             <Info className="h-4 w-4" />
-                            <AlertTitle>{t("absencesPage.noAbsences")}</AlertTitle>
+                            <AlertTitle>
+                                {t("absencesPage.noAbsences")}
+                            </AlertTitle>
                         </Alert>
                     </motion.div>
                 ) : (

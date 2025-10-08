@@ -19,11 +19,10 @@ import {
     DrawerTitle,
 } from "@/components/ui/drawer";
 import { memo, useState } from "react";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -49,20 +48,18 @@ export function GradesPage() {
         isFetching,
     } = useQuery<Grade[], Error>({
         queryKey: ["grades"],
-        queryFn: () => fetchGrades().then((res) => res?.data || []),
+        queryFn: (): Promise<Grade[]> =>
+            fetchGrades().then((res) => res?.data || grades),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        "Notes en cours de chargement…",
-        "grades-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const filteredGrades = getGrades({
@@ -74,7 +71,7 @@ export function GradesPage() {
         <PullToRefresh
             onRefresh={handleRefresh}
             className="mx-auto max-w-3xl space-y-4 pt-4"
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
@@ -160,7 +157,9 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4 ">
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.grade")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.grade")}
+                                    </p>
                                     <p className="text-2xl font-bold">
                                         {selectedGrade.grade}
                                     </p>
@@ -185,11 +184,15 @@ export function GradesPage() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.min")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.min")}
+                                    </p>
                                     <p>{selectedGrade.min}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">{t("gradesPage.max")}</p>
+                                    <p className="text-sm font-medium">
+                                        {t("gradesPage.max")}
+                                    </p>
                                     <p>{selectedGrade.max}</p>
                                 </div>
                             </div>
@@ -212,7 +215,9 @@ export function GradesPage() {
                             </div>
 
                             <div>
-                                <p className="text-sm font-medium">{t("gradesPage.date")}</p>
+                                <p className="text-sm font-medium">
+                                    {t("gradesPage.date")}
+                                </p>
                                 <p>
                                     {selectedGrade.date
                                         ? format(

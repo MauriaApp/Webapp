@@ -18,16 +18,14 @@ import { GradesPage } from "./pages/grades/page";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./lib/api/aurion";
 import { ThemeProvider } from "./components/theme-provider";
+import { BackgroundProvider } from "./components/background-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
 import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
 import * as Sentry from "@sentry/react";
-import { useEffect, useState } from "react";
-import { overrideStorage, saveFromApp } from "./lib/utils/storage";
-import { Loader } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { InitialGetter } from "./contexts/initialGetter";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -40,7 +38,7 @@ if (import.meta.env.PROD) {
             Sentry.replayIntegration(),
             Sentry.browserTracingIntegration(),
         ],
-        replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+        replaysSessionSampleRate: 0, // This sets the sample rate at 0%. You may want to change it to 100% while in development and then sample at a lower rate in production.
         replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
         tracesSampleRate: 1.0, // Adjust this value in production as needed
     });
@@ -94,73 +92,24 @@ function AppRoutes() {
 }
 
 function App() {
-    const [isLoading, setIsLoading] = useState(true);
-    const { t } = useTranslation();
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 750);
-
-        return () => {
-            clearTimeout(timer);
-        };
-    }, []);
-
-    useEffect(() => {
-        // Écouter la réponse d'Ionic pour récupérer une donnée
-        const handleMessage = (event: MessageEvent) => {
-            const { type, key, payload } = event.data;
-            if (type === "DATA_RESPONSE" && key) {
-                console.log(`Donnée reçue pour ${key}: `, payload);
-                saveFromApp(key, payload);
-            }
-            if (type === "ALL_DATA_RESPONSE" && payload) {
-                console.log("Toutes les données reçues: ", payload);
-                for (const [k, v] of Object.entries(payload)) {
-                    overrideStorage({ [k]: v } as Record<string, string>);
-                }
-                setIsLoading(false);
-            }
-        };
-
-        console.log("Requesting all data from parent...");
-        window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
-
-        window.addEventListener("message", handleMessage);
-
-        return () => {
-            window.removeEventListener("message", handleMessage);
-        };
-    }, []);
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-col items-center text-center justify-center h-screen space-y-4">
-                <p>
-                    {t("common.loading")}
-                    <br />
-                    {t("common.loadingWeb")}
-                </p>
-                <Loader className="w-12 h-12 text-muted-foreground animate-spin" />
-            </div>
-        );
-    }
-
     return (
         <ThemeProvider defaultTheme="light">
-            <ToastContextProvider>
-                <ModalContextProvider>
-                    <Toaster richColors position="top-center" />
-                    <BrowserRouter>
-                        <ReactQueryProvider>
-                            <CurrentYearProvider>
-                                <AppRoutes />
-                            </CurrentYearProvider>
-                        </ReactQueryProvider>
-                    </BrowserRouter>
-                </ModalContextProvider>
-            </ToastContextProvider>
+            <BackgroundProvider defaultBackground="particles">
+                <ToastContextProvider>
+                    <ModalContextProvider>
+                        <Toaster richColors position="top-center" />
+                        <InitialGetter>
+                            <BrowserRouter>
+                                <ReactQueryProvider>
+                                    <CurrentYearProvider>
+                                        <AppRoutes />
+                                    </CurrentYearProvider>
+                                </ReactQueryProvider>
+                            </BrowserRouter>
+                        </InitialGetter>
+                    </ModalContextProvider>
+                </ToastContextProvider>
+            </BackgroundProvider>
         </ThemeProvider>
     );
 }

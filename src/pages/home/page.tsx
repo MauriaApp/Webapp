@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 import { getHomeUpcoming } from "@/lib/utils/home";
 import { getFirstName } from "@/lib/api/helper";
@@ -32,58 +31,19 @@ export function HomePage() {
         isFetching,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
-        queryFn: () => fetchPlanning().then((res) => res?.data || []),
+        queryFn: (): Promise<Lesson[]> =>
+            fetchPlanning().then((res) => res?.data || lessons),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchIntervalInBackground: true,
         refetchInterval: 1000 * 60 * 5, // 5 min
+        placeholderData: (previousData) => previousData,
     });
 
-    const toastTimeoutRef = useRef<number | null>(null);
-    const toastShownRef = useRef(false);
+    const isBusy = isLoading || isFetching;
 
-    useEffect(() => {
-        const TOAST_ID = "planning-loading";
-
-        if (isLoading || isFetching) {
-            // Avoid flashing toasts: only show if fetch lasts > 250ms
-            if (toastTimeoutRef.current == null) {
-                toastTimeoutRef.current = window.setTimeout(() => {
-                    console.log("Showing toast");
-                    toast.loading(t("homePage.loadingSchedule"), {
-                        id: TOAST_ID,
-                    });
-                    toastShownRef.current = true;
-                    toastTimeoutRef.current = null;
-                }, 250);
-            }
-        } else {
-            // Clear any pending show and dismiss if visible
-            if (toastTimeoutRef.current != null) {
-                window.clearTimeout(toastTimeoutRef.current);
-                toastTimeoutRef.current = null;
-            }
-            if (toastShownRef.current) {
-                console.log("Hiding toast");
-                toast.dismiss(TOAST_ID);
-                toastShownRef.current = false;
-            }
-        }
-
-        return () => {
-            if (toastTimeoutRef.current != null) {
-                window.clearTimeout(toastTimeoutRef.current);
-                toastTimeoutRef.current = null;
-            }
-            if (toastShownRef.current) {
-                toast.dismiss(TOAST_ID);
-                toastShownRef.current = false;
-            }
-        };
-    }, [isLoading, isFetching]);
-
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const { data: importantMessage } = useQuery({
@@ -115,7 +75,7 @@ export function HomePage() {
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >

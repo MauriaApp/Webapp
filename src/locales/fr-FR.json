@@ -39,6 +39,11 @@
       "light": "Clair",
       "oled": "OLED"
     },
+    "backgroundParameter": {
+      "title": "Fond",
+      "particles": "Particules",
+      "grid": "Grille"
+    },
     "sizeParameter": {
       "title": "Taille",
       "small": "Petit",

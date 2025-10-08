@@ -1,6 +1,5 @@
 import { AssociationData, MessageEntry, UpdatesEntry } from "@/types/data";
-import { apiRequest, APIResponse } from "./helper";
-import { saveToStorage } from "../utils/storage";
+import { apiRequest } from "./helper";
 
 export async function fetchAssos(): Promise<AssociationData[] | null> {
     const response = await apiRequest<AssociationData[]>(
@@ -26,15 +25,11 @@ export async function fetchImportantMessage(): Promise<MessageEntry> {
 }
 
 export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {
-    const response = await apiRequest<APIResponse<UpdatesEntry[]>>(
-        "/updates",
-        "GET"
-    );
+    const response = await apiRequest<UpdatesEntry[]>("/updates", "GET");
 
-    if (!response?.success || !response.data) {
-        saveToStorage("updates-log", "[]");
+    if (!response) {
         return null;
     }
 
-    return response.data;
+    return response;
 }

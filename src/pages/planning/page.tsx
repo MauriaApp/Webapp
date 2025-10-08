@@ -7,7 +7,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -45,20 +44,18 @@ export function PlanningPage() {
         dataUpdatedAt,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
-        queryFn: () => fetchPlanning().then((res) => res?.data || []),
+        queryFn: (): Promise<Lesson[]> =>
+            fetchPlanning().then((res) => res?.data || lessons),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
+        placeholderData: (previousData) => previousData,
     });
 
-    useLoadingToast(
-        isLoading || isFetching,
-        t("schedulePage.loadingSchedule"),
-        "planning-loading"
-    );
+    const isBusy = isLoading || isFetching;
 
-    const handleRefresh = async () => {
-        await refetch();
+    const handleRefresh = () => {
+        void refetch();
     };
 
     const handleExport = () => {
@@ -71,7 +68,7 @@ export function PlanningPage() {
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
-            isPullable={!isLoading}
+            isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
@@ -155,7 +152,7 @@ export function PlanningPage() {
                 <Button
                     className="mt-2"
                     onClick={handleExport}
-                    disabled={lessons.length === 0 || isLoading || isFetching}
+                    disabled={lessons.length === 0 || isBusy}
                 >
                     {t("schedulePage.exportSchedule")}
                 </Button>

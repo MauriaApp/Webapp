@@ -48,7 +48,7 @@ export function GradeCardAnimate({
                         {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("common.coef")} {grade.coefficient}
+                        {t("gradesPage.coef")} {grade.coefficient}
                     </div>
                 </div>
                 <div className="flex-1">
@@ -100,7 +100,7 @@ export function GradeCard({
                         {grade.grade}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("common.coef")} {grade.coefficient}
+                        {t("gradesPage.coef")} {grade.coefficient}
                     </div>
                 </div>
                 <div className="flex-1">

@@ -15,7 +15,6 @@ import {
 import { fetchAssos } from "@/lib/api/supa";
 import { AssociationData } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
-import { useLoadingToast } from "@/hooks/useLoadingToast";
 import { useTranslation } from "react-i18next";
 
 const formLink = "https://forms.office.com/e/Kpx2fP8Gh1";
@@ -52,22 +51,13 @@ function AssociationImage({
 }
 
 export function AssociationsPage() {
-    const {
-        data: associations = [],
-        isLoading,
-        isFetching,
-    } = useQuery<AssociationData[], Error>({
+    const { data: associations = [] } = useQuery<AssociationData[], Error>({
         queryKey: ["associations"],
         queryFn: () => fetchAssos().then((res) => res || []),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
+        placeholderData: (previousData) => previousData,
     });
-
-    useLoadingToast(
-        isLoading || isFetching,
-        "Associations en cours de chargement…",
-        "associations-loading"
-    );
 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedAssociation, setSelectedAssociation] =

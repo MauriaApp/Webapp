@@ -36,12 +36,11 @@ export default function NewUpdateDrawer() {
     });
 
     useEffect(() => {
-        if (updates?.length) {
+        if (updates) {
             const last = updates[0]?.version ?? null;
             if (last) {
                 const seen = getFromStorage(LAST_SEEN_UPDATE_KEY);
                 if (seen !== last) {
-                    console.log("New update, showing the new update modal.");
                     saveToStorage(LAST_SEEN_UPDATE_KEY, last);
                     setOpen(true);
                 }
@@ -72,7 +71,9 @@ export default function NewUpdateDrawer() {
                 <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 touch-pan-y [-webkit-overflow-scrolling:touch]">
                     <Alert className="mb-4">
                         <Eye className="h-4 w-4" />
-                        <AlertTitle>{t("update.visualImprovements")}</AlertTitle>
+                        <AlertTitle>
+                            {t("update.visualImprovements")}
+                        </AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5 space-y-1 text-sm mb-4">
                                 {formatUpdateContentList(
@@ -86,7 +87,9 @@ export default function NewUpdateDrawer() {
 
                     <Alert className="mb-4">
                         <CodeXml className="h-4 w-4" />
-                        <AlertTitle>{t("update.technicalImprovements")}</AlertTitle>
+                        <AlertTitle>
+                            {t("update.technicalImprovements")}
+                        </AlertTitle>
                         <AlertDescription>
                             <ul className="list-disc pl-5 space-y-1 text-sm mb-4">
                                 {formatUpdateContentList(
