@@ -22,7 +22,7 @@
         overscroll-behavior: none;
     }
     :root {
-        --safe-area-top: 40px;
+        --safe-area-top: 50px;
         --safe-area-bottom: 30px;
         --safe-area-left: env(safe-area-inset-left, 0px);
         --safe-area-right: env(safe-area-inset-right, 0px);
