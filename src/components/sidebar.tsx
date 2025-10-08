@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   Moon, Sun, MoonStar, Menu, HeartHandshake, BadgeX, ThumbsDown, Book, Printer,
   MailQuestionMark, ImageUpscale, ArrowDownRightFromSquare, Languages,
@@ -74,7 +74,14 @@ export default function Sidebar() {
 
       <SheetContent
         side="right"
-        className="w-[85%] sm:max-w-sm p-5 flex-col flex justify-between border-none oled:bg-black"
+        className="w-[85%] sm:max-w-sm flex flex-col justify-between border-none oled:bg-black px-5 pb-5 pt-[var(--sidebar-safe-area-top)]"
+        style={
+          {
+            "--sidebar-safe-area-top": "calc(var(--safe-area-top) + 12px)",
+            "--sheet-close-top": "calc(var(--safe-area-top) + 14px)",
+            "--sheet-close-right": "24px"
+          } as CSSProperties
+        }
       >
         <SheetHeader>
           <SheetTitle>{t("sidebar.title")}</SheetTitle>
