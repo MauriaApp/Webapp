@@ -11,7 +11,7 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TimePicker } from "./ui/time-picker/time-picker";
 import { saveTaskToLocalStorage } from "@/lib/utils/agenda";
 import { Lesson } from "@/types/aurion";
@@ -19,6 +19,43 @@ import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { useTranslation } from 'react-i18next';
+
+const combineDateAndTime = (
+    targetDate: Date | undefined,
+    time: Date | undefined
+): Date | undefined => {
+    if (!targetDate || !time) return undefined;
+
+    return new Date(
+        targetDate.getFullYear(),
+        targetDate.getMonth(),
+        targetDate.getDate(),
+        time.getHours(),
+        time.getMinutes(),
+        time.getSeconds(),
+        time.getMilliseconds()
+    );
+};
+
+const createDefaultDateTimes = () => {
+    const start = new Date();
+    start.setHours(start.getHours() + 1);
+
+    const date = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        start.getDate()
+    );
+
+    const end = new Date(start);
+    end.setHours(end.getHours() + 1);
+
+    return {
+        date,
+        startTime: start,
+        endTime: end,
+    };
+};
 
 export function DrawerEventTask({
     type,
@@ -30,35 +67,59 @@ export function DrawerEventTask({
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
 
+    const defaultDateTimesRef = useRef(createDefaultDateTimes());
+
     const [title, setTitle] = useState<string>("");
-    const [date, setDate] = useState<Date | undefined>(new Date());
-    const [startTime, setStartTime] = useState<Date | undefined>(new Date());
-    const [endTime, setEndTime] = useState<Date | undefined>(new Date());
+    const [date, setDate] = useState<Date | undefined>(
+        defaultDateTimesRef.current.date
+    );
+    const [startTime, setStartTime] = useState<Date | undefined>(
+        defaultDateTimesRef.current.startTime
+    );
+    const [endTime, setEndTime] = useState<Date | undefined>(
+        defaultDateTimesRef.current.endTime
+    );
+
+    const resetForm = useCallback(() => {
+        const defaults = createDefaultDateTimes();
+        defaultDateTimesRef.current = defaults;
+        setTitle("");
+        setDate(defaults.date);
+        setStartTime(defaults.startTime);
+        setEndTime(defaults.endTime);
+    }, []);
+
+    useEffect(() => {
+        if (open) {
+            resetForm();
+        }
+    }, [open, resetForm]);
 
     const handleValidate = () => {
-        if (!title || !date || !startTime || (type === "event" && !endTime))
+        const now = new Date();
+        const startDateTime = combineDateAndTime(date, startTime);
+        const endDateTime = combineDateAndTime(date, endTime);
+
+        if (!title || !startDateTime || (type === "event" && !endDateTime))
             return;
+
+        if (startDateTime.getTime() < now.getTime()) return;
+        if (
+            type === "event" &&
+            endDateTime &&
+            endDateTime.getTime() <= startDateTime.getTime()
+        )
+            return;
+
 
         switch (type) {
             case "event": {
-                if (!endTime) return;
+                if (!endDateTime) return;
                 const newUserEvent: Lesson = {
                     id: crypto.randomUUID(),
                     title: title,
-                    start: new Date(
-                        date.getFullYear(),
-                        date.getMonth(),
-                        date.getDate(),
-                        startTime.getHours(),
-                        startTime.getMinutes()
-                    ).toISOString(),
-                    end: new Date(
-                        date.getFullYear(),
-                        date.getMonth(),
-                        date.getDate(),
-                        endTime.getHours(),
-                        endTime.getMinutes()
-                    ).toISOString(),
+                    start: startDateTime.toISOString(),
+                    end: endDateTime.toISOString(),
                     allDay: false,
                     editable: true,
                     className: "est-perso",
@@ -76,7 +137,7 @@ export function DrawerEventTask({
                     task: {
                         id: crypto.randomUUID(),
                         task: title,
-                        date: new Date(startTime),
+                        date: startDateTime,
                     },
                 });
                 toast.success("Tâche ajoutée", {
@@ -94,11 +155,23 @@ export function DrawerEventTask({
     const handleClose = () => {
         onClose();
         setOpen(false);
-        setTitle("");
-        setDate(new Date());
-        setStartTime(new Date());
-        setEndTime(new Date());
+        resetForm();
     };
+
+    const now = new Date();
+    const startDateTimeForValidation = combineDateAndTime(date, startTime);
+    const endDateTimeForValidation = combineDateAndTime(date, endTime);
+    const isEventDisabled =
+        type === "event" &&
+        (!startDateTimeForValidation ||
+            !endDateTimeForValidation ||
+            endDateTimeForValidation.getTime() <=
+                startDateTimeForValidation.getTime() ||
+            startDateTimeForValidation.getTime() < now.getTime());
+    const isTaskDisabled =
+        type === "task" &&
+        (!startDateTimeForValidation ||
+            startDateTimeForValidation.getTime() < now.getTime());
 
     return (
         <Drawer open={open} onOpenChange={setOpen}>
@@ -134,24 +207,28 @@ export function DrawerEventTask({
                     <div className="flex w-full justify-between items-center px-10">
                         <div>
                             <DatePickerComponent
-                                onChange={(date) => setDate(date)}
+                                value={date}
+                                onChange={setDate}
                             />
                         </div>
                         <div>
                             {type === "task" ? (
                                 <TimePickerComponent
                                     label={t('agendaPage.hour')}
-                                    onChange={(time) => setStartTime(time)}
+                                    value={startTime}
+                                    onChange={setStartTime}
                                 />
                             ) : (
                                 <>
                                     <TimePickerComponent
                                         label="Heure de début"
-                                        onChange={(time) => setStartTime(time)}
+                                        value={startTime}
+                                        onChange={setStartTime}
                                     />
                                     <TimePickerComponent
                                         label="Heure de fin"
-                                        onChange={(time) => setEndTime(time)}
+                                        value={endTime}
+                                        onChange={setEndTime}
                                     />
                                 </>
                             )}
@@ -165,10 +242,8 @@ export function DrawerEventTask({
                             !title ||
                             !date ||
                             !startTime ||
-                            (endTime &&
-                                (startTime.getTime() === endTime.getTime() ||
-                                    startTime.getTime() > endTime.getTime())) ||
-                            (type === "event" && !endTime)
+                            isEventDisabled ||
+                            isTaskDisabled
                         }
                     >
                         {type === "event"
@@ -182,13 +257,21 @@ export function DrawerEventTask({
 }
 
 const DatePickerComponent = ({
+    value,
     onChange,
 }: {
+    value: Date | undefined;
     onChange: (date: Date | undefined) => void;
 }) => {
-    const [date, setDate] = useState<Date | undefined>(new Date());
+    const [date, setDate] = useState<Date | undefined>(() =>
+        value ? new Date(value) : undefined
+    );
     const [open, setOpen] = useState(false);
     const { t } = useTranslation();
+
+    useEffect(() => {
+        setDate(value ? new Date(value) : undefined);
+    }, [value]);
 
     const handleDateChange = (selectedDate: Date | undefined) => {
         setDate(selectedDate);
@@ -233,12 +316,20 @@ const DatePickerComponent = ({
 
 const TimePickerComponent = ({
     label,
+    value,
     onChange,
 }: {
     label: string;
-    onChange: (time: Date) => void;
+    value: Date | undefined;
+    onChange: (time: Date | undefined) => void;
 }) => {
-    const [time, setTime] = useState<Date | undefined>(new Date());
+    const [time, setTime] = useState<Date | undefined>(() =>
+        value ? new Date(value) : new Date()
+    );
+
+    useEffect(() => {
+        setTime(value ? new Date(value) : new Date());
+    }, [value]);
 
     const handleTimeChange = (newTime: Date | undefined) => {
         if (!newTime) return;
