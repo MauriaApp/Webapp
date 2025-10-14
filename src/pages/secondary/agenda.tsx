@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
     getTasksFromLocalStorage,
     removeTaskFromLocalStorage,
+    saveTaskToLocalStorage,
 } from "@/lib/utils/agenda";
 import { TaskData } from "@/types/data";
 import { format } from "date-fns";
@@ -22,24 +23,34 @@ export function AgendaPage() {
     const pendingTimeoutsRef = useRef<
         Map<string, ReturnType<typeof setTimeout>>
     >(new Map());
+    const pendingTasksRef = useRef<Map<string, TaskData>>(new Map());
     const { t } = useTranslation();
 
     const refreshTasks = useCallback(() => {
-        setTasks(getTasksFromLocalStorage());
-    }, [setTasks]);
+        const storedTasks = getTasksFromLocalStorage();
+        const pendingTasks = Array.from(pendingTasksRef.current.values());
+        const combined = [
+            ...storedTasks,
+            ...pendingTasks.filter(
+                (pendingTask) =>
+                    !storedTasks.some((task) => task.id === pendingTask.id)
+            ),
+        ];
+        combined.sort(
+            (a, b) => a.date.getTime() - b.date.getTime()
+        );
+        setTasks(combined);
+    }, []);
 
-    const finalizeTaskCompletion = useCallback(
-        (taskId: string) => {
-            removeTaskFromLocalStorage({ taskId });
-            refreshTasks();
-            pendingTimeoutsRef.current.delete(taskId);
-            setPendingTaskIds((prev) => {
-                const { [taskId]: _removed, ...rest } = prev;
-                return rest;
-            });
-        },
-        [refreshTasks]
-    );
+    const finalizeTaskCompletion = useCallback((taskId: string) => {
+        pendingTimeoutsRef.current.delete(taskId);
+        pendingTasksRef.current.delete(taskId);
+        setPendingTaskIds((prev) => {
+            const { [taskId]: _removed, ...rest } = prev;
+            return rest;
+        });
+        setTasks((prev) => prev.filter((task) => task.id !== taskId));
+    }, []);
 
     const handleTaskCompletionToggle = (taskId: string) => {
         const isPending = Boolean(pendingTaskIds[taskId]);
@@ -50,13 +61,23 @@ export function AgendaPage() {
                 clearTimeout(existingTimeout);
             }
             pendingTimeoutsRef.current.delete(taskId);
+            const pendingTask = pendingTasksRef.current.get(taskId);
+            if (pendingTask) {
+                saveTaskToLocalStorage({ task: pendingTask });
+            }
+            pendingTasksRef.current.delete(taskId);
             setPendingTaskIds((prev) => {
                 const { [taskId]: _removed, ...rest } = prev;
                 return rest;
             });
+            refreshTasks();
             return;
         }
 
+        const taskToComplete = tasks.find((task) => task.id === taskId);
+        if (!taskToComplete) return;
+        pendingTasksRef.current.set(taskId, taskToComplete);
+        removeTaskFromLocalStorage({ taskId });
         setPendingTaskIds((prev) => ({ ...prev, [taskId]: true }));
         const timeoutId = setTimeout(
             () => finalizeTaskCompletion(taskId),
