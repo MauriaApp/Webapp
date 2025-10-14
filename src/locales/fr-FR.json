@@ -137,7 +137,11 @@
     "hour": "Heure",
     "createTaskBtn": "Créer la tâche",
     "markTaskDone": "Marquer comme effectuée",
-    "undoTaskCompletion": "Annuler la complétion"
+    "undoTaskCompletion": "Annuler la complétion",
+    "editTaskTitle": "Modifier la tâche",
+    "updateTaskBtn": "Mettre à jour la tâche",
+    "taskUpdated": "Tâche mise à jour",
+    "taskUpdatedDescription": "Les modifications ont été enregistrées."
   },
   "associationsPage": {
     "search": "Rechercher une association",

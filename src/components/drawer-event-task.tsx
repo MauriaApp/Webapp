@@ -11,14 +11,18 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TimePicker } from "./ui/time-picker/time-picker";
-import { saveTaskToLocalStorage } from "@/lib/utils/agenda";
+import {
+    saveTaskToLocalStorage,
+    updateTaskInLocalStorage,
+} from "@/lib/utils/agenda";
 import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import { TaskData } from "@/types/data";
 
 const combineDateAndTime = (
     targetDate: Date | undefined,
@@ -57,60 +61,119 @@ const createDefaultDateTimes = () => {
     };
 };
 
+interface DrawerEventTaskProps {
+    type: "event" | "task";
+    onClose: () => void;
+    mode?: "create" | "edit";
+    initialTask?: TaskData;
+    onSave?: () => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    hideTrigger?: boolean;
+}
+
 export function DrawerEventTask({
     type,
     onClose,
-}: {
-    type: "event" | "task";
-    onClose: () => void;
-}) {
-    const [open, setOpen] = useState(false);
+    mode = "create",
+    initialTask,
+    onSave,
+    open: controlledOpen,
+    onOpenChange,
+    hideTrigger = false,
+}: DrawerEventTaskProps) {
     const { t } = useTranslation();
-
-    const defaultDateTimesRef = useRef(createDefaultDateTimes());
+    const isEditMode = mode === "edit";
+    const isTaskDrawer = type === "task";
 
     const [title, setTitle] = useState<string>("");
-    const [date, setDate] = useState<Date | undefined>(
-        defaultDateTimesRef.current.date
-    );
-    const [startTime, setStartTime] = useState<Date | undefined>(
-        defaultDateTimesRef.current.startTime
-    );
-    const [endTime, setEndTime] = useState<Date | undefined>(
-        defaultDateTimesRef.current.endTime
+    const [date, setDate] = useState<Date | undefined>();
+    const [startTime, setStartTime] = useState<Date | undefined>();
+    const [endTime, setEndTime] = useState<Date | undefined>();
+
+    const [internalOpen, setInternalOpen] = useState(false);
+    const isControlled = typeof controlledOpen === "boolean";
+    const open = isControlled ? Boolean(controlledOpen) : internalOpen;
+
+    const setDrawerOpen = useCallback(
+        (next: boolean) => {
+            if (!isControlled) {
+                setInternalOpen(next);
+            }
+            onOpenChange?.(next);
+        },
+        [isControlled, onOpenChange]
     );
 
-    const resetForm = useCallback(() => {
+    const initializeForm = useCallback(() => {
+        if (isEditMode && isTaskDrawer && initialTask) {
+            const taskDate = new Date(initialTask.date);
+            setTitle(initialTask.task);
+            setDate(new Date(taskDate));
+            setStartTime(new Date(taskDate));
+            setEndTime(new Date(taskDate));
+            return;
+        }
+
         const defaults = createDefaultDateTimes();
-        defaultDateTimesRef.current = defaults;
         setTitle("");
         setDate(defaults.date);
         setStartTime(defaults.startTime);
         setEndTime(defaults.endTime);
-    }, []);
+    }, [initialTask, isEditMode, isTaskDrawer]);
 
     useEffect(() => {
         if (open) {
-            resetForm();
+            initializeForm();
         }
-    }, [open, resetForm]);
+    }, [open, initializeForm]);
+
+    const closeDrawer = useCallback(() => {
+        setDrawerOpen(false);
+        onClose();
+    }, [onClose, setDrawerOpen]);
+
+    const handleDrawerOpenChange = useCallback(
+        (next: boolean) => {
+            if (next) {
+                setDrawerOpen(true);
+            } else {
+                closeDrawer();
+            }
+        },
+        [closeDrawer, setDrawerOpen]
+    );
+
+    const now = new Date();
+    const startDateTimeForValidation = combineDateAndTime(date, startTime);
+    const endDateTimeForValidation = combineDateAndTime(date, endTime);
+    const isEventDisabled =
+        type === "event" &&
+        (!startDateTimeForValidation ||
+            !endDateTimeForValidation ||
+            endDateTimeForValidation.getTime() <=
+                startDateTimeForValidation.getTime() ||
+            startDateTimeForValidation.getTime() < now.getTime());
+    const isTaskDisabled =
+        type === "task" &&
+        (!startDateTimeForValidation ||
+            startDateTimeForValidation.getTime() < now.getTime());
 
     const handleValidate = () => {
-        const now = new Date();
+        const validationNow = new Date();
         const startDateTime = combineDateAndTime(date, startTime);
         const endDateTime = combineDateAndTime(date, endTime);
 
         if (!title || !startDateTime || (type === "event" && !endDateTime))
             return;
 
-        if (startDateTime.getTime() < now.getTime()) return;
+        if (startDateTime.getTime() < validationNow.getTime()) return;
         if (
             type === "event" &&
             endDateTime &&
             endDateTime.getTime() <= startDateTime.getTime()
         )
             return;
-
 
         switch (type) {
             case "event": {
@@ -133,72 +196,84 @@ export function DrawerEventTask({
             }
 
             case "task": {
-                saveTaskToLocalStorage({
-                    task: {
-                        id: crypto.randomUUID(),
+                if (isEditMode && initialTask) {
+                    const updatedTask: TaskData = {
+                        ...initialTask,
                         task: title,
                         date: startDateTime,
-                    },
-                });
-                toast.success("Tâche ajoutée", {
-                    description: "La tâche a été ajoutée à l’agenda.",
-                    duration: 3000,
-                });
+                    };
+                    updateTaskInLocalStorage({ task: updatedTask });
+                    toast.success(t("agendaPage.taskUpdated"), {
+                        description: t(
+                            "agendaPage.taskUpdatedDescription"
+                        ),
+                        duration: 3000,
+                    });
+                } else {
+                    saveTaskToLocalStorage({
+                        task: {
+                            id: crypto.randomUUID(),
+                            task: title,
+                            date: startDateTime,
+                        },
+                    });
+                    toast.success("Tâche ajoutée", {
+                        description: "La tâche a été ajoutée à l’agenda.",
+                        duration: 3000,
+                    });
+                }
                 break;
             }
             default:
                 break;
         }
-        handleClose();
+
+        onSave?.();
+        closeDrawer();
     };
 
-    const handleClose = () => {
-        onClose();
-        setOpen(false);
-        resetForm();
-    };
+    const drawerTitle =
+        type === "event"
+            ? isEditMode
+                ? "Modifier l'événement"
+                : "Ajouter un événement"
+            : isEditMode
+            ? t("agendaPage.editTaskTitle")
+            : t("agendaPage.addTask");
 
-    const now = new Date();
-    const startDateTimeForValidation = combineDateAndTime(date, startTime);
-    const endDateTimeForValidation = combineDateAndTime(date, endTime);
-    const isEventDisabled =
-        type === "event" &&
-        (!startDateTimeForValidation ||
-            !endDateTimeForValidation ||
-            endDateTimeForValidation.getTime() <=
-                startDateTimeForValidation.getTime() ||
-            startDateTimeForValidation.getTime() < now.getTime());
-    const isTaskDisabled =
-        type === "task" &&
-        (!startDateTimeForValidation ||
-            startDateTimeForValidation.getTime() < now.getTime());
+    const submitLabel =
+        type === "event"
+            ? isEditMode
+                ? "Mettre à jour l'événement"
+                : "Créer l'événement"
+            : isEditMode
+            ? t("agendaPage.updateTaskBtn")
+            : t("agendaPage.createTaskBtn");
 
     return (
-        <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild className="z-50">
-                <Button className="fixed z-50 bottom-safe-offset-20 right-6 bg-accent text-white rounded-full size-10 shadow-lg hover:bg-accent/90 focus:outline-hidden focus:ring-2 focus:ring-accent/50 transition">
-                    <Plus className="scale-150" />
-                </Button>
-            </DrawerTrigger>
+        <Drawer open={open} onOpenChange={handleDrawerOpenChange}>
+            {!hideTrigger && (
+                <DrawerTrigger asChild className="z-50">
+                    <Button className="fixed z-50 bottom-safe-offset-20 right-6 bg-accent text-white rounded-full size-10 shadow-lg hover:bg-accent/90 focus:outline-hidden focus:ring-2 focus:ring-accent/50 transition">
+                        <Plus className="scale-150" />
+                    </Button>
+                </DrawerTrigger>
+            )}
 
             <DrawerContent>
                 <DrawerHeader>
-                    <DrawerTitle>
-                        {type === "event"
-                            ? "Ajouter un événement"
-                            : "Ajouter une tâche"}
-                    </DrawerTitle>
+                    <DrawerTitle>{drawerTitle}</DrawerTitle>
                 </DrawerHeader>
 
                 <div className="p-4 space-y-4">
                     <div>
                         <Label className="block text-sm font-medium mb-2">
-                            {t('agendaPage.taskTitle')}
+                            {t("agendaPage.taskTitle")}
                         </Label>
                         <Input
                             type="text"
                             className="w-full p-2 border rounded-md"
-                            placeholder={t('agendaPage.taskDescription')}
+                            placeholder={t("agendaPage.taskDescription")}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                         />
@@ -214,7 +289,7 @@ export function DrawerEventTask({
                         <div>
                             {type === "task" ? (
                                 <TimePickerComponent
-                                    label={t('agendaPage.hour')}
+                                    label={t("agendaPage.hour")}
                                     value={startTime}
                                     onChange={setStartTime}
                                 />
@@ -246,9 +321,7 @@ export function DrawerEventTask({
                             isTaskDisabled
                         }
                     >
-                        {type === "event"
-                            ? "Créer l'événement"
-                            : "Créer la tâche"}
+                        {submitLabel}
                     </Button>
                 </div>
             </DrawerContent>

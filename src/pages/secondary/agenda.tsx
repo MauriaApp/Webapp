@@ -24,6 +24,8 @@ export function AgendaPage() {
         Map<string, ReturnType<typeof setTimeout>>
     >(new Map());
     const pendingTasksRef = useRef<Map<string, TaskData>>(new Map());
+    const [editingTask, setEditingTask] = useState<TaskData | null>(null);
+    const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
     const { t } = useTranslation();
 
     const refreshTasks = useCallback(() => {
@@ -42,15 +44,22 @@ export function AgendaPage() {
         setTasks(combined);
     }, []);
 
-    const finalizeTaskCompletion = useCallback((taskId: string) => {
-        pendingTimeoutsRef.current.delete(taskId);
-        pendingTasksRef.current.delete(taskId);
-        setPendingTaskIds((prev) => {
-            const { [taskId]: _removed, ...rest } = prev;
-            return rest;
-        });
-        setTasks((prev) => prev.filter((task) => task.id !== taskId));
-    }, []);
+    const finalizeTaskCompletion = useCallback(
+        (taskId: string) => {
+            pendingTimeoutsRef.current.delete(taskId);
+            pendingTasksRef.current.delete(taskId);
+            setPendingTaskIds((prev) => {
+                const { [taskId]: _removed, ...rest } = prev;
+                return rest;
+            });
+            setTasks((prev) => prev.filter((task) => task.id !== taskId));
+            if (editingTask?.id === taskId) {
+                setIsEditDrawerOpen(false);
+                setEditingTask(null);
+            }
+        },
+        [editingTask]
+    );
 
     const handleTaskCompletionToggle = (taskId: string) => {
         const isPending = Boolean(pendingTaskIds[taskId]);
@@ -78,6 +87,10 @@ export function AgendaPage() {
         if (!taskToComplete) return;
         pendingTasksRef.current.set(taskId, taskToComplete);
         removeTaskFromLocalStorage({ taskId });
+        if (editingTask?.id === taskId) {
+            setIsEditDrawerOpen(false);
+            setEditingTask(null);
+        }
         setPendingTaskIds((prev) => ({ ...prev, [taskId]: true }));
         const timeoutId = setTimeout(
             () => finalizeTaskCompletion(taskId),
@@ -85,6 +98,15 @@ export function AgendaPage() {
         );
         pendingTimeoutsRef.current.set(taskId, timeoutId);
     };
+
+    const handleTaskCardClick = useCallback(
+        (task: TaskData) => {
+            if (pendingTaskIds[task.id]) return;
+            setEditingTask(task);
+            setIsEditDrawerOpen(true);
+        },
+        [pendingTaskIds]
+    );
 
     useEffect(() => {
         return () => {
@@ -94,6 +116,10 @@ export function AgendaPage() {
             pendingTimeoutsRef.current.clear();
         };
     }, []);
+
+    useEffect(() => {
+        refreshTasks();
+    }, [refreshTasks]);
 
     return (
         <div className="flex min-h-[calc(100vh-16rem)] flex-col py-6">
@@ -122,6 +148,7 @@ export function AgendaPage() {
                                 <div
                                     className="group cursor-pointer transform transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
                                     key={task.id}
+                                    onClick={() => handleTaskCardClick(task)}
                                 >
                                     <div
                                         className={cn(
@@ -163,11 +190,12 @@ export function AgendaPage() {
                                                         isPending &&
                                                             "bg-amber-100 hover:bg-amber-200 focus:ring-amber-300 oled:bg-neutral-900 oled:hover:bg-neutral-900/90"
                                                     )}
-                                                    onClick={() =>
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
                                                         handleTaskCompletionToggle(
                                                             task.id
-                                                        )
-                                                    }
+                                                        );
+                                                    }}
                                                     title={
                                                         isPending
                                                             ? t(
@@ -217,6 +245,21 @@ export function AgendaPage() {
                 )}
             </div>
             <DrawerEventTask type="task" onClose={refreshTasks} />
+            <DrawerEventTask
+                type="task"
+                mode="edit"
+                hideTrigger
+                initialTask={editingTask ?? undefined}
+                open={isEditDrawerOpen && Boolean(editingTask)}
+                onOpenChange={(open) => {
+                    setIsEditDrawerOpen(open);
+                    if (!open) {
+                        setEditingTask(null);
+                    }
+                }}
+                onClose={refreshTasks}
+                onSave={refreshTasks}
+            />
         </div>
     );
 }
