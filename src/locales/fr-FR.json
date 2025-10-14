@@ -135,7 +135,9 @@
     "taskDescription": "Entrez le titre",
     "date": "Date",
     "hour": "Heure",
-    "createTaskBtn": "Créer la tâche"
+    "createTaskBtn": "Créer la tâche",
+    "markTaskDone": "Marquer comme effectuée",
+    "undoTaskCompletion": "Annuler la complétion"
   },
   "associationsPage": {
     "search": "Rechercher une association",

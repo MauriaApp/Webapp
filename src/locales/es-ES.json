@@ -135,7 +135,9 @@
     "taskDescription": "Introduce el título",
     "date": "Fecha",
     "hour": "Hora",
-    "createTaskBtn": "Crear tarea"
+    "createTaskBtn": "Crear tarea",
+    "markTaskDone": "Marcar como completada",
+    "undoTaskCompletion": "Deshacer la finalización"
   },
   "associationsPage": {
     "search": "Buscar una asociación",

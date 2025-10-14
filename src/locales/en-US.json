@@ -135,7 +135,9 @@
     "taskDescription": "Enter the title",
     "date": "Date",
     "hour": "Hour",
-    "createTaskBtn": "Create task"
+    "createTaskBtn": "Create task",
+    "markTaskDone": "Mark as done",
+    "undoTaskCompletion": "Undo completion"
   },
   "associationsPage": {
     "search": "Find an association",
