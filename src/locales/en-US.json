@@ -135,7 +135,13 @@
     "taskDescription": "Enter the title",
     "date": "Date",
     "hour": "Hour",
-    "createTaskBtn": "Create task"
+    "createTaskBtn": "Create task",
+    "markTaskDone": "Mark as done",
+    "undoTaskCompletion": "Undo completion",
+    "editTaskTitle": "Edit task",
+    "updateTaskBtn": "Update task",
+    "taskUpdated": "Task updated",
+    "taskUpdatedDescription": "Your changes have been saved."
   },
   "associationsPage": {
     "search": "Find an association",
