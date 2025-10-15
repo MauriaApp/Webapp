@@ -43,7 +43,7 @@ const combineDateAndTime = (
 
 const createDefaultDateTimes = () => {
     const start = new Date();
-    start.setHours(start.getHours() + 1);
+    start.setHours(start.getHours() + 1); // Add an hour to the default time
 
     const date = new Date(
         start.getFullYear(),
@@ -52,7 +52,7 @@ const createDefaultDateTimes = () => {
     );
 
     const end = new Date(start);
-    end.setHours(end.getHours() + 1);
+    end.setHours(end.getHours() + 1); // Add an hour to the default time
 
     return {
         date,
@@ -122,11 +122,10 @@ export function DrawerEventTask({
         setEndTime(defaults.endTime);
     }, [initialTask, isEditMode, isTaskDrawer]);
 
-    useEffect(() => {
-        if (open) {
-            initializeForm();
-        }
-    }, [open, initializeForm]);
+    const handleOpen = useCallback(() => {
+        initializeForm();
+        setDrawerOpen(true);
+    }, [initializeForm, setDrawerOpen]);
 
     const closeDrawer = useCallback(() => {
         setDrawerOpen(false);
@@ -136,12 +135,12 @@ export function DrawerEventTask({
     const handleDrawerOpenChange = useCallback(
         (next: boolean) => {
             if (next) {
-                setDrawerOpen(true);
+                handleOpen();
             } else {
                 closeDrawer();
             }
         },
-        [closeDrawer, setDrawerOpen]
+        [closeDrawer, handleOpen]
     );
 
     const now = new Date();
@@ -396,17 +395,10 @@ const TimePickerComponent = ({
     value: Date | undefined;
     onChange: (time: Date | undefined) => void;
 }) => {
-    const [time, setTime] = useState<Date | undefined>(() =>
-        value ? new Date(value) : new Date()
-    );
-
-    useEffect(() => {
-        setTime(value ? new Date(value) : new Date());
-    }, [value]);
+    const time = value ? new Date(value) : new Date();
 
     const handleTimeChange = (newTime: Date | undefined) => {
         if (!newTime) return;
-        setTime(newTime);
         onChange(newTime);
     };
 
