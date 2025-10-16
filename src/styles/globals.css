@@ -22,7 +22,7 @@
         overscroll-behavior: none;
     }
     :root {
-        --safe-area-top: 40px;
+        --safe-area-top: 50px;
         --safe-area-bottom: 30px;
         --safe-area-left: env(safe-area-inset-left, 0px);
         --safe-area-right: env(safe-area-inset-right, 0px);
@@ -460,6 +460,32 @@
             transform: rotate(var(--angle)) translateX(-500px);
             opacity: 0;
         }
+    }
+}
+
+@keyframes task-complete-fade {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    70% {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+    90% {
+        opacity: 0.4;
+        transform: translateY(-8px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+}
+
+@layer utilities {
+    .animate-task-complete {
+        animation: task-complete-fade 5s ease-in-out forwards;
+        will-change: opacity, transform;
     }
 }
 
