@@ -34,3 +34,43 @@ export function getGrades({
         return true;
     });
 }
+
+export type GradeBadgeInfo = {
+    label: string;
+    rawCode: string;
+    normalizedCode: string;
+};
+
+const gradeBadgeKeywordMap: Array<{ keyword: string; label: string }> = [
+    { keyword: "maths", label: "Maths" },
+    { keyword: "physique", label: "Physique" },
+    { keyword: "info", label: "Informatique" },
+    { keyword: "anglais", label: "Anglais" },
+    { keyword: "sii", label: "SII" },
+    { keyword: "fhs", label: "FHS" },
+];
+
+export function getGradeBadgeInfoFromCode(code?: string | null): GradeBadgeInfo | null {
+    const rawCode = (code ?? "").trim();
+    if (!rawCode) return null;
+
+    const normalizedBase = rawCode
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const normalizedCode = normalizedBase.toUpperCase();
+    const searchableCode = normalizedBase.toLowerCase();
+
+    const keywordMatch = gradeBadgeKeywordMap.find(({ keyword }) =>
+        searchableCode.includes(keyword)
+    );
+    const label = keywordMatch?.label ?? "";
+
+    return {
+        label,
+        rawCode,
+        normalizedCode,
+    };
+}
