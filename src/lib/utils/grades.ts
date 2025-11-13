@@ -42,9 +42,12 @@ export type GradeBadgeInfo = {
 };
 
 const gradeBadgeKeywordMap: Array<{ keyword: string; label: string }> = [
-    { keyword: "maths", label: "Maths" },
-    { keyword: "physique", label: "Physique" },
+    { keyword: "math", label: "Maths" },
+    { keyword: "phys", label: "Physique" },
+    { keyword: "optique", label: "Physique" },
     { keyword: "info", label: "Informatique" },
+    { keyword: "prog", label: "Informatique" },
+    { keyword: "web", label: "Informatique" },
     { keyword: "anglais", label: "Anglais" },
     { keyword: "sii", label: "SII" },
     { keyword: "fhs", label: "FHS" },
