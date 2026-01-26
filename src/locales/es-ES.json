@@ -37,7 +37,8 @@
       "title": "Tema",
       "dark": "Oscuro",
       "light": "Claro",
-      "oled": "OLED"
+      "oled": "OLED",
+      "cherry": "Cherry"
     },
     "backgroundParameter": {
       "title": "Fondo",

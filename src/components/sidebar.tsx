@@ -3,6 +3,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import {
+    Cherry,
     Moon,
     Sun,
     MoonStar,
@@ -83,6 +84,7 @@ export default function Sidebar() {
         light: { Icon: Sun, label: t("sidebar.themeParameter.light") },
         dark: { Icon: Moon, label: t("sidebar.themeParameter.dark") },
         oled: { Icon: MoonStar, label: t("sidebar.themeParameter.oled") },
+        cherry: { Icon: Cherry, label: t("sidebar.themeParameter.cherry") },
     } as const;
 
     const { Icon: ThemeIcon, label: themeLabel } =
@@ -119,6 +121,10 @@ export default function Sidebar() {
                 {
                     value: "oled",
                     label: t("sidebar.themeParameter.oled"),
+                },
+                {
+                    value: "cherry",
+                    label: t("sidebar.themeParameter.cherry"),
                 },
             ],
         },
