@@ -11,6 +11,7 @@ export const InitialGetter = ({ children }: Props) => {
     const [isLoading, setIsLoading] = useState(true);
     const nbTryRef = useRef(0);
     const hasTimedOut = useRef(false);
+    const responseReceivedRef = useRef(false);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -18,8 +19,27 @@ export const InitialGetter = ({ children }: Props) => {
         const TIMEOUT_MS = 1500; // global timeout 1.5s
 
         const requestData = () => {
-            console.log("Requesting all data from parent...");
+            if (hasTimedOut.current) return;
+            nbTryRef.current += 1;
+            responseReceivedRef.current = false;
+            console.log(
+                `Requesting all data from parent (attempt ${nbTryRef.current}/${MAX_RETRIES})...`
+            );
             window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
+
+            const delay = 200 * nbTryRef.current;
+            setTimeout(() => {
+                if (hasTimedOut.current || responseReceivedRef.current) return;
+                if (nbTryRef.current < MAX_RETRIES) {
+                    console.warn(
+                        `No response (attempt ${nbTryRef.current}/${MAX_RETRIES}), retrying...`
+                    );
+                    requestData();
+                } else {
+                    console.warn("Giving up after 3 failed attempts.");
+                    setIsLoading(false);
+                }
+            }, delay);
         };
 
         const handleMessage = async (event: MessageEvent) => {
@@ -32,13 +52,13 @@ export const InitialGetter = ({ children }: Props) => {
             }
 
             if (type === "ALL_DATA_RESPONSE") {
+                responseReceivedRef.current = true;
                 console.log("All data received:", payload);
 
                 if (payload["email"]) {
                     overrideStorage(payload as Record<string, string>);
                     setIsLoading(false);
                 } else {
-                    nbTryRef.current += 1;
                     console.warn(
                         `No email found (attempt ${nbTryRef.current}/${MAX_RETRIES})`
                     );
@@ -48,7 +68,7 @@ export const InitialGetter = ({ children }: Props) => {
                         !hasTimedOut.current
                     ) {
                         const delay = 200 * nbTryRef.current; // 200ms, 400ms, 600ms
-                        setTimeout(requestData, delay);
+                            setTimeout(requestData, delay);
                     } else {
                         console.warn("Giving up after 3 failed attempts.");
                         setIsLoading(false);
@@ -56,6 +76,8 @@ export const InitialGetter = ({ children }: Props) => {
                 }
             }
         };
+
+        window.addEventListener("message", handleMessage);
 
         // Initial request
         requestData();
@@ -69,7 +91,6 @@ export const InitialGetter = ({ children }: Props) => {
             }
         }, TIMEOUT_MS);
 
-        window.addEventListener("message", handleMessage);
         return () => {
             window.removeEventListener("message", handleMessage);
             clearTimeout(timeout);
