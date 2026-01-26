@@ -92,6 +92,10 @@ function AppRoutes() {
 }
 
 function App() {
+    const baseUrl = import.meta.env.BASE_URL ?? "/";
+    const routerBaseName =
+        baseUrl === "/" ? undefined : baseUrl.replace(/\/$/, "");
+
     return (
         <ThemeProvider defaultTheme="light">
             <BackgroundProvider defaultBackground="particles">
@@ -99,7 +103,7 @@ function App() {
                     <ModalContextProvider>
                         <Toaster richColors position="top-center" />
                         <InitialGetter>
-                            <BrowserRouter>
+                            <BrowserRouter basename={routerBaseName}>
                                 <ReactQueryProvider>
                                     <CurrentYearProvider>
                                         <AppRoutes />
