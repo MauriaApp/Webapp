@@ -30,10 +30,10 @@
         --mauria-scale: 1;
 
         --background: 40 33% 98%;
-        --foreground: 222 47% 11%;
+        --foreground: 0 0% 0%;
 
         --card: 0 0% 100%;
-        --card-foreground: 222 47% 11%;
+        --card-foreground: 0 0% 0%;
 
         --popover: 0 0% 100%;
         --popover-foreground: 222 47% 11%;
@@ -101,23 +101,21 @@
 
         --planning-event-default-gradient: linear-gradient(
             45deg,
-            hsl(var(--mauria-purple)),
-            hsl(var(--mauria-purple-soft))
+            hsl(352 90% 65%),
+            hsl(50 95% 58%),
+            hsl(200 85% 60%)
         );
-        --planning-event-default-shadow: 0 16px 32px hsl(
-            var(--mauria-purple) / 0.24
-        );
+        --planning-event-default-shadow: 0 16px 32px hsl(200 85% 60% / 0.28);
         --planning-event-default-text: hsl(var(--mauria-white));
-        --planning-event-default-solid: hsl(var(--mauria-purple-soft));
+        --planning-event-default-solid: hsl(352 90% 65%);
 
         --planning-event-epreuve-gradient: linear-gradient(
             45deg,
-            hsl(var(--mauria-accent)),
-            hsl(var(--mauria-accent-dark))
+            hsl(25 95% 60%),
+            hsl(50 95% 58%),
+            hsl(135 65% 50%)
         );
-        --planning-event-epreuve-shadow: 0 16px 32px hsl(
-            var(--mauria-accent) / 0.24
-        );
+        --planning-event-epreuve-shadow: 0 16px 32px hsl(50 95% 58% / 0.28);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
@@ -348,6 +346,139 @@
         --bubble-color-fifth: 255, 185, 196;
         --bubble-color-sixth: 255, 205, 216;
     }
+    .pride {
+        color-scheme: light;
+
+        --background: 0 0% 98%;
+        --foreground: 222 47% 11%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 0%;
+
+        --primary: 200 85% 55%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 210 40% 96%;
+        --secondary-foreground: 0 0% 0%;
+
+        --muted: 210 40% 96%;
+        --muted-foreground: 0 0% 25%;
+
+        --accent: 352 90% 60%;
+        --accent-foreground: 0 0% 0%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 200 85% 70%;
+
+        --mauria-bg: 0 0% 98%;
+        --mauria-card: 0 0% 100%;
+        --mauria-accent: 25 95% 60%;
+        --mauria-alert: 0 100% 95%;
+        --mauria-border: 214 32% 91%;
+        --mauria-purple: 0 0% 0%;
+        --mauria-text: 0 0% 0%;
+
+        --mauria-white: 0 0% 100%;
+        --mauria-black: 0 0% 0%;
+        --mauria-accent-dark: 50 95% 58%;
+        --mauria-purple-soft: 0 0% 0%;
+        --mauria-purple-bright: 0 0% 0%;
+        --mauria-purple-light: 0 0% 0%;
+        --mauria-green: 135 65% 45%;
+        --mauria-green-dark: 135 65% 35%;
+        --mauria-green-soft: 135 65% 55%;
+        --mauria-planning-slot-border: 214 32% 91% / 0.4;
+        --mauria-planning-today: 50 95% 80% / 0.25;
+        --mauria-particles: 200 85% 60%;
+        --mauria-meteor-glow: 352 90% 70% / 0.25;
+        --mauria-chart-line: 270 50% 70%;
+
+        --planning-button-text: hsl(var(--mauria-purple));
+        --planning-button-background: hsl(var(--mauria-card));
+        --planning-button-shadow: 0 12px 32px hsl(var(--mauria-purple) / 0.2);
+        --planning-button-active-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-button-active-shadow: 0 12px 24px hsl(
+            var(--mauria-accent) / 0.24
+        );
+        --planning-button-active-text: hsl(var(--mauria-white));
+
+        --planning-grid-background: hsl(var(--mauria-card));
+        --planning-slot-border-color: hsl(var(--mauria-planning-slot-border));
+        --planning-today-background: hsl(var(--mauria-planning-today));
+
+        --planning-event-default-gradient: linear-gradient(
+            45deg,
+            hsl(25 95% 60%),
+            hsl(50 95% 58%)
+        );
+        --planning-event-default-shadow: 0 16px 32px hsl(25 95% 60% / 0.28);
+        --planning-event-default-text: hsl(var(--mauria-black));
+        --planning-event-default-solid: hsl(352 90% 65%);
+
+        --planning-event-epreuve-gradient: linear-gradient(
+            45deg,
+            hsl(330 85% 60%),
+            hsl(352 90% 65%)
+        );
+        --planning-event-epreuve-shadow: 0 16px 32px hsl(330 85% 60% / 0.28);
+        --planning-event-epreuve-text: hsl(var(--mauria-black));
+
+        --planning-event-personal-gradient: linear-gradient(
+            45deg,
+            hsl(135 65% 50%),
+            hsl(170 65% 45%)
+        );
+        --planning-event-personal-shadow: 0 16px 32px hsl(135 65% 50% / 0.28);
+        --planning-event-personal-text: hsl(var(--mauria-black));
+
+        --planning-event-autogere-gradient: linear-gradient(
+            45deg,
+            hsl(200 85% 60%),
+            hsl(240 70% 60%)
+        );
+        --planning-event-autogere-shadow: 0 16px 32px hsl(200 85% 60% / 0.28);
+        --planning-event-autogere-text: hsl(var(--mauria-black));
+
+        --particles-color: hsl(var(--mauria-particles));
+        --meteors-trail-glow: hsl(var(--mauria-meteor-glow));
+        --chart-grid-stroke: hsl(var(--mauria-chart-line));
+        --chart-dot-stroke: transparent;
+        --bubble-color-first: 255, 99, 132;
+        --bubble-color-second: 255, 159, 64;
+        --bubble-color-third: 255, 205, 86;
+        --bubble-color-fourth: 75, 192, 192;
+        --bubble-color-fifth: 54, 162, 235;
+        --bubble-color-sixth: 153, 102, 255;
+        --mauria-pride-gradient: linear-gradient(
+            135deg,
+            hsl(352 90% 65%),
+            hsl(25 95% 60%),
+            hsl(50 95% 58%),
+            hsl(135 65% 50%),
+            hsl(200 85% 60%),
+            hsl(270 80% 65%)
+        );
+        --mauria-pride-gradient-soft: linear-gradient(
+            135deg,
+            hsl(352 90% 65% / 0.25),
+            hsl(25 95% 60% / 0.25),
+            hsl(50 95% 58% / 0.25),
+            hsl(135 65% 50% / 0.25),
+            hsl(200 85% 60% / 0.25),
+            hsl(270 80% 65% / 0.25)
+        );
+    }
     .oled {
         color-scheme: dark;
 
@@ -480,6 +611,37 @@
     }
     .oled .bg-mauria-accent\/20 {
         background-color: hsl(0 0% 16% / 0.65) !important;
+    }
+    .pride header .text-white {
+        color: hsl(var(--mauria-black));
+    }
+    .pride header .text-white:hover {
+        color: hsl(var(--mauria-black));
+    }
+    .pride .bg-mauria-purple {
+        background-image: var(--mauria-pride-gradient);
+        background-color: transparent;
+    }
+    .pride .bg-mauria-purple\/10 {
+        background-image: var(--mauria-pride-gradient-soft);
+        background-color: transparent;
+    }
+    .pride .bg-mauria-accent {
+        background-image: var(--mauria-pride-gradient);
+        background-color: transparent;
+    }
+    .pride .bg-mauria-accent\/20 {
+        background-image: var(--mauria-pride-gradient-soft);
+        background-color: transparent;
+    }
+    .pride .bg-accent {
+        background-image: var(--mauria-pride-gradient-soft);
+        background-color: transparent;
+    }
+    .toaster [data-sonner-toast] {
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        border: 1px solid hsl(var(--border));
     }
 }
 

@@ -38,7 +38,8 @@
       "dark": "Sombre",
       "light": "Clair",
       "oled": "OLED",
-      "cherry": "Cherry"
+      "cherry": "Cherry",
+      "pride": "Fierté"
     },
     "backgroundParameter": {
       "title": "Fond",

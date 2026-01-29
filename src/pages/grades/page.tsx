@@ -147,7 +147,7 @@ export function GradesPage() {
                     {selectedGrade && (
                         <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto mb-6">
                             <div>
-                                <h3 className="font-semibold text-lg">
+                                <h3 className="font-semibold text-lg text-black dark:text-white">
                                     {selectedGrade.name}
                                 </h3>
                                 <p className="text-sm text-muted-foreground">
