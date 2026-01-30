@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { formatLessonType } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 export function DrawerPlanningContent({
     drawerOpen,
@@ -27,6 +28,7 @@ export function DrawerPlanningContent({
     eventInfo: PreparedLesson | null;
 }) {
     const { t } = useTranslation();
+    const [isTechnicalDetailsOpen, setIsTechnicalDetailsOpen] = useState(false);
     return (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent aria-describedby={undefined}>
@@ -171,11 +173,24 @@ export function DrawerPlanningContent({
                             </div>
                         </div>
 
-                        <details className="mt-6">
+                        <details
+                            className="mt-6"
+                            onToggle={(event) =>
+                                setIsTechnicalDetailsOpen(
+                                    event.currentTarget.open
+                                )
+                            }
+                        >
                             <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 oled:text-gray-200 flex items-center gap-2 hover:text-mauria-purple/80 oled:hover:text-gray-200 transition-colors">
                                 <Info className="w-4 h-4" />
                                 {t("drawerPlanningContent.technicalDetails")}
-                                <ChevronDownIcon className="w-4 h-4 ml-auto" />
+                                <ChevronDownIcon
+                                    className={`w-4 h-4 ml-auto transition-transform ${
+                                        isTechnicalDetailsOpen
+                                            ? "rotate-0"
+                                            : "rotate-180"
+                                    }`}
+                                />
                             </summary>
                             <div className="mt-3 space-y-2 p-3 rounded-lg">
                                 <div className="flex items-center gap-2 text-sm">
