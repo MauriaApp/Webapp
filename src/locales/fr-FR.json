@@ -39,6 +39,8 @@
       "light": "Clair",
       "oled": "OLED",
       "cherry": "Cherry",
+      "ocean": "Océan",
+      "forest": "Forêt",
       "pride": "Fierté"
     },
     "backgroundParameter": {

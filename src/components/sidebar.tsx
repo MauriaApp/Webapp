@@ -8,6 +8,8 @@ import {
     Moon,
     Sun,
     MoonStar,
+    TreePine,
+    Waves,
     Menu,
     HeartHandshake,
     BadgeX,
@@ -86,6 +88,8 @@ export default function Sidebar() {
         dark: { Icon: Moon, label: t("sidebar.themeParameter.dark") },
         oled: { Icon: MoonStar, label: t("sidebar.themeParameter.oled") },
         cherry: { Icon: Cherry, label: t("sidebar.themeParameter.cherry") },
+        ocean: { Icon: Waves, label: t("sidebar.themeParameter.ocean") },
+        forest: { Icon: TreePine, label: t("sidebar.themeParameter.forest") },
         pride: { Icon: Rainbow, label: t("sidebar.themeParameter.pride") },
     } as const;
 
@@ -127,6 +131,14 @@ export default function Sidebar() {
                 {
                     value: "cherry",
                     label: t("sidebar.themeParameter.cherry"),
+                },
+                {
+                    value: "ocean",
+                    label: t("sidebar.themeParameter.ocean"),
+                },
+                {
+                    value: "forest",
+                    label: t("sidebar.themeParameter.forest"),
                 },
                 {
                     value: "pride",

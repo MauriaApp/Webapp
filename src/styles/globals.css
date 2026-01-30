@@ -5,6 +5,8 @@
 
 @custom-variant dark (&:is(.dark *, .oled *));
 @custom-variant oled (&:is(.oled *));
+@custom-variant ocean (&:is(.ocean *));
+@custom-variant forest (&:is(.forest *));
 
 @utility container {
     margin-inline: auto;
@@ -222,6 +224,248 @@
             hsl(var(--mauria-green-soft)),
             hsl(var(--mauria-green))
         );
+    }
+    .ocean {
+        color-scheme: light;
+
+        --background: 202 60% 96%;
+        --foreground: 210 30% 16%;
+
+        --card: 200 60% 98%;
+        --card-foreground: 210 30% 16%;
+
+        --popover: 200 60% 98%;
+        --popover-foreground: 210 30% 16%;
+
+        --primary: 204 88% 40%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 198 45% 90%;
+        --secondary-foreground: 210 30% 20%;
+
+        --muted: 198 45% 92%;
+        --muted-foreground: 210 16% 38%;
+
+        --accent: 190 75% 45%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 200 40% 88%;
+        --input: 200 40% 88%;
+        --ring: 204 70% 60%;
+
+        --mauria-bg: 202 60% 96%;
+        --mauria-card: 200 60% 98%;
+        --mauria-accent: 190 75% 45%;
+        --mauria-alert: 195 60% 92%;
+        --mauria-border: 200 40% 88%;
+        --mauria-purple: 210 45% 22%;
+        --mauria-text: 210 30% 16%;
+
+        --mauria-white: 0 0% 100%;
+        --mauria-black: 0 0% 0%;
+        --mauria-accent-dark: 190 70% 38%;
+        --mauria-purple-soft: 210 35% 34%;
+        --mauria-purple-bright: 204 70% 48%;
+        --mauria-purple-light: 204 70% 60%;
+        --mauria-green: 170 45% 45%;
+        --mauria-green-dark: 170 50% 34%;
+        --mauria-green-soft: 170 40% 58%;
+        --mauria-planning-slot-border: 200 35% 82% / 0.25;
+        --mauria-planning-today: 190 80% 85% / 0.35;
+        --mauria-particles: 195 70% 55%;
+        --mauria-meteor-glow: 200 80% 98% / 0.35;
+        --mauria-chart-line: 204 30% 85%;
+
+        --planning-button-text: hsl(var(--mauria-purple));
+        --planning-button-background: hsl(var(--mauria-card));
+        --planning-button-shadow: 0 12px 32px hsl(var(--mauria-purple) / 0.18);
+        --planning-button-active-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-button-active-shadow: 0 12px 24px hsl(
+            var(--mauria-accent) / 0.22
+        );
+        --planning-button-active-text: hsl(var(--mauria-white));
+
+        --planning-grid-background: hsl(var(--mauria-card));
+        --planning-slot-border-color: hsl(var(--mauria-planning-slot-border));
+        --planning-today-background: hsl(var(--mauria-planning-today));
+
+        --planning-event-default-gradient: linear-gradient(
+            45deg,
+            hsl(204 88% 55%),
+            hsl(190 75% 50%)
+        );
+        --planning-event-default-shadow: 0 16px 30px hsl(204 88% 55% / 0.22);
+        --planning-event-default-text: hsl(var(--mauria-white));
+        --planning-event-default-solid: hsl(204 88% 55%);
+
+        --planning-event-epreuve-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-event-epreuve-shadow: 0 16px 30px hsl(
+            var(--mauria-accent) / 0.24
+        );
+        --planning-event-epreuve-text: hsl(var(--mauria-white));
+
+        --planning-event-personal-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-personal-shadow: 0 16px 30px hsl(
+            var(--mauria-green) / 0.22
+        );
+        --planning-event-personal-text: hsl(var(--mauria-white));
+
+        --planning-event-autogere-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-autogere-shadow: 0 16px 30px hsl(
+            var(--mauria-green) / 0.22
+        );
+        --planning-event-autogere-text: hsl(var(--mauria-white));
+
+        --particles-color: hsl(var(--mauria-particles));
+        --meteors-trail-glow: hsl(var(--mauria-meteor-glow));
+        --chart-grid-stroke: hsl(var(--mauria-chart-line));
+        --chart-dot-stroke: transparent;
+        --bubble-color-first: 120, 196, 235;
+        --bubble-color-second: 96, 182, 226;
+        --bubble-color-third: 58, 136, 194;
+        --bubble-color-fourth: 72, 200, 210;
+        --bubble-color-fifth: 156, 220, 230;
+        --bubble-color-sixth: 84, 164, 214;
+    }
+    .forest {
+        color-scheme: light;
+
+        --background: 120 25% 96%;
+        --foreground: 140 18% 18%;
+
+        --card: 120 25% 98%;
+        --card-foreground: 140 18% 18%;
+
+        --popover: 120 25% 98%;
+        --popover-foreground: 140 18% 18%;
+
+        --primary: 142 45% 32%;
+        --primary-foreground: 120 20% 96%;
+
+        --secondary: 110 20% 90%;
+        --secondary-foreground: 140 18% 20%;
+
+        --muted: 110 20% 92%;
+        --muted-foreground: 140 12% 42%;
+
+        --accent: 168 45% 38%;
+        --accent-foreground: 120 20% 96%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 120 20% 88%;
+        --input: 120 20% 88%;
+        --ring: 142 40% 45%;
+
+        --mauria-bg: 120 25% 96%;
+        --mauria-card: 120 25% 98%;
+        --mauria-accent: 168 45% 38%;
+        --mauria-alert: 120 30% 92%;
+        --mauria-border: 120 20% 88%;
+        --mauria-purple: 142 40% 28%;
+        --mauria-text: 140 18% 18%;
+
+        --mauria-white: 0 0% 100%;
+        --mauria-black: 0 0% 0%;
+        --mauria-accent-dark: 168 50% 30%;
+        --mauria-purple-soft: 142 35% 40%;
+        --mauria-purple-bright: 142 45% 36%;
+        --mauria-purple-light: 142 35% 52%;
+        --mauria-green: 142 40% 40%;
+        --mauria-green-dark: 142 45% 30%;
+        --mauria-green-soft: 142 35% 56%;
+        --mauria-planning-slot-border: 120 20% 85% / 0.25;
+        --mauria-planning-today: 90 50% 85% / 0.35;
+        --mauria-particles: 142 35% 45%;
+        --mauria-meteor-glow: 120 30% 96% / 0.35;
+        --mauria-chart-line: 120 20% 84%;
+
+        --planning-button-text: hsl(var(--mauria-purple));
+        --planning-button-background: hsl(var(--mauria-card));
+        --planning-button-shadow: 0 12px 32px hsl(var(--mauria-purple) / 0.18);
+        --planning-button-active-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-button-active-shadow: 0 12px 24px hsl(
+            var(--mauria-accent) / 0.22
+        );
+        --planning-button-active-text: hsl(var(--mauria-white));
+
+        --planning-grid-background: hsl(var(--mauria-card));
+        --planning-slot-border-color: hsl(var(--mauria-planning-slot-border));
+        --planning-today-background: hsl(var(--mauria-planning-today));
+
+        --planning-event-default-gradient: linear-gradient(
+            45deg,
+            hsl(142 45% 38%),
+            hsl(110 45% 50%)
+        );
+        --planning-event-default-shadow: 0 16px 30px hsl(142 45% 38% / 0.22);
+        --planning-event-default-text: hsl(var(--mauria-white));
+        --planning-event-default-solid: hsl(142 45% 40%);
+
+        --planning-event-epreuve-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
+        );
+        --planning-event-epreuve-shadow: 0 16px 30px hsl(
+            var(--mauria-accent) / 0.24
+        );
+        --planning-event-epreuve-text: hsl(var(--mauria-white));
+
+        --planning-event-personal-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-personal-shadow: 0 16px 30px hsl(
+            var(--mauria-green) / 0.22
+        );
+        --planning-event-personal-text: hsl(var(--mauria-white));
+
+        --planning-event-autogere-gradient: linear-gradient(
+            45deg,
+            hsl(var(--mauria-green)),
+            hsl(var(--mauria-green-dark))
+        );
+        --planning-event-autogere-shadow: 0 16px 30px hsl(
+            var(--mauria-green) / 0.22
+        );
+        --planning-event-autogere-text: hsl(var(--mauria-white));
+
+        --particles-color: hsl(var(--mauria-particles));
+        --meteors-trail-glow: hsl(var(--mauria-meteor-glow));
+        --chart-grid-stroke: hsl(var(--mauria-chart-line));
+        --chart-dot-stroke: transparent;
+        --bubble-color-first: 86, 140, 96;
+        --bubble-color-second: 120, 176, 124;
+        --bubble-color-third: 64, 112, 76;
+        --bubble-color-fourth: 180, 156, 98;
+        --bubble-color-fifth: 148, 196, 140;
+        --bubble-color-sixth: 98, 150, 108;
     }
     .cherry {
         color-scheme: light;

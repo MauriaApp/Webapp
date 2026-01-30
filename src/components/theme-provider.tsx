@@ -5,7 +5,7 @@ import type React from "react";
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "dark" | "light" | "oled" | "cherry" | "pride";
+type Theme = "dark" | "light" | "oled" | "cherry" | "pride" | "ocean" | "forest";
 
 type ThemeProviderProps = {
     children: React.ReactNode;
@@ -30,7 +30,15 @@ export function ThemeProvider({
 
     useEffect(() => {
         const root = window.document.documentElement;
-        root.classList.remove("light", "dark", "oled", "cherry", "pride");
+        root.classList.remove(
+            "light",
+            "dark",
+            "oled",
+            "cherry",
+            "pride",
+            "ocean",
+            "forest"
+        );
         root.classList.add(theme);
         saveToStorage("theme", theme);
     }, [theme]);

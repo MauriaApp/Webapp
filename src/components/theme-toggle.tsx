@@ -1,6 +1,6 @@
 "use client";
 
-import { Cherry, Moon, MoonStar, Rainbow, Sun } from "lucide-react";
+import { Cherry, Moon, MoonStar, Rainbow, Sun, TreePine, Waves } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,8 @@ export function ThemeToggle() {
   const themeCycle: typeof theme[] = [
     "light",
     "cherry",
+    "ocean",
+    "forest",
     "pride",
     "dark",
     "oled",
@@ -39,6 +41,12 @@ export function ThemeToggle() {
       )}
       {theme === "cherry" && (
         <Cherry className="h-[1.2rem] w-[1.2rem] text-white" />
+      )}
+      {theme === "ocean" && (
+        <Waves className="h-[1.2rem] w-[1.2rem] text-white" />
+      )}
+      {theme === "forest" && (
+        <TreePine className="h-[1.2rem] w-[1.2rem] text-white" />
       )}
       {theme === "pride" && (
         <Rainbow className="h-[1.2rem] w-[1.2rem] text-white" />
