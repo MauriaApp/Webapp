@@ -12,14 +12,20 @@ export const InitialGetter = ({ children }: Props) => {
     const nbTryRef = useRef(0);
     const hasTimedOut = useRef(false);
     const responseReceivedRef = useRef(false);
+    const parentReadyRef = useRef(false);
+    const initialRequestSentRef = useRef(false);
     const { t } = useTranslation();
 
     useEffect(() => {
-        const MAX_RETRIES = 3;
-        const TIMEOUT_MS = 1500; // global timeout 1.5s
+        const MAX_RETRIES = 6;
+        const TIMEOUT_MS = 5000; // global timeout 5s
+        const READY_WAIT_MS = 600;
 
         const requestData = () => {
             if (hasTimedOut.current) return;
+            if (!initialRequestSentRef.current) {
+                initialRequestSentRef.current = true;
+            }
             nbTryRef.current += 1;
             responseReceivedRef.current = false;
             console.log(
@@ -44,6 +50,14 @@ export const InitialGetter = ({ children }: Props) => {
 
         const handleMessage = async (event: MessageEvent) => {
             const { type, key, payload } = event.data ?? {};
+
+            if (type === "PARENT_READY") {
+                parentReadyRef.current = true;
+                if (isLoading && !initialRequestSentRef.current) {
+                    requestData();
+                }
+                return;
+            }
 
             if (type === "DATA_RESPONSE" && key) {
                 console.log("Data received for %s:", key, payload);
@@ -79,8 +93,17 @@ export const InitialGetter = ({ children }: Props) => {
 
         window.addEventListener("message", handleMessage);
 
-        // Initial request
-        requestData();
+        const isEmbedded = window.parent !== window;
+        let readyTimeout: number | undefined;
+        if (!isEmbedded) {
+            requestData();
+        } else {
+            readyTimeout = window.setTimeout(() => {
+                if (!parentReadyRef.current) {
+                    requestData();
+                }
+            }, READY_WAIT_MS);
+        }
 
         // Global timeout in case parent never answers
         const timeout = setTimeout(() => {
@@ -94,6 +117,9 @@ export const InitialGetter = ({ children }: Props) => {
         return () => {
             window.removeEventListener("message", handleMessage);
             clearTimeout(timeout);
+            if (readyTimeout) {
+                clearTimeout(readyTimeout);
+            }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
