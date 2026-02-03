@@ -3,9 +3,13 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import {
+    Rainbow,
+    Cherry,
     Moon,
     Sun,
     MoonStar,
+    TreePine,
+    Waves,
     Menu,
     HeartHandshake,
     BadgeX,
@@ -83,6 +87,10 @@ export default function Sidebar() {
         light: { Icon: Sun, label: t("sidebar.themeParameter.light") },
         dark: { Icon: Moon, label: t("sidebar.themeParameter.dark") },
         oled: { Icon: MoonStar, label: t("sidebar.themeParameter.oled") },
+        cherry: { Icon: Cherry, label: t("sidebar.themeParameter.cherry") },
+        ocean: { Icon: Waves, label: t("sidebar.themeParameter.ocean") },
+        forest: { Icon: TreePine, label: t("sidebar.themeParameter.forest") },
+        pride: { Icon: Rainbow, label: t("sidebar.themeParameter.pride") },
     } as const;
 
     const { Icon: ThemeIcon, label: themeLabel } =
@@ -119,6 +127,22 @@ export default function Sidebar() {
                 {
                     value: "oled",
                     label: t("sidebar.themeParameter.oled"),
+                },
+                {
+                    value: "cherry",
+                    label: t("sidebar.themeParameter.cherry"),
+                },
+                {
+                    value: "ocean",
+                    label: t("sidebar.themeParameter.ocean"),
+                },
+                {
+                    value: "forest",
+                    label: t("sidebar.themeParameter.forest"),
+                },
+                {
+                    value: "pride",
+                    label: t("sidebar.themeParameter.pride"),
                 },
             ],
         },
@@ -210,7 +234,7 @@ export default function Sidebar() {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white [&_svg]:size-7!"
+                    className="text-white [&_svg]:size-7! hover:bg-white/15 hover:text-white"
                 >
                     <Menu />
                     <span className="sr-only">{t("sidebar.openMenu")}</span>
@@ -282,7 +306,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => handleNavigate("/associations")}
                         >
                             <HeartHandshake className="h-5 w-5" />
@@ -295,7 +319,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => window.open(aurionURL, "_blank")}
                         >
                             <ThumbsDown className="h-5 w-5" />
@@ -308,7 +332,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() =>
                                 window.open(juniaLearningURL, "_blank")
                             }
@@ -323,7 +347,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => window.open(printURL, "_blank")}
                         >
                             <Printer className="h-5 w-5" />
@@ -340,7 +364,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => window.open(contactURL, "_blank")}
                         >
                             <MailQuestionMark className="h-5 w-5" />
@@ -353,7 +377,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 text-red-500 oled:text-gray-200"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 text-red-500 oled:text-gray-200 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={signOut}
                         >
                             <BadgeX className="h-5 w-5" />

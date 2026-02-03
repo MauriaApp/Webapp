@@ -37,7 +37,11 @@
       "title": "Thème",
       "dark": "Sombre",
       "light": "Clair",
-      "oled": "OLED"
+      "oled": "OLED",
+      "cherry": "Cherry",
+      "ocean": "Océan",
+      "forest": "Forêt",
+      "pride": "Fierté"
     },
     "backgroundParameter": {
       "title": "Fond",

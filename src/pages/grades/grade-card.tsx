@@ -55,7 +55,7 @@ export function GradeCardAnimate({
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium text-mauria-purple dark:text-white">
+                    <div className="text-lg font-medium text-black dark:text-white">
                         {grade.name}
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -108,7 +108,7 @@ export function GradeCard({
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium text-mauria-purple dark:text-white">
+                    <div className="text-lg font-medium text-black dark:text-white">
                         {grade.name}
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -145,7 +145,7 @@ const GradeTypeBadge = ({ code }: { code?: string | null }) => {
     return (
         <Badge
             data-grade-code={badgeInfo?.rawCode ?? code}
-            className="pointer-events-none absolute right-4 top-4 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-mauria-accent whitespace-nowrap"
+            className="pointer-events-none absolute right-4 top-4 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-black dark:text-white whitespace-nowrap"
         >
             {badgeInfo.label}
         </Badge>

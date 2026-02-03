@@ -64,9 +64,7 @@ export const LessonCard = ({
                 <h4 className="font-semibold text-balance leading-tight pr-2">
                     {lesson.courseTitle}
                 </h4>
-                <Badge
-                    className={`px-2 py-1 rounded-md text-xs font-medium bg-mauria-accent/20 text-mauria-accent whitespace-nowrap`}
-                >
+                <Badge className="px-2 py-1 rounded-md text-xs font-medium bg-mauria-accent/20 text-black dark:text-white whitespace-nowrap">
                     {formatLessonType(lesson.type)}
                 </Badge>
             </div>
@@ -167,10 +165,10 @@ export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
         className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
     >
         <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
-            <AlertTitle className="font-bold text-mauria-accent dark:text-white">
+            <AlertTitle className="font-bold text-black dark:text-white">
                 {message?.title ?? "Aucun message important"}
             </AlertTitle>
-            <AlertDescription className="text-mauria-accent/90 dark:text-white/90">
+            <AlertDescription className="text-black/80 dark:text-white/90">
                 {message?.message ?? "Bonne journée !"}
             </AlertDescription>
         </Alert>

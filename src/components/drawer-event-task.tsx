@@ -259,7 +259,7 @@ export function DrawerEventTask({
                 </DrawerTrigger>
             )}
 
-            <DrawerContent>
+            <DrawerContent className="bg-mauria-card shadow-2xl">
                 <DrawerHeader>
                     <DrawerTitle>{drawerTitle}</DrawerTitle>
                 </DrawerHeader>
