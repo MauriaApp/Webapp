@@ -17,6 +17,8 @@ const queryClient = new QueryClient({
     },
 });
 
+const PERSIST_MAX_AGE = 1000 * 60 * 60 * 24 * 30; // 30 days
+
 const localStorageAsyncPersister = createAsyncStoragePersister({
     storage: {
         getItem: (key) => Promise.resolve(getFromStorage(key)),
@@ -33,7 +35,10 @@ export const ReactQueryProvider = ({ children }: ReactQueryProviderProps) => {
     return (
         <PersistQueryClientProvider
             client={queryClient}
-            persistOptions={{ persister: localStorageAsyncPersister }}
+            persistOptions={{
+                persister: localStorageAsyncPersister,
+                maxAge: PERSIST_MAX_AGE,
+            }}
             onSuccess={() => {
                 console.log(
                     "Cache React Query restauré avec persistance asynchrone"

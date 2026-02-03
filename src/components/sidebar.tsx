@@ -390,7 +390,18 @@ export default function Sidebar() {
                             onClick={handleModeBeta}
                         >
                             <span className="text-xs text-muted-foreground">
-                                <span className="">mode Beta</span>
+                                <span className="">beta</span>
+                            </span>
+                        </Button>
+                        <span className="ml-1">—</span>
+                        <Button
+                            variant="link"
+                            size="sm"
+                            className="p-0 ml-2"
+                            onClick={() => handleNavigate("/logs")}
+                        >
+                            <span className="text-xs text-muted-foreground">
+                                <span className="">logs</span>
                             </span>
                         </Button>
                     </div>
