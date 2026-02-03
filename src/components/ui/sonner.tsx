@@ -35,13 +35,15 @@ const Toaster = ({
     ...props
 }: ToasterProps) => {
     const { theme = "system" } = useTheme();
+    const sonnerTheme: ToasterProps["theme"] =
+        theme === "dark" || theme === "oled" ? "dark" : "light";
 
     const mergedToastOptions: ToasterProps["toastOptions"] = {
         ...toastOptions,
         classNames: {
             ...toastOptions?.classNames,
             toast: mergeClassName(
-                "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+                "group toast bg-background text-foreground border border-border shadow-lg",
                 toastOptions?.classNames?.toast
             ),
             description: mergeClassName(
@@ -61,7 +63,7 @@ const Toaster = ({
 
     return (
         <Sonner
-            theme={theme as ToasterProps["theme"]}
+            theme={sonnerTheme}
             className="toaster group"
             toastOptions={mergedToastOptions}
             offset={resolveOffset(offset)}

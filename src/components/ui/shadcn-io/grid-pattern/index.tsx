@@ -11,6 +11,7 @@ interface GridPatternProps {
   squares?: Array<[number, number]>;
   strokeDasharray?: string;
   className?: string;
+  style?: React.CSSProperties;
   [key: string]: unknown;
 }
 
@@ -22,6 +23,7 @@ export function GridPattern({
   strokeDasharray = "0",
   squares,
   className,
+  style,
   ...props
 }: GridPatternProps) {
   const id = React.useId();
@@ -30,9 +32,10 @@ export function GridPattern({
     <svg
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-gray-400/30 stroke-gray-400/30",
+        "pointer-events-none absolute inset-0 h-full w-full fill-current/30 stroke-current/30",
         className
       )}
+      style={{ color: "hsl(var(--mauria-border))", ...style }}
       {...props}
     >
       <defs>

@@ -23,6 +23,7 @@ import {
     readInitialLocale,
     type LocaleOption,
 } from "@/lib/utils/translations";
+import { useNavigate } from "react-router";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -33,6 +34,7 @@ export function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         applyLocale(locale);
@@ -59,7 +61,9 @@ export function LoginPage() {
                     );
                 }
 
-                window.location.href = shouldShowWelcome ? "/welcome" : "/";
+                navigate(shouldShowWelcome ? "/welcome" : "/", {
+                    replace: true,
+                });
             } else {
                 toast.error("Identifiants invalides", {
                     description:

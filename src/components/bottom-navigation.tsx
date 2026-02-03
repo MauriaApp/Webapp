@@ -11,12 +11,18 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@/components/theme-provider";
 
 export default function BottomNavigation() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const location = useLocation();
     const pathname = location.pathname;
+    const { theme } = useTheme();
+    const hoverWhite = theme === "dark" || theme === "oled";
+    const hoverTextClass = hoverWhite
+        ? "group-hover:text-white"
+        : "group-hover:text-mauria-purple";
 
     const items = [
         {
@@ -70,7 +76,7 @@ export default function BottomNavigation() {
                             "group flex h-auto flex-1 flex-col items-center gap-1 rounded-full px-4 pb-2 pt-2 text-[0.7rem] font-medium transition-colors hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:size-7 min-w-0",
                             isActive
                                 ? "text-mauria-purple dark:text-white oled:text-gray-100"
-                                : "text-gray-400 dark:text-gray-500 oled:text-gray-500 group-hover:text-mauria-purple dark:group-hover:text-white oled:group-hover:text-gray-200"
+                                : "text-gray-400 dark:text-gray-500 oled:text-gray-500"
                         )}
                         onClick={() => navigate(item.path)}
                         aria-current={isActive ? "page" : undefined}
@@ -84,9 +90,19 @@ export default function BottomNavigation() {
                                         : "bg-transparent group-hover:bg-mauria-purple/10 dark:group-hover:bg-white/10 oled:group-hover:bg-white/10"
                                 )}
                             />
-                            <item.icon className="relative z-10" />
+                            <item.icon
+                                className={cn(
+                                    "relative z-10 transition-colors",
+                                    hoverTextClass
+                                )}
+                            />
                         </span>
-                        <span className="leading-none text-inherit">
+                        <span
+                            className={cn(
+                                "leading-none text-inherit transition-colors",
+                                hoverTextClass
+                            )}
+                        >
                             {item.label}
                         </span>
                     </Button>

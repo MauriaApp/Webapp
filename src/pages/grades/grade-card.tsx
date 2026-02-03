@@ -1,10 +1,12 @@
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Grade } from "@/types/aurion";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { SquareArrowOutDownRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 
 const MotionCard = motion(Card);
 
@@ -39,9 +41,10 @@ export function GradeCardAnimate({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full"
+            className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
+            <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
@@ -52,7 +55,7 @@ export function GradeCardAnimate({
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium text-mauria-purple dark:text-white">
+                    <div className="text-lg font-medium text-black dark:text-white">
                         {grade.name}
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -91,9 +94,10 @@ export function GradeCard({
 
     return (
         <Card
-            className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full"
+            className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
+            <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
@@ -104,7 +108,7 @@ export function GradeCard({
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium text-mauria-purple dark:text-white">
+                    <div className="text-lg font-medium text-black dark:text-white">
                         {grade.name}
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
@@ -131,3 +135,19 @@ export function GradeCard({
         </Card>
     );
 }
+
+const GradeTypeBadge = ({ code }: { code?: string | null }) => {
+    if (!code?.trim()) return null;
+
+    const badgeInfo = getGradeBadgeInfoFromCode(code);
+    if (!badgeInfo?.label) return null;
+
+    return (
+        <Badge
+            data-grade-code={badgeInfo?.rawCode ?? code}
+            className="pointer-events-none absolute right-4 top-4 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-black dark:text-white whitespace-nowrap"
+        >
+            {badgeInfo.label}
+        </Badge>
+    );
+};
