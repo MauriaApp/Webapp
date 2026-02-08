@@ -111,11 +111,10 @@
 
         --planning-event-epreuve-gradient: linear-gradient(
             45deg,
-            hsl(25 95% 60%),
-            hsl(50 95% 58%),
-            hsl(135 65% 50%)
+            hsl(var(--mauria-accent)),
+            hsl(var(--mauria-accent-dark))
         );
-        --planning-event-epreuve-shadow: 0 16px 32px hsl(50 95% 58% / 0.28);
+        --planning-event-epreuve-shadow: 0 16px 32px hsl(var(--mauria-accent) / 0.24);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
