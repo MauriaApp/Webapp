@@ -92,9 +92,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-button-active-shadow: 0 12px 24px hsl(
-            var(--mauria-accent) / 0.24
-        );
+        --planning-button-active-shadow: 0 12px 24px
+            hsl(var(--mauria-accent) / 0.24);
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(var(--mauria-card));
@@ -103,11 +102,10 @@
 
         --planning-event-default-gradient: linear-gradient(
             45deg,
-            hsl(352 90% 65%),
-            hsl(50 95% 58%),
-            hsl(200 85% 60%)
+            hsl(var(--mauria-purple-soft)),
+            hsl(var(--mauria-purple-light))
         );
-        --planning-event-default-shadow: 0 16px 32px hsl(200 85% 60% / 0.28);
+        --planning-event-default-shadow: 0 16px 32px hsl( var(--mauria-purple) / 0.24);
         --planning-event-default-text: hsl(var(--mauria-white));
         --planning-event-default-solid: hsl(352 90% 65%);
 
@@ -125,9 +123,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-personal-shadow: 0 16px 32px hsl(
-            var(--mauria-green) / 0.24
-        );
+        --planning-event-personal-shadow: 0 16px 32px
+            hsl(var(--mauria-green) / 0.24);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
@@ -135,9 +132,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-autogere-shadow: 0 16px 32px hsl(
-            var(--mauria-green) / 0.24
-        );
+        --planning-event-autogere-shadow: 0 16px 32px
+            hsl(var(--mauria-green) / 0.24);
         --planning-event-autogere-text: hsl(var(--mauria-white));
 
         --particles-color: hsl(var(--mauria-particles));
@@ -214,9 +210,8 @@
             hsl(var(--mauria-purple-bright)),
             hsl(var(--mauria-purple-light))
         );
-        --planning-event-default-shadow: 0 16px 32px hsl(
-            var(--mauria-black) / 0.24
-        );
+        --planning-event-default-shadow: 0 16px 32px
+            hsl(var(--mauria-black) / 0.24);
         --planning-event-default-solid: hsl(var(--mauria-purple-bright));
 
         --planning-event-autogere-gradient: linear-gradient(
@@ -287,9 +282,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-button-active-shadow: 0 12px 24px hsl(
-            var(--mauria-accent) / 0.22
-        );
+        --planning-button-active-shadow: 0 12px 24px
+            hsl(var(--mauria-accent) / 0.22);
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(var(--mauria-card));
@@ -310,9 +304,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-event-epreuve-shadow: 0 16px 30px hsl(
-            var(--mauria-accent) / 0.24
-        );
+        --planning-event-epreuve-shadow: 0 16px 30px
+            hsl(var(--mauria-accent) / 0.24);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
@@ -320,9 +313,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-personal-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.22
-        );
+        --planning-event-personal-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.22);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
@@ -330,9 +322,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-autogere-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.22
-        );
+        --planning-event-autogere-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.22);
         --planning-event-autogere-text: hsl(var(--mauria-white));
 
         --particles-color: hsl(var(--mauria-particles));
@@ -408,9 +399,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-button-active-shadow: 0 12px 24px hsl(
-            var(--mauria-accent) / 0.22
-        );
+        --planning-button-active-shadow: 0 12px 24px
+            hsl(var(--mauria-accent) / 0.22);
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(var(--mauria-card));
@@ -431,9 +421,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-event-epreuve-shadow: 0 16px 30px hsl(
-            var(--mauria-accent) / 0.24
-        );
+        --planning-event-epreuve-shadow: 0 16px 30px
+            hsl(var(--mauria-accent) / 0.24);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
@@ -441,9 +430,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-personal-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.22
-        );
+        --planning-event-personal-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.22);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
@@ -451,9 +439,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-dark))
         );
-        --planning-event-autogere-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.22
-        );
+        --planning-event-autogere-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.22);
         --planning-event-autogere-text: hsl(var(--mauria-white));
 
         --particles-color: hsl(var(--mauria-particles));
@@ -529,9 +516,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-button-active-shadow: 0 12px 24px hsl(
-            var(--mauria-accent) / 0.22
-        );
+        --planning-button-active-shadow: 0 12px 24px
+            hsl(var(--mauria-accent) / 0.22);
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(var(--mauria-card));
@@ -543,9 +529,8 @@
             hsl(var(--mauria-purple)),
             hsl(var(--mauria-purple-soft))
         );
-        --planning-event-default-shadow: 0 16px 30px hsl(
-            var(--mauria-purple) / 0.18
-        );
+        --planning-event-default-shadow: 0 16px 30px
+            hsl(var(--mauria-purple) / 0.18);
         --planning-event-default-text: hsl(var(--mauria-white));
         --planning-event-default-solid: hsl(var(--mauria-purple-soft));
 
@@ -554,9 +539,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-event-epreuve-shadow: 0 16px 30px hsl(
-            var(--mauria-accent) / 0.2
-        );
+        --planning-event-epreuve-shadow: 0 16px 30px
+            hsl(var(--mauria-accent) / 0.2);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
@@ -564,9 +548,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-soft))
         );
-        --planning-event-personal-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.2
-        );
+        --planning-event-personal-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.2);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
@@ -574,9 +557,8 @@
             hsl(var(--mauria-green)),
             hsl(var(--mauria-green-soft))
         );
-        --planning-event-autogere-shadow: 0 16px 30px hsl(
-            var(--mauria-green) / 0.2
-        );
+        --planning-event-autogere-shadow: 0 16px 30px
+            hsl(var(--mauria-green) / 0.2);
         --planning-event-autogere-text: hsl(var(--mauria-white));
 
         --particles-color: hsl(var(--mauria-particles));
@@ -652,9 +634,8 @@
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-button-active-shadow: 0 12px 24px hsl(
-            var(--mauria-accent) / 0.24
-        );
+        --planning-button-active-shadow: 0 12px 24px
+            hsl(var(--mauria-accent) / 0.24);
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(var(--mauria-card));
