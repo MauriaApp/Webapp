@@ -14,5 +14,14 @@ export default defineConfig(() => {
                 "@": resolve(__dirname, "./src"),
             },
         },
+        build: {
+            outDir: "dist",
+            rollupOptions: {
+                output: {
+                    entryFileNames: "assets/mauriajs.js",
+                    assetFileNames: "assets/mauriacss[extname]",
+                },
+            },
+        },
     };
 });
