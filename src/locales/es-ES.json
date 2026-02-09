@@ -99,6 +99,7 @@
   "schedulePage": {
     "title": "Horario",
     "lastUpdate": "Última actualización:",
+    "noExport": "La exportación del horario no está disponible actualmente.",
     "exportSchedule": "Exportar el horario",
     "loadingSchedule": "Cargando datos del horario…",
     "buttons": {

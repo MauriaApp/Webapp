@@ -26,7 +26,6 @@ import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
 import { LogsPage } from "./pages/secondary/logs";
 import * as Sentry from "@sentry/react";
-import { InitialGetter } from "./contexts/initialGetter";
 
 if (import.meta.env.PROD) {
     console.log("Initializing Sentry in production mode...");
@@ -104,15 +103,13 @@ function App() {
                 <ToastContextProvider>
                     <ModalContextProvider>
                         <Toaster richColors position="top-center" />
-                        <InitialGetter>
-                            <BrowserRouter basename={routerBaseName}>
-                                <ReactQueryProvider>
-                                    <CurrentYearProvider>
-                                        <AppRoutes />
-                                    </CurrentYearProvider>
-                                </ReactQueryProvider>
-                            </BrowserRouter>
-                        </InitialGetter>
+                        <BrowserRouter basename={routerBaseName}>
+                            <ReactQueryProvider>
+                                <CurrentYearProvider>
+                                    <AppRoutes />
+                                </CurrentYearProvider>
+                            </ReactQueryProvider>
+                        </BrowserRouter>
                     </ModalContextProvider>
                 </ToastContextProvider>
             </BackgroundProvider>

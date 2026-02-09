@@ -82,7 +82,7 @@ export default function RootLayout() {
             {backgroundElement}
             <NewUpdateDrawer />
             {/* Header */}
-            <header className="flex items-center justify-between px-4 pb-4 pt-safe-or-4 bg-mauria-purple oled:bg-black z-10">
+            <header className="flex items-center justify-between px-4 pb-4 pt-4 bg-mauria-purple oled:bg-black z-10">
                 <h1 className="text-2xl font-bold text-white">
                     {t("welcome.mauria")}
                 </h1>
@@ -97,7 +97,10 @@ export default function RootLayout() {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                                transition={{
+                                    duration: 0.4,
+                                    ease: [0.16, 1, 0.3, 1],
+                                }}
                                 className="flex items-center text-white origin-center"
                             >
                                 <Loader2

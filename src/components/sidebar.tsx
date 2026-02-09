@@ -64,7 +64,7 @@ const juniaLearningURL = "https://junia-learning.com";
 const printURL = "https://print.junia.com/end-user/ui/dashboard";
 const contactURL = "mailto:milo.montuori@student.junia.com";
 const githubURL = "https://github.com/MauriaApp";
-const preprodURL = "https://mauria-preprod.fly.dev";
+// const preprodURL = "https://mauria-preprod.fly.dev";
 
 export default function Sidebar() {
     const { t } = useTranslation();
@@ -221,13 +221,6 @@ export default function Sidebar() {
         handleNavigate("/login");
     };
 
-    const handleModeBeta = () => {
-        window.parent.postMessage(
-            { type: "MODE_BETA", payload: preprodURL },
-            "*"
-        );
-    };
-
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -246,9 +239,11 @@ export default function Sidebar() {
                 className="w-[85%] sm:max-w-sm flex flex-col justify-between border-none oled:bg-black px-5 pb-5 pt-[var(--sidebar-safe-area-top)]"
                 style={
                     {
-                    "--sidebar-safe-area-top": "calc(var(--safe-area-top) + 12px)",
-                    "--sheet-close-top": "calc(var(--safe-area-top) + 14px)",
-                    "--sheet-close-right": "24px",
+                        "--sidebar-safe-area-top":
+                            "calc(var(--safe-area-top) + 12px)",
+                        "--sheet-close-top":
+                            "calc(var(--safe-area-top) + 14px)",
+                        "--sheet-close-right": "24px",
                     } as CSSProperties
                 }
             >
@@ -407,7 +402,8 @@ export default function Sidebar() {
                             {t("sidebar.contribute")}
                         </a>
                         <span className="ml-1">—</span>
-                        <Button
+                        {/* TODO Fix beta link (think how to do this shit) */}
+                        {/* <Button
                             variant="link"
                             size="sm"
                             className="p-0 ml-2"
@@ -416,8 +412,8 @@ export default function Sidebar() {
                             <span className="text-xs text-muted-foreground">
                                 <span className="">beta</span>
                             </span>
-                        </Button>
-                        <span className="ml-1">—</span>
+                        </Button> 
+                        <span className="ml-1">—</span>*/}
                         <Button
                             variant="link"
                             size="sm"

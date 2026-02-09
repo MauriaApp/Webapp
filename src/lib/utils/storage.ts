@@ -64,10 +64,6 @@ export function logAppLaunch() {
 export function saveToStorage(key: string, value: string) {
     try {
         localStorage.setItem(key, value);
-        window.parent.postMessage(
-            { type: "SAVE_DATA", key, payload: value },
-            "*"
-        );
         if (key !== STORAGE_LOGS_KEY) {
             appendStorageLog({
                 ts: new Date().toISOString(),
@@ -108,10 +104,6 @@ export function getFromStorage(key: string): string | null {
         console.error("Error reading from localStorage", e);
         return null;
     }
-}
-
-export function getAllFromApp() {
-    window.parent.postMessage({ type: "REQUEST_ALL_DATA" }, "*");
 }
 
 export function overrideStorage(data: Record<string, string>) {

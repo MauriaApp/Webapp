@@ -99,6 +99,7 @@
   "schedulePage": {
     "title": "Planning",
     "lastUpdate": "Dernière mise à jour :",
+    "noExport": "L'exportation du planning n'est pas disponible pour le moment.",
     "exportSchedule": "Exporter le planning",
     "loadingSchedule": "Données du planning en cours de chargement…",
     "buttons": {
