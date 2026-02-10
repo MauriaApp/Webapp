@@ -98,7 +98,7 @@ function App() {
         baseUrl === "/" ? undefined : baseUrl.replace(/\/$/, "");
 
     return (
-        <ThemeProvider defaultTheme="light">
+        <ThemeProvider>
             <BackgroundProvider defaultBackground="particles">
                 <ToastContextProvider>
                     <ModalContextProvider>
