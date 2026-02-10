@@ -1,27 +1,6 @@
-export type Lesson = {
-  id: string;
-  title: string;
-  start: string;   // ISO
-  end: string;     // ISO
-  allDay: boolean;
-  editable: boolean;
-  className: string;
-};
-
-const parseFromTitle = (lesson: Lesson) => {
-  const lines = lesson.title
-    .split("\\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  const location = lines[0] ?? "";
-  const courseTitle = lines[1] ?? lines[0] ?? lesson.title;
-  const inferredType = lines[2] ?? lesson.className ?? "";
-  const teacher = lines[3] ?? "";
-
-  return { courseTitle, location, type: inferredType, teacher };
-};
-
+import { Lesson } from "@/types/aurion";
+import i18n from "@/i18n";
+import { parseFromTitle } from "./home";
 
 const escapeIcsText = (text: string): string => {
   return text
@@ -50,7 +29,7 @@ export const exportCalendarWeb = (events: Lesson[]) => {
     .map((lesson) => {
       const parsed = parseFromTitle(lesson);
       const start = new Date(lesson.start);
-      const end = new Date(lesson.end);
+      const end = new Date(lesson.end);      
 
       return [
         "BEGIN:VEVENT",
@@ -58,10 +37,10 @@ export const exportCalendarWeb = (events: Lesson[]) => {
         `DTSTAMP:${formatDateUTC(new Date())}`,
         `DTSTART:${formatDateUTC(start)}`,
         `DTEND:${formatDateUTC(end)}`,
-        `SUMMARY:${escapeIcsText(parsed.courseTitle || "Événement sans titre")}`,
+        `SUMMARY:${escapeIcsText(parsed.courseTitle || i18n.t("schedulePage.calendar.untitledEvent"))}`,
         `LOCATION:${escapeIcsText(parsed.location || "Mauria")}`,
         `DESCRIPTION:${escapeIcsText(
-          `Enseignant: ${parsed.teacher || "Inconnu"}, Type: ${parsed.type || "Inconnu"}`
+          `${i18n.t("schedulePage.calendar.teacher")}: ${parsed.teacher || i18n.t("schedulePage.calendar.unknown")}, ${i18n.t("schedulePage.calendar.type")}: ${parsed.type || i18n.t("schedulePage.calendar.unknown")}`
         )}`,
         "END:VEVENT",
       ].join("\r\n");  // ← CRLF obligatoire !

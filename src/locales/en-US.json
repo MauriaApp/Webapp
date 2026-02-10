@@ -103,6 +103,12 @@
     "warnExport": "This will export your schedule as an .ics file that you can import in your calendar app.",
     "exportSchedule": "Export schedule",
     "loadingSchedule": "Loading schedule data…",
+    "calendar": {
+      "untitledEvent": "Untitled event",
+      "teacher": "Teacher",
+      "type": "Type",
+      "unknown": "Unknown"
+    },
     "buttons": {
       "today": "Today",
       "week": "Week",
