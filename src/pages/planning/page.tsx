@@ -18,8 +18,9 @@ import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { exportCalendarWeb } from "@/lib/utils/exportCalendar";
 
 const Calendar = memo(FullCalendar);
 
@@ -58,6 +59,10 @@ export function PlanningPage() {
         void refetch();
     };
 
+    const handleExport = () => {
+        exportCalendarWeb(lessons);
+    };
+
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
@@ -86,7 +91,7 @@ export function PlanningPage() {
             >
                 <Calendar
                     datesSet={() => {
-                        window.dispatchEvent(new Event("resize"));
+                        globalThis.dispatchEvent(new Event("resize"));
                     }}
                     ref={calendarRef}
                     locale={FrLocale}
@@ -142,15 +147,14 @@ export function PlanningPage() {
                         locale: fr,
                     })}
                 </div>
-                {/* TODO Fix planning exportation, check how to do this shit without capacitor (browser only) */}
-                {/* <Button
+                <Button
                     className="mt-2"
                     onClick={handleExport}
                     disabled={lessons.length === 0 || isBusy}
                 >
                     {t("schedulePage.exportSchedule")}
-                </Button> */}
-                <p className="mt-2 italic">{t("schedulePage.noExport")}</p>
+                </Button>
+                <p className="mt-2 italic">{t("schedulePage.warnExport")}</p>
             </motion.section>
             <DrawerPlanningContent
                 drawerOpen={drawerOpen}

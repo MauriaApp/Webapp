@@ -100,6 +100,7 @@
     "title": "Schedule",
     "lastUpdate": "Last updated:",
     "noExport": "Exporting the schedule is currently not available.",
+    "warnExport": "This will export your schedule as an .ics file that you can import in your calendar app.",
     "exportSchedule": "Export schedule",
     "loadingSchedule": "Loading schedule data…",
     "buttons": {
