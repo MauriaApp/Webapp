@@ -9,7 +9,6 @@ type Theme = "dark" | "light" | "oled" | "cherry" | "pride" | "ocean" | "forest"
 
 type ThemeProviderProps = {
     children: React.ReactNode;
-    defaultTheme?: Theme;
 };
 
 const ThemeProviderContext = createContext<{
@@ -20,16 +19,18 @@ const ThemeProviderContext = createContext<{
     setTheme: () => null,
 });
 
-export function ThemeProvider({
-    children,
-    defaultTheme = "dark",
-}: ThemeProviderProps) {
+export function ThemeProvider({ children }: Readonly<ThemeProviderProps>) {
+    const defaultTheme = globalThis.matchMedia?.("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+
     const [theme, setTheme] = useState<Theme>(
         (getFromStorage("theme") as Theme) || defaultTheme
     );
 
     useEffect(() => {
-        const root = window.document.documentElement;
+        const root = globalThis.document.documentElement;
         root.classList.remove(
             "light",
             "dark",

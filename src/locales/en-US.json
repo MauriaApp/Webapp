@@ -99,6 +99,7 @@
   "schedulePage": {
     "title": "Schedule",
     "lastUpdate": "Last updated:",
+    "noExport": "Exporting the schedule is currently not available.",
     "exportSchedule": "Export schedule",
     "loadingSchedule": "Loading schedule data…",
     "buttons": {
