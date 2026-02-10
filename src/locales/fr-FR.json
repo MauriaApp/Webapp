@@ -100,8 +100,15 @@
     "title": "Planning",
     "lastUpdate": "Dernière mise à jour :",
     "noExport": "L'exportation du planning n'est pas disponible pour le moment.",
+    "warnExport": "Cela exportera votre planning sous forme de fichier .ics que vous pourrez importer dans votre application de calendrier.",
     "exportSchedule": "Exporter le planning",
     "loadingSchedule": "Données du planning en cours de chargement…",
+    "calendar": {
+      "untitledEvent": "Événement sans titre",
+      "teacher": "Enseignant",
+      "type": "Type",
+      "unknown": "Inconnu"
+    },
     "buttons": {
       "today": "Aujourd'hui",
       "week": "Semaine",

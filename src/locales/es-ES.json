@@ -100,7 +100,14 @@
     "title": "Horario",
     "lastUpdate": "Última actualización:",
     "noExport": "La exportación del horario no está disponible actualmente.",
+    "warnExport": "Esto exportará tu horario como un archivo .ics que podrás importar en tu aplicación de calendario.",
     "exportSchedule": "Exportar el horario",
+    "calendar": {
+      "untitledEvent": "Evento sin título",
+      "teacher": "Profesor",
+      "type": "Tipo",
+      "unknown": "Desconocido"
+    },
     "loadingSchedule": "Cargando datos del horario…",
     "buttons": {
       "today": "Hoy",
