@@ -4,6 +4,15 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 
+const parseAbsenceDate = (rawDate: string) => {
+    const [day, month, year] = rawDate.split("/");
+    const fullYear =
+        year?.length === 2
+            ? 2000 + parseInt(year, 10)
+            : parseInt(year, 10);
+    return new Date(fullYear, parseInt(month, 10) - 1, parseInt(day, 10));
+};
+
 const MotionCard = motion(Card);
 
 const absenceVariants = {
@@ -50,12 +59,7 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
                     <div className="text-foreground">{absence.class}</div>
                     <div className="text-sm text-muted-foreground">
                         {(() => {
-                            const [day, month, year] = absence.date.split("/");
-                            const date = new Date(
-                                parseInt(year),
-                                parseInt(month) - 1,
-                                parseInt(day)
-                            );
+                            const date = parseAbsenceDate(absence.date);
                             return format(date, "EEEE d MMM", { locale: fr });
                         })()}
                         {", "}
@@ -89,12 +93,7 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     <div className="text-foreground">{absence.class}</div>
                     <div className="text-sm text-muted-foreground">
                         {(() => {
-                            const [day, month, year] = absence.date.split("/");
-                            const date = new Date(
-                                parseInt(year),
-                                parseInt(month) - 1,
-                                parseInt(day)
-                            );
+                            const date = parseAbsenceDate(absence.date);
                             return format(date, "EEEE d MMM", { locale: fr });
                         })()}
                         {", "}

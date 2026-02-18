@@ -17,15 +17,18 @@ function Calendar({
     buttonVariant = "ghost",
     formatters,
     components,
+    weekStartsOn,
     ...props
 }: React.ComponentProps<typeof DayPicker> & {
     buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
     const defaultClassNames = getDefaultClassNames();
+    const effectiveWeekStartsOn = weekStartsOn ?? 1;
 
     return (
         <DayPicker
             showOutsideDays={showOutsideDays}
+            weekStartsOn={effectiveWeekStartsOn}
             className={cn(
                 "bg-background group/calendar p-3 [--cell-size:2rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
                 String.raw`[.rdp-button\_next>svg]:**:rtl:rotate-180`,
