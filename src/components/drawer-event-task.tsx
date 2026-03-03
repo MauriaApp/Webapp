@@ -21,6 +21,7 @@ import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { fr, enUS, es } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { TaskData } from "@/types/data";
 
@@ -339,7 +340,8 @@ const DatePickerComponent = ({
         value ? new Date(value) : undefined
     );
     const [open, setOpen] = useState(false);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
 
     useEffect(() => {
         setDate(value ? new Date(value) : undefined);
@@ -374,6 +376,8 @@ const DatePickerComponent = ({
                         <Calendar
                             mode="single"
                             selected={date}
+                            locale={locale}
+                            weekStartsOn={1}
                             onSelect={(date) => {
                                 handleDateChange(date);
                                 setOpen(false);

@@ -5,6 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
+import EsLocale from "@fullcalendar/core/locales/es";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import "./planning.css";
@@ -17,7 +18,7 @@ import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendarWeb } from "@/lib/utils/exportCalendar";
@@ -33,8 +34,9 @@ export function PlanningPage() {
         getUserEventsFromLocalStorage()
     );
 
-    i18n.on("languageChanged", () => {
-        calendarRef.current?.getApi().setOption("locale", i18n.language);
+    i18n.on("languageChanged", (lng) => {
+        const fcLocale = lng === "fr" ? FrLocale : lng === "es" ? EsLocale : undefined;
+        calendarRef.current?.getApi().setOption("locale", fcLocale);
     });
 
     const {
@@ -94,7 +96,7 @@ export function PlanningPage() {
                         globalThis.dispatchEvent(new Event("resize"));
                     }}
                     ref={calendarRef}
-                    locale={FrLocale}
+                    locale={i18n.language === "fr" ? FrLocale : i18n.language === "es" ? EsLocale : undefined}
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                     initialView="timeGridWeek"
                     headerToolbar={{
@@ -111,7 +113,7 @@ export function PlanningPage() {
                     slotMaxTime="22:00:00"
                     titleFormat={{ month: "short", day: "numeric" }}
                     allDaySlot={false}
-                    firstDay={0}
+                    firstDay={1}
                     hiddenDays={[0]}
                     eventSources={[lessons, userEvents]}
                     eventColor="var(--planning-event-default-solid)"
@@ -144,7 +146,7 @@ export function PlanningPage() {
                 <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
                     {t("schedulePage.lastUpdate")}{" "}
                     {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
-                        locale: fr,
+                        locale: i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr,
                     })}
                 </div>
                 <Button
