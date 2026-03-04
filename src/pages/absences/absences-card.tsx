@@ -5,6 +5,15 @@ import { fr, enUS, es } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
+const parseAbsenceDate = (rawDate: string) => {
+    const [day, month, year] = rawDate.split("/");
+    const fullYear =
+        year?.length === 2
+            ? 2000 + parseInt(year, 10)
+            : parseInt(year, 10);
+    return new Date(fullYear, parseInt(month, 10) - 1, parseInt(day, 10));
+};
+
 const MotionCard = motion(Card);
 
 const absenceVariants = {
