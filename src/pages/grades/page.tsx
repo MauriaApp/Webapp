@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { GradePositionSlider, GradesTimelineChart } from "./grades-stats";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -136,6 +137,7 @@ export function GradesPage() {
                         ))}
                     </div>
                 )}
+                <GradesTimelineChart grades={displayedGrades} />
             </motion.div>
 
             {displayedGrades.length === 0 ? (
@@ -212,6 +214,7 @@ export function GradesPage() {
                                     </p>
                                 </div>
                             </div>
+                            <GradePositionSlider grade={selectedGrade} />
                             <Separator />
 
                             <div className="grid grid-cols-2 gap-4">
