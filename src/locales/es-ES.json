@@ -129,7 +129,15 @@
     "coef": "Coef",
     "date": "Fecha",
     "comment": "Comentario",
-    "allSubjects": "Todas"
+    "allSubjects": "Todas",
+    "subjects": {
+      "maths": "Matemáticas",
+      "physics": "Física",
+      "computerScience": "Informática",
+      "english": "Inglés",
+      "sii": "SII",
+      "fhs": "FHS"
+    }
   },
   "absencesPage": {
     "noAbsences": "No se encontraron ausencias.",

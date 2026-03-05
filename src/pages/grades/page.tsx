@@ -70,18 +70,18 @@ export function GradesPage() {
     });
 
     const availableSubjects = useMemo(() => {
-        const labels = new Set<string>();
+        const keys = new Set<string>();
         for (const grade of filteredGrades) {
             const info = getGradeBadgeInfoFromCode(grade.code);
-            if (info?.label) labels.add(info.label);
+            if (info?.labelKey) keys.add(info.labelKey);
         }
-        return Array.from(labels).sort();
+        return Array.from(keys).sort();
     }, [filteredGrades]);
 
     const displayedGrades = useMemo(() => {
         if (!selectedSubject) return filteredGrades;
         return filteredGrades.filter(
-            (g) => getGradeBadgeInfoFromCode(g.code)?.label === selectedSubject
+            (g) => getGradeBadgeInfoFromCode(g.code)?.labelKey === selectedSubject
         );
     }, [filteredGrades, selectedSubject]);
 
@@ -119,19 +119,19 @@ export function GradesPage() {
                         >
                             {t("gradesPage.allSubjects")}
                         </Button>
-                        {availableSubjects.map((subject) => (
+                        {availableSubjects.map((subjectKey) => (
                             <Button
-                                key={subject}
+                                key={subjectKey}
                                 size="sm"
-                                variant={selectedSubject === subject ? "default" : "outline"}
+                                variant={selectedSubject === subjectKey ? "default" : "outline"}
                                 onClick={() =>
                                     setSelectedSubject(
-                                        selectedSubject === subject ? null : subject
+                                        selectedSubject === subjectKey ? null : subjectKey
                                     )
                                 }
                                 className="flex-1"
                             >
-                                {subject}
+                                {t(subjectKey)}
                             </Button>
                         ))}
                     </div>

@@ -137,17 +137,18 @@ export function GradeCard({
 }
 
 const GradeTypeBadge = ({ code }: { code?: string | null }) => {
+    const { t } = useTranslation();
     if (!code?.trim()) return null;
 
     const badgeInfo = getGradeBadgeInfoFromCode(code);
-    if (!badgeInfo?.label) return null;
+    if (!badgeInfo?.labelKey) return null;
 
     return (
         <Badge
             data-grade-code={badgeInfo?.rawCode ?? code}
             className="pointer-events-none absolute right-4 top-4 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-black dark:text-white whitespace-nowrap"
         >
-            {badgeInfo.label}
+            {t(badgeInfo.labelKey)}
         </Badge>
     );
 };
