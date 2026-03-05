@@ -44,9 +44,8 @@ export function GradeCardAnimate({
             className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <GradeTypeBadge code={grade.code} />
-            <div className="flex items-center ">
-                <div className="mr-4 w-20 items-center justify-center text-center">
+            <div className="flex items-center">
+                <div className="mr-4 w-20 shrink-0 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
                         {grade.grade}
                     </div>
@@ -54,9 +53,12 @@ export function GradeCardAnimate({
                         {t("gradesPage.coef")} {grade.coefficient}
                     </div>
                 </div>
-                <div className="flex-1">
-                    <div className="text-lg font-medium text-black dark:text-white">
-                        {grade.name}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 truncate text-lg font-medium text-black dark:text-white">
+                            {grade.name}
+                        </div>
+                        <GradeTypeBadge code={grade.code} />
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                         <p>
@@ -97,9 +99,8 @@ export function GradeCard({
             className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <GradeTypeBadge code={grade.code} />
-            <div className="flex items-center ">
-                <div className="mr-4 w-20 items-center justify-center text-center">
+            <div className="flex items-center">
+                <div className="mr-4 w-20 shrink-0 items-center justify-center text-center">
                     <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
                         {grade.grade}
                     </div>
@@ -107,9 +108,12 @@ export function GradeCard({
                         {t("gradesPage.coef")} {grade.coefficient}
                     </div>
                 </div>
-                <div className="flex-1">
-                    <div className="text-lg font-medium text-black dark:text-white">
-                        {grade.name}
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 truncate text-lg font-medium text-black dark:text-white">
+                            {grade.name}
+                        </div>
+                        <GradeTypeBadge code={grade.code} />
                     </div>
                     <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                         <p>
@@ -145,7 +149,7 @@ const GradeTypeBadge = ({ code }: { code?: string | null }) => {
     return (
         <Badge
             data-grade-code={badgeInfo?.rawCode ?? code}
-            className="pointer-events-none absolute right-4 top-4 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-black dark:text-white whitespace-nowrap"
+            className="pointer-events-none shrink-0 rounded-md bg-mauria-accent/20 px-2 py-1 text-xs font-medium text-black dark:text-white whitespace-nowrap"
         >
             {badgeInfo.label}
         </Badge>
