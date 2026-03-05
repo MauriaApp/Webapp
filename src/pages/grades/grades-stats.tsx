@@ -157,7 +157,7 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
                         height: DOT_SIZE,
                         borderRadius: "50%",
                         backgroundColor: accentColor,
-                        border: "2.5px solid white",
+                        border: "2.5px solid hsl(var(--background))",
                         boxShadow: `0 0 0 3px ${accentColor}40, 0 2px 6px rgba(0,0,0,0.18)`,
                         zIndex: 10,
                     }}
