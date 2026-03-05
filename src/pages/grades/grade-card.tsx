@@ -47,11 +47,18 @@ export function GradeCardAnimate({
             <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
-                        {grade.grade}
+                    <div className="inline-flex items-start">
+                        <span className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                            {grade.grade}
+                        </span>
+                        {grade.coefficient && (
+                            <span className="ml-0.5 mt-1 text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                ×{grade.coefficient}
+                            </span>
+                        )}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("gradesPage.coef")} {grade.coefficient}
+                        {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>
                 <div className="flex-1">
@@ -100,11 +107,18 @@ export function GradeCard({
             <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
-                        {grade.grade}
+                    <div className="inline-flex items-start">
+                        <span className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                            {grade.grade}
+                        </span>
+                        {grade.coefficient && (
+                            <span className="ml-0.5 mt-1 text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                                ×{grade.coefficient}
+                            </span>
+                        )}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("gradesPage.coef")} {grade.coefficient}
+                        {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>
                 <div className="flex-1">
