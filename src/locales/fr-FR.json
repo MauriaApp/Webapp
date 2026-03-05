@@ -128,7 +128,8 @@
     "coefficient": "Coefficient",
     "coef": "Coef",
     "date": "Date",
-    "comment": "Commentaire"
+    "comment": "Commentaire",
+    "allSubjects": "Toutes"
   },
   "absencesPage": {
     "noAbsences": "Aucune absence trouvée.",
