@@ -46,7 +46,9 @@
     "backgroundParameter": {
       "title": "Fond",
       "particles": "Particules",
-      "grid": "Grille"
+      "grid": "Grille",
+      "topography": "Topographie",
+      "dot-pattern": "Points"
     },
     "sizeParameter": {
       "title": "Taille",

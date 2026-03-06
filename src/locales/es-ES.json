@@ -46,7 +46,9 @@
     "backgroundParameter": {
       "title": "Fondo",
       "particles": "Partículas",
-      "grid": "Rejilla"
+      "grid": "Rejilla",
+      "topography": "Topografía",
+      "dot-pattern": "Puntos"
     },
     "sizeParameter": {
       "title": "Tamaño",
