@@ -44,7 +44,6 @@ export function GradeCardAnimate({
             className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="inline-flex items-start">
@@ -107,7 +106,6 @@ export function GradeCard({
             className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
-            <GradeTypeBadge code={grade.code} />
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="inline-flex items-start">
