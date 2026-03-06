@@ -127,8 +127,20 @@
     "standardDeviation": "Standard deviation",
     "coefficient": "Coefficient",
     "coef": "Coef",
+    "avgShort": "Avg.",
     "date": "Date",
-    "comment": "Comment"
+    "comment": "Comment",
+    "allSubjects": "All",
+    "positionInClass": "Position in class",
+    "classStats": "Class stats",
+    "subjects": {
+      "maths": "Maths",
+      "physics": "Physics",
+      "computerScience": "Computer Science",
+      "english": "English",
+      "sii": "SII",
+      "fhs": "FHS"
+    }
   },
   "absencesPage": {
     "noAbsences": "No absences found.",

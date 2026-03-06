@@ -1,4 +1,4 @@
-import { fr } from "date-fns/locale";
+import { fr, enUS, es } from "date-fns/locale";
 import { DrawerContent, DrawerTitle, Drawer } from "./ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
@@ -26,7 +26,8 @@ export function DrawerPlanningContent({
     setDrawerOpen: (open: boolean) => void;
     eventInfo: PreparedLesson | null;
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
     return (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent aria-describedby={undefined}>
@@ -94,7 +95,7 @@ export function DrawerPlanningContent({
                                         {format(
                                             new Date(eventInfo.details.start),
                                             "EEEE d MMM",
-                                            { locale: fr }
+                                            { locale }
                                         )}
                                     </p>
                                 </div>
@@ -148,7 +149,7 @@ export function DrawerPlanningContent({
                                         {format(
                                             new Date(eventInfo.details.start),
                                             "HH'h'mm",
-                                            { locale: fr }
+                                            { locale }
                                         )}
                                     </p>
                                 </div>
@@ -164,7 +165,7 @@ export function DrawerPlanningContent({
                                         {format(
                                             new Date(eventInfo.details.end),
                                             "HH'h'mm",
-                                            { locale: fr }
+                                            { locale }
                                         )}
                                     </p>
                                 </div>
