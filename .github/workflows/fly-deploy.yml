@@ -2,23 +2,28 @@ name: Deploy to Fly.io
 
 on:
   push:
-    branches: [main, preprod]
+    branches: [main]
 
 jobs:
-  deploy:
+  deploy-preprod:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - name: Deploy main branch (prod app)
-        if: github.ref == 'refs/heads/main'
-        run: flyctl deploy --remote-only
+      - name: Deploy to Preprod
+        run: flyctl deploy --app mauria-preprod --config fly.preprod.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-      - name: Deploy preprod branch (preprod app)
-        if: github.ref == 'refs/heads/preprod'
-        run: flyctl deploy --app mauria-preprod --config fly.preprod.toml --remote-only
+  deploy-prod-manual:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Prod
+        run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
