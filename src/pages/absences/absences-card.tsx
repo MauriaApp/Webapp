@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Absence } from "@/types/aurion";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, es } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const MotionCard = motion(Card);
 
@@ -22,6 +23,8 @@ const absenceVariants = {
     },
 };
 export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
+    const { i18n } = useTranslation();
+    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
     return (
         <MotionCard
             layout
@@ -51,12 +54,9 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
                     <div className="text-sm text-muted-foreground">
                         {(() => {
                             const [day, month, year] = absence.date.split("/");
-                            const date = new Date(
-                                parseInt(year),
-                                parseInt(month) - 1,
-                                parseInt(day)
-                            );
-                            return format(date, "EEEE d MMM", { locale: fr });
+                            const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
+                            const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
+                            return format(date, "EEEE d MMM", { locale });
                         })()}
                         {", "}
                         {absence.time}
@@ -68,6 +68,8 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
 }
 
 export function AbsenceCard({ absence }: { absence: Absence }) {
+    const { i18n } = useTranslation();
+    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
     return (
         <Card className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card">
             <div className="flex p-4 items-center h-full">
@@ -90,12 +92,9 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
                     <div className="text-sm text-muted-foreground">
                         {(() => {
                             const [day, month, year] = absence.date.split("/");
-                            const date = new Date(
-                                parseInt(year),
-                                parseInt(month) - 1,
-                                parseInt(day)
-                            );
-                            return format(date, "EEEE d MMM", { locale: fr });
+                            const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
+                            const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
+                            return format(date, "EEEE d MMM", { locale });
                         })()}
                         {", "}
                         {absence.time}
