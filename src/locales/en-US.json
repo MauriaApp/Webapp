@@ -128,7 +128,8 @@
     "coefficient": "Coefficient",
     "coef": "Coef",
     "date": "Date",
-    "comment": "Comment"
+    "comment": "Comment",
+    "dateNotSpecified": "Not specified"
   },
   "absencesPage": {
     "noAbsences": "No absences found.",
@@ -161,7 +162,8 @@
     "associationsCount_other": "{{count}} associations found",
     "contactUs": "Contact us",
     "reinitialize": "Reinitialize",
-    "formLink": "Your association missing or changed?"
+    "formLink": "Your association missing or changed?",
+    "noResultsFor": "No association found for \"{{term}}\""
   },
   "drawerPlanningContent": {
     "place": "Place",

@@ -21,7 +21,7 @@ import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
 import { TaskData } from "@/types/data";
 
@@ -341,7 +341,7 @@ const DatePickerComponent = ({
     );
     const [open, setOpen] = useState(false);
     const { t, i18n } = useTranslation();
-    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
+    const locale = getDateLocale(i18n.language);
 
     useEffect(() => {
         setDate(value ? new Date(value) : undefined);

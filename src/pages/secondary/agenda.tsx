@@ -7,7 +7,7 @@ import {
 } from "@/lib/utils/agenda";
 import { TaskData } from "@/types/data";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { Calendar, Check, ClipboardListIcon, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,7 @@ export function AgendaPage() {
     const [editingTask, setEditingTask] = useState<TaskData | null>(null);
     const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
     const { t, i18n } = useTranslation();
-    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
+    const locale = getDateLocale(i18n.language);
 
     const refreshTasks = useCallback(() => {
         const storedTasks = getTasksFromLocalStorage();

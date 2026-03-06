@@ -21,7 +21,7 @@ import {
 import { memo, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
@@ -39,7 +39,7 @@ export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const {
         data: grades = [],
@@ -228,9 +228,9 @@ export function GradesPage() {
                                                       .join("-")
                                               ),
                                               "EEEE d MMM yyyy",
-                                              { locale: fr }
+                                              { locale: getDateLocale(i18n.language) }
                                           )
-                                        : "Non spécifiée"}
+                                        : t("gradesPage.dateNotSpecified")}
                                 </p>
                             </div>
 
