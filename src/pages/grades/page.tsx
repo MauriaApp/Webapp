@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
-import { GradePositionSlider, GradesTimelineChart } from "./grades-stats";
+import { GradePositionSlider } from "./grades-stats";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -137,7 +137,6 @@ export function GradesPage() {
                         ))}
                     </div>
                 )}
-                <GradesTimelineChart grades={displayedGrades} />
             </motion.div>
 
             {displayedGrades.length === 0 ? (

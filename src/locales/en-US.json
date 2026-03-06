@@ -133,8 +133,6 @@
     "allSubjects": "All",
     "positionInClass": "Position in class",
     "classStats": "Class stats",
-    "evolution": "Grade evolution",
-    "classAvg": "Class",
     "subjects": {
       "maths": "Maths",
       "physics": "Physics",

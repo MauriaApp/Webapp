@@ -133,8 +133,6 @@
     "allSubjects": "Todas",
     "positionInClass": "Posición en clase",
     "classStats": "Stats clase",
-    "evolution": "Evolución de notas",
-    "classAvg": "Clase",
     "subjects": {
       "maths": "Matemáticas",
       "physics": "Física",
