@@ -3,10 +3,11 @@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
-import { getGrades } from "@/lib/utils/grades";
+import { getGrades, getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
@@ -18,11 +19,12 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { GradePositionSlider } from "./grades-stats";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -39,6 +41,7 @@ export function GradesPage() {
     const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     const { t } = useTranslation();
 
     const {
@@ -67,6 +70,22 @@ export function GradesPage() {
         grades: grades,
     });
 
+    const availableSubjects = useMemo(() => {
+        const keys = new Set<string>();
+        for (const grade of filteredGrades) {
+            const info = getGradeBadgeInfoFromCode(grade.code);
+            if (info?.labelKey) keys.add(info.labelKey);
+        }
+        return Array.from(keys).sort();
+    }, [filteredGrades]);
+
+    const displayedGrades = useMemo(() => {
+        if (!selectedSubject) return filteredGrades;
+        return filteredGrades.filter(
+            (g) => getGradeBadgeInfoFromCode(g.code)?.labelKey === selectedSubject
+        );
+    }, [filteredGrades, selectedSubject]);
+
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
@@ -79,19 +98,48 @@ export function GradesPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="flex items-center gap-2 mb-4"
+                className="space-y-3 mb-4"
             >
-                <Switch
-                    id="onlyThisYear"
-                    checked={showCurrentYearOnly}
-                    onCheckedChange={toggleCurrentYearFilter}
-                />
-                <Label htmlFor="onlyThisYear">
-                    {t("gradesPage.onlyCurrentYear")}
-                </Label>
+                <div className="flex items-center gap-2">
+                    <Switch
+                        id="onlyThisYear"
+                        checked={showCurrentYearOnly}
+                        onCheckedChange={toggleCurrentYearFilter}
+                    />
+                    <Label htmlFor="onlyThisYear">
+                        {t("gradesPage.onlyCurrentYear")}
+                    </Label>
+                </div>
+                {availableSubjects.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        <Button
+                            size="sm"
+                            variant={selectedSubject === null ? "default" : "outline"}
+                            onClick={() => setSelectedSubject(null)}
+                            className="flex-1"
+                        >
+                            {t("gradesPage.allSubjects")}
+                        </Button>
+                        {availableSubjects.map((subjectKey) => (
+                            <Button
+                                key={subjectKey}
+                                size="sm"
+                                variant={selectedSubject === subjectKey ? "default" : "outline"}
+                                onClick={() =>
+                                    setSelectedSubject(
+                                        selectedSubject === subjectKey ? null : subjectKey
+                                    )
+                                }
+                                className="flex-1"
+                            >
+                                {t(subjectKey)}
+                            </Button>
+                        ))}
+                    </div>
+                )}
             </motion.div>
 
-            {filteredGrades.length === 0 ? (
+            {displayedGrades.length === 0 ? (
                 <motion.div
                     key="empty-state"
                     initial={{ opacity: 0, y: 12 }}
@@ -115,7 +163,7 @@ export function GradesPage() {
                     animate="show"
                 >
                     <AnimatePresence mode="popLayout">
-                        {filteredGrades.map((grade, index) =>
+                        {displayedGrades.map((grade, index) =>
                             index < 8 ? (
                                 <AnimatedGradeCard
                                     key={index}
@@ -165,6 +213,7 @@ export function GradesPage() {
                                     </p>
                                 </div>
                             </div>
+                            <GradePositionSlider grade={selectedGrade} />
                             <Separator />
 
                             <div className="grid grid-cols-2 gap-4">

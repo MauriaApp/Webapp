@@ -36,21 +36,21 @@ export function getGrades({
 }
 
 export type GradeBadgeInfo = {
-    label: string;
+    labelKey: string;
     rawCode: string;
     normalizedCode: string;
 };
 
-const gradeBadgeKeywordMap: Array<{ keyword: string; label: string }> = [
-    { keyword: "math", label: "Maths" },
-    { keyword: "phys", label: "Physique" },
-    { keyword: "optique", label: "Physique" },
-    { keyword: "info", label: "Informatique" },
-    { keyword: "prog", label: "Informatique" },
-    { keyword: "web", label: "Informatique" },
-    { keyword: "anglais", label: "Anglais" },
-    { keyword: "sii", label: "SII" },
-    { keyword: "fhs", label: "FHS" },
+const gradeBadgeKeywordMap: Array<{ keyword: string; labelKey: string }> = [
+    { keyword: "math", labelKey: "gradesPage.subjects.maths" },
+    { keyword: "phys", labelKey: "gradesPage.subjects.physics" },
+    { keyword: "optique", labelKey: "gradesPage.subjects.physics" },
+    { keyword: "info", labelKey: "gradesPage.subjects.computerScience" },
+    { keyword: "prog", labelKey: "gradesPage.subjects.computerScience" },
+    { keyword: "web", labelKey: "gradesPage.subjects.computerScience" },
+    { keyword: "anglais", labelKey: "gradesPage.subjects.english" },
+    { keyword: "sii", labelKey: "gradesPage.subjects.sii" },
+    { keyword: "fhs", labelKey: "gradesPage.subjects.fhs" },
 ];
 
 export function getGradeBadgeInfoFromCode(code?: string | null): GradeBadgeInfo | null {
@@ -69,10 +69,10 @@ export function getGradeBadgeInfoFromCode(code?: string | null): GradeBadgeInfo 
     const keywordMatch = gradeBadgeKeywordMap.find(({ keyword }) =>
         searchableCode.includes(keyword)
     );
-    const label = keywordMatch?.label ?? "";
+    const labelKey = keywordMatch?.labelKey ?? "";
 
     return {
-        label,
+        labelKey,
         rawCode,
         normalizedCode,
     };
