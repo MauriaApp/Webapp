@@ -54,6 +54,9 @@
       "medium": "Medium",
       "large": "Large"
     },
+    "hapticParameter": {
+      "title": "Haptic feedback"
+    },
     "languageParameter": {
       "title": "Language",
       "english": "English",

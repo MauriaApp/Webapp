@@ -21,6 +21,7 @@ import {
     ArrowDownRightFromSquare,
     Languages,
     Wallpaper,
+    Vibrate,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,8 @@ import {
 } from "./ui/select";
 import { clearStorage } from "@/lib/utils/storage";
 import { useTranslation } from "react-i18next";
+import { readHapticEnabled, saveHapticEnabled } from "@/lib/utils/haptic";
+import { Switch } from "@/components/ui/switch";
 
 import {
     applyLocale,
@@ -98,6 +101,12 @@ export default function Sidebar() {
 
     const [size, setSize] = useState<SizeOption>(readInitialSize);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
+    const [hapticEnabled, setHapticEnabled] = useState<boolean>(readHapticEnabled);
+
+    const handleHapticToggle = (value: boolean) => {
+        setHapticEnabled(value);
+        saveHapticEnabled(value);
+    };
 
     useEffect(() => {
         applyScale(size);
@@ -295,6 +304,20 @@ export default function Sidebar() {
                                 </div>
                             </div>
                         ))}
+
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 [&_svg]:size-7!">
+                                <Vibrate className="h-5 w-5" />
+                                <Label className="cursor-pointer">
+                                    {t("sidebar.hapticParameter.title")}
+                                </Label>
+                            </div>
+                            <Switch
+                                checked={hapticEnabled}
+                                onCheckedChange={handleHapticToggle}
+                                aria-label={t("sidebar.hapticParameter.title")}
+                            />
+                        </div>
 
                         <Separator />
 
