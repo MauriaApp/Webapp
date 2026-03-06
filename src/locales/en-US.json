@@ -46,7 +46,9 @@
     "backgroundParameter": {
       "title": "Background",
       "particles": "Particles",
-      "grid": "Grid"
+      "grid": "Grid",
+      "topography": "Topography",
+      "dot-pattern": "Dots"
     },
     "sizeParameter": {
       "title": "Size",
