@@ -12,6 +12,7 @@ import { Calendar, Check, ClipboardListIcon, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
+import { haptic, hapticNotification } from "@/lib/utils/haptic";
 
 export function AgendaPage() {
     const [tasks, setTasks] = useState<TaskData[]>(() =>
@@ -66,6 +67,7 @@ export function AgendaPage() {
         const isPending = Boolean(pendingTaskIds[taskId]);
 
         if (isPending) {
+            haptic("Light");
             const existingTimeout = pendingTimeoutsRef.current.get(taskId);
             if (existingTimeout) {
                 clearTimeout(existingTimeout);
@@ -92,6 +94,7 @@ export function AgendaPage() {
             setIsEditDrawerOpen(false);
             setEditingTask(null);
         }
+        hapticNotification("Success");
         setPendingTaskIds((prev) => ({ ...prev, [taskId]: true }));
         const timeoutId = setTimeout(
             () => finalizeTaskCompletion(taskId),

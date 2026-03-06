@@ -25,6 +25,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { GradePositionSlider } from "./grades-stats";
+import { haptic } from "@/lib/utils/haptic";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -155,6 +156,7 @@ function SubjectFilterCarousel({
                         size="sm"
                         variant={selected === item ? "default" : "outline"}
                         onClick={() => {
+                            haptic("Light");
                             onSelect(item);
                             scrollToIndex(idx);
                         }}
@@ -291,6 +293,7 @@ export function GradesPage() {
                                     key={index}
                                     grade={grade}
                                     onGradeClick={(grade) => {
+                                        haptic("Light");
                                         setSelectedGrade(grade);
                                         setDrawerOpen(true);
                                     }}
@@ -300,6 +303,7 @@ export function GradesPage() {
                                     key={index}
                                     grade={grade}
                                     onGradeClick={(grade) => {
+                                        haptic("Light");
                                         setSelectedGrade(grade);
                                         setDrawerOpen(true);
                                     }}

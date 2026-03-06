@@ -22,6 +22,7 @@ import { fr, enUS, es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendarWeb } from "@/lib/utils/exportCalendar";
+import { haptic } from "@/lib/utils/haptic";
 
 const Calendar = memo(FullCalendar);
 
@@ -127,6 +128,7 @@ export function PlanningPage() {
                     eventDurationEditable={false}
                     eventResizableFromStart={false}
                     eventClick={(info) => {
+                        haptic("Light");
                         const event = info.event.toJSON();
 
                         const { courseTitle, location, type, teacher } =

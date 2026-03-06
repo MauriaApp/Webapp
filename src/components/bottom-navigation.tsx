@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils/cn";
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@/components/theme-provider";
+import { haptic } from "@/lib/utils/haptic";
 
 export default function BottomNavigation() {
     const navigate = useNavigate();
@@ -78,7 +79,7 @@ export default function BottomNavigation() {
                                 ? "text-mauria-purple dark:text-white oled:text-gray-100"
                                 : "text-gray-400 dark:text-gray-500 oled:text-gray-500"
                         )}
-                        onClick={() => navigate(item.path)}
+                        onClick={() => { haptic("Light"); navigate(item.path); }}
                         aria-current={isActive ? "page" : undefined}
                     >
                         <span className="relative flex items-center justify-center px-4 py-1">
