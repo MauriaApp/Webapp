@@ -21,7 +21,7 @@ import { format } from "date-fns";
 import { fr, enUS, es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { exportCalendarWeb } from "@/lib/utils/exportCalendar";
+import { exportCalendar } from "@/lib/utils/exportCalendar";
 
 const Calendar = memo(FullCalendar);
 
@@ -62,7 +62,7 @@ export function PlanningPage() {
     };
 
     const handleExport = () => {
-        exportCalendarWeb(lessons);
+        void exportCalendar(lessons);
     };
 
     return (
