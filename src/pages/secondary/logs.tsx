@@ -5,20 +5,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { clearStorageLogs, getStorageLogs, logAppLaunch } from "@/lib/utils/storage";
+import { triggerHaptic, type HapticPattern } from "@/hooks/use-haptic-feedback";
 
 type StorageLogEntry = {
     ts: string;
-    action: "set" | "override" | "remove" | "clear" | "launch";
+    action: "set" | "override" | "remove" | "clear" | "launch" | "haptic";
     key?: string;
     size?: number;
     details?: string;
 };
+
+const HAPTIC_PATTERNS: HapticPattern[] = ["light", "medium", "heavy", "success", "error"];
 
 function formatLogLine(entry: StorageLogEntry) {
     if (entry.action === "launch") {
         return `[${formatTimestamp(entry.ts)}] ${
             entry.details ?? "----- LANCEMENT DE L'APP -----"
         }`;
+    }
+    if (entry.action === "haptic") {
+        const status = entry.details === "ok" ? "✓ native" : "~ fallback";
+        return `[${formatTimestamp(entry.ts)}] HAPTIC ${entry.key ?? "?"} — ${status}`;
     }
     const parts = [`[${formatTimestamp(entry.ts)}]`, entry.action.toUpperCase()];
     if (entry.key) parts.push(entry.key);
@@ -58,6 +65,27 @@ export function LogsPage() {
     return (
         <div className="mt-4 space-y-6 sm:px-6 lg:px-0">
             <div className="mx-auto w-full max-w-4xl space-y-4">
+                <Card className="border-border bg-card">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-2xl font-semibold text-foreground">
+                            Haptic feedback
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-wrap gap-2">
+                            {HAPTIC_PATTERNS.map((pattern) => (
+                                <Button
+                                    key={pattern}
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => triggerHaptic(pattern)}
+                                >
+                                    {pattern}
+                                </Button>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
                 <Card className="border-border bg-card">
                     <CardHeader className="pb-2">
                         <div className="flex items-center justify-between gap-4">

@@ -1,6 +1,6 @@
 type StorageLogEntry = {
     ts: string;
-    action: "set" | "override" | "remove" | "clear" | "launch";
+    action: "set" | "override" | "remove" | "clear" | "launch" | "haptic";
     key?: string;
     size?: number;
     details?: string;
@@ -149,4 +149,13 @@ export function clearStorage() {
         // Handle storage errors
         console.error("Error clearing localStorage", e);
     }
+}
+
+export function logHaptic(pattern: string, success: boolean) {
+    appendStorageLog({
+        ts: new Date().toISOString(),
+        action: "haptic",
+        key: pattern,
+        details: success ? "ok" : "fallback",
+    });
 }
