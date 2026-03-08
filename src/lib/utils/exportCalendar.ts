@@ -24,12 +24,12 @@ const formatDateUTC = (date: Date) => {
   );
 };
 
-export const exportCalendarWeb = (events: Lesson[]) => {
+const buildIcsContent = (events: Lesson[]): string => {
   const vevents = events
     .map((lesson) => {
       const parsed = parseFromTitle(lesson);
       const start = new Date(lesson.start);
-      const end = new Date(lesson.end);      
+      const end = new Date(lesson.end);
 
       return [
         "BEGIN:VEVENT",
@@ -43,23 +43,36 @@ export const exportCalendarWeb = (events: Lesson[]) => {
           `${i18n.t("schedulePage.calendar.teacher")}: ${parsed.teacher || i18n.t("schedulePage.calendar.unknown")}, ${i18n.t("schedulePage.calendar.type")}: ${parsed.type || i18n.t("schedulePage.calendar.unknown")}`
         )}`,
         "END:VEVENT",
-      ].join("\r\n");  // ← CRLF obligatoire !
+      ].join("\r\n");
     })
     .join("\r\n");
 
-  const icsContent = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Mauria//Planning//FR",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
-    vevents,
-    "END:VCALENDAR",
-  ].join("\r\n") + "\r\n";  // ← CRLF partout !
+  return (
+    [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Mauria//Planning//FR",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      vevents,
+      "END:VCALENDAR",
+    ].join("\r\n") + "\r\n"
+  );
+};
 
+export const exportCalendar = async (events: Lesson[]): Promise<void> => {
+  const icsContent = buildIcsContent(events);
   const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+  const file = new File([blob], "mauria-planning.ics", { type: "text/calendar" });
 
+  // Web Share API : fonctionne dans les WebViews iOS et Android
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file], title: "Mauria Planning" });
+    return;
+  }
+
+  // Fallback navigateur web classique
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = "mauria-planning.ics";
