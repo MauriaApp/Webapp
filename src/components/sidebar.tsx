@@ -21,6 +21,7 @@ import {
     ArrowDownRightFromSquare,
     Languages,
     Wallpaper,
+    Vibrate,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -50,7 +51,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "./ui/select";
-import { clearStorage } from "@/lib/utils/storage";
+import { clearStorage, getHapticEnabled, setHapticEnabled } from "@/lib/utils/storage";
+import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -98,6 +100,12 @@ export default function Sidebar() {
 
     const [size, setSize] = useState<SizeOption>(readInitialSize);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
+    const [hapticEnabled, setHapticEnabledState] = useState<boolean>(getHapticEnabled);
+
+    const handleHapticToggle = (checked: boolean) => {
+        setHapticEnabledState(checked);
+        setHapticEnabled(checked);
+    };
 
     useEffect(() => {
         applyScale(size);
@@ -295,6 +303,25 @@ export default function Sidebar() {
                                 </div>
                             </div>
                         ))}
+
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 [&_svg]:size-7!">
+                                <Vibrate className="h-5 w-5" />
+                                <div className="flex flex-col items-start">
+                                    <Label className="cursor-default text-left">
+                                        {t("sidebar.hapticParameter.title")}
+                                    </Label>
+                                    <span className="text-xs text-muted-foreground text-left">
+                                        {t("sidebar.hapticParameter.description")}
+                                    </span>
+                                </div>
+                            </div>
+                            <Switch
+                                checked={hapticEnabled}
+                                onCheckedChange={handleHapticToggle}
+                                aria-label={t("sidebar.hapticParameter.title")}
+                            />
+                        </div>
 
                         <Separator />
 

@@ -54,6 +54,10 @@
       "medium": "Mediano",
       "large": "Grande"
     },
+    "hapticParameter": {
+      "title": "Respuesta háptica",
+      "description": "Vibraciones"
+    },
     "languageParameter": {
       "title": "Idioma",
       "english": "Inglés",

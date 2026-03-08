@@ -54,6 +54,10 @@
       "medium": "Moyen",
       "large": "Grand"
     },
+    "hapticParameter": {
+      "title": "Retour haptique",
+      "description": "Vibrations"
+    },
     "languageParameter": {
       "title": "Langue",
       "english": "Anglais",

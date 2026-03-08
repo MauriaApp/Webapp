@@ -151,6 +151,26 @@ export function clearStorage() {
     }
 }
 
+const HAPTIC_ENABLED_KEY = "__mauria_haptic_enabled__";
+
+export function getHapticEnabled(): boolean {
+    try {
+        const raw = localStorage.getItem(HAPTIC_ENABLED_KEY);
+        if (raw === null) return true; // ON par défaut
+        return raw === "true";
+    } catch {
+        return true;
+    }
+}
+
+export function setHapticEnabled(enabled: boolean) {
+    try {
+        localStorage.setItem(HAPTIC_ENABLED_KEY, String(enabled));
+    } catch {
+        // Ignore
+    }
+}
+
 export function logHaptic(pattern: string, success: boolean) {
     appendStorageLog({
         ts: new Date().toISOString(),

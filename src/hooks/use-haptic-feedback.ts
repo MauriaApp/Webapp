@@ -1,5 +1,5 @@
 import { Haptics, ImpactStyle, NotificationType } from "@capacitor/haptics";
-import { logHaptic } from "@/lib/utils/storage";
+import { getHapticEnabled, logHaptic } from "@/lib/utils/storage";
 
 type HapticPattern = "light" | "medium" | "heavy" | "success" | "error";
 
@@ -12,6 +12,7 @@ const VIBRATION_FALLBACK: Record<HapticPattern, VibratePattern> = {
 };
 
 async function triggerHaptic(pattern: HapticPattern = "light"): Promise<void> {
+    if (!getHapticEnabled()) return;
     try {
         switch (pattern) {
             case "light":
