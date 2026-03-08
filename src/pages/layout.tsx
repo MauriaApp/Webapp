@@ -12,10 +12,14 @@ import { Outlet } from "react-router";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import { GridPattern } from "@/components/ui/shadcn-io/grid-pattern";
+import { Topography } from "@/components/ui/shadcn-io/topography";
+import { DotPattern } from "@/components/ui/shadcn-io/dot-pattern";
 
 const BottomNav = memo(BottomNavigation);
 const ParticlesMemo = memo(Particles);
 const GridPatternMemo = memo(GridPattern);
+const TopographyMemo = memo(Topography);
+const DotPatternMemo = memo(DotPattern);
 const SidebarMemo = memo(Sidebar);
 const PageTransitionMemo = memo(PageTransition);
 
@@ -67,10 +71,19 @@ export default function RootLayout() {
                                 "absolute left-0 w-full top-[-30%] h-[160vh] pointer-events-none transform",
                                 "[--mask-r:clamp(400px,70vw,3000px)]",
                                 "[mask-image:radial-gradient(var(--mask-r)_circle_at_center,white,transparent)]",
-                                "skew-y-12"
+                                "skew-y-12",
+                                "fill-current/50 stroke-current/50"
                             )}
                         />
                     </div>
+                );
+            case "topography":
+                return (
+                    <TopographyMemo className="absolute inset-0 z-0" />
+                );
+            case "dot-pattern":
+                return (
+                    <DotPatternMemo className="absolute inset-0 z-0" />
                 );
             default:
                 return null;

@@ -6,7 +6,7 @@ import { createContext, useContext, useState } from "react";
 
 const BACKGROUND_STORAGE_KEY = "background";
 
-export const BACKGROUND_OPTIONS = ["particles", "grid"] as const;
+export const BACKGROUND_OPTIONS = ["particles", "grid", "topography", "dot-pattern"] as const;
 
 export type BackgroundName = (typeof BACKGROUND_OPTIONS)[number];
 
