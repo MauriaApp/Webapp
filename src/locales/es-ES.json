@@ -132,6 +132,7 @@
     "avgShort": "Med.",
     "date": "Fecha",
     "comment": "Comentario",
+    "dateNotSpecified": "No especificada",
     "allSubjects": "Todas",
     "positionInClass": "Posición en clase",
     "classStats": "Stats clase",
@@ -175,7 +176,8 @@
     "associationsCount_other": "{{count}} asociaciones encontradas",
     "contactUs": "Contáctanos",
     "reinitialize": "Reiniciar",
-    "formLink": "¿Tu asociación falta o ha cambiado?"
+    "formLink": "¿Tu asociación falta o ha cambiado?",
+    "noResultsFor": "No se encontró ninguna asociación para \"{{term}}\""
   },
   "drawerPlanningContent": {
     "place": "Lugar",

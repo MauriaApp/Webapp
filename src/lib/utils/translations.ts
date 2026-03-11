@@ -1,6 +1,7 @@
 // utils/translations.ts
 import { getFromStorage, saveToStorage } from "./storage";
 import i18n from "@/i18n";
+import { fr, enUS, es, type Locale } from "date-fns/locale";
 
 export type LocaleOption = "fr-FR" | "en-US" | "es-ES";
 
@@ -32,4 +33,10 @@ export const applyLocale = (locale: LocaleOption) => {
   const code = I18N_CODE[locale];
   i18n.changeLanguage(code);
   saveToStorage(LOCALE_STORAGE_KEY, locale);
+};
+
+export const getDateLocale = (language: string): Locale => {
+  if (language.startsWith("fr")) return fr;
+  if (language.startsWith("es")) return es;
+  return enUS;
 };

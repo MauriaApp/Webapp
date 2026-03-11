@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Absence } from "@/types/aurion";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -24,7 +24,7 @@ const absenceVariants = {
 };
 export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
     const { i18n } = useTranslation();
-    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
+    const locale = getDateLocale(i18n.language);
     return (
         <MotionCard
             layout
@@ -69,7 +69,7 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
 
 export function AbsenceCard({ absence }: { absence: Absence }) {
     const { i18n } = useTranslation();
-    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
+    const locale = getDateLocale(i18n.language);
     return (
         <Card className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card">
             <div className="flex p-4 items-center h-full">

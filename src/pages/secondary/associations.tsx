@@ -197,7 +197,7 @@ export function AssociationsPage() {
             {filteredAssociations.length === 0 && (
                 <div className="text-center py-12">
                     <p className="text-muted-foreground text-lg">
-                        {'Aucune association trouvée pour "' + searchTerm + '"'}
+                        {t("associationsPage.noResultsFor", { term: searchTerm })}
                     </p>
                     <Button
                         variant="outline"

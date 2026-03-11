@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Grade } from "@/types/aurion";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { motion } from "framer-motion";
 import { SquareArrowOutDownRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -33,7 +33,7 @@ export function GradeCardAnimate({
     grade: Grade;
     onGradeClick: (grade: Grade) => void;
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     return (
         <MotionCard
             layout
@@ -78,9 +78,9 @@ export function GradeCardAnimate({
                                               .join("-")
                                       ),
                                       "EEEE d MMM yyyy",
-                                      { locale: fr }
+                                      { locale: getDateLocale(i18n.language) }
                                   )
-                                : "Non spécifiée"}
+                                : t("gradesPage.dateNotSpecified")}
                         </p>
                         <div className="mb-0 flex items-end justify-end">
                             <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
@@ -99,7 +99,7 @@ export function GradeCard({
     grade: Grade;
     onGradeClick: (grade: Grade) => void;
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     return (
         <Card
@@ -140,9 +140,9 @@ export function GradeCard({
                                               .join("-")
                                       ),
                                       "EEEE d MMM yyyy",
-                                      { locale: fr }
+                                      { locale: getDateLocale(i18n.language) }
                                   )
-                                : "Non spécifiée"}
+                                : t("gradesPage.dateNotSpecified")}
                         </p>
                         <div className="mb-0 flex items-end justify-end">
                             <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />

@@ -18,7 +18,7 @@ import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
@@ -146,7 +146,7 @@ export function PlanningPage() {
                 <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
                     {t("schedulePage.lastUpdate")}{" "}
                     {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
-                        locale: i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr,
+                        locale: getDateLocale(i18n.language),
                     })}
                 </div>
                 <Button

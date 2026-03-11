@@ -1,4 +1,4 @@
-import { fr, enUS, es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/utils/translations";
 import { DrawerContent, DrawerTitle, Drawer } from "./ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
@@ -27,7 +27,7 @@ export function DrawerPlanningContent({
     eventInfo: PreparedLesson | null;
 }) {
     const { t, i18n } = useTranslation();
-    const locale = i18n.language === "es" ? es : i18n.language === "en" ? enUS : fr;
+    const locale = getDateLocale(i18n.language);
     return (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
             <DrawerContent aria-describedby={undefined}>
