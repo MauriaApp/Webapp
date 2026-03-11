@@ -46,7 +46,9 @@
     "backgroundParameter": {
       "title": "Fond",
       "particles": "Particules",
-      "grid": "Grille"
+      "grid": "Grille",
+      "topography": "Topographie",
+      "dot-pattern": "Points"
     },
     "sizeParameter": {
       "title": "Taille",
@@ -127,9 +129,21 @@
     "standardDeviation": "Écart-type",
     "coefficient": "Coefficient",
     "coef": "Coef",
+    "avgShort": "Moy.",
     "date": "Date",
     "comment": "Commentaire",
-    "dateNotSpecified": "Non spécifiée"
+    "dateNotSpecified": "Non spécifiée",
+    "allSubjects": "Toutes",
+    "positionInClass": "Position dans la classe",
+    "classStats": "Stats classe",
+    "subjects": {
+      "maths": "Maths",
+      "physics": "Physique",
+      "computerScience": "Informatique",
+      "english": "Anglais",
+      "sii": "SII",
+      "fhs": "FHS"
+    }
   },
   "absencesPage": {
     "noAbsences": "Aucune absence trouvée.",
