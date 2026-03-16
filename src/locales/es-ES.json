@@ -136,6 +136,10 @@
     "allSubjects": "Todas",
     "positionInClass": "Posición en clase",
     "classStats": "Stats clase",
+    "averagesSummary": "Medias",
+    "myAverage": "Mi media",
+    "classAverage": "Clase",
+    "bySubject": "Por asignatura",
     "subjects": {
       "maths": "Matemáticas",
       "physics": "Física",

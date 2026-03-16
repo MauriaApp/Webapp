@@ -4,7 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Info } from "lucide-react";
+import { ChevronDown, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { getGrades, getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/drawer";
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
@@ -28,6 +29,114 @@ import { GradePositionSlider } from "./grades-stats";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
+
+function parseGradeValue(value: string): number | null {
+    if (!value || value.trim() === "") return null;
+    const n = parseFloat(value.replace(",", "."));
+    return isNaN(n) ? null : n;
+}
+
+function computeAverages(grades: Grade[]) {
+    let studentSum = 0, classSum = 0, studentCoef = 0, classCoef = 0;
+    const subjectMap = new Map<string, { labelKey: string; studentSum: number; classSum: number; studentCoef: number; classCoef: number }>();
+
+    for (const grade of grades) {
+        const g = parseGradeValue(grade.grade);
+        const avg = parseGradeValue(grade.average);
+        const coef = parseGradeValue(grade.coefficient) ?? 1;
+        const info = getGradeBadgeInfoFromCode(grade.code);
+        const labelKey = info?.labelKey || grade.code;
+
+        if (g !== null) { studentSum += g * coef; studentCoef += coef; }
+        if (avg !== null) { classSum += avg * coef; classCoef += coef; }
+
+        if (!subjectMap.has(labelKey)) {
+            subjectMap.set(labelKey, { labelKey, studentSum: 0, classSum: 0, studentCoef: 0, classCoef: 0 });
+        }
+        const s = subjectMap.get(labelKey)!;
+        if (g !== null) { s.studentSum += g * coef; s.studentCoef += coef; }
+        if (avg !== null) { s.classSum += avg * coef; s.classCoef += coef; }
+    }
+
+    return {
+        overall: {
+            student: studentCoef > 0 ? studentSum / studentCoef : null,
+            class: classCoef > 0 ? classSum / classCoef : null,
+        },
+        bySubject: Array.from(subjectMap.values()).map((s) => ({
+            labelKey: s.labelKey,
+            student: s.studentCoef > 0 ? s.studentSum / s.studentCoef : null,
+            class: s.classCoef > 0 ? s.classSum / s.classCoef : null,
+        })),
+    };
+}
+
+function AveragesComparison({ grades, t }: { grades: Grade[]; t: (key: string) => string }) {
+    const [expanded, setExpanded] = useState(false);
+    const averages = useMemo(() => computeAverages(grades), [grades]);
+
+    if (averages.overall.student === null && averages.overall.class === null) return null;
+
+    const fmt = (v: number | null) => v !== null ? v.toFixed(2) : "—";
+    const diff = (averages.overall.student ?? 0) - (averages.overall.class ?? 0);
+    const aboveClass = diff > 0;
+    const belowClass = diff < 0;
+
+    return (
+        <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
+            <CardContent className="p-3 space-y-2">
+                <button
+                    className="w-full flex items-center justify-between gap-2"
+                    onClick={() => setExpanded((v) => !v)}
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="text-left">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{t("gradesPage.myAverage")}</p>
+                            <p className={`text-xl font-bold ${aboveClass ? "text-mauria-accent" : belowClass ? "text-gray-400 dark:text-gray-500" : "text-mauria-accent"}`}>
+                                {fmt(averages.overall.student)}
+                            </p>
+                        </div>
+                        <Separator orientation="vertical" className="h-8" />
+                        <div className="text-left">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{t("gradesPage.classAverage")}</p>
+                            <p className="text-xl font-bold text-gray-500 dark:text-gray-400">{fmt(averages.overall.class)}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                        <span>{t("gradesPage.bySubject")}</span>
+                        <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+                        />
+                    </div>
+                </button>
+
+                {expanded && (
+                    <div className="space-y-1 pt-1">
+                        <Separator />
+                        {averages.bySubject.map((subject) => {
+                            const d = (subject.student ?? 0) - (subject.class ?? 0);
+                            const isAbove = d > 0;
+                            return (
+                                <div key={subject.labelKey} className="flex items-center justify-between py-1">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[50%]">
+                                        {t(subject.labelKey) || subject.labelKey}
+                                    </p>
+                                    <div className="flex items-center gap-3 text-sm font-medium">
+                                        <span className={isAbove ? "text-mauria-accent" : "text-gray-400 dark:text-gray-500"}>
+                                            {fmt(subject.student)}
+                                        </span>
+                                        <span className="text-gray-300 dark:text-gray-600">/</span>
+                                        <span className="text-gray-500 dark:text-gray-400">{fmt(subject.class)}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
 
 function SubjectFilterCarousel({
     subjects,
@@ -261,6 +370,11 @@ export function GradesPage() {
                 )}
             </motion.div>
 
+            <div className="space-y-3">
+            {filteredGrades.length > 0 && (
+                <AveragesComparison grades={filteredGrades} t={t} />
+            )}
+
             {displayedGrades.length === 0 ? (
                 <motion.div
                     key="empty-state"
@@ -309,6 +423,7 @@ export function GradesPage() {
                     </AnimatePresence>
                 </motion.div>
             )}
+            </div>
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
                     <DrawerHeader>
