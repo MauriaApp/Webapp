@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
-import { getGrades, getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
+import { getGrades, getGradeBadgeInfoFromCode, subjectCoefficients } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
@@ -37,7 +37,6 @@ function parseGradeValue(value: string): number | null {
 }
 
 function computeAverages(grades: Grade[]) {
-    let studentSum = 0, classSum = 0, studentCoef = 0, classCoef = 0;
     const subjectMap = new Map<string, { labelKey: string; studentSum: number; classSum: number; studentCoef: number; classCoef: number }>();
 
     for (const grade of grades) {
@@ -47,9 +46,6 @@ function computeAverages(grades: Grade[]) {
         const info = getGradeBadgeInfoFromCode(grade.code);
         const labelKey = info?.labelKey || grade.code;
 
-        if (g !== null) { studentSum += g * coef; studentCoef += coef; }
-        if (avg !== null) { classSum += avg * coef; classCoef += coef; }
-
         if (!subjectMap.has(labelKey)) {
             subjectMap.set(labelKey, { labelKey, studentSum: 0, classSum: 0, studentCoef: 0, classCoef: 0 });
         }
@@ -58,16 +54,27 @@ function computeAverages(grades: Grade[]) {
         if (avg !== null) { s.classSum += avg * coef; s.classCoef += coef; }
     }
 
+    const bySubject = Array.from(subjectMap.values()).map((s) => ({
+        labelKey: s.labelKey,
+        student: s.studentCoef > 0 ? s.studentSum / s.studentCoef : null,
+        class: s.classCoef > 0 ? s.classSum / s.classCoef : null,
+        subjectCoef: subjectCoefficients[s.labelKey] ?? null,
+    }));
+
+    // Overall average: weighted by subject coefficients
+    let studentSum = 0, classSum = 0, studentTotalCoef = 0, classTotalCoef = 0;
+    for (const s of bySubject) {
+        const sc = s.subjectCoef ?? 1;
+        if (s.student !== null) { studentSum += s.student * sc; studentTotalCoef += sc; }
+        if (s.class !== null) { classSum += s.class * sc; classTotalCoef += sc; }
+    }
+
     return {
         overall: {
-            student: studentCoef > 0 ? studentSum / studentCoef : null,
-            class: classCoef > 0 ? classSum / classCoef : null,
+            student: studentTotalCoef > 0 ? studentSum / studentTotalCoef : null,
+            class: classTotalCoef > 0 ? classSum / classTotalCoef : null,
         },
-        bySubject: Array.from(subjectMap.values()).map((s) => ({
-            labelKey: s.labelKey,
-            student: s.studentCoef > 0 ? s.studentSum / s.studentCoef : null,
-            class: s.classCoef > 0 ? s.classSum / s.classCoef : null,
-        })),
+        bySubject,
     };
 }
 
@@ -118,10 +125,17 @@ function AveragesComparison({ grades, t }: { grades: Grade[]; t: (key: string) =
                             const isAbove = d > 0;
                             return (
                                 <div key={subject.labelKey} className="flex items-center justify-between py-1">
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[50%]">
-                                        {t(subject.labelKey) || subject.labelKey}
-                                    </p>
-                                    <div className="flex items-center gap-3 text-sm font-medium">
+                                    <div className="flex items-baseline gap-1 min-w-0">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                            {t(subject.labelKey) || subject.labelKey}
+                                        </p>
+                                        {subject.subjectCoef !== null && (
+                                            <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 shrink-0">
+                                                ×{subject.subjectCoef}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-3 text-sm font-medium shrink-0 ml-2">
                                         <span className={isAbove ? "text-mauria-accent" : "text-gray-400 dark:text-gray-500"}>
                                             {fmt(subject.student)}
                                         </span>
@@ -133,6 +147,12 @@ function AveragesComparison({ grades, t }: { grades: Grade[]; t: (key: string) =
                         })}
                     </div>
                 )}
+                <div className="flex items-start gap-1.5 pt-1">
+                    <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
+                    <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
+                        {t("gradesPage.averageDisclaimer")}
+                    </p>
+                </div>
             </CardContent>
         </Card>
     );

@@ -119,7 +119,7 @@
   },
   "gradesPage": {
     "noGrades": "No grades available for now.",
-    "onlyCurrentYear": "Display only current year",
+    "onlyCurrentYear": "Display only current semester",
     "details": "Grade details",
     "grade": "Grade",
     "average": "Average",
@@ -140,13 +140,15 @@
     "myAverage": "My average",
     "classAverage": "Class",
     "bySubject": "By subject",
+    "averageDisclaimer": "The average shown is indicative. Some subject coefficients may not be taken into account.",
     "subjects": {
       "maths": "Maths",
       "physics": "Physics",
       "computerScience": "Computer Science",
       "english": "English",
       "sii": "SII",
-      "fhs": "FHS"
+      "fhs": "FHS",
+      "eps": "EPS"
     }
   },
   "absencesPage": {
