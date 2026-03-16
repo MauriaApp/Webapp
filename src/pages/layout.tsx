@@ -95,7 +95,7 @@ export default function RootLayout() {
             {backgroundElement}
             <NewUpdateDrawer />
             {/* Header */}
-            <header className="flex items-center justify-between px-4 pb-4 pt-4 bg-mauria-purple oled:bg-black z-10">
+            <header className="flex items-center justify-between px-4 pb-4 pt-safe-offset-4 bg-mauria-purple oled:bg-black z-10">
                 <h1 className="text-2xl font-bold text-white">
                     {t("welcome.mauria")}
                 </h1>
