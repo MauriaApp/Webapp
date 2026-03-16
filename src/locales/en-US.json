@@ -136,6 +136,10 @@
     "allSubjects": "All",
     "positionInClass": "Position in class",
     "classStats": "Class stats",
+    "averagesSummary": "Averages",
+    "myAverage": "My average",
+    "classAverage": "Class",
+    "bySubject": "By subject",
     "subjects": {
       "maths": "Maths",
       "physics": "Physics",
