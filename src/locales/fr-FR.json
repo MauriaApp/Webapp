@@ -119,7 +119,7 @@
   },
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
-    "onlyCurrentYear": "Afficher uniquement cette année",
+    "onlyCurrentYear": "Afficher uniquement ce semestre",
     "details": "Détails de la note",
     "grade": "Note",
     "average": "Moyenne",
@@ -140,13 +140,15 @@
     "myAverage": "Ma moyenne",
     "classAverage": "Classe",
     "bySubject": "Par matière",
+    "averageDisclaimer": "La moyenne affichée est indicative. Certains coefficients de matières peuvent ne pas être pris en compte.",
     "subjects": {
       "maths": "Maths",
       "physics": "Physique",
       "computerScience": "Informatique",
       "english": "Anglais",
       "sii": "SII",
-      "fhs": "FHS"
+      "fhs": "FHS",
+      "eps": "EPS"
     }
   },
   "absencesPage": {
