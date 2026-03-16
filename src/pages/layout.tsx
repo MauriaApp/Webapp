@@ -132,7 +132,7 @@ export default function RootLayout() {
             {/* Main Content */}
             <PageTransitionMemo
                 as="main"
-                className="flex-1 px-4 pb-safe-offset-20 z-10"
+                className="flex-1 px-4 pb-safe-offset-24 z-10"
             >
                 <Outlet />
             </PageTransitionMemo>
