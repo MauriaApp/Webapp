@@ -23,7 +23,10 @@
     html {
         height: 100dvh;
         overscroll-behavior: none;
-        background-color: hsl(var(--background));
+        background-color: hsl(var(--mauria-purple));
+    }
+    html.oled {
+        background-color: black;
     }
     body {
         height: 100%;
