@@ -141,6 +141,8 @@
     "classAverage": "Classe",
     "bySubject": "Par matière",
     "averageDisclaimer": "La moyenne affichée est indicative. Certains coefficients de matières peuvent ne pas être pris en compte.",
+    "supportedClasses": "Classes supportées : MP2I, MPSI, MPI, PSI.",
+    "lv2NotCounted": "non comptée",
     "subjects": {
       "maths": "Maths",
       "physics": "Physique",
@@ -148,7 +150,10 @@
       "english": "Anglais",
       "sii": "SII",
       "fhs": "FHS",
-      "eps": "EPS"
+      "eps": "EPS",
+      "lv2": "LV2",
+      "tipe": "TIPE",
+      "pix": "PIX"
     }
   },
   "absencesPage": {
