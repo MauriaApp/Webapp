@@ -51,6 +51,7 @@ import {
     SelectValue,
 } from "./ui/select";
 import { clearStorage } from "@/lib/utils/storage";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -210,6 +211,7 @@ export default function Sidebar() {
     ];
 
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const handleNavigate = (path: string) => {
         setOpen(false);
@@ -217,7 +219,9 @@ export default function Sidebar() {
     };
 
     const signOut = () => {
+        setTheme("light");
         clearStorage();
+        queryClient.clear();
         handleNavigate("/login");
     };
 

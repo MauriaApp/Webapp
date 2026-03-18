@@ -61,17 +61,84 @@ const gradeBadgeKeywordMap: Array<{ keyword: string; labelKey: string }> = [
     { keyword: "sii", labelKey: "gradesPage.subjects.sii" },
     { keyword: "fhs", labelKey: "gradesPage.subjects.fhs" },
     { keyword: "eps", labelKey: "gradesPage.subjects.eps" },
+    { keyword: "lv2", labelKey: "gradesPage.subjects.lv2" },
+    { keyword: "langue vivante", labelKey: "gradesPage.subjects.lv2" },
+    { keyword: "tipe", labelKey: "gradesPage.subjects.tipe" },
+    { keyword: "projet passion", labelKey: "gradesPage.subjects.tipe" },
+    { keyword: "pix", labelKey: "gradesPage.subjects.pix" },
 ];
 
-export const subjectCoefficients: Record<string, number> = {
-    "gradesPage.subjects.maths": 8,
-    "gradesPage.subjects.physics": 6,
-    "gradesPage.subjects.computerScience": 6,
-    "gradesPage.subjects.sii": 3,
-    "gradesPage.subjects.fhs": 2,
-    "gradesPage.subjects.english": 2,
-    "gradesPage.subjects.eps": 1,
+export type StudentClass = "CPG1_MP2I" | "CPG1_MPSI" | "CPG2_MPI" | "CPG2_PSI";
+
+const CLASS_PATTERNS: Array<{ pattern: string; cls: StudentClass }> = [
+    { pattern: "CPG1_MP2I", cls: "CPG1_MP2I" },
+    { pattern: "CPG1_MPSI", cls: "CPG1_MPSI" },
+    { pattern: "CPG2_MPI", cls: "CPG2_MPI" },
+    { pattern: "CPG2_PSI", cls: "CPG2_PSI" },
+];
+
+export function detectStudentClass(grades: Grade[]): StudentClass | null {
+    for (const grade of grades) {
+        const code = grade.code.toUpperCase();
+        for (const { pattern, cls } of CLASS_PATTERNS) {
+            if (code.includes(pattern)) return cls;
+        }
+    }
+    return null;
+}
+
+const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> = {
+    "CPG1_MP2I": {
+        "gradesPage.subjects.maths": 8,
+        "gradesPage.subjects.physics": 6,
+        "gradesPage.subjects.sii": 2,
+        "gradesPage.subjects.computerScience": 6,
+        "gradesPage.subjects.fhs": 2,
+        "gradesPage.subjects.english": 2,
+        "gradesPage.subjects.eps": 1,
+        "gradesPage.subjects.lv2": 2,
+        "gradesPage.subjects.tipe": 1,
+    },
+    "CPG1_MPSI": {
+        "gradesPage.subjects.maths": 8,
+        "gradesPage.subjects.physics": 8,
+        "gradesPage.subjects.sii": 4,
+        "gradesPage.subjects.computerScience": 2,
+        "gradesPage.subjects.fhs": 2,
+        "gradesPage.subjects.english": 2,
+        "gradesPage.subjects.eps": 1,
+        "gradesPage.subjects.lv2": 2,
+        "gradesPage.subjects.tipe": 1,
+        "gradesPage.subjects.pix": 1,
+    },
+    "CPG2_MPI": {
+        "gradesPage.subjects.maths": 8,
+        "gradesPage.subjects.physics": 6,
+        "gradesPage.subjects.computerScience": 6,
+        "gradesPage.subjects.fhs": 2,
+        "gradesPage.subjects.english": 2,
+        "gradesPage.subjects.eps": 1,
+        "gradesPage.subjects.lv2": 2,
+        "gradesPage.subjects.tipe": 1,
+    },
+    "CPG2_PSI": {
+        "gradesPage.subjects.maths": 8,
+        "gradesPage.subjects.physics": 8,
+        "gradesPage.subjects.sii": 4,
+        "gradesPage.subjects.computerScience": 2,
+        "gradesPage.subjects.fhs": 2,
+        "gradesPage.subjects.english": 2,
+        "gradesPage.subjects.eps": 1,
+        "gradesPage.subjects.lv2": 2,
+        "gradesPage.subjects.tipe": 1,
+        "gradesPage.subjects.pix": 1,
+    },
 };
+
+export function getSubjectCoefficients(grades: Grade[]): Record<string, number> {
+    const cls = detectStudentClass(grades);
+    return subjectCoefficientsPerClass[cls ?? "CPG1_MP2I"];
+}
 
 export function getGradeBadgeInfoFromCode(code?: string | null): GradeBadgeInfo | null {
     const rawCode = (code ?? "").trim();

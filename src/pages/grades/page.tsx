@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
-import { getGrades, getGradeBadgeInfoFromCode, subjectCoefficients } from "@/lib/utils/grades";
+import { getGrades, getGradeBadgeInfoFromCode, getSubjectCoefficients } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
@@ -36,13 +36,17 @@ function parseGradeValue(value: string): number | null {
     return isNaN(n) ? null : n;
 }
 
+const LV2_LABEL_KEY = "gradesPage.subjects.lv2";
+
 function computeAverages(grades: Grade[]) {
+    const coefficients = getSubjectCoefficients(grades);
     const subjectMap = new Map<string, { labelKey: string; studentSum: number; classSum: number; studentCoef: number; classCoef: number }>();
 
     for (const grade of grades) {
         const g = parseGradeValue(grade.grade);
         const avg = parseGradeValue(grade.average);
-        const coef = parseGradeValue(grade.coefficient) ?? 1;
+        const isPartiel = grade.code.toUpperCase().includes("PART");
+        const coef = (parseGradeValue(grade.coefficient) ?? 1) * (isPartiel ? 1 : 2);
         const info = getGradeBadgeInfoFromCode(grade.code);
         const labelKey = info?.labelKey || grade.code;
 
@@ -58,24 +62,37 @@ function computeAverages(grades: Grade[]) {
         labelKey: s.labelKey,
         student: s.studentCoef > 0 ? s.studentSum / s.studentCoef : null,
         class: s.classCoef > 0 ? s.classSum / s.classCoef : null,
-        subjectCoef: subjectCoefficients[s.labelKey] ?? null,
+        subjectCoef: coefficients[s.labelKey] ?? null,
+        excluded: false,
     }));
 
-    // Overall average: weighted by subject coefficients
-    let studentSum = 0, classSum = 0, studentTotalCoef = 0, classTotalCoef = 0;
-    for (const s of bySubject) {
-        const sc = s.subjectCoef ?? 1;
-        if (s.student !== null) { studentSum += s.student * sc; studentTotalCoef += sc; }
-        if (s.class !== null) { classSum += s.class * sc; classTotalCoef += sc; }
-    }
-
-    return {
-        overall: {
+    const computeOverall = (subjects: typeof bySubject) => {
+        let studentSum = 0, classSum = 0, studentTotalCoef = 0, classTotalCoef = 0;
+        for (const s of subjects) {
+            if (s.excluded) continue;
+            const sc = s.subjectCoef ?? 1;
+            if (s.student !== null) { studentSum += s.student * sc; studentTotalCoef += sc; }
+            if (s.class !== null) { classSum += s.class * sc; classTotalCoef += sc; }
+        }
+        return {
             student: studentTotalCoef > 0 ? studentSum / studentTotalCoef : null,
             class: classTotalCoef > 0 ? classSum / classTotalCoef : null,
-        },
-        bySubject,
+        };
     };
+
+    // LV2 is optional: only counted if it improves the student's average
+    const lv2Idx = bySubject.findIndex((s) => s.labelKey === LV2_LABEL_KEY);
+    if (lv2Idx !== -1 && bySubject[lv2Idx].student !== null) {
+        bySubject[lv2Idx].excluded = true;
+        const avgWithout = computeOverall(bySubject);
+        bySubject[lv2Idx].excluded = false;
+        const avgWith = computeOverall(bySubject);
+        if (avgWithout.student !== null && avgWith.student !== null && avgWith.student <= avgWithout.student) {
+            bySubject[lv2Idx].excluded = true;
+        }
+    }
+
+    return { overall: computeOverall(bySubject), bySubject };
 }
 
 function AveragesComparison({ grades, t }: { grades: Grade[]; t: (key: string) => string }) {
@@ -126,25 +143,36 @@ function AveragesComparison({ grades, t }: { grades: Grade[]; t: (key: string) =
                             return (
                                 <div key={subject.labelKey} className="flex items-center justify-between py-1">
                                     <div className="flex items-baseline gap-1 min-w-0">
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                        <p className={`text-sm truncate ${subject.excluded ? "text-gray-300 dark:text-gray-600 line-through" : "text-gray-500 dark:text-gray-400"}`}>
                                             {t(subject.labelKey) || subject.labelKey}
                                         </p>
-                                        {subject.subjectCoef !== null && (
+                                        {subject.subjectCoef !== null && !subject.excluded && (
                                             <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 shrink-0">
                                                 ×{subject.subjectCoef}
                                             </span>
                                         )}
+                                        {subject.excluded && (
+                                            <span className="text-[10px] italic text-gray-300 dark:text-gray-600 shrink-0">
+                                                {t("gradesPage.lv2NotCounted")}
+                                            </span>
+                                        )}
                                     </div>
                                     <div className="flex items-center gap-3 text-sm font-medium shrink-0 ml-2">
-                                        <span className={isAbove ? "text-mauria-accent" : "text-gray-400 dark:text-gray-500"}>
+                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : isAbove ? "text-mauria-accent" : "text-gray-400 dark:text-gray-500"}>
                                             {fmt(subject.student)}
                                         </span>
                                         <span className="text-gray-300 dark:text-gray-600">/</span>
-                                        <span className="text-gray-500 dark:text-gray-400">{fmt(subject.class)}</span>
+                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : "text-gray-500 dark:text-gray-400"}>{fmt(subject.class)}</span>
                                     </div>
                                 </div>
                             );
                         })}
+                        <div className="flex items-start gap-1.5 pt-1">
+                            <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
+                            <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
+                                {t("gradesPage.supportedClasses")}
+                            </p>
+                        </div>
                     </div>
                 )}
                 <div className="flex items-start gap-1.5 pt-1">
