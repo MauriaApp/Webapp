@@ -124,6 +124,7 @@ export const Particles: React.FC<ParticlesProps> = ({
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
     const context = useRef<CanvasRenderingContext2D | null>(null);
+    const animationFrameId = useRef<number>(0);
     const circles = useRef<Circle[]>([]);
     const mousePosition = useMousePosition();
     const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -147,6 +148,7 @@ export const Particles: React.FC<ParticlesProps> = ({
 
         return () => {
             window.removeEventListener("resize", initCanvas);
+            cancelAnimationFrame(animationFrameId.current);
         };
         // canvas lifecycle helpers are stable across renders
     }, [color]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -364,7 +366,7 @@ export const Particles: React.FC<ParticlesProps> = ({
                 // update the circle position
             }
         });
-        window.requestAnimationFrame(animate);
+        animationFrameId.current = window.requestAnimationFrame(animate);
     };
 
     return (

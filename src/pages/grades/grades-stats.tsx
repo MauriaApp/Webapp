@@ -1,7 +1,7 @@
 "use client";
 
 import { Grade } from "@/types/aurion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 function parseNum(val?: string | null): number {
@@ -40,12 +40,12 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
     const isAboveAverage = !isNaN(avg) && myGrade >= avg;
     const accentColor = isAboveAverage ? "hsl(142 70% 45%)" : "hsl(0 70% 55%)";
 
-    const classMarkers = [
+    const classMarkers = useMemo(() => [
         { value: min, label: t("gradesPage.min") },
         { value: avg, label: t("gradesPage.average") },
         { value: median, label: t("gradesPage.median") },
         { value: max, label: t("gradesPage.max") },
-    ].filter((m) => !isNaN(m.value) && m.value > 0);
+    ].filter((m) => !isNaN(m.value) && m.value > 0), [min, avg, median, max, t]);
 
     const sd = parseNum(grade.standardDeviation);
     const sdStart = !isNaN(avg) && !isNaN(sd) ? Math.max(0, avg - sd) : null;
@@ -58,18 +58,17 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
     const GAP = 4;
     const ROW_H = 14;
 
-    function halfW(text: string) {
-        return (text.length * CHAR_W) / 2;
-    }
-    function overlapsH(posA: number, labelA: string, posB: number, labelB: string) {
-        const pxA = (posA / 100) * trackW;
-        const pxB = (posB / 100) * trackW;
-        return Math.abs(pxA - pxB) < halfW(labelA) + halfW(labelB) + GAP;
-    }
+    const { numbersAbove, placedMarkers, maxRow } = useMemo(() => {
+        const halfW = (text: string) => (text.length * CHAR_W) / 2;
+        const overlapsH = (posA: number, labelA: string, posB: number, labelB: string) => {
+            const pxA = (posA / 100) * trackW;
+            const pxB = (posB / 100) * trackW;
+            return Math.abs(pxA - pxB) < halfW(labelA) + halfW(labelB) + GAP;
+        };
 
-    const numbersAbove = [...classMarkers]
-        .sort((a, b) => a.value - b.value)
-        .reduce<Array<{ value: number; label: string; visible: boolean }>>((acc, m) => {
+        const sorted = [...classMarkers].sort((a, b) => a.value - b.value);
+
+        const numbersAbove = sorted.reduce<Array<{ value: number; label: string; visible: boolean }>>((acc, m) => {
             const lastVisible = [...acc].reverse().find((p) => p.visible);
             const visible =
                 !lastVisible ||
@@ -83,9 +82,7 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
             return acc;
         }, []);
 
-    const placedMarkers = [...classMarkers]
-        .sort((a, b) => a.value - b.value)
-        .reduce<Array<{ value: number; label: string; row: number }>>((acc, m) => {
+        const placedMarkers = sorted.reduce<Array<{ value: number; label: string; row: number }>>((acc, m) => {
             const pos = (m.value / scale) * 100;
             let row = 0;
             while (acc.filter((p) => p.row === row).some((p) => overlapsH(pos, m.label, (p.value / scale) * 100, p.label))) {
@@ -95,7 +92,9 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
             return acc;
         }, []);
 
-    const maxRow = placedMarkers.reduce((max, m) => Math.max(max, m.row), 0);
+        const maxRow = placedMarkers.reduce((max, m) => Math.max(max, m.row), 0);
+        return { numbersAbove, placedMarkers, maxRow };
+    }, [classMarkers, trackW, scale]);
     const labelsBottom = TRACK_TOP + TRACK_H + 4 + (4 + maxRow * ROW_H) + 10;
     const SD_TOP = labelsBottom + 6;
     const containerH = SD_TOP + 20;

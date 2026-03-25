@@ -350,7 +350,7 @@ export function GradesPage() {
     } = useQuery<Grade[], Error>({
         queryKey: ["grades"],
         queryFn: (): Promise<Grade[]> =>
-            fetchGrades().then((res) => res?.data || grades),
+            fetchGrades().then((res) => res?.data ?? []),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
@@ -363,10 +363,10 @@ export function GradesPage() {
         void refetch();
     };
 
-    const filteredGrades = getGrades({
+    const filteredGrades = useMemo(() => getGrades({
         showCurrentYearOnly,
-        grades: grades,
-    });
+        grades,
+    }), [showCurrentYearOnly, grades]);
 
     const availableSubjects = useMemo(() => {
         const keys = new Set<string>();
