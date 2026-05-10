@@ -25,6 +25,7 @@ const absenceVariants = {
 export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
     const { i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
+    const isJustified = !absence.type.toLowerCase().includes("non");
     return (
         <MotionCard
             layout
@@ -36,18 +37,12 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
         >
             <div className="flex p-4 items-center h-full">
                 <div className="w-20 mr-4 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                    <div className={`text-2xl font-bold ${isJustified ? "text-green-600" : "text-amber-600"}`}>
                         {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div
-                        className={`text-lg font-medium ${
-                            absence.type.toLowerCase().includes("non")
-                                ? "text-mauria-accent"
-                                : "text-mauria-purple"
-                        } dark:text-white`}
-                    >
+                    <div className="text-lg font-medium">
                         {absence.type}
                     </div>
                     <div className="text-foreground">{absence.class}</div>
@@ -70,22 +65,17 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
 export function AbsenceCard({ absence }: { absence: Absence }) {
     const { i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
+    const isJustified = !absence.type.toLowerCase().includes("non");
     return (
         <Card className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card">
             <div className="flex p-4 items-center h-full">
                 <div className="w-20 mr-4 items-center justify-center text-center">
-                    <div className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                    <div className={`text-2xl font-bold ${isJustified ? "text-green-600" : "text-amber-600"}`}>
                         {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div
-                        className={`text-lg font-medium ${
-                            absence.type.toLowerCase().includes("non")
-                                ? "text-mauria-accent"
-                                : "text-mauria-purple"
-                        } dark:text-white`}
-                    >
+                    <div className="text-lg font-medium">
                         {absence.type}
                     </div>
                     <div className="text-foreground">{absence.class}</div>
