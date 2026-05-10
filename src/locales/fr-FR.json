@@ -140,6 +140,8 @@
     "myAverage": "Ma moyenne",
     "classAverage": "Classe",
     "bySubject": "Par matière",
+    "averageEvolutionGeneral": "Évolution de la moyenne générale",
+    "averageEvolutionIn": "Évolution de la moyenne en {{subject}}",
     "averageDisclaimer": "La moyenne affichée est indicative. Certains coefficients de matières peuvent ne pas être pris en compte.",
     "supportedClasses": "Classes supportées : MP2I, MPSI, MPI, PSI.",
     "lv2NotCounted": "non comptée",
