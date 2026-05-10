@@ -140,6 +140,8 @@
     "myAverage": "My average",
     "classAverage": "Class",
     "bySubject": "By subject",
+    "averageEvolutionGeneral": "General average evolution",
+    "averageEvolutionIn": "Average evolution in {{subject}}",
     "averageDisclaimer": "The average shown is indicative. Some subject coefficients may not be taken into account.",
     "supportedClasses": "Supported classes: MP2I, MPSI, MPI, PSI.",
     "lv2NotCounted": "not counted",

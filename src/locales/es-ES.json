@@ -140,6 +140,8 @@
     "myAverage": "Mi media",
     "classAverage": "Clase",
     "bySubject": "Por asignatura",
+    "averageEvolutionGeneral": "Evolución de la media general",
+    "averageEvolutionIn": "Evolución de la media en {{subject}}",
     "averageDisclaimer": "La media mostrada es indicativa. Es posible que algunos coeficientes de asignaturas no se tengan en cuenta.",
     "supportedClasses": "Clases compatibles: MP2I, MPSI, MPI, PSI.",
     "lv2NotCounted": "no contada",
