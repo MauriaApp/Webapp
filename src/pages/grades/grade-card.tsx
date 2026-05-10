@@ -26,6 +26,11 @@ const gradeVariants = {
     },
 };
 
+function parseGradeNum(val?: string | null): number {
+    if (!val) return NaN;
+    return parseFloat(val.replace(",", "."));
+}
+
 export function GradeCardAnimate({
     grade,
     onGradeClick,
@@ -34,6 +39,11 @@ export function GradeCardAnimate({
     onGradeClick: (grade: Grade) => void;
 }) {
     const { t, i18n } = useTranslation();
+    const gradeNum = parseGradeNum(grade.grade);
+    const avgNum = parseGradeNum(grade.average);
+    const avgColor = !isNaN(gradeNum) && !isNaN(avgNum)
+        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60" : "text-amber-700/70 dark:text-amber-400/60"
+        : "text-gray-500 dark:text-gray-400";
     return (
         <MotionCard
             layout
@@ -56,7 +66,7 @@ export function GradeCardAnimate({
                             </span>
                         )}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className={`text-sm ${avgColor}`}>
                         {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>
@@ -100,6 +110,11 @@ export function GradeCard({
     onGradeClick: (grade: Grade) => void;
 }) {
     const { t, i18n } = useTranslation();
+    const gradeNum = parseGradeNum(grade.grade);
+    const avgNum = parseGradeNum(grade.average);
+    const avgColor = !isNaN(gradeNum) && !isNaN(avgNum)
+        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60" : "text-amber-700/70 dark:text-amber-400/60"
+        : "text-gray-500 dark:text-gray-400";
 
     return (
         <Card
@@ -118,7 +133,7 @@ export function GradeCard({
                             </span>
                         )}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className={`text-sm ${avgColor}`}>
                         {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>

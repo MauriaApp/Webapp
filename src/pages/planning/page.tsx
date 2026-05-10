@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -34,10 +34,14 @@ export function PlanningPage() {
         getUserEventsFromLocalStorage()
     );
 
-    i18n.on("languageChanged", (lng) => {
-        const fcLocale = lng === "fr" ? FrLocale : lng === "es" ? EsLocale : undefined;
-        calendarRef.current?.getApi().setOption("locale", fcLocale);
-    });
+    useEffect(() => {
+        const handler = (lng: string) => {
+            const fcLocale = lng === "fr" ? FrLocale : lng === "es" ? EsLocale : undefined;
+            calendarRef.current?.getApi().setOption("locale", fcLocale);
+        };
+        i18n.on("languageChanged", handler);
+        return () => { i18n.off("languageChanged", handler); };
+    }, [i18n]);
 
     const {
         data: lessons = [],
@@ -48,7 +52,7 @@ export function PlanningPage() {
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
         queryFn: (): Promise<Lesson[]> =>
-            fetchPlanning().then((res) => res?.data || lessons),
+            fetchPlanning().then((res) => res?.data ?? []),
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
@@ -93,7 +97,7 @@ export function PlanningPage() {
             >
                 <Calendar
                     datesSet={() => {
-                        globalThis.dispatchEvent(new Event("resize"));
+                        calendarRef.current?.getApi().updateSize();
                     }}
                     ref={calendarRef}
                     locale={i18n.language === "fr" ? FrLocale : i18n.language === "es" ? EsLocale : undefined}
