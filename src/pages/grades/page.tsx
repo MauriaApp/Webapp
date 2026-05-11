@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, GraduationCap, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
-import { getGrades, getGradeBadgeInfoFromCode, getSubjectCoefficients } from "@/lib/utils/grades";
+import {
+    getGrades,
+    getGradeBadgeInfoFromCode,
+    getSubjectCoefficients,
+} from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +22,15 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+    memo,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
@@ -26,7 +38,11 @@ import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
 import { GradePositionSlider } from "./grades-stats";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ChartContainer, ChartTooltip, ChartConfig } from "@/components/ui/chart";
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartConfig,
+} from "@/components/ui/chart";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -41,22 +57,44 @@ const LV2_LABEL_KEY = "gradesPage.subjects.lv2";
 
 function computeAverages(grades: Grade[]) {
     const coefficients = getSubjectCoefficients(grades);
-    const subjectMap = new Map<string, { labelKey: string; studentSum: number; classSum: number; studentCoef: number; classCoef: number }>();
+    const subjectMap = new Map<
+        string,
+        {
+            labelKey: string;
+            studentSum: number;
+            classSum: number;
+            studentCoef: number;
+            classCoef: number;
+        }
+    >();
 
     for (const grade of grades) {
         const g = parseGradeValue(grade.grade);
         const avg = parseGradeValue(grade.average);
         const isPartiel = grade.code.toUpperCase().includes("PART");
-        const coef = (parseGradeValue(grade.coefficient) ?? 1) * (isPartiel ? 1 : 2);
+        const coef =
+            (parseGradeValue(grade.coefficient) ?? 1) * (isPartiel ? 1 : 2);
         const info = getGradeBadgeInfoFromCode(grade.code);
         const labelKey = info?.labelKey || grade.code;
 
         if (!subjectMap.has(labelKey)) {
-            subjectMap.set(labelKey, { labelKey, studentSum: 0, classSum: 0, studentCoef: 0, classCoef: 0 });
+            subjectMap.set(labelKey, {
+                labelKey,
+                studentSum: 0,
+                classSum: 0,
+                studentCoef: 0,
+                classCoef: 0,
+            });
         }
         const s = subjectMap.get(labelKey)!;
-        if (g !== null) { s.studentSum += g * coef; s.studentCoef += coef; }
-        if (avg !== null) { s.classSum += avg * coef; s.classCoef += coef; }
+        if (g !== null) {
+            s.studentSum += g * coef;
+            s.studentCoef += coef;
+        }
+        if (avg !== null) {
+            s.classSum += avg * coef;
+            s.classCoef += coef;
+        }
     }
 
     const bySubject = Array.from(subjectMap.values()).map((s) => ({
@@ -68,15 +106,25 @@ function computeAverages(grades: Grade[]) {
     }));
 
     const computeOverall = (subjects: typeof bySubject) => {
-        let studentSum = 0, classSum = 0, studentTotalCoef = 0, classTotalCoef = 0;
+        let studentSum = 0,
+            classSum = 0,
+            studentTotalCoef = 0,
+            classTotalCoef = 0;
         for (const s of subjects) {
             if (s.excluded) continue;
             const sc = s.subjectCoef ?? 1;
-            if (s.student !== null) { studentSum += s.student * sc; studentTotalCoef += sc; }
-            if (s.class !== null) { classSum += s.class * sc; classTotalCoef += sc; }
+            if (s.student !== null) {
+                studentSum += s.student * sc;
+                studentTotalCoef += sc;
+            }
+            if (s.class !== null) {
+                classSum += s.class * sc;
+                classTotalCoef += sc;
+            }
         }
         return {
-            student: studentTotalCoef > 0 ? studentSum / studentTotalCoef : null,
+            student:
+                studentTotalCoef > 0 ? studentSum / studentTotalCoef : null,
             class: classTotalCoef > 0 ? classSum / classTotalCoef : null,
         };
     };
@@ -88,7 +136,11 @@ function computeAverages(grades: Grade[]) {
         const avgWithout = computeOverall(bySubject);
         bySubject[lv2Idx].excluded = false;
         const avgWith = computeOverall(bySubject);
-        if (avgWithout.student !== null && avgWith.student !== null && avgWith.student <= avgWithout.student) {
+        if (
+            avgWithout.student !== null &&
+            avgWith.student !== null &&
+            avgWith.student <= avgWithout.student
+        ) {
             bySubject[lv2Idx].excluded = true;
         }
     }
@@ -100,19 +152,28 @@ function computeAverageEvolution(grades: Grade[]) {
     const sorted = [...grades]
         .filter((g) => g.date)
         .sort((a, b) => {
-            const toMs = (d: string) => new Date(d.split("/").reverse().join("-")).getTime();
+            const toMs = (d: string) =>
+                new Date(d.split("/").reverse().join("-")).getTime();
             return toMs(a.date) - toMs(b.date);
         });
 
     if (sorted.length === 0) return [];
 
-    const points: Array<{ date: string; student: number | null; class: number | null }> = [];
+    const points: Array<{
+        date: string;
+        student: number | null;
+        class: number | null;
+    }> = [];
     const dateToIdx = new Map<string, number>();
 
     for (let i = 0; i < sorted.length; i++) {
         const avg = computeAverages(sorted.slice(0, i + 1));
         const dateKey = sorted[i].date;
-        const point = { date: dateKey, student: avg.overall.student, class: avg.overall.class };
+        const point = {
+            date: dateKey,
+            student: avg.overall.student,
+            class: avg.overall.class,
+        };
 
         if (dateToIdx.has(dateKey)) {
             points[dateToIdx.get(dateKey)!] = point;
@@ -139,8 +200,12 @@ function GradesEvolutionTooltip({
     t: (k: string) => string;
 }) {
     if (!active || !payload?.length || !label) return null;
-    const studentAboveEntry = payload.find((p) => p.dataKey === "studentAbove" && p.value != null);
-    const studentBelowEntry = payload.find((p) => p.dataKey === "studentBelow" && p.value != null);
+    const studentAboveEntry = payload.find(
+        (p) => p.dataKey === "studentAbove" && p.value != null
+    );
+    const studentBelowEntry = payload.find(
+        (p) => p.dataKey === "studentBelow" && p.value != null
+    );
     const studentEntry = studentAboveEntry ?? studentBelowEntry;
     const cls = payload.find((p) => p.dataKey === "class");
     return (
@@ -148,42 +213,72 @@ function GradesEvolutionTooltip({
             <p className="font-medium">{formatDate(label)}</p>
             {studentEntry?.value != null && (
                 <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: studentEntry.color }} />
-                    <span className="text-muted-foreground">{t("gradesPage.myAverage")}</span>
-                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">{Number(studentEntry.value).toFixed(2)}</span>
+                    <div
+                        className="h-2 w-2 shrink-0 rounded-[2px]"
+                        style={{ backgroundColor: studentEntry.color }}
+                    />
+                    <span className="text-muted-foreground">
+                        {t("gradesPage.myAverage")}
+                    </span>
+                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">
+                        {Number(studentEntry.value).toFixed(2)}
+                    </span>
                 </div>
             )}
             {cls?.value != null && (
                 <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: cls.color }} />
-                    <span className="text-muted-foreground">{t("gradesPage.classAverage")}</span>
-                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">{Number(cls.value).toFixed(2)}</span>
+                    <div
+                        className="h-2 w-2 shrink-0 rounded-[2px]"
+                        style={{ backgroundColor: cls.color }}
+                    />
+                    <span className="text-muted-foreground">
+                        {t("gradesPage.classAverage")}
+                    </span>
+                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">
+                        {Number(cls.value).toFixed(2)}
+                    </span>
                 </div>
             )}
         </div>
     );
 }
 
-function splitStudentByComparison(data: Array<{ date: string; student: number | null; class: number | null }>) {
+function splitStudentByComparison(
+    data: Array<{ date: string; student: number | null; class: number | null }>
+) {
     return data.map((point, i, arr) => {
         const { student } = point;
         const cls = point.class;
-        if (student === null) return { ...point, studentAbove: null, studentBelow: null };
+        if (student === null)
+            return { ...point, studentAbove: null, studentBelow: null };
 
         const isAbove = cls === null || student >= cls;
         const prev = i > 0 ? arr[i - 1] : null;
-        const prevIsAbove = prev && prev.student !== null ? (prev.class === null || prev.student >= prev.class) : isAbove;
+        const prevIsAbove =
+            prev && prev.student !== null
+                ? prev.class === null || prev.student >= prev.class
+                : isAbove;
         const isTransition = isAbove !== prevIsAbove;
 
         return {
             ...point,
-            studentAbove: isAbove || (!isAbove && isTransition) ? student : null,
-            studentBelow: !isAbove || (isAbove && isTransition) ? student : null,
+            studentAbove:
+                isAbove || (!isAbove && isTransition) ? student : null,
+            studentBelow:
+                !isAbove || (isAbove && isTransition) ? student : null,
         };
     });
 }
 
-function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject: string | null; t: (key: string, opts?: Record<string, string>) => string }) {
+function GradesEvolutionChart({
+    grades,
+    subject,
+    t,
+}: {
+    grades: Grade[];
+    subject: string | null;
+    t: (key: string, opts?: Record<string, string>) => string;
+}) {
     const { i18n } = useTranslation();
     const rawData = useMemo(() => computeAverageEvolution(grades), [grades]);
     const data = useMemo(() => splitStudentByComparison(rawData), [rawData]);
@@ -193,23 +288,39 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
     const chartConfig: ChartConfig = {
         studentAbove: {
             label: t("gradesPage.myAverage"),
-            theme: { light: "hsl(142 71% 29%)", dark: "hsl(142 69% 52%)", oled: "hsl(142 65% 68%)" },
+            theme: {
+                light: "hsl(142 71% 29%)",
+                dark: "hsl(142 69% 52%)",
+                oled: "hsl(142 65% 68%)",
+            },
         },
         studentBelow: {
             label: t("gradesPage.myAverage"),
-            theme: { light: "hsl(24 88% 52%)", dark: "hsl(24 88% 58%)", oled: "hsl(24 88% 58%)" },
+            theme: {
+                light: "hsl(24 88% 52%)",
+                dark: "hsl(24 88% 58%)",
+                oled: "hsl(24 88% 58%)",
+            },
         },
         class: {
             label: t("gradesPage.classAverage"),
-            theme: { light: "hsl(210 16% 65%)", dark: "hsl(210 16% 55%)", oled: "hsl(210 8% 44%)" },
+            theme: {
+                light: "hsl(210 16% 65%)",
+                dark: "hsl(210 16% 55%)",
+                oled: "hsl(210 8% 44%)",
+            },
         },
     };
 
     const formatXDate = (dateStr: string) => {
         try {
-            return format(new Date(dateStr.split("/").reverse().join("-")), "d MMM", {
-                locale: getDateLocale(i18n.language),
-            });
+            return format(
+                new Date(dateStr.split("/").reverse().join("-")),
+                "d MMM",
+                {
+                    locale: getDateLocale(i18n.language),
+                }
+            );
         } catch {
             return dateStr;
         }
@@ -219,11 +330,19 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
         <div className="pt-2 pb-1">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1.5">
                 {subject
-                    ? t("gradesPage.averageEvolutionIn", { subject: t(subject) })
+                    ? t("gradesPage.averageEvolutionIn", {
+                          subject: t(subject),
+                      })
                     : t("gradesPage.averageEvolutionGeneral")}
             </p>
-            <ChartContainer config={chartConfig} className="h-36 w-full aspect-auto">
-                <LineChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+            <ChartContainer
+                config={chartConfig}
+                className="h-36 w-full aspect-auto"
+            >
+                <LineChart
+                    data={data}
+                    margin={{ top: 4, right: 4, bottom: 0, left: -20 }}
+                >
                     <CartesianGrid vertical={false} />
                     <XAxis
                         dataKey="date"
@@ -245,7 +364,13 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
                         content={({ active, payload, label }) => (
                             <GradesEvolutionTooltip
                                 active={active}
-                                payload={payload as Array<{ dataKey: string; value: number; color: string }>}
+                                payload={
+                                    payload as Array<{
+                                        dataKey: string;
+                                        value: number;
+                                        color: string;
+                                    }>
+                                }
                                 label={label as string}
                                 formatDate={formatXDate}
                                 t={t}
@@ -280,14 +405,26 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
     );
 }
 
-function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade[]; chartGrades: Grade[]; subject: string | null; t: (key: string, opts?: Record<string, string>) => string }) {
+function AveragesComparison({
+    grades,
+    chartGrades,
+    subject,
+    t,
+}: {
+    grades: Grade[];
+    chartGrades: Grade[];
+    subject: string | null;
+    t: (key: string, opts?: Record<string, string>) => string;
+}) {
     const [expanded, setExpanded] = useState(false);
     const averages = useMemo(() => computeAverages(grades), [grades]);
 
-    if (averages.overall.student === null && averages.overall.class === null) return null;
+    if (averages.overall.student === null && averages.overall.class === null)
+        return null;
 
-    const fmt = (v: number | null) => v !== null ? v.toFixed(2) : "—";
-    const diff = (averages.overall.student ?? 0) - (averages.overall.class ?? 0);
+    const fmt = (v: number | null) => (v !== null ? v.toFixed(2) : "—");
+    const diff =
+        (averages.overall.student ?? 0) - (averages.overall.class ?? 0);
     const aboveClass = diff > 0;
     const belowClass = diff < 0;
 
@@ -300,15 +437,23 @@ function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade
                 >
                     <div className="flex items-center gap-4">
                         <div className="text-left">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{t("gradesPage.myAverage")}</p>
-                            <p className={`text-xl font-bold ${aboveClass ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : belowClass ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}`}>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {t("gradesPage.myAverage")}
+                            </p>
+                            <p
+                                className={`text-xl font-bold ${aboveClass ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : belowClass ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}`}
+                            >
                                 {fmt(averages.overall.student)}
                             </p>
                         </div>
                         <Separator orientation="vertical" className="h-8" />
                         <div className="text-left">
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{t("gradesPage.classAverage")}</p>
-                            <p className="text-xl font-bold text-gray-500 dark:text-gray-400">{fmt(averages.overall.class)}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {t("gradesPage.classAverage")}
+                            </p>
+                            <p className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                                {fmt(averages.overall.class)}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
@@ -323,20 +468,28 @@ function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade
                     <div className="space-y-1 pt-1">
                         <Separator />
                         {averages.bySubject.map((subject) => {
-                            const d = (subject.student ?? 0) - (subject.class ?? 0);
+                            const d =
+                                (subject.student ?? 0) - (subject.class ?? 0);
                             const isAbove = subject.student !== null && d >= 0;
                             const isBelow = subject.student !== null && d < 0;
                             return (
-                                <div key={subject.labelKey} className="flex items-center justify-between py-1">
+                                <div
+                                    key={subject.labelKey}
+                                    className="flex items-center justify-between py-1"
+                                >
                                     <div className="flex items-baseline gap-1 min-w-0">
-                                        <p className={`text-sm truncate ${subject.excluded ? "text-gray-300 dark:text-gray-600 line-through" : "text-gray-500 dark:text-gray-400"}`}>
-                                            {t(subject.labelKey) || subject.labelKey}
+                                        <p
+                                            className={`text-sm truncate ${subject.excluded ? "text-gray-300 dark:text-gray-600 line-through" : "text-gray-500 dark:text-gray-400"}`}
+                                        >
+                                            {t(subject.labelKey) ||
+                                                subject.labelKey}
                                         </p>
-                                        {subject.subjectCoef !== null && !subject.excluded && (
-                                            <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 shrink-0">
-                                                ×{subject.subjectCoef}
-                                            </span>
-                                        )}
+                                        {subject.subjectCoef !== null &&
+                                            !subject.excluded && (
+                                                <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 shrink-0">
+                                                    ×{subject.subjectCoef}
+                                                </span>
+                                            )}
                                         {subject.excluded && (
                                             <span className="text-[10px] italic text-gray-300 dark:text-gray-600 shrink-0">
                                                 {t("gradesPage.lv2NotCounted")}
@@ -344,17 +497,41 @@ function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade
                                         )}
                                     </div>
                                     <div className="flex items-center gap-3 text-sm font-medium shrink-0 ml-2">
-                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : isAbove ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : isBelow ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}>
+                                        <span
+                                            className={
+                                                subject.excluded
+                                                    ? "text-gray-300 dark:text-gray-600"
+                                                    : isAbove
+                                                      ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65"
+                                                      : isBelow
+                                                        ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
+                                                        : "text-gray-400 dark:text-gray-500"
+                                            }
+                                        >
                                             {fmt(subject.student)}
                                         </span>
-                                        <span className="text-gray-300 dark:text-gray-600">/</span>
-                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : "text-gray-500 dark:text-gray-400"}>{fmt(subject.class)}</span>
+                                        <span className="text-gray-300 dark:text-gray-600">
+                                            /
+                                        </span>
+                                        <span
+                                            className={
+                                                subject.excluded
+                                                    ? "text-gray-300 dark:text-gray-600"
+                                                    : "text-gray-500 dark:text-gray-400"
+                                            }
+                                        >
+                                            {fmt(subject.class)}
+                                        </span>
                                     </div>
                                 </div>
                             );
                         })}
                         <Separator className="mt-2" />
-                        <GradesEvolutionChart grades={chartGrades} subject={subject} t={t} />
+                        <GradesEvolutionChart
+                            grades={chartGrades}
+                            subject={subject}
+                            t={t}
+                        />
                         <div className="flex items-start gap-1.5 pt-1">
                             <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
                             <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
@@ -391,7 +568,10 @@ function SubjectFilterCarousel({
     const programmaticScrollRef = useRef(false);
     const [sidePadding, setSidePadding] = useState(0);
 
-    const allItems = useMemo(() => [null, ...subjects] as (string | null)[], [subjects]);
+    const allItems = useMemo(
+        () => [null, ...subjects] as (string | null)[],
+        [subjects]
+    );
 
     useLayoutEffect(() => {
         const el = containerRef.current;
@@ -408,10 +588,16 @@ function SubjectFilterCarousel({
         const item = itemRefs.current[idx];
         if (!container || !item) return;
         programmaticScrollRef.current = true;
-        const target = item.offsetLeft + item.offsetWidth / 2 - container.offsetWidth / 2;
-        container.scrollTo({ left: target, behavior: smooth ? "smooth" : "instant" });
+        const target =
+            item.offsetLeft + item.offsetWidth / 2 - container.offsetWidth / 2;
+        container.scrollTo({
+            left: target,
+            behavior: smooth ? "smooth" : "instant",
+        });
         // Release after animation completes
-        setTimeout(() => { programmaticScrollRef.current = false; }, 600);
+        setTimeout(() => {
+            programmaticScrollRef.current = false;
+        }, 600);
     }, []);
 
     // Intercept horizontal touch events at the native level to prevent PullToRefresh from stealing them
@@ -467,7 +653,9 @@ function SubjectFilterCarousel({
         let closestDist = Infinity;
         itemRefs.current.forEach((item, idx) => {
             if (!item) return;
-            const dist = Math.abs(item.offsetLeft + item.offsetWidth / 2 - center);
+            const dist = Math.abs(
+                item.offsetLeft + item.offsetWidth / 2 - center
+            );
             if (dist < closestDist) {
                 closestDist = dist;
                 closestIdx = idx;
@@ -477,7 +665,10 @@ function SubjectFilterCarousel({
         onSelect(allItems[closestIdx] ?? null);
 
         if (snapTimer.current) clearTimeout(snapTimer.current);
-        snapTimer.current = setTimeout(() => scrollToIndex(closestIdx, true), 150);
+        snapTimer.current = setTimeout(
+            () => scrollToIndex(closestIdx, true),
+            150
+        );
     }, [allItems, onSelect, scrollToIndex]);
 
     return (
@@ -551,10 +742,14 @@ export function GradesPage() {
         void refetch();
     };
 
-    const filteredGrades = useMemo(() => getGrades({
-        showCurrentYearOnly,
-        grades,
-    }), [showCurrentYearOnly, grades]);
+    const filteredGrades = useMemo(
+        () =>
+            getGrades({
+                showCurrentYearOnly,
+                grades,
+            }),
+        [showCurrentYearOnly, grades]
+    );
 
     const availableSubjects = useMemo(() => {
         const keys = new Set<string>();
@@ -568,7 +763,8 @@ export function GradesPage() {
     const displayedGrades = useMemo(() => {
         if (!selectedSubject) return filteredGrades;
         return filteredGrades.filter(
-            (g) => getGradeBadgeInfoFromCode(g.code)?.labelKey === selectedSubject
+            (g) =>
+                getGradeBadgeInfoFromCode(g.code)?.labelKey === selectedSubject
         );
     }, [filteredGrades, selectedSubject]);
 
@@ -607,67 +803,72 @@ export function GradesPage() {
             </motion.div>
 
             <div className="space-y-3">
-            {filteredGrades.length > 0 && (
-                <AveragesComparison grades={filteredGrades} chartGrades={displayedGrades} subject={selectedSubject} t={t} />
-            )}
+                {filteredGrades.length > 0 && (
+                    <AveragesComparison
+                        grades={filteredGrades}
+                        chartGrades={displayedGrades}
+                        subject={selectedSubject}
+                        t={t}
+                    />
+                )}
 
-            {displayedGrades.length === 0 ? (
-                <motion.div
-                    key="empty-state"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                        duration: 0.25,
-                        ease: "easeOut",
-                        delay: 0.05,
-                    }}
-                >
-                    <div className="text-center py-12">
-                        <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                            <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                {displayedGrades.length === 0 ? (
+                    <motion.div
+                        key="empty-state"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            duration: 0.25,
+                            ease: "easeOut",
+                            delay: 0.05,
+                        }}
+                    >
+                        <div className="text-center py-12">
+                            <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                                <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <h3 className="text-lg font-semibold mb-2">
+                                    {t("gradesPage.noGrades")}
+                                </h3>
+                                <p className="text-muted-foreground">
+                                    {t("gradesPage.noGradesPlaceholder")}
+                                </p>
                             </div>
-                            <h3 className="text-lg font-semibold mb-2">
-                                {t("gradesPage.noGrades")}
-                            </h3>
-                            <p className="text-muted-foreground">
-                                {t("gradesPage.noGradesPlaceholder")}
-                            </p>
                         </div>
-                    </div>
-                </motion.div>
-            ) : (
-                <motion.div
-                    className="space-y-4 p-1"
-                    variants={listVariants}
-                    initial="hidden"
-                    animate="show"
-                >
-                    <AnimatePresence mode="popLayout">
-                        {displayedGrades.map((grade, index) =>
-                            index < 8 ? (
-                                <AnimatedGradeCard
-                                    key={index}
-                                    grade={grade}
-                                    onGradeClick={(grade) => {
-                                        setSelectedGrade(grade);
-                                        setDrawerOpen(true);
-                                    }}
-                                />
-                            ) : (
-                                <StaticGradeCard
-                                    key={index}
-                                    grade={grade}
-                                    onGradeClick={(grade) => {
-                                        setSelectedGrade(grade);
-                                        setDrawerOpen(true);
-                                    }}
-                                />
-                            )
-                        )}
-                    </AnimatePresence>
-                </motion.div>
-            )}
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        className="space-y-4"
+                        variants={listVariants}
+                        initial="hidden"
+                        animate="show"
+                    >
+                        <AnimatePresence mode="popLayout">
+                            {displayedGrades.map((grade, index) =>
+                                index < 8 ? (
+                                    <AnimatedGradeCard
+                                        key={index}
+                                        grade={grade}
+                                        onGradeClick={(grade) => {
+                                            setSelectedGrade(grade);
+                                            setDrawerOpen(true);
+                                        }}
+                                    />
+                                ) : (
+                                    <StaticGradeCard
+                                        key={index}
+                                        grade={grade}
+                                        onGradeClick={(grade) => {
+                                            setSelectedGrade(grade);
+                                            setDrawerOpen(true);
+                                        }}
+                                    />
+                                )
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
             </div>
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
@@ -759,7 +960,11 @@ export function GradesPage() {
                                                       .join("-")
                                               ),
                                               "EEEE d MMM yyyy",
-                                              { locale: getDateLocale(i18n.language) }
+                                              {
+                                                  locale: getDateLocale(
+                                                      i18n.language
+                                                  ),
+                                              }
                                           )
                                         : t("gradesPage.dateNotSpecified")}
                                 </p>

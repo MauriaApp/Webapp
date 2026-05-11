@@ -104,7 +104,7 @@ export function AbsencesPage() {
                                 <div className="text-sm font-medium text-muted-foreground">
                                     {t("absencesPage.justified")}
                                 </div>
-                                <div className="mt-1 text-2xl font-semibold text-green-600">
+                                <div className="mt-1 text-2xl font-semibold text-green-700/70 dark:text-green-400/60 oled:text-green-300/65">
                                     {justified}
                                 </div>
                             </div>
@@ -115,7 +115,7 @@ export function AbsencesPage() {
                                 <div className="text-sm font-medium text-muted-foreground">
                                     {t("absencesPage.unjustified")}
                                 </div>
-                                <div className="mt-1 text-2xl font-semibold text-amber-600">
+                                <div className="mt-1 text-2xl font-semibold text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60">
                                     {unjustified}
                                 </div>
                             </div>
@@ -149,7 +149,7 @@ export function AbsencesPage() {
                 ) : (
                     <motion.div
                         key="list"
-                        className="space-y-4 p-1"
+                        className="space-y-4"
                         variants={listVariants}
                         initial="hidden"
                         animate="show"
