@@ -41,6 +41,7 @@ export function updateTaskInLocalStorage({ task }: { task: TaskData }) {
                   ...storedTask,
                   task: task.task,
                   date: new Date(task.date).toISOString(),
+                  notificationIds: task.notificationIds,
               }
             : storedTask
     );

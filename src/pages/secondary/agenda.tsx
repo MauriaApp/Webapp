@@ -5,6 +5,7 @@ import {
     removeTaskFromLocalStorage,
     saveTaskToLocalStorage,
 } from "@/lib/utils/agenda";
+import { cancelTaskNotifications } from "@/lib/utils/notifications";
 import { TaskData } from "@/types/data";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
@@ -47,6 +48,10 @@ export function AgendaPage() {
 
     const finalizeTaskCompletion = useCallback(
         (taskId: string) => {
+            const task = pendingTasksRef.current.get(taskId);
+            if (task?.notificationIds?.length) {
+                cancelTaskNotifications(task.notificationIds);
+            }
             pendingTimeoutsRef.current.delete(taskId);
             pendingTasksRef.current.delete(taskId);
             setPendingTaskIds((prev) => {

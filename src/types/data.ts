@@ -23,4 +23,5 @@ export type TaskData = {
     id: string;
     task: string;
     date: Date;
+    notificationIds?: number[];
 };

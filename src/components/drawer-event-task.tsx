@@ -17,6 +17,11 @@ import {
     saveTaskToLocalStorage,
     updateTaskInLocalStorage,
 } from "@/lib/utils/agenda";
+import {
+    cancelTaskNotifications,
+    requestNotificationPermission,
+    scheduleTaskNotifications,
+} from "@/lib/utils/notifications";
 import { Lesson } from "@/types/aurion";
 import { saveUserEventToLocalStorage } from "@/lib/utils/planning";
 import { toast } from "sonner";
@@ -159,7 +164,7 @@ export function DrawerEventTask({
         (!startDateTimeForValidation ||
             startDateTimeForValidation.getTime() < now.getTime());
 
-    const handleValidate = () => {
+    const handleValidate = async () => {
         const validationNow = new Date();
         const startDateTime = combineDateAndTime(date, startTime);
         const endDateTime = combineDateAndTime(date, endTime);
@@ -197,11 +202,19 @@ export function DrawerEventTask({
 
             case "task": {
                 if (isEditMode && initialTask) {
+                    if (initialTask.notificationIds?.length) {
+                        cancelTaskNotifications(initialTask.notificationIds);
+                    }
+                    const permission = await requestNotificationPermission();
                     const updatedTask: TaskData = {
                         ...initialTask,
                         task: title,
                         date: startDateTime,
                     };
+                    updatedTask.notificationIds =
+                        permission === "granted"
+                            ? await scheduleTaskNotifications(updatedTask)
+                            : undefined;
                     updateTaskInLocalStorage({ task: updatedTask });
                     toast.success(t("agendaPage.taskUpdated"), {
                         description: t(
@@ -210,13 +223,17 @@ export function DrawerEventTask({
                         duration: 3000,
                     });
                 } else {
-                    saveTaskToLocalStorage({
-                        task: {
-                            id: crypto.randomUUID(),
-                            task: title,
-                            date: startDateTime,
-                        },
-                    });
+                    const permission = await requestNotificationPermission();
+                    const newTask: TaskData = {
+                        id: crypto.randomUUID(),
+                        task: title,
+                        date: startDateTime,
+                    };
+                    if (permission === "granted") {
+                        newTask.notificationIds =
+                            await scheduleTaskNotifications(newTask);
+                    }
+                    saveTaskToLocalStorage({ task: newTask });
                     toast.success("Tâche ajoutée", {
                         description: "La tâche a été ajoutée à l’agenda.",
                         duration: 3000,
