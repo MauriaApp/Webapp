@@ -2,9 +2,8 @@
 
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown, GraduationCap, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
 import { getGrades, getGradeBadgeInfoFromCode, getSubjectCoefficients } from "@/lib/utils/grades";
@@ -623,10 +622,19 @@ export function GradesPage() {
                         delay: 0.05,
                     }}
                 >
-                    <Alert className="mb-4">
-                        <Info className="h-4 w-4" />
-                        <AlertTitle>{t("gradesPage.noGrades")}</AlertTitle>
-                    </Alert>
+                    <div className="text-center py-12">
+                        <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                            <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-lg font-semibold mb-2">
+                                {t("gradesPage.noGrades")}
+                            </h3>
+                            <p className="text-muted-foreground">
+                                {t("gradesPage.noGradesPlaceholder")}
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
             ) : (
                 <motion.div

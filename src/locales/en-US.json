@@ -119,6 +119,7 @@
   },
   "gradesPage": {
     "noGrades": "No grades available for now.",
+    "noGradesPlaceholder": "No grades have been published yet.",
     "onlyCurrentYear": "Display only current semester",
     "details": "Grade details",
     "grade": "Grade",
@@ -160,6 +161,7 @@
   },
   "absencesPage": {
     "noAbsences": "No absences found.",
+    "noAbsencesPlaceholder": "No absences have been recorded yet.",
     "onlyCurrentYear": "Display only current year",
     "justified": "Justified",
     "unjustified": "Unjustified",

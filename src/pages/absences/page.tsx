@@ -1,13 +1,12 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Info } from "lucide-react";
+import { CalendarOff } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { getAbsencesDurations } from "@/lib/utils/absences";
-import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { AbsenceCard, AbsenceCardAnimate } from "./absences-card";
 import { useCurrentYear } from "@/contexts/currentYearContext";
@@ -133,12 +132,19 @@ export function AbsencesPage() {
                         exit={{ opacity: 0, y: -12 }}
                         transition={{ duration: 0.25, ease: "easeOut" }}
                     >
-                        <Alert className="mb-4">
-                            <Info className="h-4 w-4" />
-                            <AlertTitle>
-                                {t("absencesPage.noAbsences")}
-                            </AlertTitle>
-                        </Alert>
+                        <div className="text-center py-12">
+                            <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                                <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <CalendarOff className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <h3 className="text-lg font-semibold mb-2">
+                                    {t("absencesPage.noAbsences")}
+                                </h3>
+                                <p className="text-muted-foreground">
+                                    {t("absencesPage.noAbsencesPlaceholder")}
+                                </p>
+                            </div>
+                        </div>
                     </motion.div>
                 ) : (
                     <motion.div
