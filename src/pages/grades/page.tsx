@@ -194,15 +194,15 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
     const chartConfig: ChartConfig = {
         studentAbove: {
             label: t("gradesPage.myAverage"),
-            theme: { light: "hsl(142 71% 29%)", dark: "hsl(142 69% 52%)" },
+            theme: { light: "hsl(142 71% 29%)", dark: "hsl(142 69% 52%)", oled: "hsl(142 65% 68%)" },
         },
         studentBelow: {
             label: t("gradesPage.myAverage"),
-            theme: { light: "hsl(24 88% 52%)", dark: "hsl(24 88% 58%)" },
+            theme: { light: "hsl(24 88% 52%)", dark: "hsl(24 88% 58%)", oled: "hsl(24 88% 58%)" },
         },
         class: {
             label: t("gradesPage.classAverage"),
-            theme: { light: "hsl(210 16% 65%)", dark: "hsl(210 16% 55%)" },
+            theme: { light: "hsl(210 16% 65%)", dark: "hsl(210 16% 55%)", oled: "hsl(210 8% 44%)" },
         },
     };
 
@@ -302,7 +302,7 @@ function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade
                     <div className="flex items-center gap-4">
                         <div className="text-left">
                             <p className="text-xs text-gray-500 dark:text-gray-400">{t("gradesPage.myAverage")}</p>
-                            <p className={`text-xl font-bold ${aboveClass ? "text-green-700/70 dark:text-green-400/60" : belowClass ? "text-amber-700/70 dark:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}`}>
+                            <p className={`text-xl font-bold ${aboveClass ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : belowClass ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}`}>
                                 {fmt(averages.overall.student)}
                             </p>
                         </div>
@@ -345,7 +345,7 @@ function AveragesComparison({ grades, chartGrades, subject, t }: { grades: Grade
                                         )}
                                     </div>
                                     <div className="flex items-center gap-3 text-sm font-medium shrink-0 ml-2">
-                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : isAbove ? "text-green-700/70 dark:text-green-400/60" : isBelow ? "text-amber-700/70 dark:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}>
+                                        <span className={subject.excluded ? "text-gray-300 dark:text-gray-600" : isAbove ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : isBelow ? "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60" : "text-gray-400 dark:text-gray-500"}>
                                             {fmt(subject.student)}
                                         </span>
                                         <span className="text-gray-300 dark:text-gray-600">/</span>
