@@ -140,16 +140,18 @@ function GradesEvolutionTooltip({
     t: (k: string) => string;
 }) {
     if (!active || !payload?.length || !label) return null;
-    const student = payload.find((p) => p.dataKey === "student");
+    const studentAboveEntry = payload.find((p) => p.dataKey === "studentAbove" && p.value != null);
+    const studentBelowEntry = payload.find((p) => p.dataKey === "studentBelow" && p.value != null);
+    const studentEntry = studentAboveEntry ?? studentBelowEntry;
     const cls = payload.find((p) => p.dataKey === "class");
     return (
         <div className="rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl space-y-1">
             <p className="font-medium">{formatDate(label)}</p>
-            {student?.value != null && (
+            {studentEntry?.value != null && (
                 <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: student.color }} />
+                    <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: studentEntry.color }} />
                     <span className="text-muted-foreground">{t("gradesPage.myAverage")}</span>
-                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">{Number(student.value).toFixed(2)}</span>
+                    <span className="ml-auto pl-3 font-mono font-medium tabular-nums">{Number(studentEntry.value).toFixed(2)}</span>
                 </div>
             )}
             {cls?.value != null && (
@@ -163,16 +165,40 @@ function GradesEvolutionTooltip({
     );
 }
 
+function splitStudentByComparison(data: Array<{ date: string; student: number | null; class: number | null }>) {
+    return data.map((point, i, arr) => {
+        const { student } = point;
+        const cls = point.class;
+        if (student === null) return { ...point, studentAbove: null, studentBelow: null };
+
+        const isAbove = cls === null || student >= cls;
+        const prev = i > 0 ? arr[i - 1] : null;
+        const prevIsAbove = prev && prev.student !== null ? (prev.class === null || prev.student >= prev.class) : isAbove;
+        const isTransition = isAbove !== prevIsAbove;
+
+        return {
+            ...point,
+            studentAbove: isAbove || (!isAbove && isTransition) ? student : null,
+            studentBelow: !isAbove || (isAbove && isTransition) ? student : null,
+        };
+    });
+}
+
 function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject: string | null; t: (key: string, opts?: Record<string, string>) => string }) {
     const { i18n } = useTranslation();
-    const data = useMemo(() => computeAverageEvolution(grades), [grades]);
+    const rawData = useMemo(() => computeAverageEvolution(grades), [grades]);
+    const data = useMemo(() => splitStudentByComparison(rawData), [rawData]);
 
     if (data.length < 2) return null;
 
     const chartConfig: ChartConfig = {
-        student: {
+        studentAbove: {
             label: t("gradesPage.myAverage"),
-            theme: { light: "hsl(24 88% 58%)", dark: "hsl(24 88% 58%)" },
+            theme: { light: "hsl(142 71% 29%)", dark: "hsl(142 69% 52%)" },
+        },
+        studentBelow: {
+            label: t("gradesPage.myAverage"),
+            theme: { light: "hsl(24 88% 52%)", dark: "hsl(24 88% 58%)" },
         },
         class: {
             label: t("gradesPage.classAverage"),
@@ -228,11 +254,18 @@ function GradesEvolutionChart({ grades, subject, t }: { grades: Grade[]; subject
                         )}
                     />
                     <Line
-                        dataKey="student"
-                        stroke="var(--color-student)"
+                        dataKey="studentAbove"
+                        stroke="var(--color-studentAbove)"
                         strokeWidth={2}
                         dot={false}
-                        connectNulls
+                        legendType="none"
+                    />
+                    <Line
+                        dataKey="studentBelow"
+                        stroke="var(--color-studentBelow)"
+                        strokeWidth={2}
+                        dot={false}
+                        legendType="none"
                     />
                     <Line
                         dataKey="class"
