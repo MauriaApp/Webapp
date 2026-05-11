@@ -119,6 +119,7 @@
   },
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
+    "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "onlyCurrentYear": "Afficher uniquement ce semestre",
     "details": "Détails de la note",
     "grade": "Note",
@@ -160,6 +161,7 @@
   },
   "absencesPage": {
     "noAbsences": "Aucune absence trouvée.",
+    "noAbsencesPlaceholder": "Aucune absence n'a été enregistrée pour le moment.",
     "onlyCurrentYear": "Afficher uniquement cette année",
     "justified": "Justifiées",
     "unjustified": "Injustifiées",

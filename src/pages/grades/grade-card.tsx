@@ -41,9 +41,9 @@ export function GradeCardAnimate({
     const { t, i18n } = useTranslation();
     const gradeNum = parseGradeNum(grade.grade);
     const avgNum = parseGradeNum(grade.average);
-    const avgColor = !isNaN(gradeNum) && !isNaN(avgNum)
-        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60" : "text-amber-700/70 dark:text-amber-400/60"
-        : "text-gray-500 dark:text-gray-400";
+    const gradeColor = !isNaN(gradeNum) && !isNaN(avgNum)
+        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
+        : "text-mauria-accent dark:text-mauria-accent";
     return (
         <MotionCard
             layout
@@ -57,7 +57,7 @@ export function GradeCardAnimate({
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="inline-flex items-start">
-                        <span className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                        <span className={`text-2xl font-bold ${gradeColor}`}>
                             {grade.grade}
                         </span>
                         {grade.coefficient && (
@@ -66,7 +66,7 @@ export function GradeCardAnimate({
                             </span>
                         )}
                     </div>
-                    <div className={`text-sm ${avgColor}`}>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                         {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>
@@ -112,9 +112,9 @@ export function GradeCard({
     const { t, i18n } = useTranslation();
     const gradeNum = parseGradeNum(grade.grade);
     const avgNum = parseGradeNum(grade.average);
-    const avgColor = !isNaN(gradeNum) && !isNaN(avgNum)
-        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60" : "text-amber-700/70 dark:text-amber-400/60"
-        : "text-gray-500 dark:text-gray-400";
+    const gradeColor = !isNaN(gradeNum) && !isNaN(avgNum)
+        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
+        : "text-mauria-accent dark:text-mauria-accent";
 
     return (
         <Card
@@ -124,7 +124,7 @@ export function GradeCard({
             <div className="flex items-center ">
                 <div className="mr-4 w-20 items-center justify-center text-center">
                     <div className="inline-flex items-start">
-                        <span className="text-2xl font-bold text-mauria-accent dark:text-mauria-accent">
+                        <span className={`text-2xl font-bold ${gradeColor}`}>
                             {grade.grade}
                         </span>
                         {grade.coefficient && (
@@ -133,7 +133,7 @@ export function GradeCard({
                             </span>
                         )}
                     </div>
-                    <div className={`text-sm ${avgColor}`}>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                         {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
                     </div>
                 </div>

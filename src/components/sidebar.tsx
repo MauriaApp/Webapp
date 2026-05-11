@@ -277,7 +277,7 @@ export default function Sidebar() {
                                         onValueChange={setting.onValueChange}
                                     >
                                         <SelectTrigger
-                                            className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs "
+                                            className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs focus:ring-0 focus:ring-offset-0"
                                             aria-label={setting.title}
                                         >
                                             <SelectValue
