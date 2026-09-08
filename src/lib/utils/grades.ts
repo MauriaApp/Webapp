@@ -1,47 +1,92 @@
 import { Grade } from "@/types/aurion";
 
+function isArtifactGrade(grade: Grade): boolean {
+    const values = Object.values(grade).map((v) => (v ?? "").toString().trim());
+    return values.every((v) => v === "");
+}
+
 export function getGrades({
-    showCurrentYearOnly,
+    semesterKey,
     grades,
 }: {
-    showCurrentYearOnly?: boolean;
+    semesterKey?: string | null;
     grades: Grade[];
 }): Grade[] {
     return grades.filter((grade) => {
-        const values = Object.values(grade).map((v) => (v ?? "").toString().trim());
-        const isArtifact = values.every((v) => v === "");
-        if (isArtifact) return false;
-
-        if (showCurrentYearOnly) {
-            const now = new Date();
-            const currentMonth = now.getMonth(); // 0-indexed
-
-            // S1: Sept 1 – Dec 29, S2: Dec 30 – Aug 31
-            const inS1 = currentMonth >= 8 && (currentMonth < 11 || now.getDate() <= 29);
-
-            let semesterStart: Date;
-            let semesterEnd: Date;
-            if (inS1) {
-                semesterStart = new Date(now.getFullYear(), 8, 1);   // Sept 1
-                semesterEnd   = new Date(now.getFullYear(), 11, 29); // Dec 29
-            } else if (currentMonth <= 7) {
-                // Jan–Aug: S2 started Dec 30 of previous year
-                semesterStart = new Date(now.getFullYear() - 1, 11, 30);
-                semesterEnd   = new Date(now.getFullYear(), 7, 31);
-            } else {
-                // Dec 30–31: S2 goes to Aug 31 of next year
-                semesterStart = new Date(now.getFullYear(), 11, 30);
-                semesterEnd   = new Date(now.getFullYear() + 1, 7, 31);
-            }
-
-            const gradeDate = new Date(
-                grade.date.split("/").reverse().join("-")
-            );
-
-            return gradeDate >= semesterStart && gradeDate <= semesterEnd;
+        if (isArtifactGrade(grade)) return false;
+        if (semesterKey) {
+            return getGradeSemester(grade)?.key === semesterKey;
         }
         return true;
     });
+}
+
+export type SemesterId = {
+    /** Stable identifier, e.g. "2025-S1". */
+    key: string;
+    /** Academic year label, e.g. "2025-26". */
+    yearLabel: string;
+    sem: 1 | 2;
+};
+
+/** Academic year starts at the "rentrée" (late August). */
+function academicStartYear(d: Date): number {
+    if (d.getMonth() >= 8) return d.getFullYear();
+    if (d.getMonth() === 7 && d.getDate() >= 29) return d.getFullYear();
+    return d.getFullYear() - 1;
+}
+
+/**
+ * Aurion encodes the semester in the grade code, e.g.
+ * `..._PART1_MATHS1`, `..._ANGLAIS_CLASSWORK_S2`, `..._TIPE_S2`.
+ */
+function semesterFromCode(code: string): 1 | 2 | null {
+    const m =
+        code.match(/_PART([12])(?:_|$)/i) ?? code.match(/_S([12])(?:_|$)/i);
+    if (!m) return null;
+    return m[1] === "2" ? 2 : 1;
+}
+
+/** Fallback when the code carries no marker. S1: Aug 29 – Dec 29, S2: Dec 30 – Aug 28. */
+function semesterFromDate(d: Date): 1 | 2 {
+    const m = d.getMonth();
+    const day = d.getDate();
+    if (m === 7 && day >= 29) return 1; // late August = rentrée
+    if (m >= 8 && !(m === 11 && day >= 30)) return 1;
+    return 2;
+}
+
+function parseGradeDate(date?: string | null): Date | null {
+    if (!date) return null;
+    const d = new Date(date.split("/").reverse().join("-"));
+    return isNaN(d.getTime()) ? null : d;
+}
+
+export function getGradeSemester(grade: Grade): SemesterId | null {
+    const d = parseGradeDate(grade.date);
+    if (!d) return null;
+    const startYear = academicStartYear(d);
+    const sem = semesterFromCode(grade.code) ?? semesterFromDate(d);
+    return {
+        key: `${startYear}-S${sem}`,
+        yearLabel: `${startYear}-${String(startYear + 1).slice(2)}`,
+        sem,
+    };
+}
+
+/** Distinct semesters present in the grades, chronological order (oldest first). */
+export function getGradeSemesters(grades: Grade[]): SemesterId[] {
+    const map = new Map<string, SemesterId>();
+    for (const grade of grades) {
+        if (isArtifactGrade(grade)) continue;
+        const s = getGradeSemester(grade);
+        if (s) map.set(s.key, s);
+    }
+    return Array.from(map.values()).sort((a, b) => a.key.localeCompare(b.key));
+}
+
+export function getCurrentSemesterKey(now = new Date()): string {
+    return `${academicStartYear(now)}-S${semesterFromDate(now)}`;
 }
 
 export type GradeBadgeInfo = {
@@ -87,8 +132,11 @@ export function detectStudentClass(grades: Grade[]): StudentClass | null {
     return null;
 }
 
-const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> = {
-    "CPG1_MP2I": {
+const subjectCoefficientsPerClass: Record<
+    StudentClass,
+    Record<string, number>
+> = {
+    CPG1_MP2I: {
         "gradesPage.subjects.maths": 8,
         "gradesPage.subjects.physics": 6,
         "gradesPage.subjects.sii": 2,
@@ -99,7 +147,7 @@ const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> 
         "gradesPage.subjects.lv2": 2,
         "gradesPage.subjects.tipe": 1,
     },
-    "CPG1_MPSI": {
+    CPG1_MPSI: {
         "gradesPage.subjects.maths": 8,
         "gradesPage.subjects.physics": 8,
         "gradesPage.subjects.sii": 4,
@@ -111,7 +159,7 @@ const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> 
         "gradesPage.subjects.tipe": 1,
         "gradesPage.subjects.pix": 1,
     },
-    "CPG2_MPI": {
+    CPG2_MPI: {
         "gradesPage.subjects.maths": 8,
         "gradesPage.subjects.physics": 6,
         "gradesPage.subjects.computerScience": 6,
@@ -121,7 +169,7 @@ const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> 
         "gradesPage.subjects.lv2": 2,
         "gradesPage.subjects.tipe": 1,
     },
-    "CPG2_PSI": {
+    CPG2_PSI: {
         "gradesPage.subjects.maths": 8,
         "gradesPage.subjects.physics": 8,
         "gradesPage.subjects.sii": 4,
@@ -135,12 +183,16 @@ const subjectCoefficientsPerClass: Record<StudentClass, Record<string, number>> 
     },
 };
 
-export function getSubjectCoefficients(grades: Grade[]): Record<string, number> {
+export function getSubjectCoefficients(
+    grades: Grade[]
+): Record<string, number> {
     const cls = detectStudentClass(grades);
     return subjectCoefficientsPerClass[cls ?? "CPG1_MP2I"];
 }
 
-export function getGradeBadgeInfoFromCode(code?: string | null): GradeBadgeInfo | null {
+export function getGradeBadgeInfoFromCode(
+    code?: string | null
+): GradeBadgeInfo | null {
     const rawCode = (code ?? "").trim();
     if (!rawCode) return null;
 

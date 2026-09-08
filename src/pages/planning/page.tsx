@@ -36,11 +36,14 @@ export function PlanningPage() {
 
     useEffect(() => {
         const handler = (lng: string) => {
-            const fcLocale = lng === "fr" ? FrLocale : lng === "es" ? EsLocale : undefined;
+            const fcLocale =
+                lng === "fr" ? FrLocale : lng === "es" ? EsLocale : undefined;
             calendarRef.current?.getApi().setOption("locale", fcLocale);
         };
         i18n.on("languageChanged", handler);
-        return () => { i18n.off("languageChanged", handler); };
+        return () => {
+            i18n.off("languageChanged", handler);
+        };
     }, [i18n]);
 
     const {
@@ -51,8 +54,16 @@ export function PlanningPage() {
         dataUpdatedAt,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
-        queryFn: (): Promise<Lesson[]> =>
-            fetchPlanning().then((res) => res?.data ?? []),
+        queryFn: async (): Promise<Lesson[]> => {
+            const res = await fetchPlanning();
+            // Throw (don't return []) on failure so React Query keeps the
+            // cached data instead of wiping it — e.g. a failed
+            // refetch-on-focus after the app was backgrounded.
+            if (!res?.success) {
+                throw new Error("Failed to fetch planning");
+            }
+            return res.data ?? [];
+        },
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
@@ -100,7 +111,13 @@ export function PlanningPage() {
                         calendarRef.current?.getApi().updateSize();
                     }}
                     ref={calendarRef}
-                    locale={i18n.language === "fr" ? FrLocale : i18n.language === "es" ? EsLocale : undefined}
+                    locale={
+                        i18n.language === "fr"
+                            ? FrLocale
+                            : i18n.language === "es"
+                              ? EsLocale
+                              : undefined
+                    }
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                     initialView="timeGridWeek"
                     headerToolbar={{

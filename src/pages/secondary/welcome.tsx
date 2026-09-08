@@ -62,14 +62,15 @@ const WELCOME_SECTIONS: WelcomeSection[] = [
 export function WelcomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const {
-        isLoading,
-        isFetching,
-        data: lessons = [],
-    } = useQuery({
+    const { isLoading, isFetching } = useQuery({
         queryKey: ["planning"],
-        queryFn: (): Promise<Lesson[]> =>
-            fetchPlanning().then((res) => res?.data || lessons),
+        queryFn: async (): Promise<Lesson[]> => {
+            const res = await fetchPlanning();
+            if (!res?.success) {
+                throw new Error("Failed to fetch planning");
+            }
+            return res.data ?? [];
+        },
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 60 * 24,
         refetchOnWindowFocus: false,
