@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/drawer";
 import { fetchDailyMenu } from "@/lib/api/lacatho";
 import { RestaurantMenu } from "@/types/data";
+import { useRestaurantMenuEnabled } from "@/lib/utils/restaurant-menu";
 import { SectionHeader } from "./sections";
 
 const containerVariants: Variants = {
@@ -59,6 +60,7 @@ const RESTAURANT_ICONS: Record<string, LucideIcon> = {
 
 export function RestaurantsSection() {
     const { t } = useTranslation();
+    const menuEnabled = useRestaurantMenuEnabled();
     const { data } = useQuery({
         queryKey: ["dailyMenu"],
         queryFn: fetchDailyMenu,
@@ -70,8 +72,8 @@ export function RestaurantsSection() {
     const [selected, setSelected] = useState<RestaurantMenu | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    // API pas encore à jour / injoignable : on n'affiche simplement rien.
-    if (!data) return null;
+    // Désactivé depuis les réglages, ou API pas encore à jour / injoignable.
+    if (!menuEnabled || !data) return null;
 
     const handleClick = (restaurant: RestaurantMenu) => {
         setSelected(restaurant);

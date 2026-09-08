@@ -65,6 +65,11 @@
       "en-US": "Inglés",
       "es-ES": "Español"
     },
+    "restaurantParameter": {
+      "title": "Menú del comedor",
+      "enabled": "Mostrado",
+      "disabled": "Oculto"
+    },
     "actions": {
       "associations": "Asociaciones",
       "aurion": "Aurion",

@@ -65,6 +65,11 @@
       "en-US": "Anglais",
       "es-ES": "Espagnol"
     },
+    "restaurantParameter": {
+      "title": "Menu du RU",
+      "enabled": "Affiché",
+      "disabled": "Masqué"
+    },
     "actions": {
       "associations": "Associations",
       "aurion": "Aurion",
