@@ -1,15 +1,15 @@
 "use client";
 
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, GraduationCap, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
-import { useCurrentYear } from "@/contexts/currentYearContext";
 import {
     getGrades,
     getGradeBadgeInfoFromCode,
     getSubjectCoefficients,
+    detectStudentClass,
+    getGradeSemesters,
+    getCurrentSemesterKey,
 } from "@/lib/utils/grades";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchGrades } from "@/lib/api/aurion";
@@ -32,6 +32,7 @@ import {
     useState,
 } from "react";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils/cn";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
@@ -532,12 +533,6 @@ function AveragesComparison({
                             subject={subject}
                             t={t}
                         />
-                        <div className="flex items-start gap-1.5 pt-1">
-                            <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
-                            <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
-                                {t("gradesPage.supportedClasses")}
-                            </p>
-                        </div>
                     </div>
                 )}
                 <div className="flex items-start gap-1.5 pt-1">
@@ -551,154 +546,182 @@ function AveragesComparison({
     );
 }
 
-function SubjectFilterCarousel({
-    subjects,
+type CarouselItem = { value: string | null; label: string };
+
+/**
+ * Horizontal chip picker. Native CSS scroll-snap does the snapping (momentum,
+ * flicks, release all handled by the browser); JS only (a) centres the selected
+ * chip once on mount and (b) adopts whichever chip ends up centred after a
+ * user scroll settles. No programmatic-vs-user scroll feedback loop.
+ */
+function FilterCarousel({
+    items,
     selected,
     onSelect,
-    t,
 }: {
-    subjects: string[];
+    items: CarouselItem[];
     selected: string | null;
     onSelect: (v: string | null) => void;
-    t: (key: string) => string;
 }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-    const snapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const programmaticScrollRef = useRef(false);
+    const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const didInitRef = useRef(false);
     const [sidePadding, setSidePadding] = useState(0);
 
-    const allItems = useMemo(
-        () => [null, ...subjects] as (string | null)[],
-        [subjects]
+    const selectedIndex = Math.max(
+        0,
+        items.findIndex((i) => i.value === selected)
     );
 
+    const centerIndex = useCallback((idx: number, behavior: ScrollBehavior) => {
+        itemRefs.current[idx]?.scrollIntoView({
+            behavior,
+            inline: "center",
+            block: "nearest",
+        });
+    }, []);
+
+    // Half-width padding on both ends so the first/last chip can reach centre.
     useLayoutEffect(() => {
         const el = containerRef.current;
         if (!el) return;
-        const update = () => setSidePadding(el.offsetWidth / 2);
+        const update = () => setSidePadding(el.clientWidth / 2);
         update();
         const ro = new ResizeObserver(update);
         ro.observe(el);
         return () => ro.disconnect();
     }, []);
 
-    const scrollToIndex = useCallback((idx: number, smooth = true) => {
-        const container = containerRef.current;
-        const item = itemRefs.current[idx];
-        if (!container || !item) return;
-        programmaticScrollRef.current = true;
-        const target =
-            item.offsetLeft + item.offsetWidth / 2 - container.offsetWidth / 2;
-        container.scrollTo({
-            left: target,
-            behavior: smooth ? "smooth" : "instant",
-        });
-        // Release after animation completes
-        setTimeout(() => {
-            programmaticScrollRef.current = false;
-        }, 600);
-    }, []);
+    // Centre the selected chip once, as soon as the padding is laid out.
+    useEffect(() => {
+        if (sidePadding <= 0 || didInitRef.current) return;
+        didInitRef.current = true;
+        centerIndex(selectedIndex, "auto");
+    }, [sidePadding, selectedIndex, centerIndex]);
 
-    // Intercept horizontal touch events at the native level to prevent PullToRefresh from stealing them
+    // Smoothly re-centre whenever the selection changes. Runs *after* the
+    // commit (and on the next frame) so the scroll animation starts on a
+    // settled DOM — otherwise the very first change would land instantly.
+    const prevSelectedRef = useRef(selected);
+    useEffect(() => {
+        if (prevSelectedRef.current === selected) return;
+        prevSelectedRef.current = selected;
+        if (!didInitRef.current) return;
+        const id = requestAnimationFrame(() =>
+            centerIndex(selectedIndex, "smooth")
+        );
+        return () => cancelAnimationFrame(id);
+    }, [selected, selectedIndex, centerIndex]);
+
+    // After a user scroll settles, adopt the chip closest to the centre.
+    const handleScroll = useCallback(() => {
+        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = setTimeout(() => {
+            idleTimerRef.current = null;
+            const container = containerRef.current;
+            if (!container) return;
+            const center = container.scrollLeft + container.clientWidth / 2;
+            let bestIdx = selectedIndex;
+            let bestDist = Infinity;
+            for (let i = 0; i < items.length; i++) {
+                const el = itemRefs.current[i];
+                if (!el) continue;
+                const dist = Math.abs(
+                    el.offsetLeft + el.offsetWidth / 2 - center
+                );
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestIdx = i;
+                }
+            }
+            const value = items[bestIdx]?.value ?? null;
+            if (value !== selected) onSelect(value);
+        }, 120);
+    }, [items, selected, selectedIndex, onSelect]);
+
+    useEffect(
+        () => () => {
+            if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+        },
+        []
+    );
+
+    // Keep horizontal drags from bubbling to the pull-to-refresh handler.
     useEffect(() => {
         const el = containerRef.current;
         if (!el) return;
         let startX = 0;
         let startY = 0;
-        let decided = false;
-        const onTouchStart = (e: TouchEvent) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            decided = false;
+        let axis: "h" | "v" | null = null;
+        const onStart = (e: TouchEvent) => {
+            const touch = e.touches[0];
+            if (!touch) return;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            axis = null;
         };
-        const onTouchMove = (e: TouchEvent) => {
-            if (decided) {
-                e.stopPropagation();
-                return;
+        const onMove = (e: TouchEvent) => {
+            const touch = e.touches[0];
+            if (!touch) return;
+            if (!axis) {
+                const dx = Math.abs(touch.clientX - startX);
+                const dy = Math.abs(touch.clientY - startY);
+                if (dx < 5 && dy < 5) return;
+                axis = dx > dy ? "h" : "v";
             }
-            const dx = Math.abs(e.touches[0].clientX - startX);
-            const dy = Math.abs(e.touches[0].clientY - startY);
-            if (dx > 5 || dy > 5) {
-                decided = true;
-                if (dx > dy) e.stopPropagation();
-            }
+            if (axis === "h") e.stopPropagation();
         };
-        el.addEventListener("touchstart", onTouchStart, { passive: true });
-        el.addEventListener("touchmove", onTouchMove, { passive: false });
+        el.addEventListener("touchstart", onStart, { passive: true });
+        el.addEventListener("touchmove", onMove, { passive: false });
         return () => {
-            el.removeEventListener("touchstart", onTouchStart);
-            el.removeEventListener("touchmove", onTouchMove);
+            el.removeEventListener("touchstart", onStart);
+            el.removeEventListener("touchmove", onMove);
         };
     }, []);
-
-    // Scroll to selected only on initial layout (when sidePadding is first computed)
-    const initializedRef = useRef(false);
-    useEffect(() => {
-        if (sidePadding > 0 && !initializedRef.current) {
-            initializedRef.current = true;
-            const idx = allItems.indexOf(selected);
-            if (idx >= 0) scrollToIndex(idx, false);
-        }
-    }, [sidePadding, allItems, selected, scrollToIndex]);
-
-    const handleScroll = useCallback(() => {
-        if (programmaticScrollRef.current) return;
-
-        const container = containerRef.current;
-        if (!container) return;
-        const center = container.scrollLeft + container.offsetWidth / 2;
-
-        let closestIdx = 0;
-        let closestDist = Infinity;
-        itemRefs.current.forEach((item, idx) => {
-            if (!item) return;
-            const dist = Math.abs(
-                item.offsetLeft + item.offsetWidth / 2 - center
-            );
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestIdx = idx;
-            }
-        });
-
-        onSelect(allItems[closestIdx] ?? null);
-
-        if (snapTimer.current) clearTimeout(snapTimer.current);
-        snapTimer.current = setTimeout(
-            () => scrollToIndex(closestIdx, true),
-            150
-        );
-    }, [allItems, onSelect, scrollToIndex]);
 
     return (
         <div className="relative overflow-hidden">
             <div
                 ref={containerRef}
                 onScroll={handleScroll}
-                className="flex gap-2 overflow-x-auto py-1"
-                style={{
-                    paddingInline: sidePadding,
-                    scrollbarWidth: "none",
-                }}
+                className="flex snap-x snap-mandatory gap-2 overflow-x-auto py-1 [&::-webkit-scrollbar]:hidden"
+                style={{ paddingInline: sidePadding, scrollbarWidth: "none" }}
             >
-                {allItems.map((item, idx) => (
-                    <Button
-                        key={item ?? "__all__"}
-                        ref={(el) => {
-                            itemRefs.current[idx] = el;
-                        }}
-                        size="sm"
-                        variant={selected === item ? "default" : "outline"}
-                        onClick={() => {
-                            onSelect(item);
-                            scrollToIndex(idx);
-                        }}
-                        className="flex-shrink-0"
-                    >
-                        {item ? t(item) : t("gradesPage.allSubjects")}
-                    </Button>
-                ))}
+                {items.map((item, idx) => {
+                    const isSelected = item.value === selected;
+                    return (
+                        <Button
+                            key={item.value ?? "__all__"}
+                            ref={(el) => {
+                                itemRefs.current[idx] = el;
+                            }}
+                            type="button"
+                            size="sm"
+                            variant={isSelected ? "default" : "outline"}
+                            aria-pressed={isSelected}
+                            onClick={() => {
+                                if (isSelected) {
+                                    // Selection won't change → re-centre here;
+                                    // otherwise the effect above handles it.
+                                    requestAnimationFrame(() =>
+                                        centerIndex(idx, "smooth")
+                                    );
+                                } else {
+                                    onSelect(item.value);
+                                }
+                            }}
+                            // `border` on both states keeps the width identical
+                            // when the variant flips, so chips never shift.
+                            className={cn(
+                                "shrink-0 snap-center border",
+                                isSelected && "border-transparent"
+                            )}
+                        >
+                            {item.label}
+                        </Button>
+                    );
+                })}
             </div>
             <div className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-background to-transparent" />
             <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-background to-transparent" />
@@ -715,11 +738,15 @@ const listVariants = {
 };
 
 export function GradesPage() {
-    const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { t, i18n } = useTranslation();
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+    // undefined = not chosen yet (falls back to the current semester);
+    // null = "All"; string = a specific semester key
+    const [semesterChoice, setSemesterChoice] = useState<
+        string | null | undefined
+    >(undefined);
 
     const {
         data: grades = [],
@@ -728,8 +755,16 @@ export function GradesPage() {
         isFetching,
     } = useQuery<Grade[], Error>({
         queryKey: ["grades"],
-        queryFn: (): Promise<Grade[]> =>
-            fetchGrades().then((res) => res?.data ?? []),
+        queryFn: async (): Promise<Grade[]> => {
+            const res = await fetchGrades();
+            // Throw (don't return []) on failure so React Query keeps the
+            // cached data instead of wiping it — e.g. a failed
+            // refetch-on-focus after the app was backgrounded.
+            if (!res?.success) {
+                throw new Error("Failed to fetch grades");
+            }
+            return res.data ?? [];
+        },
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
@@ -742,13 +777,19 @@ export function GradesPage() {
         void refetch();
     };
 
+    const semesters = useMemo(() => getGradeSemesters(grades), [grades]);
+
+    const semesterKey = useMemo(() => {
+        if (semesterChoice !== undefined) return semesterChoice;
+        const current = getCurrentSemesterKey();
+        // Default to the current semester, else the most recent one with grades
+        if (semesters.some((s) => s.key === current)) return current;
+        return semesters[semesters.length - 1]?.key ?? null;
+    }, [semesterChoice, semesters]);
+
     const filteredGrades = useMemo(
-        () =>
-            getGrades({
-                showCurrentYearOnly,
-                grades,
-            }),
-        [showCurrentYearOnly, grades]
+        () => getGrades({ semesterKey, grades }),
+        [semesterKey, grades]
     );
 
     const availableSubjects = useMemo(() => {
@@ -768,6 +809,37 @@ export function GradesPage() {
         );
     }, [filteredGrades, selectedSubject]);
 
+    const hasKnownClass = useMemo(
+        () => detectStudentClass(filteredGrades) !== null,
+        [filteredGrades]
+    );
+
+    const semesterItems = useMemo<CarouselItem[]>(
+        () => [
+            { value: null, label: t("gradesPage.allSemesters") },
+            ...semesters.map((s) => ({
+                value: s.key,
+                label: t("gradesPage.semesterLabel", {
+                    sem: s.sem,
+                    year: s.yearLabel,
+                }),
+            })),
+        ],
+        [semesters, t]
+    );
+
+    const subjectItems = useMemo<CarouselItem[]>(
+        () => [
+            { value: null, label: t("gradesPage.allSubjects") },
+            ...availableSubjects.map((s) => ({ value: s, label: t(s) })),
+        ],
+        [availableSubjects, t]
+    );
+
+    // Remounts the results list on every filter change so the entrance
+    // animation replays consistently (and not just from the 2nd change on).
+    const filterKey = `${semesterKey ?? "all"}|${selectedSubject ?? "all"}`;
+
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
@@ -782,93 +854,114 @@ export function GradesPage() {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="space-y-3 mb-4"
             >
-                <div className="flex items-center gap-2">
-                    <Switch
-                        id="onlyThisYear"
-                        checked={showCurrentYearOnly}
-                        onCheckedChange={toggleCurrentYearFilter}
+                {semesters.length > 1 && (
+                    <FilterCarousel
+                        items={semesterItems}
+                        selected={semesterKey}
+                        onSelect={setSemesterChoice}
                     />
-                    <Label htmlFor="onlyThisYear">
-                        {t("gradesPage.onlyCurrentYear")}
-                    </Label>
-                </div>
+                )}
                 {availableSubjects.length > 0 && (
-                    <SubjectFilterCarousel
-                        subjects={availableSubjects}
+                    <FilterCarousel
+                        items={subjectItems}
                         selected={selectedSubject}
                         onSelect={setSelectedSubject}
-                        t={t}
                     />
                 )}
             </motion.div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 pb-4">
                 {filteredGrades.length > 0 && (
-                    <AveragesComparison
-                        grades={filteredGrades}
-                        chartGrades={displayedGrades}
-                        subject={selectedSubject}
-                        t={t}
-                    />
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                    >
+                        {hasKnownClass ? (
+                            <AveragesComparison
+                                grades={filteredGrades}
+                                chartGrades={displayedGrades}
+                                subject={selectedSubject}
+                                t={t}
+                            />
+                        ) : (
+                            <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
+                                <CardContent className="p-3 flex items-start gap-1.5">
+                                    <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
+                                    <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
+                                        {t("gradesPage.averagesNotSupported")}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </motion.div>
                 )}
 
-                {displayedGrades.length === 0 ? (
-                    <motion.div
-                        key="empty-state"
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.25,
-                            ease: "easeOut",
-                            delay: 0.05,
-                        }}
-                    >
-                        <div className="text-center py-12">
-                            <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                                <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                <AnimatePresence mode="wait">
+                    {displayedGrades.length === 0 ? (
+                        <motion.div
+                            key={`empty-${filterKey}`}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{
+                                duration: 0.25,
+                                ease: "easeOut",
+                                delay: 0.05,
+                            }}
+                        >
+                            <div className="text-center py-12">
+                                <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                                    <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                    </div>
+                                    <h3 className="text-lg font-semibold mb-2">
+                                        {t("gradesPage.noGrades")}
+                                    </h3>
+                                    <p className="text-muted-foreground">
+                                        {t("gradesPage.noGradesPlaceholder")}
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-semibold mb-2">
-                                    {t("gradesPage.noGrades")}
-                                </h3>
-                                <p className="text-muted-foreground">
-                                    {t("gradesPage.noGradesPlaceholder")}
-                                </p>
                             </div>
-                        </div>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        className="space-y-4"
-                        variants={listVariants}
-                        initial="hidden"
-                        animate="show"
-                    >
-                        <AnimatePresence mode="popLayout">
-                            {displayedGrades.map((grade, index) =>
-                                index < 8 ? (
-                                    <AnimatedGradeCard
-                                        key={index}
-                                        grade={grade}
-                                        onGradeClick={(grade) => {
-                                            setSelectedGrade(grade);
-                                            setDrawerOpen(true);
-                                        }}
-                                    />
-                                ) : (
-                                    <StaticGradeCard
-                                        key={index}
-                                        grade={grade}
-                                        onGradeClick={(grade) => {
-                                            setSelectedGrade(grade);
-                                            setDrawerOpen(true);
-                                        }}
-                                    />
-                                )
-                            )}
-                        </AnimatePresence>
-                    </motion.div>
-                )}
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key={`list-${filterKey}`}
+                            className="space-y-4"
+                            variants={listVariants}
+                            initial="hidden"
+                            animate="show"
+                            exit={{
+                                opacity: 0,
+                                transition: { duration: 0.15 },
+                            }}
+                        >
+                            <AnimatePresence mode="popLayout">
+                                {displayedGrades.map((grade, index) =>
+                                    index < 8 ? (
+                                        <AnimatedGradeCard
+                                            key={index}
+                                            grade={grade}
+                                            onGradeClick={(grade) => {
+                                                setSelectedGrade(grade);
+                                                setDrawerOpen(true);
+                                            }}
+                                        />
+                                    ) : (
+                                        <StaticGradeCard
+                                            key={index}
+                                            grade={grade}
+                                            onGradeClick={(grade) => {
+                                                setSelectedGrade(grade);
+                                                setDrawerOpen(true);
+                                            }}
+                                        />
+                                    )
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>

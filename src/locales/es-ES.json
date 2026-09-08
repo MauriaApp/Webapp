@@ -131,7 +131,8 @@
   "gradesPage": {
     "noGrades": "Todavía no hay notas.",
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
-    "onlyCurrentYear": "Mostrar solo este semestre",
+    "allSemesters": "Todas",
+    "semesterLabel": "S{{sem}} {{year}}",
     "details": "Detalles de la nota",
     "grade": "Nota",
     "average": "Media",
@@ -155,7 +156,7 @@
     "averageEvolutionGeneral": "Evolución de la media general",
     "averageEvolutionIn": "Evolución de la media en {{subject}}",
     "averageDisclaimer": "La media mostrada es indicativa. Es posible que algunos coeficientes de asignaturas no se tengan en cuenta.",
-    "supportedClasses": "Clases compatibles: MP2I, MPSI, MPI, PSI.",
+    "averagesNotSupported": "Las medias aún no son compatibles con tu clase.",
     "lv2NotCounted": "no contada",
     "subjects": {
       "maths": "Matemáticas",

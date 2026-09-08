@@ -38,8 +38,16 @@ export function AbsencesPage() {
         isFetching,
     } = useQuery<Absence[], Error>({
         queryKey: ["absences"],
-        queryFn: (): Promise<Absence[]> =>
-            fetchAbsences().then((res) => res?.data || absences),
+        queryFn: async (): Promise<Absence[]> => {
+            const res = await fetchAbsences();
+            // Throw (don't fall back) on failure so React Query keeps the
+            // cached data instead of wiping it — e.g. a failed
+            // refetch-on-focus after the app was backgrounded.
+            if (!res?.success) {
+                throw new Error("Failed to fetch absences");
+            }
+            return res.data ?? [];
+        },
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre

@@ -131,7 +131,8 @@
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
-    "onlyCurrentYear": "Afficher uniquement ce semestre",
+    "allSemesters": "Toutes",
+    "semesterLabel": "S{{sem}} {{year}}",
     "details": "Détails de la note",
     "grade": "Note",
     "average": "Moyenne",
@@ -155,7 +156,7 @@
     "averageEvolutionGeneral": "Évolution de la moyenne générale",
     "averageEvolutionIn": "Évolution de la moyenne en {{subject}}",
     "averageDisclaimer": "La moyenne affichée est indicative. Certains coefficients de matières peuvent ne pas être pris en compte.",
-    "supportedClasses": "Classes supportées : MP2I, MPSI, MPI, PSI.",
+    "averagesNotSupported": "Les moyennes ne sont pas encore supportées pour ta classe.",
     "lv2NotCounted": "non comptée",
     "subjects": {
       "maths": "Maths",

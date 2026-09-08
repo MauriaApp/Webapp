@@ -131,7 +131,8 @@
   "gradesPage": {
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
-    "onlyCurrentYear": "Display only current semester",
+    "allSemesters": "All",
+    "semesterLabel": "S{{sem}} {{year}}",
     "details": "Grade details",
     "grade": "Grade",
     "average": "Average",
@@ -155,7 +156,7 @@
     "averageEvolutionGeneral": "General average evolution",
     "averageEvolutionIn": "Average evolution in {{subject}}",
     "averageDisclaimer": "The average shown is indicative. Some subject coefficients may not be taken into account.",
-    "supportedClasses": "Supported classes: MP2I, MPSI, MPI, PSI.",
+    "averagesNotSupported": "Averages are not supported for your class yet.",
     "lv2NotCounted": "not counted",
     "subjects": {
       "maths": "Maths",
