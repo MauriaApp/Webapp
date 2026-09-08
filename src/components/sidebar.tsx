@@ -63,7 +63,9 @@ import {
 const aurionURL = "https://aurion.junia.com";
 const juniaLearningURL = "https://junia-learning.com";
 const printURL = "https://print.junia.com/end-user/ui/dashboard";
-const contactURL = "mailto:milo.montuori@student.junia.com";
+const contactURL =
+    "mailto:louis.soltysiak@student.junia.com?subject=" +
+    encodeURIComponent("Support/feature pour Mauria");
 const githubURL = "https://github.com/MauriaApp";
 // const preprodURL = "https://mauria-preprod.fly.dev";
 

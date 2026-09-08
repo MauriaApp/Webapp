@@ -125,18 +125,21 @@ export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
 };
 
 // Important Message Component
-export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
-    <motion.div
-        variants={fadeIn}
-        className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
-    >
-        <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
-            <AlertTitle className="font-bold text-black dark:text-white">
-                {message?.title ?? "Aucun message important"}
-            </AlertTitle>
-            <AlertDescription className="text-black/80 dark:text-white/90">
-                {message?.message ?? "Bonne journée !"}
-            </AlertDescription>
-        </Alert>
-    </motion.div>
-);
+export const ImportantMessage = ({ message }: { message?: MessageEntry }) => {
+    const { t } = useTranslation();
+    return (
+        <motion.div
+            variants={fadeIn}
+            className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
+        >
+            <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
+                <AlertTitle className="font-bold text-black dark:text-white">
+                    {message?.title || t("homePage.noImportantMessageTitle")}
+                </AlertTitle>
+                <AlertDescription className="text-black/80 dark:text-white/90">
+                    {message?.message || t("homePage.noImportantMessageBody")}
+                </AlertDescription>
+            </Alert>
+        </motion.div>
+    );
+};

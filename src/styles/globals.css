@@ -1011,6 +1011,53 @@
     }
 }
 
+/* Animated "shimmer" on the brand word: a lighter band waves across it. */
+@keyframes mauria-shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@layer utilities {
+    .mauria-shimmer {
+        background-image: linear-gradient(
+            100deg,
+            hsl(var(--mauria-purple)) 0%,
+            hsl(var(--mauria-purple)) 44%,
+            hsl(var(--mauria-purple-light)) 50%,
+            hsl(var(--mauria-purple)) 56%,
+            hsl(var(--mauria-purple)) 100%
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: mauria-shimmer 3.5s ease-in-out infinite;
+    }
+
+    .dark .mauria-shimmer,
+    .oled .mauria-shimmer {
+        background-image: linear-gradient(
+            100deg,
+            hsl(var(--mauria-accent)) 0%,
+            hsl(var(--mauria-accent)) 42%,
+            hsl(0 0% 100% / 0.92) 50%,
+            hsl(var(--mauria-accent)) 58%,
+            hsl(var(--mauria-accent)) 100%
+        );
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mauria-shimmer {
+            animation: none;
+            background-position: 50% 0;
+        }
+    }
+}
+
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still

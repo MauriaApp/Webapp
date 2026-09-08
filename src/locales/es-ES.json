@@ -9,7 +9,48 @@
   "welcome": {
     "mauria": "Mauria",
     "welcome": "¡Bienvenido a Mauria!",
-    "getStarted": "Aquí tienes algunas referencias útiles para empezar:"
+    "getStarted": "Aquí tienes algunas referencias útiles para empezar:",
+    "start": "¡Vamos!",
+    "tips": [
+      "Preparando la aplicación…",
+      "Recuperando tus datos de Aurion…",
+      "Negociando con Aurion (es del tipo lento)…",
+      "Recalibrando splines…",
+      "Cargando tus notas… ¿seguro que quieres verlas?",
+      "Despertando a los servidores a golpe de DDoS…",
+      "Contando ausencias…",
+      "Alineando los astros para el horario…",
+      "Puliendo los píxeles…",
+      "Ya casi está, lo prometo…",
+      "Descifrando el horario (ni nosotros lo entendemos)…",
+      "Comprobando que de verdad tienes clase mañana (lo sentimos)…",
+      "Buscando un aula libre… 0 encontradas…",
+      "Cargando la carga…",
+      "Aplicando la pintura morada…",
+      "Descargando más RAM…",
+      "División por cero… reintentando…",
+      "Un par de cosas más y listo…",
+      "Vale la pena esperar, lo prometo…",
+      "Ya casi, no te muevas…"
+    ],
+    "sections": {
+      "notAurion": {
+        "title": "Mauria no sustituye a Aurion",
+        "description": "Es un complemento: los datos vienen de Aurion y a veces pueden variar. Si dudas, compruébalo en Aurion."
+      },
+      "overview": {
+        "title": "Orientarte",
+        "description": "Las pestañas están abajo (horario, notas, ausencias…), y arriba a la derecha hay un menú con los ajustes."
+      },
+      "privacy": {
+        "title": "Tus datos son privados",
+        "description": "No se envía nada a nuestros servidores: todo se guarda en tu teléfono y la app funciona sin conexión."
+      },
+      "support": {
+        "title": "¿Necesitas ayuda? ¿Quieres una función?",
+        "description": "Abre el menú de arriba a la derecha y pulsa «¿Una pregunta, una idea?» para escribirnos."
+      }
+    }
   },
   "common": {
     "id": "ID",
@@ -71,7 +112,7 @@
       "juniaLearning": "Junia Learning",
       "print": "Imprimir"
     },
-    "help": "¿Tienes una pregunta o un problema?",
+    "help": "¿Una pregunta, una idea?",
     "logOut": "Cerrar sesión",
     "credits": "Proyecto desarrollado y mantenido por Milo Montuori, Louis Lecouturier y Louis Soltysiak",
     "contribute": "Contribuir a Mauria"
@@ -88,6 +129,8 @@
     "nextClasses": "Próximas clases",
     "nextClassesEmptyState": "Nada por hoy ni mañana, ¡disfruta de tu descanso y tiempo libre!",
     "loadingSchedule": "Cargando datos del horario…",
+    "noImportantMessageTitle": "Ningún mensaje importante",
+    "noImportantMessageBody": "¡Buen día!",
     "current": "En este momento",
     "today": "Hoy",
     "tomorrow": "Mañana",
