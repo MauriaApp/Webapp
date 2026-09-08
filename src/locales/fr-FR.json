@@ -96,7 +96,13 @@
       "DS_SURV": "DS",
       "AUTO_GERE": "Cours auto-géré"
     },
-    "welcome": ", Bienvenue sur Mauria !"
+    "welcome": ", Bienvenue sur Mauria !",
+    "restaurants": {
+      "title": "Menu du jour",
+      "menuOf": "Menu du {{date}}",
+      "openPdf": "Ouvrir le menu complet (PDF)",
+      "unavailable": "Menu pas encore disponible pour ce resto"
+    }
   },
   "schedulePage": {
     "title": "Planning",

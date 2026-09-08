@@ -96,7 +96,13 @@
       "DS_SURV": "Exam",
       "AUTO_GERE": "Self-managed class"
     },
-    "welcomeMessage": ", Welcome to Mauria!"
+    "welcomeMessage": ", Welcome to Mauria!",
+    "restaurants": {
+      "title": "Today's menu",
+      "menuOf": "Menu for {{date}}",
+      "openPdf": "Open the full menu (PDF)",
+      "unavailable": "Menu not available yet for this restaurant"
+    }
   },
   "schedulePage": {
     "title": "Schedule",

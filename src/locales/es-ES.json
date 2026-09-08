@@ -96,7 +96,13 @@
       "DS_SURV": "Examen",
       "AUTO_GERE": "Clase autogestionada"
     },
-    "welcome": ", ¡Bienvenido a Mauria!"
+    "welcome": ", ¡Bienvenido a Mauria!",
+    "restaurants": {
+      "title": "Menú del día",
+      "menuOf": "Menú del {{date}}",
+      "openPdf": "Abrir el menú completo (PDF)",
+      "unavailable": "Menú aún no disponible para este restaurante"
+    }
   },
   "schedulePage": {
     "title": "Horario",

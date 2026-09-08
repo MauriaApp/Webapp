@@ -13,6 +13,7 @@ import {
     LessonsSection,
     WelcomeHeader,
 } from "./sections";
+import { RestaurantsSection } from "./restaurants";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { PreparedLesson } from "@/types/home";
 import { useTranslation } from "react-i18next";
@@ -81,6 +82,7 @@ export function HomePage() {
         >
             <WelcomeHeader firstName={firstName} />
             <ImportantMessage message={importantMessage} />
+            <RestaurantsSection />
 
             {current && (
                 <LessonsSection
