@@ -182,7 +182,8 @@
         --accent: 24 88% 58%;
         --accent-foreground: 210 40% 98%;
 
-        --destructive: 0 63% 31%;
+        /* Bright enough to read as red on the dark purple background */
+        --destructive: 0 74% 60%;
         --destructive-foreground: 210 40% 98%;
 
         --border: 210 0% 50%;
@@ -738,7 +739,8 @@
         --accent: 0 0% 20%;
         --accent-foreground: 0 0% 92%;
 
-        --destructive: 2 65% 46%;
+        /* Bright enough to read as red on the pure-black background */
+        --destructive: 0 74% 60%;
         --destructive-foreground: 0 0% 96%;
 
         --border: 0 0% 14%;

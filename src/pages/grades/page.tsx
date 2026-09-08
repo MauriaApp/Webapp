@@ -33,6 +33,7 @@ import {
 } from "react";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils/cn";
+import { fadeIn, staggerGroup } from "@/lib/motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
@@ -729,14 +730,6 @@ function FilterCarousel({
     );
 }
 
-const listVariants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.06, delayChildren: 0.05 },
-    },
-};
-
 export function GradesPage() {
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -843,126 +836,119 @@ export function GradesPage() {
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
-            className="mx-auto max-w-3xl space-y-4 pt-4"
+            className="space-y-4 pt-4"
             isPullable={!isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="space-y-3 mb-4"
-            >
-                {semesters.length > 1 && (
-                    <FilterCarousel
-                        items={semesterItems}
-                        selected={semesterKey}
-                        onSelect={setSemesterChoice}
-                    />
-                )}
-                {availableSubjects.length > 0 && (
-                    <FilterCarousel
-                        items={subjectItems}
-                        selected={selectedSubject}
-                        onSelect={setSelectedSubject}
-                    />
-                )}
-            </motion.div>
+            <motion.div variants={staggerGroup} initial="hidden" animate="show">
+                <motion.div variants={fadeIn} className="space-y-3 mb-4">
+                    {semesters.length > 1 && (
+                        <FilterCarousel
+                            items={semesterItems}
+                            selected={semesterKey}
+                            onSelect={setSemesterChoice}
+                        />
+                    )}
+                    {availableSubjects.length > 0 && (
+                        <FilterCarousel
+                            items={subjectItems}
+                            selected={selectedSubject}
+                            onSelect={setSelectedSubject}
+                        />
+                    )}
+                </motion.div>
 
-            <div className="space-y-3 pb-4">
-                {filteredGrades.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                    >
-                        {hasKnownClass ? (
-                            <AveragesComparison
-                                grades={filteredGrades}
-                                chartGrades={displayedGrades}
-                                subject={selectedSubject}
-                                t={t}
-                            />
-                        ) : (
-                            <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
-                                <CardContent className="p-3 flex items-start gap-1.5">
-                                    <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
-                                    <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
-                                        {t("gradesPage.averagesNotSupported")}
-                                    </p>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </motion.div>
-                )}
-
-                <AnimatePresence mode="wait">
-                    {displayedGrades.length === 0 ? (
-                        <motion.div
-                            key={`empty-${filterKey}`}
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{
-                                duration: 0.25,
-                                ease: "easeOut",
-                                delay: 0.05,
-                            }}
-                        >
-                            <div className="text-center py-12">
-                                <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                                    <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <GraduationCap className="w-8 h-8 text-muted-foreground" />
-                                    </div>
-                                    <h3 className="text-lg font-semibold mb-2">
-                                        {t("gradesPage.noGrades")}
-                                    </h3>
-                                    <p className="text-muted-foreground">
-                                        {t("gradesPage.noGradesPlaceholder")}
-                                    </p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key={`list-${filterKey}`}
-                            className="space-y-4"
-                            variants={listVariants}
-                            initial="hidden"
-                            animate="show"
-                            exit={{
-                                opacity: 0,
-                                transition: { duration: 0.15 },
-                            }}
-                        >
-                            <AnimatePresence mode="popLayout">
-                                {displayedGrades.map((grade, index) =>
-                                    index < 8 ? (
-                                        <AnimatedGradeCard
-                                            key={index}
-                                            grade={grade}
-                                            onGradeClick={(grade) => {
-                                                setSelectedGrade(grade);
-                                                setDrawerOpen(true);
-                                            }}
-                                        />
-                                    ) : (
-                                        <StaticGradeCard
-                                            key={index}
-                                            grade={grade}
-                                            onGradeClick={(grade) => {
-                                                setSelectedGrade(grade);
-                                                setDrawerOpen(true);
-                                            }}
-                                        />
-                                    )
-                                )}
-                            </AnimatePresence>
+                <motion.div variants={fadeIn} className="space-y-3 pb-4">
+                    {filteredGrades.length > 0 && (
+                        <motion.div variants={fadeIn}>
+                            {hasKnownClass ? (
+                                <AveragesComparison
+                                    grades={filteredGrades}
+                                    chartGrades={displayedGrades}
+                                    subject={selectedSubject}
+                                    t={t}
+                                />
+                            ) : (
+                                <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
+                                    <CardContent className="p-3 flex items-start gap-1.5">
+                                        <Info className="h-3 w-3 mt-0.5 shrink-0 text-gray-400 dark:text-gray-500" />
+                                        <p className="text-[11px] text-gray-400 dark:text-gray-500 leading-tight">
+                                            {t(
+                                                "gradesPage.averagesNotSupported"
+                                            )}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            )}
                         </motion.div>
                     )}
-                </AnimatePresence>
-            </div>
+
+                    <AnimatePresence mode="wait">
+                        {displayedGrades.length === 0 ? (
+                            <motion.div
+                                key={`empty-${filterKey}`}
+                                variants={fadeIn}
+                                initial="hidden"
+                                animate="show"
+                                exit="exit"
+                            >
+                                <div className="text-center py-12">
+                                    <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                                        <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                        </div>
+                                        <h3 className="text-lg font-semibold mb-2">
+                                            {t("gradesPage.noGrades")}
+                                        </h3>
+                                        <p className="text-muted-foreground">
+                                            {t(
+                                                "gradesPage.noGradesPlaceholder"
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key={`list-${filterKey}`}
+                                className="space-y-4"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{
+                                    opacity: 0,
+                                    transition: { duration: 0.15 },
+                                }}
+                            >
+                                <AnimatePresence mode="popLayout">
+                                    {displayedGrades.map((grade, index) =>
+                                        index < 8 ? (
+                                            <AnimatedGradeCard
+                                                key={index}
+                                                index={index}
+                                                grade={grade}
+                                                onGradeClick={(grade) => {
+                                                    setSelectedGrade(grade);
+                                                    setDrawerOpen(true);
+                                                }}
+                                            />
+                                        ) : (
+                                            <StaticGradeCard
+                                                key={index}
+                                                grade={grade}
+                                                onGradeClick={(grade) => {
+                                                    setSelectedGrade(grade);
+                                                    setDrawerOpen(true);
+                                                }}
+                                            />
+                                        )
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
+            </motion.div>
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
                     <DrawerHeader>

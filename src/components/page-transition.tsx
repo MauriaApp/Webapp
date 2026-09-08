@@ -2,6 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 
 import { cn } from "@/lib/utils/cn";
+import { pageFade } from "@/lib/motion";
 
 type AllowedTags = "div" | "main" | "section";
 
@@ -24,10 +25,10 @@ export function PageTransition<T extends AllowedTags = "div">({
 
     return (
         <MotionComponent
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -16, scale: 0.98 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            initial={pageFade.initial}
+            animate={pageFade.animate}
+            exit={pageFade.exit}
+            transition={pageFade.transition}
             className={cn("w-full", className)}
             {...props}
         >

@@ -4,32 +4,24 @@ import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { fadeInIndexed } from "@/lib/motion";
 
 const MotionCard = motion(Card);
-
-const absenceVariants = {
-    hidden: { opacity: 0, y: 18, scale: 0.98 },
-    show: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as const },
-    },
-    exit: {
-        opacity: 0,
-        y: -16,
-        scale: 0.98,
-        transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] as const },
-    },
-};
-export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
+export function AbsenceCardAnimate({
+    absence,
+    index = 0,
+}: {
+    absence: Absence;
+    index?: number;
+}) {
     const { i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
     const isJustified = !absence.type.toLowerCase().includes("non");
     return (
         <MotionCard
             layout
-            variants={absenceVariants}
+            variants={fadeInIndexed}
+            custom={index}
             initial="hidden"
             animate="show"
             exit="exit"
@@ -37,20 +29,27 @@ export function AbsenceCardAnimate({ absence }: { absence: Absence }) {
         >
             <div className="flex p-4 items-center h-full">
                 <div className="w-20 mr-4 items-center justify-center text-center">
-                    <div className={`text-2xl font-bold ${isJustified ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"}`}>
+                    <div
+                        className={`text-2xl font-bold ${isJustified ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"}`}
+                    >
                         {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium">
-                        {absence.type}
-                    </div>
+                    <div className="text-lg font-medium">{absence.type}</div>
                     <div className="text-foreground">{absence.class}</div>
                     <div className="text-sm text-muted-foreground">
                         {(() => {
                             const [day, month, year] = absence.date.split("/");
-                            const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
-                            const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
+                            const fullYear =
+                                year.length === 2
+                                    ? 2000 + parseInt(year)
+                                    : parseInt(year);
+                            const date = new Date(
+                                fullYear,
+                                parseInt(month) - 1,
+                                parseInt(day)
+                            );
                             return format(date, "EEEE d MMM", { locale });
                         })()}
                         {", "}
@@ -70,20 +69,27 @@ export function AbsenceCard({ absence }: { absence: Absence }) {
         <Card className="border-none bg-white shadow-md transition-shadow dark:bg-mauria-card">
             <div className="flex p-4 items-center h-full">
                 <div className="w-20 mr-4 items-center justify-center text-center">
-                    <div className={`text-2xl font-bold ${isJustified ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"}`}>
+                    <div
+                        className={`text-2xl font-bold ${isJustified ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"}`}
+                    >
                         {absence.duration.replace(":", "h") ?? absence.duration}
                     </div>
                 </div>
                 <div className="flex-1">
-                    <div className="text-lg font-medium">
-                        {absence.type}
-                    </div>
+                    <div className="text-lg font-medium">{absence.type}</div>
                     <div className="text-foreground">{absence.class}</div>
                     <div className="text-sm text-muted-foreground">
                         {(() => {
                             const [day, month, year] = absence.date.split("/");
-                            const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
-                            const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
+                            const fullYear =
+                                year.length === 2
+                                    ? 2000 + parseInt(year)
+                                    : parseInt(year);
+                            const date = new Date(
+                                fullYear,
+                                parseInt(month) - 1,
+                                parseInt(day)
+                            );
                             return format(date, "EEEE d MMM", { locale });
                         })()}
                         {", "}

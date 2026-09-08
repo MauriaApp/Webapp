@@ -85,7 +85,7 @@ export function AssociationsPage() {
 
     return (
         <div className="mt-4 space-y-6 sm:px-6 lg:px-0">
-            <div className="mx-auto w-full max-w-4xl space-y-6">
+            <div className="w-full space-y-6">
                 <div className="relative w-full">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
@@ -111,7 +111,7 @@ export function AssociationsPage() {
                 </div>
             </div>
             {/* Associations Grid */}
-            <div className="mx-auto w-full max-w-5xl">
+            <div className="w-full">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {filteredAssociations.map((association, index) => (
                         <Card
@@ -147,7 +147,7 @@ export function AssociationsPage() {
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent className="bg-card border-border pb-safe">
                     {selectedAssociation && (
-                        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+                        <div className="w-full px-4 sm:px-6">
                             <DrawerHeader className="px-0 pb-0 text-left">
                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
                                     <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-lg sm:mx-0 sm:h-20 sm:w-20">

@@ -8,6 +8,7 @@ import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
+import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -87,98 +88,98 @@ export function PlanningPage() {
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
-            <motion.h2
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
-            >
-                {t("schedulePage.title")}
-            </motion.h2>
-
-            <motion.section
-                className="rounded-lg overflow-hidden shadow-lg"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                    duration: 0.4,
-                    ease: [0.16, 1, 0.3, 1],
-                    delay: 0.1,
-                }}
-            >
-                <Calendar
-                    datesSet={() => {
-                        calendarRef.current?.getApi().updateSize();
-                    }}
-                    ref={calendarRef}
-                    locale={
-                        i18n.language === "fr"
-                            ? FrLocale
-                            : i18n.language === "es"
-                              ? EsLocale
-                              : undefined
-                    }
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                    initialView="timeGridWeek"
-                    headerToolbar={{
-                        left: "today",
-                        center: "timeGridWeek,timeGridDay",
-                        right: "prev,next",
-                    }}
-                    buttonText={{
-                        today: t("schedulePage.buttons.today"),
-                        timeGridWeek: t("schedulePage.buttons.week"),
-                        timeGridDay: t("schedulePage.buttons.day"),
-                    }}
-                    slotMinTime="07:00:00"
-                    slotMaxTime="22:00:00"
-                    titleFormat={{ month: "short", day: "numeric" }}
-                    allDaySlot={false}
-                    firstDay={1}
-                    hiddenDays={[0]}
-                    eventSources={[lessons, userEvents]}
-                    eventColor="var(--planning-event-default-solid)"
-                    contentHeight="auto"
-                    nowIndicator={true}
-                    stickyHeaderDates={false}
-                    editable={false}
-                    eventAllow={() => false}
-                    droppable={false}
-                    eventStartEditable={false}
-                    eventDurationEditable={false}
-                    eventResizableFromStart={false}
-                    eventClick={(info) => {
-                        const event = info.event.toJSON();
-
-                        const { courseTitle, location, type, teacher } =
-                            parseFromTitle(event as Lesson);
-                        const mixedEvent = {
-                            courseTitle,
-                            location,
-                            type,
-                            teacher,
-                            details: event,
-                        } as unknown as PreparedLesson;
-
-                        setEventInfo(mixedEvent);
-                        setDrawerOpen(true);
-                    }}
-                />
-                <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
-                    {t("schedulePage.lastUpdate")}{" "}
-                    {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
-                        locale: getDateLocale(i18n.language),
-                    })}
-                </div>
-                <Button
-                    className="mt-2"
-                    onClick={handleExport}
-                    disabled={lessons.length === 0 || isBusy}
+            <motion.div variants={staggerGroup} initial="hidden" animate="show">
+                <motion.h2
+                    variants={fadeIn}
+                    className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
                 >
-                    {t("schedulePage.exportSchedule")}
-                </Button>
-                <p className="mt-2 italic">{t("schedulePage.warnExport")}</p>
-            </motion.section>
+                    {t("schedulePage.title")}
+                </motion.h2>
+
+                <motion.section
+                    variants={fadeIn}
+                    className="rounded-lg overflow-hidden shadow-lg"
+                >
+                    <Calendar
+                        datesSet={() => {
+                            calendarRef.current?.getApi().updateSize();
+                        }}
+                        ref={calendarRef}
+                        locale={
+                            i18n.language === "fr"
+                                ? FrLocale
+                                : i18n.language === "es"
+                                  ? EsLocale
+                                  : undefined
+                        }
+                        plugins={[
+                            dayGridPlugin,
+                            timeGridPlugin,
+                            interactionPlugin,
+                        ]}
+                        initialView="timeGridWeek"
+                        headerToolbar={{
+                            left: "today",
+                            center: "timeGridWeek,timeGridDay",
+                            right: "prev,next",
+                        }}
+                        buttonText={{
+                            today: t("schedulePage.buttons.today"),
+                            timeGridWeek: t("schedulePage.buttons.week"),
+                            timeGridDay: t("schedulePage.buttons.day"),
+                        }}
+                        slotMinTime="07:00:00"
+                        slotMaxTime="22:00:00"
+                        titleFormat={{ month: "short", day: "numeric" }}
+                        allDaySlot={false}
+                        firstDay={1}
+                        hiddenDays={[0]}
+                        eventSources={[lessons, userEvents]}
+                        eventColor="var(--planning-event-default-solid)"
+                        contentHeight="auto"
+                        nowIndicator={true}
+                        stickyHeaderDates={false}
+                        editable={false}
+                        eventAllow={() => false}
+                        droppable={false}
+                        eventStartEditable={false}
+                        eventDurationEditable={false}
+                        eventResizableFromStart={false}
+                        eventClick={(info) => {
+                            const event = info.event.toJSON();
+
+                            const { courseTitle, location, type, teacher } =
+                                parseFromTitle(event as Lesson);
+                            const mixedEvent = {
+                                courseTitle,
+                                location,
+                                type,
+                                teacher,
+                                details: event,
+                            } as unknown as PreparedLesson;
+
+                            setEventInfo(mixedEvent);
+                            setDrawerOpen(true);
+                        }}
+                    />
+                    <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
+                        {t("schedulePage.lastUpdate")}{" "}
+                        {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
+                            locale: getDateLocale(i18n.language),
+                        })}
+                    </div>
+                    <Button
+                        className="mt-2"
+                        onClick={handleExport}
+                        disabled={lessons.length === 0 || isBusy}
+                    >
+                        {t("schedulePage.exportSchedule")}
+                    </Button>
+                    <p className="mt-2 italic">
+                        {t("schedulePage.warnExport")}
+                    </p>
+                </motion.section>
+            </motion.div>
             <DrawerPlanningContent
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}

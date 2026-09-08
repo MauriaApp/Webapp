@@ -1,8 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/webp" href="/icon.webp" />
+        <script>
+            // Apply the stored theme before paint to avoid a flash.
+            // Defaults to "light" when nothing is stored (system pref ignored).
+            (function () {
+                try {
+                    var t = localStorage.getItem("theme") || "light";
+                    var c = document.documentElement.classList;
+                    c.remove(
+                        "light",
+                        "dark",
+                        "oled",
+                        "cherry",
+                        "pride",
+                        "ocean",
+                        "forest"
+                    );
+                    c.add(t);
+                } catch (e) {}
+            })();
+        </script>
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, viewport-fit=cover"

@@ -124,7 +124,7 @@ export function AgendaPage() {
 
     return (
         <div className="flex min-h-[calc(100vh-16rem)] flex-col py-6">
-            <div className="max-w-4xl mx-auto">
+            <div className="w-full">
                 {/* Header Section */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold  mb-4">

@@ -20,13 +20,8 @@ const ThemeProviderContext = createContext<{
 });
 
 export function ThemeProvider({ children }: Readonly<ThemeProviderProps>) {
-    const defaultTheme = globalThis.matchMedia?.("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
     const [theme, setTheme] = useState<Theme>(
-        (getFromStorage("theme") as Theme) || defaultTheme
+        (getFromStorage("theme") as Theme) || "light"
     );
 
     useEffect(() => {
