@@ -182,7 +182,8 @@
         --accent: 24 88% 58%;
         --accent-foreground: 210 40% 98%;
 
-        --destructive: 0 63% 31%;
+        /* Bright enough to read as red on the dark purple background */
+        --destructive: 0 74% 60%;
         --destructive-foreground: 210 40% 98%;
 
         --border: 210 0% 50%;
@@ -738,7 +739,8 @@
         --accent: 0 0% 20%;
         --accent-foreground: 0 0% 92%;
 
-        --destructive: 2 65% 46%;
+        /* Bright enough to read as red on the pure-black background */
+        --destructive: 0 74% 60%;
         --destructive-foreground: 0 0% 96%;
 
         --border: 0 0% 14%;
@@ -1006,6 +1008,53 @@
     .animate-task-complete {
         animation: task-complete-fade 5s ease-in-out forwards;
         will-change: opacity, transform;
+    }
+}
+
+/* Animated "shimmer" on the brand word: a lighter band waves across it. */
+@keyframes mauria-shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@layer utilities {
+    .mauria-shimmer {
+        background-image: linear-gradient(
+            100deg,
+            hsl(var(--mauria-purple)) 0%,
+            hsl(var(--mauria-purple)) 44%,
+            hsl(var(--mauria-purple-light)) 50%,
+            hsl(var(--mauria-purple)) 56%,
+            hsl(var(--mauria-purple)) 100%
+        );
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: mauria-shimmer 3.5s ease-in-out infinite;
+    }
+
+    .dark .mauria-shimmer,
+    .oled .mauria-shimmer {
+        background-image: linear-gradient(
+            100deg,
+            hsl(var(--mauria-accent)) 0%,
+            hsl(var(--mauria-accent)) 42%,
+            hsl(0 0% 100% / 0.92) 50%,
+            hsl(var(--mauria-accent)) 58%,
+            hsl(var(--mauria-accent)) 100%
+        );
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mauria-shimmer {
+            animation: none;
+            background-position: 50% 0;
+        }
     }
 }
 

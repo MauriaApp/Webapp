@@ -59,12 +59,12 @@ export default function NewUpdateDrawer() {
                         <DrawerTitle className="flex items-center justify-center gap-2">
                             {t("update.somethingNew")}
                         </DrawerTitle>
-                        <p className="text-sm text-muted-foreground mb-3 text-center">
-                            {t("update.seeEnhancements")} {update?.version}
-                            <br />
-                            <br />
+                        <div className="mb-3 flex flex-col items-center gap-3 text-sm text-muted-foreground">
+                            <p>
+                                {t("update.seeEnhancements")} {update?.version}
+                            </p>
                             <Badge variant="secondary">{update?.date}</Badge>
-                        </p>
+                        </div>
                     </DrawerHeader>
                 </div>
 

@@ -1,87 +1,149 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
     CircleAlert,
-    Hand,
     MessageCircleQuestion,
     PanelsTopLeft,
-    Shredder,
+    ShieldCheck,
     type LucideIcon,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPlanning } from "@/lib/api/aurion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useQueries } from "@tanstack/react-query";
+import { fadeIn } from "@/lib/motion";
+import { fetchAbsences, fetchGrades, fetchPlanning } from "@/lib/api/aurion";
+import { fetchImportantMessage } from "@/lib/api/supa";
+import { fetchDailyMenu } from "@/lib/api/lacatho";
 import { saveToStorage } from "@/lib/utils/storage";
 import { useTranslation } from "react-i18next";
-import { Lesson } from "@/types/aurion";
+import { Absence, Grade, Lesson } from "@/types/aurion";
 
 type WelcomeSection = {
-    title: string;
-    description: string;
+    key: string;
     icon: LucideIcon;
     variant?: "default" | "destructive";
 };
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
+const PREFETCH_OPTS = {
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60 * 24,
+    refetchOnWindowFocus: false,
+    retry: 1,
+} as const;
+
+async function timedFetch<T>(label: string, fn: () => Promise<T>): Promise<T> {
+    const start = performance.now();
+    console.log(`[prefetch] ${label} — start`);
+    try {
+        return await fn();
+    } finally {
+        console.log(
+            `[prefetch] ${label} — done in ${Math.round(
+                performance.now() - start
+            )}ms`
+        );
+    }
+}
+
+// Slow, deliberate cascade for the welcome screen: ~1s between each item.
+const welcomeStagger = {
+    hidden: {},
+    show: { transition: { delayChildren: 0.15, staggerChildren: 1 } },
+};
+
 const WELCOME_SECTIONS: WelcomeSection[] = [
-    {
-        title: "Salut !",
-        description:
-            "On a remarqué que c'était ta première fois sur l'application. On te propose de t'expliquer comment ça marche et comment t'y retrouver.",
-        icon: Hand,
-    },
-    {
-        title: "Mauria ne remplace pas Aurion !",
-        description:
-            "Mauria est un outil complémentaire à Aurion : il ne remplace ni le site, ni ses données.",
-        icon: CircleAlert,
-        variant: "destructive",
-    },
-    {
-        title: "La rapide présentation",
-        description:
-            "L'application est divisé en plusieurs onglets. Tu peux les retrouver en bas de l'écran. Il y a aussi un menu en haut à droite avec des options supplémentaires.",
-        icon: PanelsTopLeft,
-    },
-    {
-        title: "Confidentialité au max !",
-        description:
-            "L'application n'enregistre rien sur ses serveurs, tout est stocké sur ton téléphone. De ce fait, tu peux l'utiliser sans connexion internet !",
-        icon: Shredder,
-    },
-    {
-        title: "Support",
-        description:
-            "Si tu as des questions, n'hésite pas à nous contacter dans l'onglet \"Support\"",
-        icon: MessageCircleQuestion,
-    },
+    { key: "notAurion", icon: CircleAlert, variant: "destructive" },
+    { key: "overview", icon: PanelsTopLeft },
+    { key: "privacy", icon: ShieldCheck },
+    { key: "support", icon: MessageCircleQuestion },
 ];
 
 export function WelcomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { isLoading, isFetching } = useQuery({
-        queryKey: ["planning"],
-        queryFn: async (): Promise<Lesson[]> => {
-            const res = await fetchPlanning();
-            if (!res?.success) {
-                throw new Error("Failed to fetch planning");
-            }
-            return res.data ?? [];
-        },
-        staleTime: 1000 * 60 * 5,
-        gcTime: 1000 * 60 * 60 * 24,
-        refetchOnWindowFocus: false,
+    // Warm every cache we can while the welcome screen is shown, so the app
+    // is ready (planning, grades, absences, home content) once the user enters.
+    const results = useQueries({
+        queries: [
+            {
+                queryKey: ["planning"],
+                queryFn: (): Promise<Lesson[]> =>
+                    timedFetch("planning", async () => {
+                        const res = await fetchPlanning();
+                        if (!res?.success)
+                            throw new Error("Failed to fetch planning");
+                        return res.data ?? [];
+                    }),
+                ...PREFETCH_OPTS,
+            },
+            {
+                queryKey: ["grades"],
+                queryFn: (): Promise<Grade[]> =>
+                    timedFetch("grades", async () => {
+                        const res = await fetchGrades();
+                        if (!res?.success)
+                            throw new Error("Failed to fetch grades");
+                        return res.data ?? [];
+                    }),
+                ...PREFETCH_OPTS,
+            },
+            {
+                queryKey: ["absences"],
+                queryFn: (): Promise<Absence[]> =>
+                    timedFetch("absences", async () => {
+                        const res = await fetchAbsences();
+                        if (!res?.success)
+                            throw new Error("Failed to fetch absences");
+                        return res.data ?? [];
+                    }),
+                ...PREFETCH_OPTS,
+            },
+            {
+                queryKey: ["importantMessage"],
+                queryFn: () =>
+                    timedFetch("importantMessage", fetchImportantMessage),
+                ...PREFETCH_OPTS,
+            },
+            {
+                queryKey: ["dailyMenu"],
+                queryFn: () => timedFetch("dailyMenu", fetchDailyMenu),
+                ...PREFETCH_OPTS,
+                staleTime: 1000 * 60 * 30,
+            },
+        ],
     });
-    const isBusy = useMemo(
-        () => isLoading || isFetching,
-        [isLoading, isFetching]
-    );
+
+    // Only block the button on the Aurion data (planning, grades, absences).
+    const isBusy = results.slice(0, 3).some((r) => r.isLoading);
     const [progress, setProgress] = useState(0);
 
-    // Fake progress effect, with irregularities
+    const tips = t("welcome.tips", { returnObjects: true }) as string[];
+    // A shuffled walk through the tips, picked once, so they show in a
+    // random order without repeating back-to-back.
+    const [tipOrder] = useState(() => {
+        const idx = tips.map((_, i) => i);
+        for (let i = idx.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [idx[i], idx[j]] = [idx[j], idx[i]];
+        }
+        return idx;
+    });
+    const [tipStep, setTipStep] = useState(0);
+    const tipIndex = tipOrder[tipStep % tipOrder.length] ?? 0;
+
+    // Cycle through the loading tips while the data is being fetched.
+    useEffect(() => {
+        if (!isBusy) return;
+        setTipStep(0);
+        const id = window.setInterval(() => setTipStep((s) => s + 1), 2800);
+        return () => window.clearInterval(id);
+    }, [isBusy]);
+
+    // Fake progress effect, with irregularities. Tuned so it rarely pins at
+    // 100% before the (slow) Aurion scrapes actually finish.
     useEffect(() => {
         if (!isBusy) {
             setProgress(100);
@@ -94,11 +156,14 @@ export function WelcomePage() {
         let current = 0;
         const interval = window.setInterval(() => {
             const elapsed = Date.now() - start;
-            const base = Math.min(1, elapsed / 7000);
-            const burst = Math.random() < 0.25 ? Math.random() * 0.12 : 0;
-            const wobble = (Math.random() - 0.5) * 0.05;
-            const target = Math.min(1, base + wobble + burst);
-            const next = Math.max(current + 0.01, target, base);
+            const base = Math.min(0.97, elapsed / 20000);
+            const burst = Math.random() < 0.22 ? Math.random() * 0.1 : 0;
+            const wobble = (Math.random() - 0.5) * 0.04;
+            const target = Math.min(0.97, base + wobble + burst);
+            const next = Math.min(
+                0.97,
+                Math.max(current + 0.006, target, base)
+            );
             current = next;
             setProgress(Math.round(current * 100));
         }, 140);
@@ -119,20 +184,39 @@ export function WelcomePage() {
 
     return (
         <div className="min-h-screen bg-mauria-bg flex flex-col">
-            <div className="px-6 pt-16 pb-6 text-center space-y-3">
-                <span className="inline-flex items-center justify-center rounded-full bg-primary/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.3em] text-primary">
-                    {t("welcome.mauria")}
-                </span>
-                <h1 className="text-3xl font-bold">{t("welcome.welcome")}</h1>
-                <p className="text-sm text-muted-foreground">
-                    {t("welcome.getStarted")}
-                </p>
-            </div>
-            <div className="flex-1 px-6 pb-8 space-y-4">
-                {WELCOME_SECTIONS.map(
-                    ({ title, description, icon: Icon, variant }) => (
+            <motion.div
+                className="flex-1 flex flex-col gap-4 px-6 pt-16 pb-8"
+                variants={welcomeStagger}
+                initial="hidden"
+                animate="show"
+            >
+                <motion.div
+                    variants={fadeIn}
+                    className="pb-2 text-center space-y-3"
+                >
+                    <h1 className="text-3xl font-bold">
+                        {(() => {
+                            const brand = t("welcome.mauria");
+                            const [before, after] =
+                                t("welcome.welcome").split(brand);
+                            return (
+                                <>
+                                    {before}
+                                    <span className="mauria-shimmer">
+                                        {brand}
+                                    </span>
+                                    {after}
+                                </>
+                            );
+                        })()}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        {t("welcome.getStarted")}
+                    </p>
+                </motion.div>
+                {WELCOME_SECTIONS.map(({ key, icon: Icon, variant }) => (
+                    <motion.div key={key} variants={fadeIn}>
                         <Alert
-                            key={title}
                             variant={
                                 variant === "destructive"
                                     ? "destructive"
@@ -141,37 +225,61 @@ export function WelcomePage() {
                             className="w-full"
                         >
                             <Icon className="h-4 w-4" />
-                            <AlertTitle>{title}</AlertTitle>
-                            <AlertDescription>{description}</AlertDescription>
+                            <AlertTitle>
+                                {t(`welcome.sections.${key}.title`)}
+                            </AlertTitle>
+                            <AlertDescription>
+                                {t(`welcome.sections.${key}.description`)}
+                            </AlertDescription>
                         </Alert>
-                    )
-                )}
-            </div>
-            <div className="px-6 pb-10 flex justify-center">
+                    </motion.div>
+                ))}
+            </motion.div>
+            <motion.div
+                variants={fadeIn}
+                initial="hidden"
+                animate="show"
+                className="px-6 pb-10 flex flex-col items-center gap-3"
+            >
+                <p
+                    aria-live="polite"
+                    className="min-h-[2.5rem] max-w-sm text-center text-sm text-muted-foreground leading-snug flex items-center justify-center"
+                >
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                            key={isBusy ? tipStep : "idle"}
+                            initial={{ opacity: 0, filter: "blur(4px)" }}
+                            animate={{ opacity: 1, filter: "blur(0px)" }}
+                            exit={{ opacity: 0, filter: "blur(4px)" }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                        >
+                            {isBusy ? tips[tipIndex] : ""}
+                        </motion.span>
+                    </AnimatePresence>
+                </p>
                 <Button
                     size="lg"
-                    disabled={isBusy}
-                    className="relative overflow-hidden"
+                    aria-disabled={isBusy}
+                    className={`relative w-full overflow-hidden ${
+                        isBusy ? "bg-primary/15 hover:bg-primary/15" : ""
+                    }`}
                     onClick={() => {
                         if (isBusy) return;
                         navigate("/");
                     }}
                 >
-                    <span className={isBusy ? "opacity-80" : undefined}>
-                        {isBusy
-                            ? "Chargement des données en cours..."
-                            : "C'est parti !"}
-                    </span>
                     {isBusy ? (
-                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-primary-foreground/35 z-10">
-                            <div
-                                className="h-full bg-mauria-accent transition-[width] duration-200 ease-linear"
-                                style={{ width: `${progress}%` }}
-                            />
-                        </div>
+                        <span
+                            aria-hidden
+                            className="pointer-events-none absolute inset-y-0 left-0 bg-primary/50 transition-[width] duration-200 ease-linear"
+                            style={{ width: `${progress}%` }}
+                        />
                     ) : null}
+                    <span className="relative z-10">
+                        {isBusy ? t("common.loading") : t("welcome.start")}
+                    </span>
                 </Button>
-            </div>
+            </motion.div>
         </div>
     );
 }

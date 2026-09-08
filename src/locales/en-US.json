@@ -9,7 +9,48 @@
   "welcome": {
     "mauria": "Mauria",
     "welcome": "Welcome to Mauria!",
-    "getStarted": "Here are some useful references to get started:"
+    "getStarted": "Here are some useful references to get started:",
+    "start": "Let's go!",
+    "tips": [
+      "Getting things ready…",
+      "Fetching your Aurion data…",
+      "Negotiating with Aurion (it's the slow type)…",
+      "Recalibrating splines…",
+      "Loading your grades… sure you want to see those?",
+      "Waking the servers up with a DDoS…",
+      "Counting absences…",
+      "Aligning the stars for the schedule…",
+      "Polishing the pixels…",
+      "Almost there, promise…",
+      "Decrypting the schedule (even we don't get it)…",
+      "Checking you really have class tomorrow (sorry)…",
+      "Looking for a free room… found 0…",
+      "Loading the loading…",
+      "Applying the purple paint…",
+      "Downloading more RAM…",
+      "Division by zero… trying again…",
+      "A few more things and we're done…",
+      "It's worth the wait, promise…",
+      "Almost there, don't move…"
+    ],
+    "sections": {
+      "notAurion": {
+        "title": "Mauria doesn't replace Aurion",
+        "description": "It's a companion: data comes from Aurion and may sometimes differ. When in doubt, check Aurion."
+      },
+      "overview": {
+        "title": "Finding your way",
+        "description": "Tabs at the bottom of the screen (schedule, grades, absences…), and a menu in the top right for settings."
+      },
+      "privacy": {
+        "title": "Your data stays private",
+        "description": "Nothing is sent to our servers: everything is stored on your phone, and the app works offline."
+      },
+      "support": {
+        "title": "Need help? Want a feature?",
+        "description": "Open the menu in the top right and tap \"A question, an idea?\" to reach us."
+      }
+    }
   },
   "common": {
     "id": "ID",
@@ -18,7 +59,7 @@
     "goBackHome": "Go back home",
     "retry": "Retry",
     "pullToRefresh": "Pull to refresh",
-    "refreshing": "Refreshing…",
+    "refreshing": "Release to refresh",
     "loadingWeb": "If you are on the web version, please wait.",
     "more": "More",
     "close": "Close",
@@ -76,7 +117,7 @@
       "juniaLearning": "Junia Learning",
       "print": "Print"
     },
-    "help": "A question, a problem?",
+    "help": "A question, an idea?",
     "logOut": "Log Out",
     "credits": "Project developed and maintained by Milo Montuori, Louis Lecouturier and Louis Soltysiak",
     "contribute": "Contribute to Mauria"
@@ -93,6 +134,8 @@
     "nextClasses": "Upcoming",
     "nextClassesEmptyState": "Nothing planned for today or tomorrow, enjoy your rest and free time!",
     "loadingSchedule": "Loading schedule data…",
+    "noImportantMessageTitle": "No important message",
+    "noImportantMessageBody": "Have a nice day!",
     "current": "Currently",
     "today": "Today",
     "tomorrow": "Tomorrow",

@@ -7,24 +7,9 @@ import { motion } from "framer-motion";
 import { SquareArrowOutDownRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
+import { fadeInIndexed } from "@/lib/motion";
 
 const MotionCard = motion(Card);
-
-const gradeVariants = {
-    hidden: { opacity: 0, y: 16, scale: 0.98 },
-    show: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const },
-    },
-    exit: {
-        opacity: 0,
-        y: -14,
-        scale: 0.98,
-        transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] as const },
-    },
-};
 
 function parseGradeNum(val?: string | null): number {
     if (!val) return NaN;
@@ -34,20 +19,26 @@ function parseGradeNum(val?: string | null): number {
 export function GradeCardAnimate({
     grade,
     onGradeClick,
+    index = 0,
 }: {
     grade: Grade;
     onGradeClick: (grade: Grade) => void;
+    index?: number;
 }) {
     const { t, i18n } = useTranslation();
     const gradeNum = parseGradeNum(grade.grade);
     const avgNum = parseGradeNum(grade.average);
-    const gradeColor = !isNaN(gradeNum) && !isNaN(avgNum)
-        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
-        : "text-mauria-accent dark:text-mauria-accent";
+    const gradeColor =
+        !isNaN(gradeNum) && !isNaN(avgNum)
+            ? gradeNum >= avgNum
+                ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65"
+                : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
+            : "text-mauria-accent dark:text-mauria-accent";
     return (
         <MotionCard
             layout
-            variants={gradeVariants}
+            variants={fadeInIndexed}
+            custom={index}
             initial="hidden"
             animate="show"
             exit="exit"
@@ -67,7 +58,9 @@ export function GradeCardAnimate({
                         )}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
+                        {grade.average
+                            ? `${t("gradesPage.avgShort")} ${grade.average}`
+                            : ""}
                     </div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -112,9 +105,12 @@ export function GradeCard({
     const { t, i18n } = useTranslation();
     const gradeNum = parseGradeNum(grade.grade);
     const avgNum = parseGradeNum(grade.average);
-    const gradeColor = !isNaN(gradeNum) && !isNaN(avgNum)
-        ? gradeNum >= avgNum ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65" : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
-        : "text-mauria-accent dark:text-mauria-accent";
+    const gradeColor =
+        !isNaN(gradeNum) && !isNaN(avgNum)
+            ? gradeNum >= avgNum
+                ? "text-green-700/70 dark:text-green-400/60 oled:text-green-300/65"
+                : "text-amber-700/70 dark:text-amber-400/60 oled:text-amber-400/60"
+            : "text-mauria-accent dark:text-mauria-accent";
 
     return (
         <Card
@@ -134,7 +130,9 @@ export function GradeCard({
                         )}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {grade.average ? `${t("gradesPage.avgShort")} ${grade.average}` : ""}
+                        {grade.average
+                            ? `${t("gradesPage.avgShort")} ${grade.average}`
+                            : ""}
                     </div>
                 </div>
                 <div className="flex-1 min-w-0">

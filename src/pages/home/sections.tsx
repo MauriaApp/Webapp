@@ -2,37 +2,17 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { Clock, Info, MapPin, SquareArrowOutDownRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatLessonLocation, formatLessonType } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
+import { fadeIn, staggerGroup } from "@/lib/motion";
 
 const MotionCard = motion(Card);
 
-const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            delayChildren: 0.05,
-            staggerChildren: 0.08,
-        },
-    },
-};
-
-const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 16, scale: 0.98 },
-    show: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: {
-            duration: 0.35,
-            ease: "easeOut",
-        },
-    },
-};
+const containerVariants = staggerGroup;
+const itemVariants = fadeIn;
 // Section Header Component
 export const SectionHeader = ({ title }: { title: string }) => (
     <motion.h2
@@ -98,12 +78,7 @@ export const LessonsSection = ({
     keyPrefix: string;
     onClick: (lesson: PreparedLesson) => () => void;
 }) => (
-    <motion.section
-        className="mb-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-    >
+    <motion.section className="mb-8" variants={containerVariants}>
         <SectionHeader title={title} />
         {lessons.map((lesson) => (
             <LessonCard
@@ -121,22 +96,17 @@ export const EmptyState = () => {
     const { t } = useTranslation();
 
     return (
-        <motion.section
-            className="mb-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-    >
-        <SectionHeader title={t("homePage.nextClasses")} />
-        <motion.div variants={itemVariants}>
-            <Alert className="mb-4">
-                <Info className="h-4 w-4" />
-                <AlertTitle>
-                    {t("homePage.nextClassesEmptyState")}
-                </AlertTitle>
-            </Alert>
-        </motion.div>
-    </motion.section>
+        <motion.section className="mb-8" variants={containerVariants}>
+            <SectionHeader title={t("homePage.nextClasses")} />
+            <motion.div variants={itemVariants}>
+                <Alert className="mb-4">
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>
+                        {t("homePage.nextClassesEmptyState")}
+                    </AlertTitle>
+                </Alert>
+            </motion.div>
+        </motion.section>
     );
 };
 
@@ -147,9 +117,7 @@ export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
     return (
         <motion.h2
             className="mt-4 mb-6 text-3xl font-bold text-mauria-purple dark:text-white"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            variants={fadeIn}
         >
             {t("homePage.title")} {firstName} !
         </motion.h2>
@@ -157,20 +125,21 @@ export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
 };
 
 // Important Message Component
-export const ImportantMessage = ({ message }: { message?: MessageEntry }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
-        className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
-    >
-        <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
-            <AlertTitle className="font-bold text-black dark:text-white">
-                {message?.title ?? "Aucun message important"}
-            </AlertTitle>
-            <AlertDescription className="text-black/80 dark:text-white/90">
-                {message?.message ?? "Bonne journée !"}
-            </AlertDescription>
-        </Alert>
-    </motion.div>
-);
+export const ImportantMessage = ({ message }: { message?: MessageEntry }) => {
+    const { t } = useTranslation();
+    return (
+        <motion.div
+            variants={fadeIn}
+            className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
+        >
+            <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
+                <AlertTitle className="font-bold text-black dark:text-white">
+                    {message?.title || t("homePage.noImportantMessageTitle")}
+                </AlertTitle>
+                <AlertDescription className="text-black/80 dark:text-white/90">
+                    {message?.message || t("homePage.noImportantMessageBody")}
+                </AlertDescription>
+            </Alert>
+        </motion.div>
+    );
+};

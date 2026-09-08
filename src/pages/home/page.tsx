@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import { getHomeUpcoming } from "@/lib/utils/home";
+import { staggerGroup } from "@/lib/motion";
 import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
 import { useQuery } from "@tanstack/react-query";
@@ -88,46 +90,48 @@ export function HomePage() {
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
-            <WelcomeHeader firstName={firstName} />
-            <ImportantMessage message={importantMessage} />
-            <RestaurantsSection />
+            <motion.div variants={staggerGroup} initial="hidden" animate="show">
+                <WelcomeHeader firstName={firstName} />
+                <ImportantMessage message={importantMessage} />
+                <RestaurantsSection />
 
-            {current && (
-                <LessonsSection
-                    title={t("homePage.current")}
-                    lessons={[current]}
-                    keyPrefix="current"
-                    onClick={(lesson) => () => {
-                        setDrawerOpen(true);
-                        setCurrentLesson(lesson);
-                    }}
-                />
-            )}
-            {today.length > 0 && (
-                <LessonsSection
-                    title={t("homePage.today")}
-                    lessons={today}
-                    keyPrefix="today"
-                    onClick={(lesson) => () => {
-                        setDrawerOpen(true);
-                        setCurrentLesson(lesson);
-                    }}
-                />
-            )}
-            {!current && today.length === 0 && tomorrow.length > 0 && (
-                <LessonsSection
-                    title={t("homePage.tomorrow")}
-                    lessons={tomorrow}
-                    keyPrefix="tomorrow"
-                    onClick={(lesson) => () => {
-                        setDrawerOpen(true);
-                        setCurrentLesson(lesson);
-                    }}
-                />
-            )}
-            {!current && today.length === 0 && tomorrow.length === 0 && (
-                <EmptyState />
-            )}
+                {current && (
+                    <LessonsSection
+                        title={t("homePage.current")}
+                        lessons={[current]}
+                        keyPrefix="current"
+                        onClick={(lesson) => () => {
+                            setDrawerOpen(true);
+                            setCurrentLesson(lesson);
+                        }}
+                    />
+                )}
+                {today.length > 0 && (
+                    <LessonsSection
+                        title={t("homePage.today")}
+                        lessons={today}
+                        keyPrefix="today"
+                        onClick={(lesson) => () => {
+                            setDrawerOpen(true);
+                            setCurrentLesson(lesson);
+                        }}
+                    />
+                )}
+                {!current && today.length === 0 && tomorrow.length > 0 && (
+                    <LessonsSection
+                        title={t("homePage.tomorrow")}
+                        lessons={tomorrow}
+                        keyPrefix="tomorrow"
+                        onClick={(lesson) => () => {
+                            setDrawerOpen(true);
+                            setCurrentLesson(lesson);
+                        }}
+                    />
+                )}
+                {!current && today.length === 0 && tomorrow.length === 0 && (
+                    <EmptyState />
+                )}
+            </motion.div>
             <DrawerPlanningContent
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
