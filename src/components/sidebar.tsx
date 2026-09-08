@@ -21,11 +21,13 @@ import {
     ArrowDownRightFromSquare,
     Languages,
     Wallpaper,
+    UtensilsCrossed,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
     Sheet,
     SheetContent,
@@ -59,6 +61,10 @@ import {
     readInitialLocale,
     type LocaleOption,
 } from "@/lib/utils/translations";
+import {
+    readRestaurantMenuEnabled,
+    setRestaurantMenuEnabled,
+} from "@/lib/utils/restaurant-menu";
 
 const aurionURL = "https://aurion.junia.com";
 const juniaLearningURL = "https://junia-learning.com";
@@ -99,6 +105,14 @@ export default function Sidebar() {
 
     const [size, setSize] = useState<SizeOption>(readInitialSize);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
+    const [restaurantMenu, setRestaurantMenu] = useState<boolean>(
+        readRestaurantMenuEnabled
+    );
+
+    const handleRestaurantMenuChange = (enabled: boolean) => {
+        setRestaurantMenu(enabled);
+        setRestaurantMenuEnabled(enabled);
+    };
 
     useEffect(() => {
         applyScale(size);
@@ -210,6 +224,18 @@ export default function Sidebar() {
         },
     ];
 
+    const toggles = [
+        {
+            icon: UtensilsCrossed,
+            title: t("sidebar.restaurantParameter.title"),
+            description: restaurantMenu
+                ? t("sidebar.restaurantParameter.enabled")
+                : t("sidebar.restaurantParameter.disabled"),
+            checked: restaurantMenu,
+            onCheckedChange: handleRestaurantMenuChange,
+        },
+    ];
+
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
@@ -260,9 +286,9 @@ export default function Sidebar() {
                                 key={index}
                                 className="flex items-center justify-between gap-4"
                             >
-                                <div className="flex items-center gap-3 [&_svg]:size-7!">
-                                    <setting.icon className="h-5 w-5" />
-                                    <div className="flex flex-col items-start">
+                                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                                    <setting.icon className="h-5 w-5 shrink-0" />
+                                    <div className="flex min-w-0 flex-col items-start">
                                         <Label className="cursor-default text-left">
                                             {setting.title}
                                         </Label>
@@ -271,7 +297,7 @@ export default function Sidebar() {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex w-full justify-end">
+                                <div className="flex shrink-0 justify-end">
                                     <Select
                                         value={setting.selectValue}
                                         onValueChange={setting.onValueChange}
@@ -296,6 +322,34 @@ export default function Sidebar() {
                                             ))}
                                         </SelectContent>
                                     </Select>
+                                </div>
+                            </div>
+                        ))}
+
+                        {toggles.map((setting, index) => (
+                            <div
+                                key={`toggle-${index}`}
+                                className="flex items-center justify-between gap-4"
+                            >
+                                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                                    <setting.icon className="h-5 w-5 shrink-0" />
+                                    <div className="flex min-w-0 flex-col items-start">
+                                        <Label className="cursor-default text-left">
+                                            {setting.title}
+                                        </Label>
+                                        <span className="text-xs text-muted-foreground text-left">
+                                            {setting.description}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex shrink-0 justify-end">
+                                    <Switch
+                                        checked={setting.checked}
+                                        onCheckedChange={
+                                            setting.onCheckedChange
+                                        }
+                                        aria-label={setting.title}
+                                    />
                                 </div>
                             </div>
                         ))}

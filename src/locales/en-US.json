@@ -65,6 +65,11 @@
       "en-US": "English",
       "es-ES": "Spanish"
     },
+    "restaurantParameter": {
+      "title": "Canteen menu",
+      "enabled": "Shown",
+      "disabled": "Hidden"
+    },
     "actions": {
       "associations": "Associations",
       "aurion": "Aurion",
