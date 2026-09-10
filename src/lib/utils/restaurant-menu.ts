@@ -6,28 +6,47 @@ export const RESTAURANT_MENU_STORAGE_KEY = "mauria-restaurant-menu";
 
 const RESTAURANT_MENU_EVENT = "mauria-restaurant-menu-change";
 
-export const readRestaurantMenuEnabled = (): boolean => {
-    if (typeof window === "undefined") {
-        return true;
-    }
+export type RestaurantCampus = "none" | "lille" | "chateauroux";
 
-    return getFromStorage(RESTAURANT_MENU_STORAGE_KEY) !== "false";
+export const RESTAURANT_CAMPUS_OPTIONS: RestaurantCampus[] = [
+    "none",
+    "lille",
+    "chateauroux",
+];
+
+const normalize = (raw: string | null): RestaurantCampus => {
+    // Rétro-compat avec l'ancien toggle booléen ("true"/"false").
+    if (raw === "false" || raw === "none") {
+        return "none";
+    }
+    if (raw === "chateauroux") {
+        return "chateauroux";
+    }
+    return "lille";
 };
 
-export const setRestaurantMenuEnabled = (enabled: boolean) => {
+export const readRestaurantCampus = (): RestaurantCampus => {
+    if (typeof window === "undefined") {
+        return "lille";
+    }
+
+    return normalize(getFromStorage(RESTAURANT_MENU_STORAGE_KEY));
+};
+
+export const setRestaurantCampus = (campus: RestaurantCampus) => {
     if (typeof window === "undefined") {
         return;
     }
 
-    saveToStorage(RESTAURANT_MENU_STORAGE_KEY, enabled ? "true" : "false");
+    saveToStorage(RESTAURANT_MENU_STORAGE_KEY, campus);
     window.dispatchEvent(new Event(RESTAURANT_MENU_EVENT));
 };
 
-export const useRestaurantMenuEnabled = (): boolean => {
-    const [enabled, setEnabled] = useState<boolean>(readRestaurantMenuEnabled);
+export const useRestaurantCampus = (): RestaurantCampus => {
+    const [campus, setCampus] = useState<RestaurantCampus>(readRestaurantCampus);
 
     useEffect(() => {
-        const handler = () => setEnabled(readRestaurantMenuEnabled());
+        const handler = () => setCampus(readRestaurantCampus());
 
         window.addEventListener(RESTAURANT_MENU_EVENT, handler);
         window.addEventListener("storage", handler);
@@ -38,5 +57,5 @@ export const useRestaurantMenuEnabled = (): boolean => {
         };
     }, []);
 
-    return enabled;
+    return campus;
 };

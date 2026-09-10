@@ -27,7 +27,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
     Sheet,
     SheetContent,
@@ -62,8 +61,10 @@ import {
     type LocaleOption,
 } from "@/lib/utils/translations";
 import {
-    readRestaurantMenuEnabled,
-    setRestaurantMenuEnabled,
+    readRestaurantCampus,
+    setRestaurantCampus,
+    RESTAURANT_CAMPUS_OPTIONS,
+    type RestaurantCampus,
 } from "@/lib/utils/restaurant-menu";
 
 const aurionURL = "https://aurion.junia.com";
@@ -107,13 +108,14 @@ export default function Sidebar() {
 
     const [size, setSize] = useState<SizeOption>(readInitialSize);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
-    const [restaurantMenu, setRestaurantMenu] = useState<boolean>(
-        readRestaurantMenuEnabled
-    );
+    const [restaurantCampus, setRestaurantCampusState] =
+        useState<RestaurantCampus>(readRestaurantCampus);
 
-    const handleRestaurantMenuChange = (enabled: boolean) => {
-        setRestaurantMenu(enabled);
-        setRestaurantMenuEnabled(enabled);
+    const handleRestaurantCampusChange = (value: string) => {
+        if (!value) return;
+        const campus = value as RestaurantCampus;
+        setRestaurantCampusState(campus);
+        setRestaurantCampus(campus);
     };
 
     useEffect(() => {
@@ -224,17 +226,16 @@ export default function Sidebar() {
                 },
             ],
         },
-    ];
-
-    const toggles = [
         {
             icon: UtensilsCrossed,
             title: t("sidebar.restaurantParameter.title"),
-            description: restaurantMenu
-                ? t("sidebar.restaurantParameter.enabled")
-                : t("sidebar.restaurantParameter.disabled"),
-            checked: restaurantMenu,
-            onCheckedChange: handleRestaurantMenuChange,
+            value: t(`sidebar.restaurantParameter.${restaurantCampus}`),
+            selectValue: restaurantCampus,
+            onValueChange: handleRestaurantCampusChange,
+            options: RESTAURANT_CAMPUS_OPTIONS.map((option) => ({
+                value: option,
+                label: t(`sidebar.restaurantParameter.${option}`),
+            })),
         },
     ];
 
@@ -324,34 +325,6 @@ export default function Sidebar() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
-                            </div>
-                        ))}
-
-                        {toggles.map((setting, index) => (
-                            <div
-                                key={`toggle-${index}`}
-                                className="flex items-center justify-between gap-4"
-                            >
-                                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
-                                    <setting.icon className="h-5 w-5 shrink-0" />
-                                    <div className="flex min-w-0 flex-col items-start">
-                                        <Label className="cursor-default text-left">
-                                            {setting.title}
-                                        </Label>
-                                        <span className="text-xs text-muted-foreground text-left">
-                                            {setting.description}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex shrink-0 justify-end">
-                                    <Switch
-                                        checked={setting.checked}
-                                        onCheckedChange={
-                                            setting.onCheckedChange
-                                        }
-                                        aria-label={setting.title}
-                                    />
                                 </div>
                             </div>
                         ))}

@@ -108,8 +108,9 @@
     },
     "restaurantParameter": {
       "title": "Canteen menu",
-      "enabled": "Shown",
-      "disabled": "Hidden"
+      "none": "None",
+      "lille": "Lille",
+      "chateauroux": "Châteauroux"
     },
     "actions": {
       "associations": "Associations",
@@ -149,6 +150,7 @@
       "title": "Today's menu",
       "menuOf": "Menu for {{date}}",
       "openPdf": "Open the full menu (PDF)",
+      "openCastelRu": "Open the menu (Crous)",
       "unavailable": "Menu not available yet for this restaurant"
     }
   },

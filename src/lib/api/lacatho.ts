@@ -13,3 +13,15 @@ export async function fetchDailyMenu(): Promise<DailyMenu | null> {
     }
     return data;
 }
+
+/**
+ * Menu du jour du CastelRU (seul RU de Châteauroux), scrappé côté API depuis
+ * crous-orleans-tours.fr. Même forme que {@link fetchDailyMenu}.
+ */
+export async function fetchCastelRuMenu(): Promise<DailyMenu | null> {
+    const data = await apiRequest<DailyMenu>("/crous/castelru/menu", "GET");
+    if (!data || !Array.isArray(data.restaurants) || !data.restaurants.length) {
+        return null;
+    }
+    return data;
+}
