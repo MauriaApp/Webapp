@@ -13,6 +13,17 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { fetchUser, setSession } from "@/lib/api/aurion";
+import { getSchoolFromEmail, isKnownSchool } from "@/lib/utils/school";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Meteors from "@/components/ui/shadcn-io/meteors";
 import { Eye, EyeOff, Languages } from "lucide-react";
 import { getFromStorage } from "@/lib/utils/storage";
@@ -32,6 +43,9 @@ export function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [unsupportedSchool, setUnsupportedSchool] = useState<string | null>(
+        null
+    );
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -40,9 +54,19 @@ export function LoginPage() {
         applyLocale(locale);
     }, [locale]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (loading) return;
+
+        const school = getSchoolFromEmail(email);
+        if (!isKnownSchool(school)) {
+            setUnsupportedSchool(school ?? email);
+            return;
+        }
+        void attemptLogin();
+    };
+
+    const attemptLogin = async () => {
         setLoading(true);
         try {
             const response = await fetchUser({ email, password });
@@ -81,6 +105,36 @@ export function LoginPage() {
 
     return (
         <>
+            <AlertDialog
+                open={unsupportedSchool !== null}
+                onOpenChange={(open) => !open && setUnsupportedSchool(null)}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {t("login.unsupportedSchool.title")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t("login.unsupportedSchool.description", {
+                                school: unsupportedSchool ?? "",
+                            })}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>
+                            {t("login.unsupportedSchool.cancel")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => {
+                                setUnsupportedSchool(null);
+                                void attemptLogin();
+                            }}
+                        >
+                            {t("login.unsupportedSchool.confirm")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
                 <Meteors number={50} />
             </div>

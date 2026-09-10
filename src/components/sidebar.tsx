@@ -61,12 +61,12 @@ import {
     readInitialLocale,
     type LocaleOption,
 } from "@/lib/utils/translations";
+import { getAurionUrl } from "@/lib/utils/school";
 import {
     readRestaurantMenuEnabled,
     setRestaurantMenuEnabled,
 } from "@/lib/utils/restaurant-menu";
 
-const aurionURL = "https://aurion.junia.com";
 const juniaLearningURL = "https://junia-learning.com";
 const printURL = "https://print.junia.com/end-user/ui/dashboard";
 const contactURL =
@@ -375,7 +375,7 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
-                            onClick={() => window.open(aurionURL, "_blank")}
+                            onClick={() => window.open(getAurionUrl(), "_blank")}
                         >
                             <ThumbsDown className="h-5 w-5" />
                             {t("sidebar.actions.aurion")}

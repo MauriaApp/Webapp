@@ -4,7 +4,13 @@
     "login": "Connexion",
     "enterAurionCredentials": "Entrez vos identifiants Aurion pour accéder à l'app",
     "email": "Email",
-    "password": "Mot de passe"
+    "password": "Mot de passe",
+    "unsupportedSchool": {
+      "title": "École non supportée",
+      "description": "L'école « {{school}} » n'est pas encore officiellement supportée par Mauria. Si son portail fonctionne sous Aurion, la connexion peut marcher, mais certaines fonctionnalités risquent d'être indisponibles. Continuer quand même ?",
+      "confirm": "Continuer",
+      "cancel": "Annuler"
+    }
   },
   "welcome": {
     "mauria": "Mauria",

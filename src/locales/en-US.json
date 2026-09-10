@@ -4,7 +4,13 @@
     "login": "Login",
     "enterAurionCredentials": "Enter your Aurion credentials to access the app",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "unsupportedSchool": {
+      "title": "School not supported",
+      "description": "The school \"{{school}}\" is not officially supported by Mauria yet. If its portal runs on Aurion, sign-in may work, but some features might be unavailable. Continue anyway?",
+      "confirm": "Continue",
+      "cancel": "Cancel"
+    }
   },
   "welcome": {
     "mauria": "Mauria",

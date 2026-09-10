@@ -4,7 +4,13 @@
     "login": "Iniciar sesión",
     "enterAurionCredentials": "Introduce tus credenciales de Aurion para acceder a la app",
     "email": "Correo electrónico",
-    "password": "Contraseña"
+    "password": "Contraseña",
+    "unsupportedSchool": {
+      "title": "Escuela no compatible",
+      "description": "La escuela «{{school}}» todavía no es compatible oficialmente con Mauria. Si su portal funciona con Aurion, el inicio de sesión puede funcionar, pero algunas funciones podrían no estar disponibles. ¿Continuar de todos modos?",
+      "confirm": "Continuar",
+      "cancel": "Cancelar"
+    }
   },
   "welcome": {
     "mauria": "Mauria",
