@@ -108,8 +108,9 @@
     },
     "restaurantParameter": {
       "title": "Menu du RU",
-      "enabled": "Affiché",
-      "disabled": "Masqué"
+      "none": "Aucun",
+      "lille": "Lille",
+      "chateauroux": "Châteauroux"
     },
     "actions": {
       "associations": "Associations",
@@ -149,6 +150,7 @@
       "title": "Menu du jour",
       "menuOf": "Menu du {{date}}",
       "openPdf": "Ouvrir le menu complet (PDF)",
+      "openCastelRu": "Ouvrir le menu (Crous)",
       "unavailable": "Menu pas encore disponible pour ce resto"
     }
   },

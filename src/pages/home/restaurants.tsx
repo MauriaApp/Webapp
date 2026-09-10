@@ -13,6 +13,7 @@ import {
     Fish,
     Globe,
     LucideIcon,
+    Milk,
     Salad,
     Sandwich,
     Soup,
@@ -31,9 +32,9 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import { fetchDailyMenu } from "@/lib/api/lacatho";
+import { fetchCastelRuMenu, fetchDailyMenu } from "@/lib/api/lacatho";
 import { RestaurantMenu } from "@/types/data";
-import { useRestaurantMenuEnabled } from "@/lib/utils/restaurant-menu";
+import { useRestaurantCampus } from "@/lib/utils/restaurant-menu";
 import { SectionHeader } from "./sections";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 
@@ -76,9 +77,11 @@ const SECTION_ICON_KEYWORDS: Array<[string, LucideIcon]> = [
     ["dessert", CakeSlice],
     ["patisserie", CakeSlice],
     ["gateau", CakeSlice],
-    ["fromage", CakeSlice],
-    ["laitage", CakeSlice],
-    ["yaourt", CakeSlice],
+    ["laitage", Milk],
+    ["laitance", Milk],
+    ["yaourt", Milk],
+    ["fromage", Milk],
+    ["fromage blanc", Milk],
     ["fruit", Apple],
     ["compote", Apple],
     ["boisson", CupSoda],
@@ -101,10 +104,13 @@ function getSectionIcon(title: string): LucideIcon {
 
 export function RestaurantsSection() {
     const { t } = useTranslation();
-    const menuEnabled = useRestaurantMenuEnabled();
+    const campus = useRestaurantCampus();
     const { data } = useQuery({
-        queryKey: ["dailyMenu"],
-        queryFn: fetchDailyMenu,
+        queryKey:
+            campus === "chateauroux" ? ["castelRuMenu"] : ["dailyMenu"],
+        queryFn:
+            campus === "chateauroux" ? fetchCastelRuMenu : fetchDailyMenu,
+        enabled: campus !== "none",
         staleTime: 1000 * 60 * 30, // 30 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         placeholderData: (previousData) => previousData,
@@ -114,7 +120,13 @@ export function RestaurantsSection() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     // Désactivé depuis les réglages, ou API pas encore à jour / injoignable.
-    if (!menuEnabled || !data) return null;
+    if (campus === "none" || !data) return null;
+
+    // Lien vers la source du menu (PDF pour Lille, page Crous pour Châteauroux).
+    const sourceLabel =
+        campus === "chateauroux"
+            ? t("homePage.restaurants.openCastelRu")
+            : t("homePage.restaurants.openPdf");
 
     const handleClick = (restaurant: RestaurantMenu) => {
         setSelected(restaurant);
@@ -207,7 +219,7 @@ export function RestaurantsSection() {
                                     rel="noopener noreferrer"
                                 >
                                     <ExternalLink className="mr-2 h-4 w-4" />
-                                    {t("homePage.restaurants.openPdf")}
+                                    {sourceLabel}
                                 </a>
                             </Button>
                         </div>
