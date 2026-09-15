@@ -659,7 +659,7 @@
             hsl(50 95% 58%)
         );
         --planning-event-default-shadow: 0 16px 32px hsl(25 95% 60% / 0.28);
-        --planning-event-default-text: hsl(var(--mauria-black));
+        --planning-event-default-text: hsl(var(--mauria-white));
         --planning-event-default-solid: hsl(352 90% 65%);
 
         --planning-event-epreuve-gradient: linear-gradient(
@@ -668,7 +668,7 @@
             hsl(352 90% 65%)
         );
         --planning-event-epreuve-shadow: 0 16px 32px hsl(330 85% 60% / 0.28);
-        --planning-event-epreuve-text: hsl(var(--mauria-black));
+        --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
             45deg,
@@ -676,7 +676,7 @@
             hsl(170 65% 45%)
         );
         --planning-event-personal-shadow: 0 16px 32px hsl(135 65% 50% / 0.28);
-        --planning-event-personal-text: hsl(var(--mauria-black));
+        --planning-event-personal-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
@@ -684,7 +684,7 @@
             hsl(240 70% 60%)
         );
         --planning-event-autogere-shadow: 0 16px 32px hsl(200 85% 60% / 0.28);
-        --planning-event-autogere-text: hsl(var(--mauria-black));
+        --planning-event-autogere-text: hsl(var(--mauria-white));
 
         --particles-color: hsl(var(--mauria-particles));
         --meteors-trail-glow: hsl(var(--mauria-meteor-glow));
