@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-import { getHomeUpcoming } from "@/lib/utils/home";
+import { buildWidgetLessons, getHomeUpcoming } from "@/lib/utils/home";
+import { hasWidgetPlugin, pushWidgetPlanning } from "@/lib/native/widget";
+import { useWidgetGradesSync } from "@/lib/native/use-widget-grades-sync";
 import { staggerGroup } from "@/lib/motion";
 import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
@@ -69,6 +71,16 @@ export function HomePage() {
     });
 
     const { current, today, tomorrow } = getHomeUpcoming({ lessons });
+
+    // Pousse le planning au widget Android a chaque fois que les cours changent.
+    useEffect(() => {
+        if (lessons.length === 0 || !hasWidgetPlugin()) return;
+        void pushWidgetPlanning(buildWidgetLessons(lessons));
+    }, [lessons]);
+
+    // Idem pour le widget de notes, depuis le cache : sinon il ne se
+    // rafraichit qu'en ouvrant la page notes.
+    useWidgetGradesSync();
     const [firstName, setFirstName] = useState<string>(t("homePage.welcome"));
 
     useEffect(() => {

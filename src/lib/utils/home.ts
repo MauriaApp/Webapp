@@ -7,6 +7,7 @@ import {
     isAfter,
     isSameDay,
     isWithinInterval,
+    startOfWeek,
 } from "date-fns";
 
 // Some planning timestamps end with offsets like "+0200" (no colon).
@@ -16,6 +17,11 @@ const normalizeOffset = (iso: string) =>
 
 const toDate = (s: string) => new Date(normalizeOffset(s));
 
+// Aurion ne remplit pas toujours la ligne du nom de la matiere : le titre se
+// reduit alors au code de type ("DS selon planning\nDS_SURV"). On le passe par
+// le meme dictionnaire que le badge plutot que d'afficher le code brut.
+const TYPE_CODE = /^[A-Z0-9]+(?:_[A-Z0-9]+)+$/;
+
 export const parseFromTitle = (lesson: Lesson) => {
     const lines = lesson.title
         .split("\n")
@@ -23,7 +29,10 @@ export const parseFromTitle = (lesson: Lesson) => {
         .filter(Boolean);
 
     const location = lines[0] ?? "";
-    const courseTitle = lines[1] ?? lines[0] ?? lesson.title;
+    const rawTitle = lines[1] ?? lines[0] ?? lesson.title;
+    const courseTitle = TYPE_CODE.test(rawTitle)
+        ? formatLessonType(rawTitle)
+        : rawTitle;
     const inferredType = lines[2] ?? lesson.className ?? "";
     const teacher = lines[3] ?? "";
 
@@ -75,6 +84,40 @@ export const getHomeUpcoming = ({
         today: todaysUpcoming.map(toCourse),
         tomorrow: tomorrows.map(toCourse),
     };
+};
+
+export type WidgetLesson = {
+    title: string;
+    type: string;
+    location: string;
+    time: string;
+    startMs: number;
+    endMs: number;
+};
+
+// Cours parses et tries envoyes au widget natif (MauriaPWA2). Le natif refait
+// le tri passe / en cours / a venir selon l'heure.
+//
+// On remonte jusqu'au lundi de la semaine courante, et pas seulement jusqu'a
+// maintenant : le widget "Semaine" dessine la grille complete, jours deja
+// passes inclus. Le widget "Prochains cours" ignore ces cours-la de lui-meme.
+export const buildWidgetLessons = (lessons: Lesson[]): WidgetLesson[] => {
+    const from = startOfWeek(new Date(), { weekStartsOn: 1 }).getTime();
+    return lessons
+        .map((l) => ({ lesson: l, start: toDate(l.start), end: toDate(l.end) }))
+        .filter(({ end }) => end.getTime() >= from)
+        .sort((a, b) => a.start.getTime() - b.start.getTime())
+        .map(({ lesson, start, end }) => {
+            const { courseTitle, location, type } = parseFromTitle(lesson);
+            return {
+                title: courseTitle,
+                type,
+                location,
+                time: `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`,
+                startMs: start.getTime(),
+                endMs: end.getTime(),
+            };
+        });
 };
 
 export const formatLessonType = (lessonType: string) => {
