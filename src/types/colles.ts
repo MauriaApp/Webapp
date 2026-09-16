@@ -15,12 +15,6 @@ export type ColleSlot = {
     start: string;
 };
 
-export type ColleStudent = {
-    lastName: string;
-    firstName: string;
-    group: string;
-};
-
 export type CollesClass = {
     id: string;
     label: string;
@@ -30,5 +24,4 @@ export type CollesClass = {
     slots: Record<string, ColleSlot>;
     /** Group id -> the slot codes of each week */
     groups: Record<string, string[][]>;
-    students: ColleStudent[];
 };
