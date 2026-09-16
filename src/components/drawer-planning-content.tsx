@@ -14,7 +14,7 @@ import {
     ChevronDownIcon,
     CalendarDays,
 } from "lucide-react";
-import { formatLessonType } from "@/lib/utils/home";
+import { formatLessonTeacher, formatLessonType } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
 
 export function DrawerPlanningContent({
@@ -73,7 +73,9 @@ export function DrawerPlanningContent({
                                             {t("drawerPlanningContent.teacher")}
                                         </span>
                                         <p className="text-gray-900 dark:text-white">
-                                            {eventInfo.teacher}
+                                            {formatLessonTeacher(
+                                                eventInfo.teacher
+                                            )}
                                         </p>
                                     </div>
                                 </div>

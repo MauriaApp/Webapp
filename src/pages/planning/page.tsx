@@ -1,9 +1,6 @@
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
-import interactionPlugin from "@fullcalendar/interaction";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
 import { fetchPlanning, getSession } from "@/lib/api/aurion";
@@ -12,8 +9,9 @@ import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
+import { PlanningCalendar } from "@/components/planning-calendar";
 import { Lesson } from "@/types/aurion";
-import { formatLessonLocation, parseFromTitle } from "@/lib/utils/home";
+import { parseFromTitle } from "@/lib/utils/home";
 import { DrawerEventTask } from "@/components/drawer-event-task";
 import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 import { getColleLessons } from "@/lib/utils/colles";
@@ -25,8 +23,6 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
 
-const Calendar = memo(FullCalendar);
-
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
     const { t, i18n } = useTranslation();
@@ -36,13 +32,15 @@ export function PlanningPage() {
         getUserEventsFromLocalStorage()
     );
 
-    // Classes whose colles schedule is known (CPG2 MPI and PSI for now) get
-    // theirs laid over the Aurion planning.
-    const colles = useMemo(
-        () => getColleLessons(getSession()?.email),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [i18n.language]
-    );
+    // Classes whose colles schedule is known (MP2I, MPSI, PSI and MPI) get
+    // theirs laid over the Aurion planning. The class/group lookup is a
+    // server call (API-v2 resolves it from the email, roster stays there).
+    const { data: colles = [] } = useQuery<Lesson[]>({
+        queryKey: ["colles", getSession()?.email, i18n.language],
+        queryFn: () => getColleLessons(getSession()?.email),
+        staleTime: 1000 * 60 * 60 * 24, // a student's class doesn't change daily
+        gcTime: 1000 * 60 * 60 * 24,
+    });
 
     useEffect(() => {
         const handler = (lng: string) => {
@@ -109,95 +107,10 @@ export function PlanningPage() {
                     variants={fadeIn}
                     className="rounded-lg overflow-hidden shadow-lg"
                 >
-                    <Calendar
-                        datesSet={() => {
-                            calendarRef.current?.getApi().updateSize();
-                        }}
+                    <PlanningCalendar
                         ref={calendarRef}
-                        locale={
-                            i18n.language === "fr"
-                                ? FrLocale
-                                : i18n.language === "es"
-                                  ? EsLocale
-                                  : undefined
-                        }
-                        plugins={[
-                            dayGridPlugin,
-                            timeGridPlugin,
-                            interactionPlugin,
-                        ]}
-                        initialView="timeGridWeek"
-                        headerToolbar={{
-                            left: "today",
-                            center: "timeGridWeek,timeGridDay",
-                            right: "prev,next",
-                        }}
-                        buttonText={{
-                            today: t("schedulePage.buttons.today"),
-                            timeGridWeek: t("schedulePage.buttons.week"),
-                            timeGridDay: t("schedulePage.buttons.day"),
-                        }}
-                        slotMinTime="07:00:00"
-                        slotMaxTime="22:00:00"
-                        titleFormat={{ month: "short", day: "numeric" }}
-                        allDaySlot={false}
-                        firstDay={1}
-                        hiddenDays={[0]}
                         eventSources={[lessons, userEvents, colles]}
-                        eventColor="var(--planning-event-default-solid)"
-                        eventContent={(arg) => {
-                            const lines = arg.event.title
-                                .split("\n")
-                                .map((line) => line.trim())
-                                .filter(Boolean);
-
-                            // Aurion rooms read "A812 - Salle … - Campus …";
-                            // only the room itself fits in a cell, the drawer
-                            // still shows the full label.
-                            const [
-                                location = "",
-                                courseTitle = "",
-                                ,
-                                teacher = "",
-                            ] = lines;
-                            const place = formatLessonLocation(location);
-
-                            // Free-form personal events are a single line and
-                            // are kept as typed.
-                            let text = arg.event.title;
-                            if (arg.event.classNames.includes("est-colle")) {
-                                text = [
-                                    [place, courseTitle]
-                                        .filter(Boolean)
-                                        .join(" "),
-                                    teacher,
-                                ]
-                                    .filter(Boolean)
-                                    .join(" - ");
-                            } else if (lines.length >= 2) {
-                                text = [place, ...lines.slice(1)].join(" ");
-                            }
-
-                            return (
-                                <div className="fc-event-main-frame">
-                                    <div className="fc-event-title-container">
-                                        <div className="fc-event-title fc-sticky">
-                                            {text}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        }}
-                        contentHeight="auto"
-                        nowIndicator={true}
-                        stickyHeaderDates={false}
-                        editable={false}
-                        eventAllow={() => false}
-                        droppable={false}
-                        eventStartEditable={false}
-                        eventDurationEditable={false}
-                        eventResizableFromStart={false}
-                        eventClick={(info) => {
+                        onEventClick={(info) => {
                             const event = info.event.toJSON();
 
                             const { courseTitle, location, type, teacher } =
