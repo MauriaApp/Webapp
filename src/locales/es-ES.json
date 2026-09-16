@@ -166,6 +166,17 @@
       "type": "Tipo",
       "unknown": "Desconocido"
     },
+    "colles": {
+      "event": "Khôlle de {{subject}}",
+      "type": "Khôlle",
+      "subjects": {
+        "maths": "Matemáticas",
+        "physics": "Física",
+        "english": "Inglés",
+        "cs": "Informática",
+        "engineering": "Ingeniería"
+      }
+    },
     "loadingSchedule": "Cargando datos del horario…",
     "buttons": {
       "today": "Hoy",

@@ -68,6 +68,12 @@
     box-shadow: var(--planning-event-personal-shadow) !important;
 }
 
+.est-colle {
+    color: var(--planning-event-colle-text) !important;
+    background: var(--planning-event-colle-gradient) !important;
+    box-shadow: var(--planning-event-colle-shadow) !important;
+}
+
 .TD_AUTO_GERE_PLANIFIE,
 .TP_AUTO_GERE_PLANIFIE,
 .CM_AUTO_GERE_PLANIFIE,
@@ -105,6 +111,13 @@
     color: var(--planning-event-personal-text) !important;
     background: var(--planning-event-personal-gradient) !important;
     box-shadow: var(--planning-event-personal-shadow) !important;
+}
+
+.fc-timegrid-event.est-colle,
+.fc-timegrid-more-link.est-colle {
+    color: var(--planning-event-colle-text) !important;
+    background: var(--planning-event-colle-gradient) !important;
+    box-shadow: var(--planning-event-colle-shadow) !important;
 }
 
 @keyframes appear {

@@ -167,6 +167,17 @@
       "type": "Type",
       "unknown": "Unknown"
     },
+    "colles": {
+      "event": "{{subject}} khôlle",
+      "type": "Khôlle",
+      "subjects": {
+        "maths": "Maths",
+        "physics": "Physics",
+        "english": "English",
+        "cs": "Computer science",
+        "engineering": "Engineering"
+      }
+    },
     "buttons": {
       "today": "Today",
       "week": "Week",

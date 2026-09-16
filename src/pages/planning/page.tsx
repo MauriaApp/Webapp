@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -6,16 +6,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
-import { fetchPlanning } from "@/lib/api/aurion";
+import { fetchPlanning, getSession } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Lesson } from "@/types/aurion";
-import { parseFromTitle } from "@/lib/utils/home";
+import { formatLessonLocation, parseFromTitle } from "@/lib/utils/home";
 import { DrawerEventTask } from "@/components/drawer-event-task";
 import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
+import { getColleLessons } from "@/lib/utils/colles";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
@@ -33,6 +34,14 @@ export function PlanningPage() {
     const [eventInfo, setEventInfo] = useState<PreparedLesson | null>(null);
     const [userEvents, setUserEvents] = useState<Lesson[]>(
         getUserEventsFromLocalStorage()
+    );
+
+    // Classes whose colles schedule is known (CPG2 MPI and PSI for now) get
+    // theirs laid over the Aurion planning.
+    const colles = useMemo(
+        () => getColleLessons(getSession()?.email),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [i18n.language]
     );
 
     useEffect(() => {
@@ -134,8 +143,54 @@ export function PlanningPage() {
                         allDaySlot={false}
                         firstDay={1}
                         hiddenDays={[0]}
-                        eventSources={[lessons, userEvents]}
+                        eventSources={[lessons, userEvents, colles]}
                         eventColor="var(--planning-event-default-solid)"
+                        eventContent={(arg) => {
+                            const lines = arg.event.title
+                                .split("\n")
+                                .map((line) => line.trim())
+                                .filter(Boolean);
+
+                            // Free-form personal events: nothing to lay out.
+                            if (lines.length < 2) return true;
+
+                            // Aurion rooms read "A812 - Salle … - Campus …";
+                            // only the room itself fits in a cell, the drawer
+                            // still shows the full label.
+                            const [
+                                location = "",
+                                courseTitle = "",
+                                ,
+                                teacher = "",
+                            ] = lines;
+                            const place = formatLessonLocation(location);
+
+                            const text = arg.event.classNames.includes(
+                                "est-colle"
+                            )
+                                ? [
+                                      [place, courseTitle]
+                                          .filter(Boolean)
+                                          .join(" "),
+                                      teacher,
+                                  ]
+                                      .filter(Boolean)
+                                      .join(" - ")
+                                : [place, ...lines.slice(1)].join(" ");
+
+                            return (
+                                <div className="fc-event-main-frame">
+                                    <div className="fc-event-time">
+                                        {arg.timeText}
+                                    </div>
+                                    <div className="fc-event-title-container">
+                                        <div className="fc-event-title fc-sticky">
+                                            {text}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }}
                         contentHeight="auto"
                         nowIndicator={true}
                         stickyHeaderDates={false}
