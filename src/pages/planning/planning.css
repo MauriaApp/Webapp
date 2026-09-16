@@ -151,11 +151,6 @@
     padding: 8px 8px 0 8px;
 }
 
-.fc .fc-event-time {
-    white-space: normal !important;
-    margin-bottom: 8px !important;
-}
-
 .fc-timegrid-col-events {
     margin: 0 !important;
 }

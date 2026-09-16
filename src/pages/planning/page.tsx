@@ -151,9 +151,6 @@ export function PlanningPage() {
                                 .map((line) => line.trim())
                                 .filter(Boolean);
 
-                            // Free-form personal events: nothing to lay out.
-                            if (lines.length < 2) return true;
-
                             // Aurion rooms read "A812 - Salle … - Campus …";
                             // only the room itself fits in a cell, the drawer
                             // still shows the full label.
@@ -165,24 +162,24 @@ export function PlanningPage() {
                             ] = lines;
                             const place = formatLessonLocation(location);
 
-                            const text = arg.event.classNames.includes(
-                                "est-colle"
-                            )
-                                ? [
-                                      [place, courseTitle]
-                                          .filter(Boolean)
-                                          .join(" "),
-                                      teacher,
-                                  ]
-                                      .filter(Boolean)
-                                      .join(" - ")
-                                : [place, ...lines.slice(1)].join(" ");
+                            // Free-form personal events are a single line and
+                            // are kept as typed.
+                            let text = arg.event.title;
+                            if (arg.event.classNames.includes("est-colle")) {
+                                text = [
+                                    [place, courseTitle]
+                                        .filter(Boolean)
+                                        .join(" "),
+                                    teacher,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" - ");
+                            } else if (lines.length >= 2) {
+                                text = [place, ...lines.slice(1)].join(" ");
+                            }
 
                             return (
                                 <div className="fc-event-main-frame">
-                                    <div className="fc-event-time">
-                                        {arg.timeText}
-                                    </div>
                                     <div className="fc-event-title-container">
                                         <div className="fc-event-title fc-sticky">
                                             {text}
