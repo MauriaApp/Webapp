@@ -230,6 +230,18 @@
       "today": "Today",
       "week": "Week",
       "day": "Day"
+    },
+    "freeRooms": {
+      "title": "Free rooms",
+      "button": "Free rooms",
+      "back": "Schedule",
+      "error": "Couldn't fetch room availability right now.",
+      "statusFree": "Free",
+      "statusBusy": "Occupied",
+      "loading": "Loading rooms…",
+      "updatedAt": "Updated at {{time}}",
+      "empty": "No building available right now.",
+      "untilPrefix": "until"
     }
   },
   "gradesPage": {
