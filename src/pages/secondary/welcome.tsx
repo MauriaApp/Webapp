@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -116,8 +116,10 @@ export function WelcomePage() {
         ],
     });
 
-    // Only block the button on the Aurion data (planning, grades, absences).
-    const isBusy = results.slice(0, 3).some((r) => r.isLoading);
+    // Only block the button on the planning — grades and absences continue
+    // to fetch in the background and will be cached when the user navigates
+    // to those pages.
+    const isBusy = results[0].isLoading;
     const [progress, setProgress] = useState(0);
 
     const tips = t("welcome.tips", { returnObjects: true }) as string[];
@@ -142,21 +144,48 @@ export function WelcomePage() {
         return () => window.clearInterval(id);
     }, [isBusy]);
 
-    // Fake progress effect, with irregularities. Tuned so it rarely pins at
-    // 100% before the (slow) Aurion scrapes actually finish.
+    // Fake progress effect, with irregularities. Tuned to target ~10s
+    // (planning takes ~9s). When the planning finishes early, the bar
+    // smoothly ramps to 100% over ~800ms instead of teleporting.
+    const progressRef = useRef(0);
     useEffect(() => {
         if (!isBusy) {
-            setProgress(100);
+            // Smooth ramp from current progress to 100%.
+            const rampFrom = progressRef.current;
+            if (rampFrom >= 100) {
+                setProgress(100);
+                const resetTimeout = window.setTimeout(
+                    () => setProgress(0),
+                    300
+                );
+                return () => window.clearTimeout(resetTimeout);
+            }
+            const rampStart = Date.now();
+            const rampDuration = 800;
+            const rampId = window.setInterval(() => {
+                const elapsed = Date.now() - rampStart;
+                const t = Math.min(1, elapsed / rampDuration);
+                // easeOut cubic
+                const eased = 1 - Math.pow(1 - t, 3);
+                setProgress(
+                    Math.round(rampFrom + (100 - rampFrom) * eased)
+                );
+                if (t >= 1) window.clearInterval(rampId);
+            }, 16);
             const resetTimeout = window.setTimeout(() => setProgress(0), 300);
-            return () => window.clearTimeout(resetTimeout);
+            return () => {
+                window.clearInterval(rampId);
+                window.clearTimeout(resetTimeout);
+            };
         }
 
         setProgress(0);
+        progressRef.current = 0;
         const start = Date.now();
         let current = 0;
         const interval = window.setInterval(() => {
             const elapsed = Date.now() - start;
-            const base = Math.min(0.97, elapsed / 20000);
+            const base = Math.min(0.97, elapsed / 10000);
             const burst = Math.random() < 0.22 ? Math.random() * 0.1 : 0;
             const wobble = (Math.random() - 0.5) * 0.04;
             const target = Math.min(0.97, base + wobble + burst);
@@ -165,7 +194,8 @@ export function WelcomePage() {
                 Math.max(current + 0.006, target, base)
             );
             current = next;
-            setProgress(Math.round(current * 100));
+            progressRef.current = Math.round(current * 100);
+            setProgress(progressRef.current);
         }, 140);
 
         return () => window.clearInterval(interval);
