@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, GraduationCap, Info } from "lucide-react";
+import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import {
     getGrades,
@@ -704,16 +704,24 @@ export function GradesPage() {
                                 <div className="text-center py-12">
                                     <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
                                         <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                            {isBusy ? (
+                                                <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                                            ) : (
+                                                <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                            )}
                                         </div>
                                         <h3 className="text-lg font-semibold mb-2">
-                                            {t("gradesPage.noGrades")}
+                                            {isBusy
+                                                ? t("common.loading")
+                                                : t("gradesPage.noGrades")}
                                         </h3>
-                                        <p className="text-muted-foreground">
-                                            {t(
-                                                "gradesPage.noGradesPlaceholder"
-                                            )}
-                                        </p>
+                                        {!isBusy && (
+                                            <p className="text-muted-foreground">
+                                                {t(
+                                                    "gradesPage.noGradesPlaceholder"
+                                                )}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </motion.div>

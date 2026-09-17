@@ -116,6 +116,7 @@
     },
     "actions": {
       "associations": "Associations",
+      "documents": "Mes documents",
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
       "print": "Imprimer"
@@ -323,6 +324,14 @@
     "reinitialize": "Réinitialiser",
     "formLink": "Ton association manque ou a changé ?",
     "noResultsFor": "Aucune association trouvée pour \"{{term}}\""
+  },
+  "documentsPage": {
+    "allCategories": "Tout",
+    "noDocuments": "Aucun document",
+    "noDocumentsPlaceholder": "Aucun document n'est disponible pour le moment.",
+    "downloadSuccess": "{{filename}} téléchargé",
+    "downloadError": "Échec du téléchargement",
+    "loadingHint": "C'est normal si c'est long, la récupération prend environ 30 secondes"
   },
   "drawerPlanningContent": {
     "place": "Lieu",

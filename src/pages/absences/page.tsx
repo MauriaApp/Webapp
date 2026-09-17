@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { CalendarOff } from "lucide-react";
+import { CalendarOff, Loader2 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAbsencesDurations, getAbsences, getAbsenceSemesters, getCurrentSemesterKey, isAbsenceJustified } from "@/lib/utils/absences";
@@ -191,16 +191,24 @@ export function AbsencesPage() {
                             <div className="text-center py-12">
                                 <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
                                     <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <CalendarOff className="w-8 h-8 text-muted-foreground" />
+                                        {isBusy ? (
+                                            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                                        ) : (
+                                            <CalendarOff className="w-8 h-8 text-muted-foreground" />
+                                        )}
                                     </div>
                                     <h3 className="text-lg font-semibold mb-2">
-                                        {t("absencesPage.noAbsences")}
+                                        {isBusy
+                                            ? t("common.loading")
+                                            : t("absencesPage.noAbsences")}
                                     </h3>
-                                    <p className="text-muted-foreground">
-                                        {t(
-                                            "absencesPage.noAbsencesPlaceholder"
-                                        )}
-                                    </p>
+                                    {!isBusy && (
+                                        <p className="text-muted-foreground">
+                                            {t(
+                                                "absencesPage.noAbsencesPlaceholder"
+                                            )}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </motion.div>

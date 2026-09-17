@@ -116,6 +116,7 @@
     },
     "actions": {
       "associations": "Associations",
+      "documents": "My documents",
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
       "print": "Print"
@@ -323,6 +324,14 @@
     "reinitialize": "Reinitialize",
     "formLink": "Your association missing or changed?",
     "noResultsFor": "No association found for \"{{term}}\""
+  },
+  "documentsPage": {
+    "allCategories": "All",
+    "noDocuments": "No documents",
+    "noDocumentsPlaceholder": "No documents are available at the moment.",
+    "downloadSuccess": "{{filename}} downloaded",
+    "downloadError": "Download failed",
+    "loadingHint": "It's normal if it takes a while, fetching takes about 30 seconds"
   },
   "drawerPlanningContent": {
     "place": "Place",

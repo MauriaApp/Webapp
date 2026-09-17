@@ -1,6 +1,6 @@
 import { getFromStorage, saveToStorage } from "../utils/storage";
 
-const API_URL =
+export const API_URL =
     import.meta.env.VITE_API_URL ?? "https://mauria-api.fly.dev";
 
 export interface APIResponse<T> {
