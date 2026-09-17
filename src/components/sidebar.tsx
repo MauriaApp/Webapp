@@ -54,7 +54,8 @@ import {
     SelectValue,
 } from "./ui/select";
 import { clearStorage } from "@/lib/utils/storage";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchUpdates } from "@/lib/api/supa";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -82,6 +83,13 @@ export default function Sidebar() {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const { theme, setTheme } = useTheme();
+    const { data: updates } = useQuery({
+        queryKey: ["updates"],
+        queryFn: fetchUpdates,
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 60 * 24,
+    });
+    const appVersion = updates?.[0]?.version ?? "?";
 
     const { background, setBackground } = useBackground();
     const selectedBackgroundLabel = t(
@@ -441,7 +449,12 @@ export default function Sidebar() {
                         })}
                     </p>
                     <div className="w-full text-center text-xs text-muted-foreground">
-                        <span>Version 3.1.0</span>
+                        <button
+                            onClick={() => handleNavigate("/versions")}
+                            className="underline underline-offset-4"
+                        >
+                            Version {appVersion}
+                        </button>
                         <span className="mx-1">—</span>
                         <a
                             href={githubURL}
@@ -451,7 +464,6 @@ export default function Sidebar() {
                         >
                             {t("sidebar.contribute")}
                         </a>
-                        <span className="ml-1">—</span>
                         {/* TODO Fix beta link (think how to do this shit) */}
                         {/* <Button
                             variant="link"
@@ -464,16 +476,6 @@ export default function Sidebar() {
                             </span>
                         </Button> 
                         <span className="ml-1">—</span>*/}
-                        <Button
-                            variant="link"
-                            size="sm"
-                            className="p-0 ml-2"
-                            onClick={() => handleNavigate("/logs")}
-                        >
-                            <span className="text-xs text-muted-foreground">
-                                <span className="">logs</span>
-                            </span>
-                        </Button>
                     </div>
                 </SheetFooter>
             </SheetContent>

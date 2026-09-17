@@ -119,7 +119,8 @@
       "documents": "My documents",
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
-      "print": "Print"
+      "print": "Print",
+      "versions": "Updates"
     },
     "help": "A question, an idea?",
     "logOut": "Log Out",
@@ -351,5 +352,9 @@
     "visualImprovements": "Visual improvements",
     "technicalImprovements": "Technical improvements",
     "discardButton": "Okay"
+  },
+  "versionsPage": {
+    "version": "Version",
+    "noVersions": "No updates to display."
   }
 }
