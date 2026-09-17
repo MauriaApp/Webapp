@@ -1,15 +1,12 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { CalendarOff } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { getAbsencesDurations } from "@/lib/utils/absences";
+import { getAbsencesDurations, getAbsences, getAbsenceSemesters, getCurrentSemesterKey, isAbsenceJustified } from "@/lib/utils/absences";
 import { Separator } from "@/components/ui/separator";
 import { AbsenceCard, AbsenceCardAnimate } from "./absences-card";
-import { useCurrentYear } from "@/contexts/currentYearContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { fetchAbsences } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
@@ -17,12 +14,23 @@ import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Absence } from "@/types/aurion";
 import { useTranslation } from "react-i18next";
 import { fadeIn, staggerGroup } from "@/lib/motion";
+import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 
 const AnimatedAbsenceCard = memo(AbsenceCardAnimate);
 const StaticAbsenceCard = memo(AbsenceCard);
+
+type StatusFilter = "justified" | "unjustified";
+
 export function AbsencesPage() {
-    const { showCurrentYearOnly, toggleCurrentYearFilter } = useCurrentYear();
     const { t } = useTranslation();
+    const [selectedStatus, setSelectedStatus] = useState<StatusFilter | null>(
+        null
+    );
+    // undefined = not chosen yet (falls back to the current semester);
+    // null = "All"; string = a specific semester key
+    const [semesterChoice, setSemesterChoice] = useState<
+        string | null | undefined
+    >(undefined);
 
     const {
         data: absences = [],
@@ -51,9 +59,62 @@ export function AbsencesPage() {
 
     const handleRefresh = () => refetch();
 
-    const { total, justified, unjustified, filteredAbsences } = useMemo(() => {
-        return getAbsencesDurations(absences, showCurrentYearOnly);
-    }, [absences, showCurrentYearOnly]);
+    const semesters = useMemo(() => getAbsenceSemesters(absences), [absences]);
+
+    const semesterKey = useMemo(() => {
+        if (semesterChoice !== undefined) return semesterChoice;
+        const current = getCurrentSemesterKey();
+        // Default to the current semester, else the most recent one with absences
+        if (semesters.some((s) => s.key === current)) return current;
+        return semesters[semesters.length - 1]?.key ?? null;
+    }, [semesterChoice, semesters]);
+
+    const filteredAbsences = useMemo(
+        () => getAbsences({ semesterKey, absences }),
+        [semesterKey, absences]
+    );
+
+    const displayedAbsences = useMemo(() => {
+        if (!selectedStatus) return filteredAbsences;
+        return filteredAbsences.filter(
+            (absence) => isAbsenceJustified(absence) === (selectedStatus === "justified")
+        );
+    }, [filteredAbsences, selectedStatus]);
+
+    const { total, justified, unjustified } = useMemo(
+        () => getAbsencesDurations(filteredAbsences),
+        [filteredAbsences]
+    );
+
+    const semesterItems = useMemo<CarouselItem[]>(
+        () => [
+            { value: null, label: t("common.allSemesters") },
+            ...semesters.map((s) => ({
+                value: s.key,
+                label: t("common.semesterLabel", {
+                    sem: s.sem,
+                    year: s.yearLabel,
+                }),
+            })),
+        ],
+        [semesters, t]
+    );
+
+    const statusItems = useMemo<CarouselItem[]>(
+        () => [
+            { value: null, label: t("absencesPage.allStatuses") },
+            { value: "justified", label: t("absencesPage.statusJustified") },
+            {
+                value: "unjustified",
+                label: t("absencesPage.statusUnjustified"),
+            },
+        ],
+        [t]
+    );
+
+    // Remounts the results list on every filter change so the entrance
+    // animation replays consistently (and not just from the 2nd change on).
+    const filterKey = `${semesterKey ?? "all"}|${selectedStatus ?? "all"}`;
 
     return (
         <PullToRefresh
@@ -64,21 +125,24 @@ export function AbsencesPage() {
             refreshingText={t("common.refreshing")}
         >
             <motion.div variants={staggerGroup} initial="hidden" animate="show">
-                <motion.div
-                    variants={fadeIn}
-                    className="flex items-center gap-2 mb-4"
-                >
-                    <Switch
-                        id="onlyThisYear"
-                        checked={showCurrentYearOnly}
-                        onCheckedChange={toggleCurrentYearFilter}
+                <motion.div variants={fadeIn} className="space-y-3 mb-4">
+                    {semesters.length > 1 && (
+                        <FilterCarousel
+                            items={semesterItems}
+                            selected={semesterKey}
+                            onSelect={setSemesterChoice}
+                        />
+                    )}
+                    <FilterCarousel
+                        items={statusItems}
+                        selected={selectedStatus}
+                        onSelect={(v) =>
+                            setSelectedStatus(v as StatusFilter | null)
+                        }
                     />
-                    <Label htmlFor="onlyThisYear">
-                        {t("absencesPage.onlyCurrentYear")}
-                    </Label>
                 </motion.div>
                 <motion.div variants={fadeIn}>
-                    <Card className="mb-6 border-mauria-border">
+                    <Card className="mb-6 border-none bg-white shadow-md dark:bg-mauria-card">
                         <CardHeader className=" flex-row items-center space-y-0 space-x-4">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
                                 {t("absencesPage.total")}
@@ -116,9 +180,9 @@ export function AbsencesPage() {
                     </Card>
                 </motion.div>
                 <AnimatePresence mode="popLayout">
-                    {filteredAbsences.length === 0 ? (
+                    {displayedAbsences.length === 0 ? (
                         <motion.div
-                            key="empty-state"
+                            key={`empty-${filterKey}`}
                             variants={fadeIn}
                             initial="hidden"
                             animate="show"
@@ -142,14 +206,14 @@ export function AbsencesPage() {
                         </motion.div>
                     ) : (
                         <motion.div
-                            key="list"
+                            key={`list-${filterKey}`}
                             className="space-y-4 pb-4"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                         >
                             <AnimatePresence mode="popLayout">
-                                {filteredAbsences.map((absence, index) =>
+                                {displayedAbsences.map((absence, index) =>
                                     index < 8 ? (
                                         <AnimatedAbsenceCard
                                             key={index}

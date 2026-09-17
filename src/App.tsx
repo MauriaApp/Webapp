@@ -12,7 +12,6 @@ import { ModalContextProvider } from "./contexts/modalContext";
 import { ToastContextProvider } from "./contexts/toastContent";
 import { AbsencesPage } from "./pages/absences/page";
 import { HomePage } from "./pages/home/page";
-import { CurrentYearProvider } from "./contexts/currentYearContext";
 import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
@@ -112,9 +111,7 @@ function App() {
                         <Toaster richColors position="top-center" />
                         <BrowserRouter basename={routerBaseName}>
                             <ReactQueryProvider>
-                                <CurrentYearProvider>
-                                    <AppRoutes />
-                                </CurrentYearProvider>
+                                <AppRoutes />
                             </ReactQueryProvider>
                         </BrowserRouter>
                     </ModalContextProvider>

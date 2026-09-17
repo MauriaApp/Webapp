@@ -1,73 +1,58 @@
 import { Absence } from "@/types/aurion";
+import { SemesterId, parseFrDate, semesterIdFromDate } from "./semesters";
 
-export const getAbsences = ({
-    showCurrentYearOnly,
+export { getCurrentSemesterKey } from "./semesters";
+
+export function getAbsenceSemester(absence: Absence): SemesterId | null {
+    const d = parseFrDate(absence.date);
+    if (!d) return null;
+    return semesterIdFromDate(d);
+}
+
+/** Distinct semesters present in the absences, chronological order (oldest first). */
+export function getAbsenceSemesters(absences: Absence[]): SemesterId[] {
+    const map = new Map<string, SemesterId>();
+    for (const absence of absences) {
+        const s = getAbsenceSemester(absence);
+        if (s) map.set(s.key, s);
+    }
+    return Array.from(map.values()).sort((a, b) => a.key.localeCompare(b.key));
+}
+
+export function getAbsences({
+    semesterKey,
     absences,
 }: {
-    showCurrentYearOnly?: boolean;
+    semesterKey?: string | null;
     absences: Absence[];
-}): Absence[] => {
-    if (!showCurrentYearOnly) return absences || [];
-
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
-
-    // School year starts September 1st
-    const schoolYearStart =
-        currentMonth >= 8
-            ? new Date(currentYear, 8, 1) // September 1st of current year
-            : new Date(currentYear - 1, 8, 1); // September 1st of previous year
-
-    const schoolYearEnd =
-        currentMonth >= 8
-            ? new Date(currentYear + 1, 7, 31, 23, 59, 59, 999) // August 31st of next year
-            : new Date(currentYear, 7, 31, 23, 59, 59, 999); // August 31st of current year
-
-    return absences.filter((absence) => {
-        const [day, month, year] = absence.date.split("/");
-        const fullYear =
-            year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
-        const absenceDate = new Date(
-            fullYear,
-            parseInt(month) - 1,
-            parseInt(day)
-        );
-        return absenceDate >= schoolYearStart && absenceDate <= schoolYearEnd;
+}): Absence[] {
+    return (absences || []).filter((absence) => {
+        if (semesterKey) {
+            return getAbsenceSemester(absence)?.key === semesterKey;
+        }
+        return true;
     });
-};
+}
 
-export const getAbsencesDurations = (
-    absences: Absence[],
-    thisYear?: boolean
-) => {
-    const targetAbsences = thisYear
-        ? getAbsences({ showCurrentYearOnly: true, absences: absences })
-        : absences;
+export function isAbsenceJustified(absence: Absence): boolean {
+    return !absence.type.toLowerCase().includes("non");
+}
 
-    if (!targetAbsences)
-        return {
-            total: "0h00",
-            justified: "0h00",
-            unjustified: "0h00",
-            filteredAbsences: [],
-        };
-
+export const getAbsencesDurations = (absences: Absence[]) => {
     let totalMinutes = 0;
     let justifiedMinutes = 0;
     let unjustifiedMinutes = 0;
 
-    targetAbsences.forEach((absence) => {
+    absences.forEach((absence) => {
         const [hours, minutes] = absence.duration.split(":").map(Number);
         const durationInMinutes = hours * 60 + minutes;
 
         totalMinutes += durationInMinutes;
 
-        const type = absence.type.toLowerCase();
-        if (type.includes("non")) {
-            unjustifiedMinutes += durationInMinutes;
-        } else {
+        if (isAbsenceJustified(absence)) {
             justifiedMinutes += durationInMinutes;
+        } else {
+            unjustifiedMinutes += durationInMinutes;
         }
     });
 
@@ -81,6 +66,5 @@ export const getAbsencesDurations = (
         total: formatDuration(totalMinutes),
         justified: formatDuration(justifiedMinutes),
         unjustified: formatDuration(unjustifiedMinutes),
-        filteredAbsences: targetAbsences || [],
     };
 };
