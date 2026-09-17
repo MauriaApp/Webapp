@@ -65,7 +65,9 @@
     "close": "Close",
     "previous": "Previous",
     "next": "Next",
-    "morePages": "More pages"
+    "morePages": "More pages",
+    "allSemesters": "All",
+    "semesterLabel": "S{{sem}} {{year}}"
   },
   "carousel": {
     "previousSlide": "See previous",
@@ -247,8 +249,6 @@
   "gradesPage": {
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
-    "allSemesters": "All",
-    "semesterLabel": "S{{sem}} {{year}}",
     "details": "Grade details",
     "grade": "Grade",
     "average": "Average",
@@ -290,10 +290,12 @@
   "absencesPage": {
     "noAbsences": "No absences found.",
     "noAbsencesPlaceholder": "No absences have been recorded yet.",
-    "onlyCurrentYear": "Display only current year",
     "justified": "Justified",
     "unjustified": "Unjustified",
-    "total": "Total"
+    "total": "Total",
+    "allStatuses": "All",
+    "statusJustified": "Justified",
+    "statusUnjustified": "Unjustified"
   },
   "agendaPage": {
     "title": "My Agenda",

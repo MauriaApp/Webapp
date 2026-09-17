@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ChevronDown, GraduationCap, Info } from "lucide-react";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import {
@@ -22,17 +21,8 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer";
-import {
-    memo,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import { memo, useMemo, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils/cn";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
@@ -45,6 +35,7 @@ import {
     ChartTooltip,
     ChartConfig,
 } from "@/components/ui/chart";
+import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
 const StaticGradeCard = memo(GradeCard);
@@ -431,10 +422,10 @@ function AveragesComparison({
     const belowClass = diff < 0;
 
     return (
-        <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
+        <Card className="border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card overflow-hidden">
             <CardContent className="p-3 space-y-2">
                 <button
-                    className="w-full flex items-center justify-between gap-2"
+                    className="w-full flex cursor-pointer items-center justify-between gap-2"
                     onClick={() => setExpanded((v) => !v)}
                 >
                     <div className="flex items-center gap-4">
@@ -547,189 +538,6 @@ function AveragesComparison({
     );
 }
 
-type CarouselItem = { value: string | null; label: string };
-
-/**
- * Horizontal chip picker. Native CSS scroll-snap does the snapping (momentum,
- * flicks, release all handled by the browser); JS only (a) centres the selected
- * chip once on mount and (b) adopts whichever chip ends up centred after a
- * user scroll settles. No programmatic-vs-user scroll feedback loop.
- */
-function FilterCarousel({
-    items,
-    selected,
-    onSelect,
-}: {
-    items: CarouselItem[];
-    selected: string | null;
-    onSelect: (v: string | null) => void;
-}) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-    const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const didInitRef = useRef(false);
-    const [sidePadding, setSidePadding] = useState(0);
-
-    const selectedIndex = Math.max(
-        0,
-        items.findIndex((i) => i.value === selected)
-    );
-
-    const centerIndex = useCallback((idx: number, behavior: ScrollBehavior) => {
-        itemRefs.current[idx]?.scrollIntoView({
-            behavior,
-            inline: "center",
-            block: "nearest",
-        });
-    }, []);
-
-    // Half-width padding on both ends so the first/last chip can reach centre.
-    useLayoutEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-        const update = () => setSidePadding(el.clientWidth / 2);
-        update();
-        const ro = new ResizeObserver(update);
-        ro.observe(el);
-        return () => ro.disconnect();
-    }, []);
-
-    // Centre the selected chip once, as soon as the padding is laid out.
-    useEffect(() => {
-        if (sidePadding <= 0 || didInitRef.current) return;
-        didInitRef.current = true;
-        centerIndex(selectedIndex, "auto");
-    }, [sidePadding, selectedIndex, centerIndex]);
-
-    // Smoothly re-centre whenever the selection changes. Runs *after* the
-    // commit (and on the next frame) so the scroll animation starts on a
-    // settled DOM — otherwise the very first change would land instantly.
-    const prevSelectedRef = useRef(selected);
-    useEffect(() => {
-        if (prevSelectedRef.current === selected) return;
-        prevSelectedRef.current = selected;
-        if (!didInitRef.current) return;
-        const id = requestAnimationFrame(() =>
-            centerIndex(selectedIndex, "smooth")
-        );
-        return () => cancelAnimationFrame(id);
-    }, [selected, selectedIndex, centerIndex]);
-
-    // After a user scroll settles, adopt the chip closest to the centre.
-    const handleScroll = useCallback(() => {
-        if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-        idleTimerRef.current = setTimeout(() => {
-            idleTimerRef.current = null;
-            const container = containerRef.current;
-            if (!container) return;
-            const center = container.scrollLeft + container.clientWidth / 2;
-            let bestIdx = selectedIndex;
-            let bestDist = Infinity;
-            for (let i = 0; i < items.length; i++) {
-                const el = itemRefs.current[i];
-                if (!el) continue;
-                const dist = Math.abs(
-                    el.offsetLeft + el.offsetWidth / 2 - center
-                );
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    bestIdx = i;
-                }
-            }
-            const value = items[bestIdx]?.value ?? null;
-            if (value !== selected) onSelect(value);
-        }, 120);
-    }, [items, selected, selectedIndex, onSelect]);
-
-    useEffect(
-        () => () => {
-            if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
-        },
-        []
-    );
-
-    // Keep horizontal drags from bubbling to the pull-to-refresh handler.
-    useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-        let startX = 0;
-        let startY = 0;
-        let axis: "h" | "v" | null = null;
-        const onStart = (e: TouchEvent) => {
-            const touch = e.touches[0];
-            if (!touch) return;
-            startX = touch.clientX;
-            startY = touch.clientY;
-            axis = null;
-        };
-        const onMove = (e: TouchEvent) => {
-            const touch = e.touches[0];
-            if (!touch) return;
-            if (!axis) {
-                const dx = Math.abs(touch.clientX - startX);
-                const dy = Math.abs(touch.clientY - startY);
-                if (dx < 5 && dy < 5) return;
-                axis = dx > dy ? "h" : "v";
-            }
-            if (axis === "h") e.stopPropagation();
-        };
-        el.addEventListener("touchstart", onStart, { passive: true });
-        el.addEventListener("touchmove", onMove, { passive: false });
-        return () => {
-            el.removeEventListener("touchstart", onStart);
-            el.removeEventListener("touchmove", onMove);
-        };
-    }, []);
-
-    return (
-        <div className="relative overflow-hidden">
-            <div
-                ref={containerRef}
-                onScroll={handleScroll}
-                className="flex snap-x snap-mandatory gap-2 overflow-x-auto py-1 [&::-webkit-scrollbar]:hidden"
-                style={{ paddingInline: sidePadding, scrollbarWidth: "none" }}
-            >
-                {items.map((item, idx) => {
-                    const isSelected = item.value === selected;
-                    return (
-                        <Button
-                            key={item.value ?? "__all__"}
-                            ref={(el) => {
-                                itemRefs.current[idx] = el;
-                            }}
-                            type="button"
-                            size="sm"
-                            variant={isSelected ? "default" : "outline"}
-                            aria-pressed={isSelected}
-                            onClick={() => {
-                                if (isSelected) {
-                                    // Selection won't change → re-centre here;
-                                    // otherwise the effect above handles it.
-                                    requestAnimationFrame(() =>
-                                        centerIndex(idx, "smooth")
-                                    );
-                                } else {
-                                    onSelect(item.value);
-                                }
-                            }}
-                            // `border` on both states keeps the width identical
-                            // when the variant flips, so chips never shift.
-                            className={cn(
-                                "shrink-0 snap-center border",
-                                isSelected && "border-transparent"
-                            )}
-                        >
-                            {item.label}
-                        </Button>
-                    );
-                })}
-            </div>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-background to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-background to-transparent" />
-        </div>
-    );
-}
-
 export function GradesPage() {
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -809,10 +617,10 @@ export function GradesPage() {
 
     const semesterItems = useMemo<CarouselItem[]>(
         () => [
-            { value: null, label: t("gradesPage.allSemesters") },
+            { value: null, label: t("common.allSemesters") },
             ...semesters.map((s) => ({
                 value: s.key,
-                label: t("gradesPage.semesterLabel", {
+                label: t("common.semesterLabel", {
                     sem: s.sem,
                     year: s.yearLabel,
                 }),

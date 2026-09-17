@@ -65,7 +65,9 @@
     "close": "Fermer",
     "previous": "Précédent",
     "next": "Suivant",
-    "morePages": "Plus de pages"
+    "morePages": "Plus de pages",
+    "allSemesters": "Toutes",
+    "semesterLabel": "S{{sem}} {{year}}"
   },
   "carousel": {
     "previousSlide": "Voir avant",
@@ -247,8 +249,6 @@
   "gradesPage": {
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
-    "allSemesters": "Toutes",
-    "semesterLabel": "S{{sem}} {{year}}",
     "details": "Détails de la note",
     "grade": "Note",
     "average": "Moyenne",
@@ -290,10 +290,12 @@
   "absencesPage": {
     "noAbsences": "Aucune absence trouvée.",
     "noAbsencesPlaceholder": "Aucune absence n'a été enregistrée pour le moment.",
-    "onlyCurrentYear": "Afficher uniquement cette année",
     "justified": "Justifiées",
     "unjustified": "Injustifiées",
-    "total": "Total"
+    "total": "Total",
+    "allStatuses": "Tout",
+    "statusJustified": "Justifié",
+    "statusUnjustified": "Non justifié"
   },
   "agendaPage": {
     "title": "Mon agenda",

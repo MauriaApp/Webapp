@@ -1,4 +1,14 @@
 import { Grade } from "@/types/aurion";
+import {
+    SemesterId,
+    academicStartYear,
+    semesterFromDate,
+    getCurrentSemesterKey,
+    parseFrDate,
+} from "./semesters";
+
+export type { SemesterId };
+export { getCurrentSemesterKey };
 
 function isArtifactGrade(grade: Grade): boolean {
     const values = Object.values(grade).map((v) => (v ?? "").toString().trim());
@@ -21,21 +31,6 @@ export function getGrades({
     });
 }
 
-export type SemesterId = {
-    /** Stable identifier, e.g. "2025-S1". */
-    key: string;
-    /** Academic year label, e.g. "2025-26". */
-    yearLabel: string;
-    sem: 1 | 2;
-};
-
-/** Academic year starts at the "rentrée" (late August). */
-function academicStartYear(d: Date): number {
-    if (d.getMonth() >= 8) return d.getFullYear();
-    if (d.getMonth() === 7 && d.getDate() >= 29) return d.getFullYear();
-    return d.getFullYear() - 1;
-}
-
 /**
  * Aurion encodes the semester in the grade code, e.g.
  * `..._PART1_MATHS1`, `..._ANGLAIS_CLASSWORK_S2`, `..._TIPE_S2`.
@@ -47,23 +42,8 @@ function semesterFromCode(code: string): 1 | 2 | null {
     return m[1] === "2" ? 2 : 1;
 }
 
-/** Fallback when the code carries no marker. S1: Aug 29 – Dec 29, S2: Dec 30 – Aug 28. */
-function semesterFromDate(d: Date): 1 | 2 {
-    const m = d.getMonth();
-    const day = d.getDate();
-    if (m === 7 && day >= 29) return 1; // late August = rentrée
-    if (m >= 8 && !(m === 11 && day >= 30)) return 1;
-    return 2;
-}
-
-function parseGradeDate(date?: string | null): Date | null {
-    if (!date) return null;
-    const d = new Date(date.split("/").reverse().join("-"));
-    return isNaN(d.getTime()) ? null : d;
-}
-
 export function getGradeSemester(grade: Grade): SemesterId | null {
-    const d = parseGradeDate(grade.date);
+    const d = parseFrDate(grade.date);
     if (!d) return null;
     const startYear = academicStartYear(d);
     const sem = semesterFromCode(grade.code) ?? semesterFromDate(d);
@@ -85,9 +65,6 @@ export function getGradeSemesters(grades: Grade[]): SemesterId[] {
     return Array.from(map.values()).sort((a, b) => a.key.localeCompare(b.key));
 }
 
-export function getCurrentSemesterKey(now = new Date()): string {
-    return `${academicStartYear(now)}-S${semesterFromDate(now)}`;
-}
 
 export type GradeBadgeInfo = {
     labelKey: string;
