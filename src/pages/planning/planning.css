@@ -57,6 +57,14 @@
     border-top-color: var(--planning-slot-border-color);
 }
 
+/* FullCalendar's default --fc-border-color (#ddd) drives the solid grid
+   lines and scrollgrid borders; override it per-theme so they pick up the
+   slot border color instead of a flat grey. */
+.fc {
+    --fc-border-color: var(--planning-slot-border-color);
+    --fc-neutral-bg-color: var(--planning-slot-border-color);
+}
+
 .fc .fc-timegrid-slot-label-cushion {
     font-size: 0.8rem;
     font-weight: 600;

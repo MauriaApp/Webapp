@@ -537,8 +537,8 @@
         --mauria-green: 148 34% 52%;
         --mauria-green-dark: 148 34% 40%;
         --mauria-green-soft: 148 34% 64%;
-        --mauria-planning-slot-border: 347 100% 90% / 0.25;
-        --mauria-planning-today: 338 100% 94% / 0.35;
+        --mauria-planning-slot-border: 347 80% 78% / 0.45;
+        --mauria-planning-today: 347 90% 84% / 0.5;
         --mauria-particles: 349 100% 88%;
         --mauria-meteor-glow: 338 100% 94% / 0.25;
         --mauria-chart-line: 344 100% 92%;
@@ -804,8 +804,8 @@
         --mauria-green: 155 32% 32%;
         --mauria-green-dark: 155 34% 24%;
         --mauria-green-soft: 155 28% 36%;
-        --mauria-planning-slot-border: 0 0% 28% / 0.55;
-        --mauria-planning-today: 0 0% 18% / 0.45;
+        --mauria-planning-slot-border: 262 20% 30% / 0.55;
+        --mauria-planning-today: 262 25% 22% / 0.45;
         --mauria-particles: 0 0% 38%;
         --mauria-meteor-glow: 0 0% 100% / 0.08;
         --mauria-chart-line: 0 0% 30%;
@@ -822,17 +822,17 @@
         --planning-button-active-text: hsl(var(--mauria-white));
 
         --planning-grid-background: hsl(0 0% 0%);
-        --planning-slot-border-color: hsl(0 0% 28% / 0.6);
-        --planning-today-background: hsl(0 0% 28% / 0.35);
+        --planning-slot-border-color: hsl(262 20% 30% / 0.6);
+        --planning-today-background: hsl(262 25% 25% / 0.35);
 
         --planning-event-default-gradient: linear-gradient(
             45deg,
-            hsl(0 0% 26%),
-            hsl(0 0% 16%)
+            hsl(262 12% 30%),
+            hsl(262 8% 20%)
         );
         --planning-event-default-shadow: 0 18px 36px hsl(0 0% 0% / 0.45);
         --planning-event-default-text: hsl(var(--mauria-white));
-        --planning-event-default-solid: hsl(0 0% 22%);
+        --planning-event-default-solid: hsl(262 10% 26%);
 
         --planning-event-epreuve-gradient: linear-gradient(
             45deg,
@@ -844,24 +844,24 @@
 
         --planning-event-personal-gradient: linear-gradient(
             45deg,
-            hsl(155 36% 28%),
-            hsl(155 34% 20%)
+            hsl(155 45% 32%),
+            hsl(155 42% 22%)
         );
         --planning-event-personal-shadow: 0 18px 36px hsl(155 28% 18% / 0.55);
         --planning-event-personal-text: hsl(155 46% 70%);
 
         --planning-event-colle-gradient: linear-gradient(
             45deg,
-            hsl(214 32% 26%),
-            hsl(226 30% 18%)
+            hsl(214 48% 30%),
+            hsl(226 44% 20%)
         );
         --planning-event-colle-shadow: 0 18px 36px hsl(214 30% 14% / 0.55);
         --planning-event-colle-text: hsl(214 50% 74%);
 
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
-            hsl(0 0% 24%),
-            hsl(0 0% 16%)
+            hsl(155 40% 28%),
+            hsl(155 38% 18%)
         );
         --planning-event-autogere-shadow: 0 18px 36px hsl(0 0% 0% / 0.5);
         --planning-event-autogere-text: hsl(var(--mauria-white));
