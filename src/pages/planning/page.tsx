@@ -4,15 +4,16 @@ import FullCalendar from "@fullcalendar/react";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
 import { ArrowLeft, Search } from "lucide-react";
-import { fetchPlanning, getSession } from "@/lib/api/aurion";
+import { fetchGrades, fetchPlanning, getSession } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { PlanningCalendar } from "@/components/planning-calendar";
-import { Lesson } from "@/types/aurion";
+import { Grade, Lesson } from "@/types/aurion";
 import { parseFromTitle } from "@/lib/utils/home";
+import { detectStudentClass } from "@/lib/utils/grades";
 import { DrawerEventTask } from "@/components/drawer-event-task";
 import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 import { getColleLessons } from "@/lib/utils/colles";
@@ -35,12 +36,28 @@ export function PlanningPage() {
     );
     const [view, setView] = useState<"calendar" | "freeRooms">("calendar");
 
+    // Whether the student is CPG1/CPG2 is only known for sure from their
+    // Aurion grade codes (detectStudentClass) — this same query backs the
+    // grades page, so it's usually already cached. It gates how loosely the
+    // server is allowed to match khôlles by name (see getColleLessons).
+    const { data: grades = [] } = useQuery<Grade[]>({
+        queryKey: ["grades"],
+        queryFn: async () => {
+            const res = await fetchGrades();
+            if (!res?.success) throw new Error("Failed to fetch grades");
+            return res.data ?? [];
+        },
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 60 * 24,
+    });
+    const confirmedCpg = detectStudentClass(grades) !== null;
+
     // Classes whose colles schedule is known (MP2I, MPSI, PSI and MPI) get
     // theirs laid over the Aurion planning. The class/group lookup is a
     // server call (API-v2 resolves it from the email, roster stays there).
     const { data: colles = [] } = useQuery<Lesson[]>({
-        queryKey: ["colles", getSession()?.email, i18n.language],
-        queryFn: () => getColleLessons(getSession()?.email),
+        queryKey: ["colles", getSession()?.email, i18n.language, confirmedCpg],
+        queryFn: () => getColleLessons(getSession()?.email, confirmedCpg),
         staleTime: 1000 * 60 * 60 * 24, // a student's class doesn't change daily
         gcTime: 1000 * 60 * 60 * 24,
     });

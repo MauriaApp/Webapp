@@ -61,13 +61,20 @@ function buildColleLessons(collesClass: CollesClass, group: string): Lesson[] {
  * The class/group lookup happens server-side (API-v2 routes/supa-data/colles.ts) —
  * the student roster never ships in this bundle. Returns an empty list when
  * the student isn't part of a known roster.
+ *
+ * `confirmedCpg` should come from `detectStudentClass` on the student's
+ * Aurion grades: it tells the server it can use its looser (prefix) name
+ * matching instead of requiring an exact full-name match. Without it, a
+ * student from another filière whose name merely resembles a CPG student's
+ * could get matched to someone else's khôlles.
  */
 export async function getColleLessons(
-    email: string | null | undefined
+    email: string | null | undefined,
+    confirmedCpg: boolean
 ): Promise<Lesson[]> {
     if (!email) return [];
 
-    const match = await fetchColleGroup(email);
+    const match = await fetchColleGroup(email, confirmedCpg);
     if (!match?.class || !match.group) return [];
 
     const collesClass = COLLES_CLASSES.find((c) => c.label === match.class);
