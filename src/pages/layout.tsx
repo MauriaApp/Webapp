@@ -2,9 +2,9 @@ import BottomNavigation from "@/components/bottom-navigation";
 import { useBackground } from "@/components/background-provider";
 import NewUpdateDrawer from "@/components/new-update-drawer";
 import { PageTransition } from "@/components/page-transition";
+import { ProgressRing } from "@/components/progress-ring";
 import Sidebar from "@/components/sidebar";
 import { Particles } from "@/components/ui/shadcn-io/particles";
-import { Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsFetching } from "@tanstack/react-query";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils/cn";
 import { GridPattern } from "@/components/ui/shadcn-io/grid-pattern";
 import { Topography } from "@/components/ui/shadcn-io/topography";
 import { DotPattern } from "@/components/ui/shadcn-io/dot-pattern";
+import { useFetchProgress } from "@/lib/hooks/use-fetch-progress";
 
 const BottomNav = memo(BottomNavigation);
 const ParticlesMemo = memo(Particles);
@@ -27,7 +28,8 @@ export default function RootLayout() {
     const { t } = useTranslation();
     const { background } = useBackground();
     const activeFetches = useIsFetching();
-    const showGlobalSpinner = activeFetches > 0;
+    const fetchProgress = useFetchProgress();
+    const showGlobalSpinner = activeFetches > 0 || fetchProgress > 0;
     const [renderSpinner, setRenderSpinner] = useState(showGlobalSpinner);
 
     useEffect(() => {
@@ -116,9 +118,10 @@ export default function RootLayout() {
                                 }}
                                 className="flex items-center text-white origin-center"
                             >
-                                <Loader2
-                                    aria-hidden
-                                    className="h-7 w-7 animate-spin"
+                                <ProgressRing
+                                    value={fetchProgress}
+                                    size={28}
+                                    strokeWidth={3}
                                 />
                                 <span className="sr-only">
                                     {t("common.loading")}
