@@ -230,6 +230,18 @@
       "today": "Hoy",
       "week": "Semana",
       "day": "Día"
+    },
+    "freeRooms": {
+      "title": "Salas libres",
+      "button": "Salas libres",
+      "back": "Horario",
+      "error": "No se pudo obtener la disponibilidad de las salas.",
+      "statusFree": "Libre",
+      "statusBusy": "Ocupada",
+      "loading": "Cargando salas…",
+      "updatedAt": "Actualizado a las {{time}}",
+      "empty": "Ningún edificio disponible por el momento.",
+      "untilPrefix": "hasta las"
     }
   },
   "gradesPage": {

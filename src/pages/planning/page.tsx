@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
+import { ArrowLeft, Search } from "lucide-react";
 import { fetchPlanning, getSession } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { fadeIn, staggerGroup } from "@/lib/motion";
@@ -17,6 +18,7 @@ import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
 import { getColleLessons } from "@/lib/utils/colles";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
+import { FreeRoomsView } from "./free-rooms-view";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { Button } from "@/components/ui/button";
@@ -31,6 +33,7 @@ export function PlanningPage() {
     const [userEvents, setUserEvents] = useState<Lesson[]>(
         getUserEventsFromLocalStorage()
     );
+    const [view, setView] = useState<"calendar" | "freeRooms">("calendar");
 
     // Classes whose colles schedule is known (MP2I, MPSI, PSI and MPI) get
     // theirs laid over the Aurion planning. The class/group lookup is a
@@ -91,59 +94,96 @@ export function PlanningPage() {
     return (
         <PullToRefresh
             onRefresh={handleRefresh}
-            isPullable={!isBusy}
+            isPullable={view === "calendar" && !isBusy}
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
             <motion.div variants={staggerGroup} initial="hidden" animate="show">
-                <motion.h2
+                <motion.div
                     variants={fadeIn}
-                    className="text-3xl font-bold text-mauria-purple dark:text-white mt-4 mb-6"
+                    className="flex items-center justify-between gap-2 mt-4 mb-6"
                 >
-                    {t("schedulePage.title")}
-                </motion.h2>
+                    <h2 className="text-3xl font-bold text-mauria-purple dark:text-white">
+                        {t(
+                            view === "calendar"
+                                ? "schedulePage.title"
+                                : "schedulePage.freeRooms.title"
+                        )}
+                    </h2>
+                    {view === "calendar" ? (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setView("freeRooms")}
+                        >
+                            <Search className="h-4 w-4" />
+                            {t("schedulePage.freeRooms.button")}
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setView("calendar")}
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            {t("schedulePage.freeRooms.back")}
+                        </Button>
+                    )}
+                </motion.div>
 
-                <motion.section
-                    variants={fadeIn}
-                    className="rounded-lg overflow-hidden shadow-lg"
-                >
-                    <PlanningCalendar
-                        ref={calendarRef}
-                        eventSources={[lessons, userEvents, colles]}
-                        onEventClick={(info) => {
-                            const event = info.event.toJSON();
-
-                            const { courseTitle, location, type, teacher } =
-                                parseFromTitle(event as Lesson);
-                            const mixedEvent = {
-                                courseTitle,
-                                location,
-                                type,
-                                teacher,
-                                details: event,
-                            } as unknown as PreparedLesson;
-
-                            setEventInfo(mixedEvent);
-                            setDrawerOpen(true);
-                        }}
-                    />
-                    <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
-                        {t("schedulePage.lastUpdate")}{" "}
-                        {format(new Date(dataUpdatedAt), "EEEE d MMM HH'h'mm", {
-                            locale: getDateLocale(i18n.language),
-                        })}
-                    </div>
-                    <Button
-                        className="mt-2"
-                        onClick={handleExport}
-                        disabled={lessons.length === 0 || isBusy}
+                {view === "calendar" ? (
+                    <motion.section
+                        variants={fadeIn}
+                        className="rounded-lg overflow-hidden shadow-lg"
                     >
-                        {t("schedulePage.exportSchedule")}
-                    </Button>
-                    <p className="mt-2 italic">
-                        {t("schedulePage.warnExport")}
-                    </p>
-                </motion.section>
+                        <PlanningCalendar
+                            ref={calendarRef}
+                            eventSources={[lessons, userEvents, colles]}
+                            onEventClick={(info) => {
+                                const event = info.event.toJSON();
+
+                                const {
+                                    courseTitle,
+                                    location,
+                                    type,
+                                    teacher,
+                                } = parseFromTitle(event as Lesson);
+                                const mixedEvent = {
+                                    courseTitle,
+                                    location,
+                                    type,
+                                    teacher,
+                                    details: event,
+                                } as unknown as PreparedLesson;
+
+                                setEventInfo(mixedEvent);
+                                setDrawerOpen(true);
+                            }}
+                        />
+                        <div className="text-sm font-semibold mt-2 ml-2 text-mauria-purple dark:text-gray-300">
+                            {t("schedulePage.lastUpdate")}{" "}
+                            {format(
+                                new Date(dataUpdatedAt),
+                                "EEEE d MMM HH'h'mm",
+                                {
+                                    locale: getDateLocale(i18n.language),
+                                }
+                            )}
+                        </div>
+                        <Button
+                            className="mt-2"
+                            onClick={handleExport}
+                            disabled={lessons.length === 0 || isBusy}
+                        >
+                            {t("schedulePage.exportSchedule")}
+                        </Button>
+                        <p className="mt-2 italic">
+                            {t("schedulePage.warnExport")}
+                        </p>
+                    </motion.section>
+                ) : (
+                    <FreeRoomsView />
+                )}
             </motion.div>
             <DrawerPlanningContent
                 drawerOpen={drawerOpen}
