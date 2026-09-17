@@ -14,6 +14,14 @@
     color: var(--planning-button-active-text) !important;
 }
 
+/* FullCalendar disables (rather than hides) the "today" button once the
+   current view already shows today. `visibility: hidden` (not
+   `display: none`) keeps its box in the flex layout so the toolbar's
+   center chunk ("Semaine"/"Jour") doesn't drift left when it's gone. */
+.fc .fc-today-button:disabled {
+    visibility: hidden;
+}
+
 .fc .fc-timegrid {
     border: 0 !important;
     outline: 0 !important;
