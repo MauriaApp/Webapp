@@ -39,6 +39,17 @@
     border: none !important;
     border-color: transparent !important;
     outline: none !important;
+    transition: filter 0.15s ease;
+}
+
+/* Only devices with a real pointer get the hover highlight — avoids a
+   sticky "hovered" look on touch after tapping an event. The effect is
+   limited to a brightness filter (no translate / scale) so the event
+   box never shifts into adjacent events and clip them. */
+@media (hover: hover) {
+    .fc .fc-timegrid-event:hover {
+        filter: brightness(1.08);
+    }
 }
 
 .fc .fc-timegrid-slot-minor {
@@ -65,7 +76,12 @@
     border-color: transparent !important;
 }
 
-.est-epreuve {
+/* Aurion envoie le code brut (ex. "DS_SURV", "EXAM") dans className, qui
+   devient une class CSS sur l'event FullCalendar — on matche donc ces
+   codes en plus du semantic "est-epreuve". */
+.est-epreuve,
+.DS_SURV,
+.EXAM {
     color: var(--planning-event-epreuve-text) !important;
     background: var(--planning-event-epreuve-gradient) !important;
     box-shadow: var(--planning-event-epreuve-shadow) !important;
@@ -86,7 +102,8 @@
 .TD_AUTO_GERE_PLANIFIE,
 .TP_AUTO_GERE_PLANIFIE,
 .CM_AUTO_GERE_PLANIFIE,
-.PROJET_AUTO_GERE {
+.PROJET_AUTO_GERE,
+.PROJET {
     color: var(--planning-event-autogere-text) !important;
     background: var(--planning-event-autogere-gradient) !important;
     box-shadow: var(--planning-event-autogere-shadow) !important;
@@ -96,8 +113,8 @@
     background-color: var(--planning-grid-background) !important;
 }
 
-.fc-timegrid-event:not(.est-epreuve),
-.fc-timegrid-more-link:not(.est-epreuve) {
+.fc-timegrid-event:not(.est-epreuve):not(.DS_SURV):not(.EXAM):not(.est-perso):not(.est-colle):not(.TD_AUTO_GERE_PLANIFIE):not(.TP_AUTO_GERE_PLANIFIE):not(.CM_AUTO_GERE_PLANIFIE):not(.PROJET_AUTO_GERE):not(.PROJET),
+.fc-timegrid-more-link:not(.est-epreuve):not(.DS_SURV):not(.EXAM):not(.est-perso):not(.est-colle):not(.TD_AUTO_GERE_PLANIFIE):not(.TP_AUTO_GERE_PLANIFIE):not(.CM_AUTO_GERE_PLANIFIE):not(.PROJET_AUTO_GERE):not(.PROJET) {
     background: var(--planning-event-default-gradient) !important;
     box-shadow: var(--planning-event-default-shadow) !important;
     color: var(--planning-event-default-text) !important;
@@ -110,7 +127,9 @@
 .fc-timegrid-event.CM_AUTO_GERE_PLANIFIE,
 .fc-timegrid-more-link.CM_AUTO_GERE_PLANIFIE,
 .fc-timegrid-event.PROJET_AUTO_GERE,
-.fc-timegrid-more-link.PROJET_AUTO_GERE {
+.fc-timegrid-more-link.PROJET_AUTO_GERE,
+.fc-timegrid-event.PROJET,
+.fc-timegrid-more-link.PROJET {
     color: var(--planning-event-autogere-text) !important;
     background: var(--planning-event-autogere-gradient) !important;
     box-shadow: var(--planning-event-autogere-shadow) !important;

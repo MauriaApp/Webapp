@@ -422,10 +422,10 @@ function AveragesComparison({
     const belowClass = diff < 0;
 
     return (
-        <Card className="border-none bg-white shadow-md dark:bg-mauria-card overflow-hidden">
+        <Card className="border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card overflow-hidden">
             <CardContent className="p-3 space-y-2">
                 <button
-                    className="w-full flex items-center justify-between gap-2"
+                    className="w-full flex cursor-pointer items-center justify-between gap-2"
                     onClick={() => setExpanded((v) => !v)}
                 >
                     <div className="flex items-center gap-4">

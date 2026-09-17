@@ -62,6 +62,7 @@ export const PlanningCalendar = forwardRef<
             }}
             slotMinTime="07:00:00"
             slotMaxTime="22:00:00"
+            slotEventOverlap={false}
             titleFormat={{ month: "short", day: "numeric" }}
             allDaySlot={false}
             firstDay={1}
@@ -84,22 +85,28 @@ export const PlanningCalendar = forwardRef<
                 // still shows the full label.
                 const place = formatLessonLocation(location);
                 const course = formatLessonCourse(courseTitle);
-                // Phone cells only fit the abbreviated subject.
-                const shortCourse = abbreviateSubjects(course);
 
                 const isColle = arg.event.classNames.includes("est-colle");
-                // Colles carry "Khôlle" as their type, which the
-                // subject line already says; Aurion lessons keep
-                // their type next to the teacher.
-                const lessonType = isColle ? "" : formatLessonType(type);
+                const lessonType = formatLessonType(type);
                 const lessonTeacher = formatLessonTeacher(teacher);
+
+                // Colles: the course line reads "Khôlle {subject}". Strip
+                // the "Khôlle" type label so only the subject stays in bold;
+                // "Khôlle" then shows as the type (not bold) before the
+                // teacher, like Aurion lesson types.
+                const colleSubject = isColle
+                    ? course.replace(/khôlle\s*(?:de\s+)?/gi, "").trim() ||
+                      course
+                    : course;
+                // Phone cells only fit the abbreviated subject.
+                const shortCourse = abbreviateSubjects(colleSubject);
 
                 // Some lessons have no course label at all (a
                 // workshop, a meeting): their type becomes the
                 // title rather than leaving the line blank.
-                const heading = course || lessonType;
+                const heading = colleSubject || lessonType;
                 const shortHeading = shortCourse || lessonType;
-                const detail = course ? lessonType : "";
+                const detail = colleSubject ? lessonType : "";
 
                 return (
                     <div className="fc-event-main-frame">

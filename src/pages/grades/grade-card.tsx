@@ -42,7 +42,7 @@ export function GradeCardAnimate({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
+            className="relative cursor-pointer border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
             <div className="flex items-center ">
@@ -114,7 +114,7 @@ export function GradeCard({
 
     return (
         <Card
-            className="relative border-none bg-white shadow-md transition-shadow dark:bg-mauria-card p-4 h-full overflow-visible"
+            className="relative cursor-pointer border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onGradeClick.bind(null, grade)}
         >
             <div className="flex items-center ">

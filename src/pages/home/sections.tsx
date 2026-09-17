@@ -35,7 +35,7 @@ export const LessonCard = ({
 }) => (
     <MotionCard
         key={`${lesson.courseTitle}-${lesson.time}-${keyPrefix}`}
-        className="mb-4 border-none bg-white p-4 shadow-md dark:bg-mauria-card"
+        className="mb-4 cursor-pointer border-none bg-white p-4 shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card"
         variants={itemVariants}
         onClick={onClick(lesson)}
     >
