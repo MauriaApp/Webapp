@@ -23,8 +23,8 @@ import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
-import { LogsPage } from "./pages/secondary/logs";
 import { DocumentsPage } from "./pages/secondary/documents";
+import { VersionsPage } from "./pages/secondary/versions";
 import { PlanningPreviewPage } from "./pages/dev/planning-preview";
 import * as Sentry from "@sentry/react";
 
@@ -95,8 +95,8 @@ function AppRoutes() {
                         path="/documents"
                         element={<DocumentsPage />}
                     />
-                    <Route path="/logs" element={<LogsPage />} />
                     <Route path="/agenda" element={<AgendaPage />} />
+                    <Route path="/versions" element={<VersionsPage />} />
                 </Route>
             </Routes>
         </AnimatePresence>

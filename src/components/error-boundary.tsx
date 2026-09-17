@@ -11,6 +11,18 @@ type State = {
     hasError: boolean;
 };
 
+function ErrorFallback() {
+    const { t } = useTranslation();
+    return (
+        <div className="flex flex-col items-center justify-center h-screen gap-4">
+            <h1>{t("common.error")}</h1>
+            <Button onClick={() => window.location.reload()}>
+                {t("common.goBackHome")}
+            </Button>
+        </div>
+    );
+}
+
 export class ErrorBoundary extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -23,23 +35,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
     }
 
     componentDidCatch(error: unknown, errorInfo: unknown) {
-        // Tu peux aussi logger ou envoyer l’erreur ici si besoin
         console.error("ErrorBoundary caught an error", error, errorInfo);
         Sentry.captureException(error);
     }
 
     render() {
         if (this.state.hasError) {
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const { t } = useTranslation();
-            return (
-                <div className="flex flex-col items-center justify-center h-screen gap-4">
-                    <h1>{t("common.error")}</h1>
-                    <Button onClick={() => window.location.reload()}>
-                        {t("common.goBackHome")}
-                    </Button>
-                </div>
-            );
+            return <ErrorFallback />;
         }
         return this.props.children;
     }
