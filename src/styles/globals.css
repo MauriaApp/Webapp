@@ -137,6 +137,14 @@
             hsl(var(--mauria-green) / 0.24);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(212 78% 52%),
+            hsl(226 70% 58%)
+        );
+        --planning-event-colle-shadow: 0 16px 32px hsl(212 78% 52% / 0.24);
+        --planning-event-colle-text: hsl(var(--mauria-white));
+
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
             hsl(var(--mauria-green)),
@@ -328,6 +336,14 @@
             hsl(var(--mauria-green) / 0.22);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(258 70% 60%),
+            hsl(278 62% 58%)
+        );
+        --planning-event-colle-shadow: 0 16px 30px hsl(258 70% 60% / 0.22);
+        --planning-event-colle-text: hsl(var(--mauria-white));
+
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
             hsl(var(--mauria-green)),
@@ -444,6 +460,14 @@
         --planning-event-personal-shadow: 0 16px 30px
             hsl(var(--mauria-green) / 0.22);
         --planning-event-personal-text: hsl(var(--mauria-white));
+
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(206 62% 46%),
+            hsl(222 55% 52%)
+        );
+        --planning-event-colle-shadow: 0 16px 30px hsl(206 62% 46% / 0.22);
+        --planning-event-colle-text: hsl(var(--mauria-white));
 
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
@@ -563,6 +587,14 @@
             hsl(var(--mauria-green) / 0.2);
         --planning-event-personal-text: hsl(var(--mauria-white));
 
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(268 52% 62%),
+            hsl(288 46% 60%)
+        );
+        --planning-event-colle-shadow: 0 16px 30px hsl(268 52% 62% / 0.2);
+        --planning-event-colle-text: hsl(var(--mauria-white));
+
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
             hsl(var(--mauria-green)),
@@ -677,6 +709,14 @@
         );
         --planning-event-personal-shadow: 0 16px 32px hsl(135 65% 50% / 0.28);
         --planning-event-personal-text: hsl(var(--mauria-black));
+
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(265 85% 65%),
+            hsl(285 80% 62%)
+        );
+        --planning-event-colle-shadow: 0 16px 32px hsl(265 85% 65% / 0.28);
+        --planning-event-colle-text: hsl(var(--mauria-black));
 
         --planning-event-autogere-gradient: linear-gradient(
             45deg,
@@ -809,6 +849,14 @@
         );
         --planning-event-personal-shadow: 0 18px 36px hsl(155 28% 18% / 0.55);
         --planning-event-personal-text: hsl(155 46% 70%);
+
+        --planning-event-colle-gradient: linear-gradient(
+            45deg,
+            hsl(214 32% 26%),
+            hsl(226 30% 18%)
+        );
+        --planning-event-colle-shadow: 0 18px 36px hsl(214 30% 14% / 0.55);
+        --planning-event-colle-text: hsl(214 50% 74%);
 
         --planning-event-autogere-gradient: linear-gradient(
             45deg,

@@ -25,6 +25,7 @@ import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
 import { LogsPage } from "./pages/secondary/logs";
+import { PlanningPreviewPage } from "./pages/dev/planning-preview";
 import * as Sentry from "@sentry/react";
 
 if (import.meta.env.PROD) {
@@ -60,6 +61,12 @@ function AppRoutes() {
     return (
         <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
+                {import.meta.env.DEV && (
+                    <Route
+                        path="/dev/planning-preview"
+                        element={<PlanningPreviewPage />}
+                    />
+                )}
                 <Route path="/login/*" element={<LoginPage />} />
                 <Route
                     path="/welcome"

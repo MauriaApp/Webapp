@@ -1,21 +1,20 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
-import interactionPlugin from "@fullcalendar/interaction";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
-import { fetchPlanning } from "@/lib/api/aurion";
+import { fetchPlanning, getSession } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
+import { PlanningCalendar } from "@/components/planning-calendar";
 import { Lesson } from "@/types/aurion";
 import { parseFromTitle } from "@/lib/utils/home";
 import { DrawerEventTask } from "@/components/drawer-event-task";
 import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
+import { getColleLessons } from "@/lib/utils/colles";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { format } from "date-fns";
@@ -23,8 +22,6 @@ import { getDateLocale } from "@/lib/utils/translations";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
-
-const Calendar = memo(FullCalendar);
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
@@ -34,6 +31,16 @@ export function PlanningPage() {
     const [userEvents, setUserEvents] = useState<Lesson[]>(
         getUserEventsFromLocalStorage()
     );
+
+    // Classes whose colles schedule is known (MP2I, MPSI, PSI and MPI) get
+    // theirs laid over the Aurion planning. The class/group lookup is a
+    // server call (API-v2 resolves it from the email, roster stays there).
+    const { data: colles = [] } = useQuery<Lesson[]>({
+        queryKey: ["colles", getSession()?.email, i18n.language],
+        queryFn: () => getColleLessons(getSession()?.email),
+        staleTime: 1000 * 60 * 60 * 24, // a student's class doesn't change daily
+        gcTime: 1000 * 60 * 60 * 24,
+    });
 
     useEffect(() => {
         const handler = (lng: string) => {
@@ -100,52 +107,10 @@ export function PlanningPage() {
                     variants={fadeIn}
                     className="rounded-lg overflow-hidden shadow-lg"
                 >
-                    <Calendar
-                        datesSet={() => {
-                            calendarRef.current?.getApi().updateSize();
-                        }}
+                    <PlanningCalendar
                         ref={calendarRef}
-                        locale={
-                            i18n.language === "fr"
-                                ? FrLocale
-                                : i18n.language === "es"
-                                  ? EsLocale
-                                  : undefined
-                        }
-                        plugins={[
-                            dayGridPlugin,
-                            timeGridPlugin,
-                            interactionPlugin,
-                        ]}
-                        initialView="timeGridWeek"
-                        headerToolbar={{
-                            left: "today",
-                            center: "timeGridWeek,timeGridDay",
-                            right: "prev,next",
-                        }}
-                        buttonText={{
-                            today: t("schedulePage.buttons.today"),
-                            timeGridWeek: t("schedulePage.buttons.week"),
-                            timeGridDay: t("schedulePage.buttons.day"),
-                        }}
-                        slotMinTime="07:00:00"
-                        slotMaxTime="22:00:00"
-                        titleFormat={{ month: "short", day: "numeric" }}
-                        allDaySlot={false}
-                        firstDay={1}
-                        hiddenDays={[0]}
-                        eventSources={[lessons, userEvents]}
-                        eventColor="var(--planning-event-default-solid)"
-                        contentHeight="auto"
-                        nowIndicator={true}
-                        stickyHeaderDates={false}
-                        editable={false}
-                        eventAllow={() => false}
-                        droppable={false}
-                        eventStartEditable={false}
-                        eventDurationEditable={false}
-                        eventResizableFromStart={false}
-                        eventClick={(info) => {
+                        eventSources={[lessons, userEvents, colles]}
+                        onEventClick={(info) => {
                             const event = info.event.toJSON();
 
                             const { courseTitle, location, type, teacher } =
