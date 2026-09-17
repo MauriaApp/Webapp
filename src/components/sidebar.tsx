@@ -16,6 +16,7 @@ import {
     ThumbsDown,
     Book,
     Printer,
+    FileText,
     MailQuestionMark,
     ImageUpscale,
     ArrowDownRightFromSquare,
@@ -27,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
     Sheet,
     SheetContent,
@@ -339,9 +341,24 @@ export default function Sidebar() {
                         >
                             <HeartHandshake className="h-5 w-5" />
                             {t("sidebar.actions.associations")}
-                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
-                                <ArrowDownRightFromSquare className="size-4!" />
-                            </div>
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
+                            onClick={() => handleNavigate("/documents")}
+                        >
+                            <FileText className="h-5 w-5" />
+                            <span className="inline-flex items-center gap-1.5">
+                                {t("sidebar.actions.documents")}
+                                <Badge
+                                    variant="secondary"
+                                    className="px-1.5 py-0 text-[10px] font-semibold"
+                                >
+                                    Beta
+                                </Badge>
+                            </span>
                         </Button>
 
                         <Button

@@ -30,3 +30,28 @@ export type Lesson = {
     editable: boolean;
     className: string;
 };
+
+export type AurionDocument = {
+    label: string;
+    type: string;
+    size: string;
+    comment: string;
+    category: string;
+    docIndex: number;
+    downloadType: "datagrid" | "select" | "consulter";
+    submitParam: string;
+    selectName?: string;
+    optionValue?: string;
+    downloadButtonParam?: string;
+    consulterParam?: string;
+};
+
+export type DocumentCategory = {
+    menuid: string;
+    label: string;
+};
+
+export type DocumentsResult = {
+    categories: DocumentCategory[];
+    documents: AurionDocument[];
+};

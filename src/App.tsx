@@ -24,6 +24,7 @@ import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
 import { LogsPage } from "./pages/secondary/logs";
+import { DocumentsPage } from "./pages/secondary/documents";
 import { PlanningPreviewPage } from "./pages/dev/planning-preview";
 import * as Sentry from "@sentry/react";
 
@@ -89,6 +90,10 @@ function AppRoutes() {
                     <Route
                         path="/associations"
                         element={<AssociationsPage />}
+                    />
+                    <Route
+                        path="/documents"
+                        element={<DocumentsPage />}
                     />
                     <Route path="/logs" element={<LogsPage />} />
                     <Route path="/agenda" element={<AgendaPage />} />
