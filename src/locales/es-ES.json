@@ -356,5 +356,33 @@
   "versionsPage": {
     "version": "Versión",
     "noVersions": "No hay actualizaciones para mostrar."
+  },
+  "printPage": {
+    "title": "Impresión",
+    "balance": {
+      "title": "Crédito de impresión",
+      "personal": "Saldo personal",
+      "bonus": "Bono anual",
+      "error": "No se pudo cargar tu saldo"
+    },
+    "jobs": {
+      "title": "Trabajos de impresión",
+      "waiting": "En espera",
+      "printed": "Impresos",
+      "empty": "No hay trabajos de impresión",
+      "error": "No se pudieron cargar tus trabajos de impresión",
+      "delete": "Eliminar",
+      "deleteError": "No se pudo eliminar este trabajo"
+    },
+    "upload": {
+      "title": "Enviar archivos",
+      "add": "Añadir archivos",
+      "bw": "Blanco y negro",
+      "duplex": "Doble cara",
+      "send": "Subir",
+      "sending": "Enviando…",
+      "error": "Error al enviar",
+      "tooLarge": "Archivo demasiado grande (máx. 100 MB)"
+    }
   }
 }
