@@ -356,5 +356,33 @@
   "versionsPage": {
     "version": "Version",
     "noVersions": "Aucune mise à jour à afficher."
+  },
+  "printPage": {
+    "title": "Impression",
+    "balance": {
+      "title": "Crédit d'impression",
+      "personal": "Solde personnel",
+      "bonus": "Bonus annuel",
+      "error": "Impossible de charger votre solde"
+    },
+    "jobs": {
+      "title": "Travaux d'impression",
+      "waiting": "En attente",
+      "printed": "Imprimés",
+      "empty": "Aucun travail d'impression",
+      "error": "Impossible de charger vos travaux d'impression",
+      "delete": "Supprimer",
+      "deleteError": "Impossible de supprimer ce travail"
+    },
+    "upload": {
+      "title": "Envoyer des fichiers",
+      "add": "Ajouter des fichiers",
+      "bw": "Noir et blanc",
+      "duplex": "Recto-verso",
+      "send": "Uploader",
+      "sending": "Envoi…",
+      "error": "Échec de l'envoi",
+      "tooLarge": "Fichier trop volumineux (100 Mo max)"
+    }
   }
 }

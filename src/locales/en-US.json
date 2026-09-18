@@ -356,5 +356,33 @@
   "versionsPage": {
     "version": "Version",
     "noVersions": "No updates to display."
+  },
+  "printPage": {
+    "title": "Print",
+    "balance": {
+      "title": "Print credit",
+      "personal": "Personal balance",
+      "bonus": "Yearly bonus",
+      "error": "Couldn't load your balance"
+    },
+    "jobs": {
+      "title": "Print jobs",
+      "waiting": "Waiting",
+      "printed": "Printed",
+      "empty": "No print jobs",
+      "error": "Couldn't load your print jobs",
+      "delete": "Delete",
+      "deleteError": "Couldn't delete this job"
+    },
+    "upload": {
+      "title": "Send files",
+      "add": "Add files",
+      "bw": "Black and white",
+      "duplex": "Double-sided",
+      "send": "Upload",
+      "sending": "Uploading…",
+      "error": "Upload failed",
+      "tooLarge": "File too large (100 MB max)"
+    }
   }
 }

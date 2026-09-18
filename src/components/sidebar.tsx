@@ -72,7 +72,6 @@ import {
 
 const aurionURL = "https://aurion.junia.com";
 const juniaLearningURL = "https://junia-learning.com";
-const printURL = "https://print.junia.com/end-user/ui/dashboard";
 const contactURL =
     "mailto:louis.soltysiak@student.junia.com?subject=" +
     encodeURIComponent("Support/feature pour Mauria");
@@ -401,13 +400,10 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
-                            onClick={() => window.open(printURL, "_blank")}
+                            onClick={() => handleNavigate("/print")}
                         >
                             <Printer className="h-5 w-5" />
                             {t("sidebar.actions.print")}
-                            <div className="justify-end flex-1 flex pr-2 text-muted-foreground transition-colors group-hover:text-accent-foreground">
-                                <ArrowDownRightFromSquare className="size-4!" />
-                            </div>
                         </Button>
                     </div>
                 </SheetHeader>
