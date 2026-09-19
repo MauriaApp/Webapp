@@ -278,7 +278,7 @@ export default function Sidebar() {
 
             <SheetContent
                 side="right"
-                className="w-[85%] sm:max-w-sm flex flex-col justify-between border-none oled:bg-black px-5 pb-5 pt-[var(--sidebar-safe-area-top)]"
+                className="w-[85%] sm:max-w-sm flex flex-col gap-2 border-none oled:bg-black px-5 pb-5 pt-[var(--sidebar-safe-area-top)]"
                 style={
                     {
                         "--sidebar-safe-area-top":
@@ -289,7 +289,7 @@ export default function Sidebar() {
                     } as CSSProperties
                 }
             >
-                <SheetHeader>
+                <SheetHeader className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6 [mask-image:linear-gradient(to_bottom,black_calc(100%-1.5rem),transparent)]">
                     <SheetTitle>{t("sidebar.title")}</SheetTitle>
 
                     <div className="mt-4 space-y-4">
@@ -372,6 +372,16 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
+                            onClick={() => handleNavigate("/print")}
+                        >
+                            <Printer className="h-5 w-5" />
+                            {t("sidebar.actions.print")}
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => window.open(aurionURL, "_blank")}
                         >
                             <ThumbsDown className="h-5 w-5" />
@@ -395,20 +405,10 @@ export default function Sidebar() {
                                 <ArrowDownRightFromSquare className="size-4!" />
                             </div>
                         </Button>
-
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
-                            onClick={() => handleNavigate("/print")}
-                        >
-                            <Printer className="h-5 w-5" />
-                            {t("sidebar.actions.print")}
-                        </Button>
                     </div>
                 </SheetHeader>
 
-                <SheetFooter className="relative flex-col! gap-2 px-0">
+                <SheetFooter className="relative z-10 shrink-0 flex-col! gap-2 bg-background px-0 oled:bg-black">
                     <div className="w-full mt-4 space-y-4">
                         <Button
                             variant="ghost"
