@@ -141,6 +141,11 @@
     "loadingSchedule": "Cargando datos del horario…",
     "noImportantMessageTitle": "Ningún mensaje importante",
     "noImportantMessageBody": "¡Buen día!",
+    "aurionDownTitle": "Aurion tiene problemas",
+    "aurionDownBody": "El portal va lento o no responde. Tu horario y tus notas pueden no actualizarse.",
+    "wifiDownTitle": "Wi-Fi de Junia con problemas",
+    "wifiDownBody": "La red del campus tiene problemas. La conexión puede ser inestable.",
+    "downSince": "Averiado desde hace {{duration}}",
     "current": "En este momento",
     "today": "Hoy",
     "tomorrow": "Mañana",
@@ -251,6 +256,7 @@
   "gradesPage": {
     "noGrades": "Todavía no hay notas.",
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
+    "noGradesCached": "No se encontraron notas en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
     "details": "Detalles de la nota",
     "grade": "Nota",
     "average": "Media",
@@ -292,6 +298,7 @@
   "absencesPage": {
     "noAbsences": "No se encontraron ausencias.",
     "noAbsencesPlaceholder": "No se ha registrado ninguna ausencia por el momento.",
+    "noAbsencesCached": "No se encontraron ausencias en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
     "justified": "Justificadas",
     "unjustified": "Injustificadas",
     "total": "Total",
@@ -330,6 +337,7 @@
     "allCategories": "Todo",
     "noDocuments": "Sin documentos",
     "noDocumentsPlaceholder": "No hay documentos disponibles por el momento.",
+    "noDocumentsCached": "No se encontraron documentos en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
     "downloadSuccess": "{{filename}} descargado",
     "downloadError": "Error en la descarga",
     "loadingHint": "Es normal si tarda, la recuperación tarda unos 30 segundos"

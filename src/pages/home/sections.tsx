@@ -2,12 +2,27 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
-import { motion } from "framer-motion";
-import { Clock, Info, MapPin, SquareArrowOutDownRightIcon } from "lucide-react";
+import { JuniaStatus } from "@/lib/api/junia-status";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+    ChevronDown,
+    Clock,
+    Info,
+    MapPin,
+    ServerCrash,
+    SquareArrowOutDownRightIcon,
+    WifiOff,
+    type LucideIcon,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatLessonLocation, formatLessonType } from "@/lib/utils/home";
+import {
+    formatElapsed,
+    formatLessonLocation,
+    formatLessonType,
+} from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
-import { fadeIn, staggerGroup } from "@/lib/motion";
+import { EASE, fadeIn, staggerGroup } from "@/lib/motion";
 
 const MotionCard = motion(Card);
 
@@ -141,5 +156,106 @@ export const ImportantMessage = ({ message }: { message?: MessageEntry }) => {
                 </AlertDescription>
             </Alert>
         </motion.div>
+    );
+};
+
+// Junia Status Warning Component
+const JuniaWarning = ({
+    Icon,
+    title,
+    body,
+    since,
+}: {
+    Icon: LucideIcon;
+    title: string;
+    body: string;
+    since: string | null;
+}) => {
+    const { t } = useTranslation();
+    const [expanded, setExpanded] = useState(false);
+
+    return (
+        <motion.div
+            variants={fadeIn}
+            className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
+        >
+            <Alert className="border-none bg-amber-500/20 dark:bg-amber-500/15">
+                <button
+                    type="button"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 text-left"
+                    aria-expanded={expanded}
+                    onClick={() => setExpanded((v) => !v)}
+                >
+                    <div className="flex min-w-0 items-center gap-2">
+                        <Icon className="h-4 w-4 shrink-0 text-foreground" />
+                        <AlertTitle className="mb-0 font-bold text-black dark:text-white">
+                            {title}
+                        </AlertTitle>
+                    </div>
+                    <ChevronDown
+                        className={`h-4 w-4 shrink-0 text-black/60 transition-transform duration-200 dark:text-white/60 ${expanded ? "rotate-180" : ""}`}
+                    />
+                </button>
+                <AnimatePresence initial={false}>
+                    {expanded && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: EASE }}
+                            className="overflow-hidden"
+                        >
+                            <AlertDescription className="pt-2 pl-6 text-black/80 dark:text-white/90">
+                                {body}
+                                {since && (
+                                    <span className="mt-1 block font-medium">
+                                        {t("homePage.downSince", {
+                                            duration: formatElapsed(since),
+                                        })}
+                                    </span>
+                                )}
+                            </AlertDescription>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </Alert>
+        </motion.div>
+    );
+};
+
+export const JuniaStatusWarning = ({
+    status,
+}: {
+    status?: JuniaStatus | null;
+}) => {
+    const { t } = useTranslation();
+
+    const warnings = [
+        status?.aurionDown && {
+            key: "aurion",
+            Icon: ServerCrash,
+            title: t("homePage.aurionDownTitle"),
+            body: t("homePage.aurionDownBody"),
+            since: status.aurionSince,
+        },
+        status?.wifiDown && {
+            key: "wifi",
+            Icon: WifiOff,
+            title: t("homePage.wifiDownTitle"),
+            body: t("homePage.wifiDownBody"),
+            since: status.wifiSince,
+        },
+    ].filter((warning) => !!warning);
+
+    if (warnings.length === 0) return null;
+
+    // -mt-4 pulls the warnings closer to the important message, whose Alert
+    // already ends with mb-8.
+    return (
+        <div className="-mt-4 mb-8 space-y-4">
+            {warnings.map(({ key, ...warning }) => (
+                <JuniaWarning key={key} {...warning} />
+            ))}
+        </div>
     );
 };

@@ -141,6 +141,11 @@
     "loadingSchedule": "Loading schedule data…",
     "noImportantMessageTitle": "No important message",
     "noImportantMessageBody": "Have a nice day!",
+    "aurionDownTitle": "Aurion is having issues",
+    "aurionDownBody": "The portal is slow or unreachable. Your schedule and grades may not update.",
+    "wifiDownTitle": "Junia Wi-Fi disrupted",
+    "wifiDownBody": "The campus network is having issues. Your connection may be unstable.",
+    "downSince": "Down for {{duration}}",
     "current": "Currently",
     "today": "Today",
     "tomorrow": "Tomorrow",
@@ -251,6 +256,7 @@
   "gradesPage": {
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
+    "noGradesCached": "No grades were found in the cache, and Aurion is down. Try again later.",
     "details": "Grade details",
     "grade": "Grade",
     "average": "Average",
@@ -292,6 +298,7 @@
   "absencesPage": {
     "noAbsences": "No absences found.",
     "noAbsencesPlaceholder": "No absences have been recorded yet.",
+    "noAbsencesCached": "No absences were found in the cache, and Aurion is down. Try again later.",
     "justified": "Justified",
     "unjustified": "Unjustified",
     "total": "Total",
@@ -330,6 +337,7 @@
     "allCategories": "All",
     "noDocuments": "No documents",
     "noDocumentsPlaceholder": "No documents are available at the moment.",
+    "noDocumentsCached": "No documents were found in the cache, and Aurion is down. Try again later.",
     "downloadSuccess": "{{filename}} downloaded",
     "downloadError": "Download failed",
     "loadingHint": "It's normal if it takes a while, fetching takes about 30 seconds"

@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
+import { AurionDownState } from "@/components/aurion-down-state";
+import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { GradeCard, GradeCardAnimate } from "./grade-card";
 import {
     getGrades,
@@ -573,6 +575,7 @@ export function GradesPage() {
     });
 
     const isBusy = isLoading || isFetching;
+    const aurionDown = useJuniaStatus()?.aurionDown ?? false;
 
     const handleRefresh = () => {
         void refetch();
@@ -703,24 +706,36 @@ export function GradesPage() {
                             >
                                 <div className="text-center py-12">
                                     <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                                        <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            {isBusy ? (
-                                                <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
-                                            ) : (
-                                                <GraduationCap className="w-8 h-8 text-muted-foreground" />
-                                            )}
-                                        </div>
-                                        <h3 className="text-lg font-semibold mb-2">
-                                            {isBusy
-                                                ? t("common.loading")
-                                                : t("gradesPage.noGrades")}
-                                        </h3>
-                                        {!isBusy && (
-                                            <p className="text-muted-foreground">
-                                                {t(
-                                                    "gradesPage.noGradesPlaceholder"
+                                        {aurionDown && grades.length === 0 ? (
+                                            <AurionDownState
+                                                message={t(
+                                                    "gradesPage.noGradesCached"
                                                 )}
-                                            </p>
+                                            />
+                                        ) : (
+                                            <>
+                                                <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    {isBusy ? (
+                                                        <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                                                    ) : (
+                                                        <GraduationCap className="w-8 h-8 text-muted-foreground" />
+                                                    )}
+                                                </div>
+                                                <h3 className="text-lg font-semibold mb-2">
+                                                    {isBusy
+                                                        ? t("common.loading")
+                                                        : t(
+                                                              "gradesPage.noGrades"
+                                                          )}
+                                                </h3>
+                                                {!isBusy && (
+                                                    <p className="text-muted-foreground">
+                                                        {t(
+                                                            "gradesPage.noGradesPlaceholder"
+                                                        )}
+                                                    </p>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </div>

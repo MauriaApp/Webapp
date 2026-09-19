@@ -5,6 +5,7 @@ import { getHomeUpcoming } from "@/lib/utils/home";
 import { staggerGroup } from "@/lib/motion";
 import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
+import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -12,6 +13,7 @@ import { Lesson } from "@/types/aurion";
 import {
     EmptyState,
     ImportantMessage,
+    JuniaStatusWarning,
     LessonsSection,
     WelcomeHeader,
 } from "./sections";
@@ -68,6 +70,8 @@ export function HomePage() {
         refetchInterval: 1000 * 60 * 5, // 5 min
     });
 
+    const juniaStatus = useJuniaStatus();
+
     const { current, today, tomorrow } = getHomeUpcoming({ lessons });
     const [firstName, setFirstName] = useState<string>(t("homePage.welcome"));
 
@@ -93,6 +97,7 @@ export function HomePage() {
             <motion.div variants={staggerGroup} initial="hidden" animate="show">
                 <WelcomeHeader firstName={firstName} />
                 <ImportantMessage message={importantMessage} />
+                <JuniaStatusWarning status={juniaStatus} />
                 <RestaurantsSection />
 
                 {current && (

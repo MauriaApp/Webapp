@@ -1,7 +1,7 @@
 import type { Variants } from "framer-motion";
 
 // Smooth, "pro" ease-out curve shared by every entrance animation.
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 /**
  * Standard entrance for a page element: a gentle fade, no movement.

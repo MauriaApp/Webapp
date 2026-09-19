@@ -7,7 +7,7 @@ import Sidebar from "@/components/sidebar";
 import { Particles } from "@/components/ui/shadcn-io/particles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsFetching } from "@tanstack/react-query";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Outlet } from "react-router";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -15,6 +15,8 @@ import { GridPattern } from "@/components/ui/shadcn-io/grid-pattern";
 import { Topography } from "@/components/ui/shadcn-io/topography";
 import { DotPattern } from "@/components/ui/shadcn-io/dot-pattern";
 import { useFetchProgress } from "@/lib/hooks/use-fetch-progress";
+import { BLINK_EVENT, useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { ServerCrash } from "lucide-react";
 
 const BottomNav = memo(BottomNavigation);
 const ParticlesMemo = memo(Particles);
@@ -29,8 +31,43 @@ export default function RootLayout() {
     const { background } = useBackground();
     const activeFetches = useIsFetching();
     const fetchProgress = useFetchProgress();
+    const aurionDown = useJuniaStatus()?.aurionDown ?? false;
     const showGlobalSpinner = activeFetches > 0 || fetchProgress > 0;
     const [renderSpinner, setRenderSpinner] = useState(showGlobalSpinner);
+    // While Aurion is down the ring is replaced by a crashed-server icon that
+    // only exists for its blink animation. Only one blink plays at a time:
+    // triggers received while it runs are ignored.
+    const [blinking, setBlinking] = useState(false);
+    const blinkingRef = useRef(false);
+    const triggerBlink = useCallback(() => {
+        if (blinkingRef.current) return;
+        blinkingRef.current = true;
+        setBlinking(true);
+    }, []);
+    const endBlink = useCallback(() => {
+        blinkingRef.current = false;
+        setBlinking(false);
+    }, []);
+
+    // Aurion came back mid-blink: the icon unmounts without completing.
+    useEffect(() => {
+        if (!aurionDown) endBlink();
+    }, [aurionDown, endBlink]);
+
+    // Blink at the start of every fetch cycle while Aurion is down.
+    const shouldBlink = aurionDown && showGlobalSpinner;
+    const wasBlinking = useRef(false);
+    useEffect(() => {
+        if (shouldBlink && !wasBlinking.current) triggerBlink();
+        wasBlinking.current = shouldBlink;
+    }, [shouldBlink, triggerBlink]);
+
+    // ...and on demand (pull-to-refresh), when no new fetch cycle begins.
+    useEffect(() => {
+        if (!aurionDown) return;
+        window.addEventListener(BLINK_EVENT, triggerBlink);
+        return () => window.removeEventListener(BLINK_EVENT, triggerBlink);
+    }, [aurionDown, triggerBlink]);
 
     useEffect(() => {
         if (showGlobalSpinner) {
@@ -80,13 +117,9 @@ export default function RootLayout() {
                     </div>
                 );
             case "topography":
-                return (
-                    <TopographyMemo className="absolute inset-0 z-0" />
-                );
+                return <TopographyMemo className="absolute inset-0 z-0" />;
             case "dot-pattern":
-                return (
-                    <DotPatternMemo className="absolute inset-0 z-0" />
-                );
+                return <DotPatternMemo className="absolute inset-0 z-0" />;
             default:
                 return null;
         }
@@ -106,7 +139,7 @@ export default function RootLayout() {
                         </Button> */}
                 <div className="flex items-center gap-3">
                     <AnimatePresence initial={false}>
-                        {renderSpinner && (
+                        {renderSpinner && !aurionDown && (
                             <motion.div
                                 key="sidebar-global-loader"
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -129,6 +162,21 @@ export default function RootLayout() {
                             </motion.div>
                         )}
                     </AnimatePresence>
+                    {/* Aurion down: 3 slow blinks, then the icon unmounts */}
+                    {blinking && aurionDown && (
+                        <motion.div
+                            className="flex items-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: [0, 1, 0, 1, 0, 1, 0] }}
+                            transition={{ duration: 1.8, ease: "linear" }}
+                            onAnimationComplete={endBlink}
+                        >
+                            <ServerCrash className="h-6 w-6 text-red-300 oled:text-red-400" />
+                            <span className="sr-only">
+                                {t("homePage.aurionDownTitle")}
+                            </span>
+                        </motion.div>
+                    )}
                     <SidebarMemo />
                 </div>
             </header>
