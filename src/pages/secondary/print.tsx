@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Plus, Trash2, Upload } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
     PrintFolder,
+    PrintJob,
     deletePrintJobs,
     fetchPrintBalance,
     fetchPrintJobs,
@@ -20,7 +21,9 @@ import { getDateLocale } from "@/lib/utils/translations";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const REFETCH_INTERVAL = 15_000;
-const REFRESH_DELAYS = [3_000, 8_000];
+// SafeQ lists a new job a few seconds after the upload returns: check at each
+// delay, and give up on the last one
+const VERIFY_DELAYS = [3_000, 6_000, 9_000];
 
 interface PendingFile {
     key: string;
@@ -28,6 +31,16 @@ interface PendingFile {
     bw: boolean;
     duplex: boolean;
 }
+
+// Uploaded file shown in the list before SafeQ actually lists it
+interface OptimisticJob extends PrintJob {
+    // Same-name jobs already listed at upload time: it is really listed once
+    // this count is exceeded
+    baseline: number;
+}
+
+const countByName = (jobs: PrintJob[] | undefined, name: string) =>
+    jobs?.filter((job) => job.name === name).length ?? 0;
 
 // SafeQ always returns dates in English, e.g. "Sep 18, 2026, 6:34 PM"
 const formatJobDate = (raw: string, language: string) => {
@@ -90,7 +103,7 @@ function BalanceSection() {
     );
 }
 
-function JobsSection() {
+function JobsSection({ optimistic }: { optimistic: OptimisticJob[] }) {
     const { t, i18n } = useTranslation();
     const queryClient = useQueryClient();
     const [folder, setFolder] = useState<PrintFolder>("WAITING");
@@ -104,6 +117,12 @@ function JobsSection() {
         },
         refetchInterval: REFETCH_INTERVAL,
     });
+
+    const pendingJobs =
+        folder === "WAITING"
+            ? optimistic.filter((o) => countByName(jobs, o.name) <= o.baseline)
+            : [];
+    const allJobs = [...pendingJobs, ...(jobs ?? [])];
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
@@ -146,10 +165,17 @@ function JobsSection() {
                 <p className="text-center text-destructive">
                     {t("printPage.jobs.error")}
                 </p>
-            ) : jobs && jobs.length > 0 ? (
+            ) : allJobs.length > 0 ? (
                 <div className="space-y-2">
-                    {jobs.map((job) => (
-                        <Card key={job.id}>
+                    {allJobs.map((job) => (
+                        <Card
+                            key={job.id}
+                            className={
+                                job.id.startsWith("pending-")
+                                    ? "opacity-60"
+                                    : undefined
+                            }
+                        >
                             <CardContent className="flex items-center justify-between gap-3 p-3">
                                 <div className="min-w-0">
                                     <p className="truncate font-medium">
@@ -162,20 +188,27 @@ function JobsSection() {
                                         )}
                                     </p>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    aria-label={t("printPage.jobs.delete")}
-                                    disabled={
-                                        deleteMutation.isPending &&
-                                        deleteMutation.variables === job.id
-                                    }
-                                    onClick={() =>
-                                        deleteMutation.mutate(job.id)
-                                    }
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
+                                {job.id.startsWith("pending-") ? (
+                                    // Same footprint as the delete button
+                                    <div className="flex h-9 w-9 items-center justify-center">
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                    </div>
+                                ) : (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        aria-label={t("printPage.jobs.delete")}
+                                        disabled={
+                                            deleteMutation.isPending &&
+                                            deleteMutation.variables === job.id
+                                        }
+                                        onClick={() =>
+                                            deleteMutation.mutate(job.id)
+                                        }
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                )}
                             </CardContent>
                         </Card>
                     ))}
@@ -198,13 +231,14 @@ function UploadRow({
     pending,
     onChange,
     onDone,
+    onUploaded,
 }: {
     pending: PendingFile;
     onChange: (patch: Partial<PendingFile>) => void;
     onDone: () => void;
+    onUploaded: (name: string) => void;
 }) {
     const { t } = useTranslation();
-    const queryClient = useQueryClient();
     const tooLarge = pending.file.size > MAX_FILE_SIZE;
 
     const mutation = useMutation({
@@ -217,13 +251,7 @@ function UploadRow({
             if (!res?.success) throw new Error("upload");
         },
         onSuccess: () => {
-            // SafeQ lists a new job a few seconds after the upload returns
-            const refresh = () =>
-                queryClient.invalidateQueries({
-                    queryKey: ["print", "jobs", "WAITING"],
-                });
-            refresh();
-            REFRESH_DELAYS.forEach((delay) => setTimeout(refresh, delay));
+            onUploaded(pending.file.name);
             onDone();
         },
     });
@@ -275,7 +303,11 @@ function UploadRow({
     );
 }
 
-function UploadSection() {
+function UploadSection({
+    onUploaded,
+}: {
+    onUploaded: (name: string) => void;
+}) {
     const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
     const [pending, setPending] = useState<PendingFile[]>([]);
@@ -323,6 +355,7 @@ function UploadSection() {
                                 )
                             )
                         }
+                        onUploaded={onUploaded}
                         onDone={() =>
                             setPending((prev) =>
                                 prev.filter((x) => x.key !== p.key)
@@ -338,6 +371,46 @@ function UploadSection() {
 export function PrintPage() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const [optimistic, setOptimistic] = useState<OptimisticJob[]>([]);
+
+    // Show the file right away, then check whether SafeQ really lists it. Once
+    // it does, the real job replaces the placeholder and the checks stop. A
+    // missing file is left pending until the last check, which drops it.
+    const trackUpload = (name: string) => {
+        const key = ["print", "jobs", "WAITING"];
+        const id = `pending-${crypto.randomUUID()}`;
+        const baseline = countByName(
+            queryClient.getQueryData<PrintJob[]>(key),
+            name
+        );
+        setOptimistic((prev) => [
+            {
+                id,
+                name,
+                date: format(new Date(), "MMM d, yyyy, h:mm a", {
+                    locale: enUS,
+                }),
+                owner: "",
+                baseline,
+            },
+            ...prev,
+        ]);
+        let settled = false;
+        VERIFY_DELAYS.forEach((delay, index) => {
+            setTimeout(async () => {
+                if (settled) return;
+                await queryClient.refetchQueries({ queryKey: key });
+                const listed =
+                    countByName(
+                        queryClient.getQueryData<PrintJob[]>(key),
+                        name
+                    ) > baseline;
+                if (!listed && index < VERIFY_DELAYS.length - 1) return;
+                settled = true;
+                setOptimistic((prev) => prev.filter((o) => o.id !== id));
+            }, delay);
+        });
+    };
 
     const handleRefresh = async () => {
         await queryClient.refetchQueries({ queryKey: ["print"] });
@@ -352,8 +425,8 @@ export function PrintPage() {
         >
             <div className="space-y-8">
                 <BalanceSection />
-                <JobsSection />
-                <UploadSection />
+                <JobsSection optimistic={optimistic} />
+                <UploadSection onUploaded={trackUpload} />
             </div>
         </PullToRefresh>
     );

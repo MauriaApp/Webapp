@@ -2,6 +2,8 @@
 
 import { memo, useMemo, useState } from "react";
 import { FileText, Download, Loader2 } from "lucide-react";
+import { AurionDownState } from "@/components/aurion-down-state";
+import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchDocuments, downloadDocument } from "@/lib/api/aurion";
@@ -45,6 +47,7 @@ export function DocumentsPage() {
     const categories = result?.categories ?? [];
 
     const isBusy = isLoading || isFetching;
+    const aurionDown = useJuniaStatus()?.aurionDown ?? false;
     const handleRefresh = () => refetch();
 
     // Build the filter carousel dynamically from the categories returned
@@ -119,31 +122,43 @@ export function DocumentsPage() {
                         >
                             <div className="text-center py-12">
                                 <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                                    <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        {isBusy ? (
-                                            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
-                                        ) : (
-                                            <FileText className="w-8 h-8 text-muted-foreground" />
-                                        )}
-                                    </div>
-                                    <h3 className="text-lg font-semibold mb-2">
-                                        {isBusy
-                                            ? t("common.loading")
-                                            : t("documentsPage.noDocuments")}
-                                    </h3>
-                                    {!isBusy && (
-                                        <p className="text-muted-foreground">
-                                            {t(
-                                                "documentsPage.noDocumentsPlaceholder"
+                                    {aurionDown && documents.length === 0 ? (
+                                        <AurionDownState
+                                            message={t(
+                                                "documentsPage.noDocumentsCached"
                                             )}
-                                        </p>
-                                    )}
-                                    {isBusy && (
-                                        <p className="text-xs text-muted-foreground">
-                                            {t(
-                                                "documentsPage.loadingHint"
+                                        />
+                                    ) : (
+                                        <>
+                                            <div className="w-16 h-16 bg-muted-foreground/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                {isBusy ? (
+                                                    <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+                                                ) : (
+                                                    <FileText className="w-8 h-8 text-muted-foreground" />
+                                                )}
+                                            </div>
+                                            <h3 className="text-lg font-semibold mb-2">
+                                                {isBusy
+                                                    ? t("common.loading")
+                                                    : t(
+                                                          "documentsPage.noDocuments"
+                                                      )}
+                                            </h3>
+                                            {!isBusy && (
+                                                <p className="text-muted-foreground">
+                                                    {t(
+                                                        "documentsPage.noDocumentsPlaceholder"
+                                                    )}
+                                                </p>
                                             )}
-                                        </p>
+                                            {isBusy && (
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t(
+                                                        "documentsPage.loadingHint"
+                                                    )}
+                                                </p>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </div>

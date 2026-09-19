@@ -230,3 +230,16 @@ const termSuffix = /\s+-\s+\d*\s*(?:er|ère|e|ème|nd|nde)?\s*semestre\s*\d*$/i;
  */
 export const formatLessonCourse = (courseTitle: string) =>
     courseTitle.replace(termSuffix, "").trim();
+
+/** Compact elapsed time since an ISO date: "<1 min", "25 min", "5 h 10 min", "30 h". */
+export function formatElapsed(since: string, now = Date.now()): string {
+    const minutes = Math.max(
+        0,
+        Math.floor((now - new Date(since).getTime()) / 60_000)
+    );
+    if (minutes < 1) return "<1 min";
+    if (minutes < 60) return `${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    if (hours >= 24) return `${hours} h`;
+    return minutes % 60 === 0 ? `${hours} h` : `${hours} h ${minutes % 60} min`;
+}
