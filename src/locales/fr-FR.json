@@ -142,6 +142,7 @@
     "loadingSchedule": "Données du planning en cours de chargement…",
     "noImportantMessageTitle": "Aucun message important",
     "noImportantMessageBody": "Bonne journée !",
+    "goToMessage": "Afficher le message important {{index}}",
     "aurionDownTitle": "Aurion rencontre des problèmes",
     "aurionDownBody": "Le portail est lent ou injoignable. Ton planning et tes notes peuvent ne pas se mettre à jour.",
     "wifiDownTitle": "Wi-Fi Junia perturbé",

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { JuniaStatus } from "@/lib/api/junia-status";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ChevronDown,
@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import { EASE, fadeIn, staggerGroup } from "@/lib/motion";
 
 const MotionCard = motion(Card);
+const MotionAlert = motion(Alert);
 
 const containerVariants = staggerGroup;
 const itemVariants = fadeIn;
@@ -140,21 +141,118 @@ export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
 };
 
 // Important Message Component
-export const ImportantMessage = ({ message }: { message?: MessageEntry }) => {
+// How long a message stays on screen before the carousel moves to the next.
+const MESSAGE_DURATION = 8; // seconds
+
+export const ImportantMessage = ({
+    messages = [],
+}: {
+    messages?: MessageEntry[];
+}) => {
     const { t } = useTranslation();
+    const [index, setIndex] = useState(0);
+    // Tapping a segment pins that message and stops the rotation.
+    const [autoplay, setAutoplay] = useState(true);
+
+    const count = messages.length;
+
+    // The list can shrink between refetches — never point past its end.
+    useEffect(() => {
+        if (index > 0 && index > count - 1) {
+            setIndex(0);
+        }
+    }, [count, index]);
+
+    const current = messages[Math.min(index, Math.max(count - 1, 0))];
+    const goTo = (target: number) => {
+        setIndex(target);
+        setAutoplay(false);
+    };
+    const next = () => setIndex((i) => (i + 1) % count);
+
     return (
         <motion.div
             variants={fadeIn}
-            className="rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
+            className="mb-8 rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
         >
-            <Alert className="mb-8 border-none bg-mauria-accent/20 dark:bg-mauria-alert">
-                <AlertTitle className="font-bold text-black dark:text-white">
-                    {message?.title || t("homePage.noImportantMessageTitle")}
-                </AlertTitle>
-                <AlertDescription className="text-black/80 dark:text-white/90">
-                    {message?.message || t("homePage.noImportantMessageBody")}
-                </AlertDescription>
-            </Alert>
+            <MotionAlert
+                layout
+                transition={{ layout: { duration: 0.35, ease: EASE } }}
+                className="overflow-hidden border-none bg-mauria-accent/20 dark:bg-mauria-alert"
+            >
+                {/* mode="wait" so the box only resizes once the old text is
+                    gone — the height then eases to the new one. */}
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                        key={index}
+                        layout="position"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2, ease: EASE }}
+                    >
+                        <AlertTitle className="font-bold text-black dark:text-white">
+                            {current?.title ||
+                                t("homePage.noImportantMessageTitle")}
+                        </AlertTitle>
+                        <AlertDescription className="text-black/80 dark:text-white/90">
+                            {current?.message ||
+                                t("homePage.noImportantMessageBody")}
+                        </AlertDescription>
+                    </motion.div>
+                </AnimatePresence>
+
+                {count > 1 && (
+                    <motion.div
+                        layout="position"
+                        className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5"
+                    >
+                        {messages.map((entry, i) => (
+                            <button
+                                key={`${i}-${entry.title}`}
+                                type="button"
+                                aria-label={t("homePage.goToMessage", {
+                                    index: i + 1,
+                                })}
+                                aria-current={i === index}
+                                onClick={() => goTo(i)}
+                                className="group flex h-3 flex-1 cursor-pointer items-center"
+                            >
+                                <span className="block h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/20">
+                                    <motion.span
+                                        key={`${i}-${index}-${String(autoplay)}`}
+                                        className="block h-full origin-left rounded-full bg-mauria-purple dark:bg-white"
+                                        initial={{
+                                            scaleX:
+                                                i < index ||
+                                                (i === index && !autoplay)
+                                                    ? 1
+                                                    : 0,
+                                        }}
+                                        animate={{
+                                            scaleX: i <= index ? 1 : 0,
+                                        }}
+                                        transition={
+                                            i === index && autoplay
+                                                ? {
+                                                      duration:
+                                                          MESSAGE_DURATION,
+                                                      ease: "linear",
+                                                  }
+                                                : { duration: 0 }
+                                        }
+                                        onAnimationComplete={() => {
+                                            if (i === index && autoplay) {
+                                                next();
+                                            }
+                                        }}
+                                    />
+                                </span>
+                            </button>
+                        ))}
+                    </motion.div>
+                )}
+            </MotionAlert>
         </motion.div>
     );
 };
