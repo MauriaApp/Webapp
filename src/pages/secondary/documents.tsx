@@ -16,6 +16,11 @@ import { fadeIn, staggerGroup } from "@/lib/motion";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 import { toast } from "sonner";
 
+// Same key on both sides of the download state — the card looks it up to swap
+// its button for a spinner, so any mismatch leaves the button clickable.
+const documentId = (doc: AurionDocument) =>
+    `${doc.category}-${doc.docIndex}-${doc.submitParam}`;
+
 export function DocumentsPage() {
     const { t } = useTranslation();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -74,7 +79,7 @@ export function DocumentsPage() {
     }, [documents, selectedCategory]);
 
     const handleDownload = async (doc: AurionDocument) => {
-        const id = `${doc.category}-${doc.docIndex}`;
+        const id = documentId(doc);
         if (downloadingId === id) return;
         setDownloadingId(id);
         const filename = await downloadDocument(doc);
@@ -176,7 +181,7 @@ export function DocumentsPage() {
                         >
                             <AnimatePresence mode="popLayout">
                                 {displayedDocuments.map((doc) => {
-                                    const id = `${doc.category}-${doc.docIndex}-${doc.submitParam}`;
+                                    const id = documentId(doc);
                                     return (
                                         <DocumentCard
                                             key={id}
