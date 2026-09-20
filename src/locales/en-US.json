@@ -120,7 +120,8 @@
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
       "print": "Print",
-      "versions": "Updates"
+      "versions": "Updates",
+      "settings": "Settings"
     },
     "help": "A question, an idea?",
     "logOut": "Log Out",
@@ -254,6 +255,25 @@
     }
   },
   "gradesPage": {
+    "caseOpening": {
+      "title": "Opening the case",
+      "caseName": "Mauria Case",
+      "contains": "Contains the following rarities",
+      "aboveAverage": "Above class average",
+      "belowAverage": "Below class average",
+      "continue": "Continue"
+    },
+    "rarity": {
+      "consumer": "Consumer Grade",
+      "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "exceedinglyRare": "Exceedingly Rare"
+    },
+    "clickToOpen": "Click to open the grade",
+    "clickToOpenShort": "Open the grade",
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
     "noGradesCached": "No grades were found in the cache, and Aurion is down. Try again later.",
@@ -360,6 +380,10 @@
     "visualImprovements": "Visual improvements",
     "technicalImprovements": "Technical improvements",
     "discardButton": "Okay"
+  },
+  "settingsPage": {
+    "experimental": "Experimental",
+    "cs2GradesGambling": "CS2 Grades Gambling"
   },
   "versionsPage": {
     "version": "Version",

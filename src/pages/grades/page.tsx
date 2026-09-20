@@ -3,7 +3,8 @@
 import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
-import { GradeCard, GradeCardAnimate } from "./grade-card";
+import { CaseOpeningOverlay } from "./case-opening-overlay";
+import { GradeCard, GradeCardAnimate, UnopenedGradeCard } from "./grade-card";
 import {
     getGrades,
     getGradeBadgeInfoFromCode,
@@ -37,6 +38,12 @@ import {
     ChartTooltip,
     ChartConfig,
 } from "@/components/ui/chart";
+import { useCs2GradesGambling } from "@/lib/utils/experimental";
+import {
+    getGradeKey,
+    openGrade,
+    useUnopenedGrades,
+} from "@/lib/utils/unopened-grades";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 
 const AnimatedGradeCard = memo(GradeCardAnimate);
@@ -543,6 +550,7 @@ function AveragesComparison({
 export function GradesPage() {
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [openingGrade, setOpeningGrade] = useState<Grade | null>(null);
     const { t, i18n } = useTranslation();
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     // undefined = not chosen yet (falls back to the current semester);
@@ -573,6 +581,11 @@ export function GradesPage() {
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
         placeholderData: (previousData) => previousData,
     });
+
+    const cs2GradesGambling = useCs2GradesGambling();
+    const unopenedKeys = useUnopenedGrades();
+    const isUnopened = (grade: Grade) =>
+        cs2GradesGambling && unopenedKeys.has(getGradeKey(grade));
 
     const isBusy = isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
@@ -612,6 +625,26 @@ export function GradesPage() {
                 getGradeBadgeInfoFromCode(g.code)?.labelKey === selectedSubject
         );
     }, [filteredGrades, selectedSubject]);
+
+    // Unopened grades stay out of the averages and the chart
+    const openedFilteredGrades = useMemo(
+        () =>
+            cs2GradesGambling
+                ? filteredGrades.filter(
+                      (g) => !unopenedKeys.has(getGradeKey(g))
+                  )
+                : filteredGrades,
+        [filteredGrades, cs2GradesGambling, unopenedKeys]
+    );
+    const openedDisplayedGrades = useMemo(
+        () =>
+            cs2GradesGambling
+                ? displayedGrades.filter(
+                      (g) => !unopenedKeys.has(getGradeKey(g))
+                  )
+                : displayedGrades,
+        [displayedGrades, cs2GradesGambling, unopenedKeys]
+    );
 
     const hasKnownClass = useMemo(
         () => detectStudentClass(filteredGrades) !== null,
@@ -675,8 +708,8 @@ export function GradesPage() {
                         <motion.div variants={fadeIn}>
                             {hasKnownClass ? (
                                 <AveragesComparison
-                                    grades={filteredGrades}
-                                    chartGrades={displayedGrades}
+                                    grades={openedFilteredGrades}
+                                    chartGrades={openedDisplayedGrades}
                                     subject={selectedSubject}
                                     t={t}
                                 />
@@ -753,7 +786,14 @@ export function GradesPage() {
                             >
                                 <AnimatePresence mode="popLayout">
                                     {displayedGrades.map((grade, index) =>
-                                        index < 8 ? (
+                                        isUnopened(grade) ? (
+                                            <UnopenedGradeCard
+                                                key={index}
+                                                index={index}
+                                                grade={grade}
+                                                onOpen={setOpeningGrade}
+                                            />
+                                        ) : index < 8 ? (
                                             <AnimatedGradeCard
                                                 key={index}
                                                 index={index}
@@ -780,6 +820,13 @@ export function GradesPage() {
                     </AnimatePresence>
                 </motion.div>
             </motion.div>
+            <CaseOpeningOverlay
+                grade={openingGrade}
+                onClose={() => {
+                    if (openingGrade) openGrade(openingGrade);
+                    setOpeningGrade(null);
+                }}
+            />
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
                     <DrawerHeader>

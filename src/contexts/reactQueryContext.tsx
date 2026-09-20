@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import {
@@ -7,8 +7,17 @@ import {
     removeFromStorage,
     saveToStorage,
 } from "@/lib/utils/storage";
+import { trackNewGrades } from "@/lib/utils/unopened-grades";
+import type { Grade } from "@/types/aurion";
 
 const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+        onSuccess: (data, query) => {
+            if (query.queryKey[0] === "grades") {
+                trackNewGrades(data as Grade[]);
+            }
+        },
+    }),
     defaultOptions: {
         queries: {
             gcTime: 1000 * 60 * 60 * 24,
