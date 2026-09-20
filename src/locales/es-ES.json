@@ -120,7 +120,8 @@
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
       "print": "Imprimir",
-      "versions": "Actualizaciones"
+      "versions": "Actualizaciones",
+      "settings": "Ajustes"
     },
     "help": "¿Una pregunta, una idea?",
     "logOut": "Cerrar sesión",
@@ -254,6 +255,25 @@
     }
   },
   "gradesPage": {
+    "caseOpening": {
+      "title": "Abriendo la caja",
+      "caseName": "Caja Mauria",
+      "contains": "Contiene las siguientes rarezas",
+      "aboveAverage": "Por encima de la media",
+      "belowAverage": "Por debajo de la media",
+      "continue": "Continuar"
+    },
+    "rarity": {
+      "consumer": "Calidad consumidor",
+      "industrial": "Calidad industrial",
+      "milspec": "Calidad militar",
+      "restricted": "Restringido",
+      "classified": "Clasificado",
+      "covert": "Secreto",
+      "exceedinglyRare": "Extremadamente raro"
+    },
+    "clickToOpen": "Haz clic para abrir la nota",
+    "clickToOpenShort": "Abrir la nota",
     "noGrades": "Todavía no hay notas.",
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
     "noGradesCached": "No se encontraron notas en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
@@ -360,6 +380,10 @@
     "visualImprovements": "Mejoras visuales",
     "technicalImprovements": "Mejoras técnicas",
     "discardButton": "De acuerdo"
+  },
+  "settingsPage": {
+    "experimental": "Experimental",
+    "cs2GradesGambling": "CS2 Grades Gambling"
   },
   "versionsPage": {
     "version": "Versión",

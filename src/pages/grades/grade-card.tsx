@@ -4,7 +4,11 @@ import { Grade } from "@/types/aurion";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { motion } from "framer-motion";
-import { SquareArrowOutDownRightIcon } from "lucide-react";
+import {
+    ChevronsRight,
+    Package,
+    SquareArrowOutDownRightIcon,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 import { fadeInIndexed } from "@/lib/motion";
@@ -164,6 +168,87 @@ export function GradeCard({
                 </div>
             </div>
         </Card>
+    );
+}
+
+// Same layout as the grade cards, in a CS2 case-opening look
+export function UnopenedGradeCard({
+    grade,
+    onOpen,
+    index = 0,
+}: {
+    grade: Grade;
+    onOpen: (grade: Grade) => void;
+    index?: number;
+}) {
+    const { t, i18n } = useTranslation();
+    const badgeInfo = grade.code?.trim()
+        ? getGradeBadgeInfoFromCode(grade.code)
+        : null;
+
+    return (
+        <MotionCard
+            layout
+            variants={fadeInIndexed}
+            custom={Math.min(index, 8)}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="cs2-card relative cursor-pointer border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card p-4 h-full overflow-visible"
+            onClick={onOpen.bind(null, grade)}
+        >
+            <div className="cs2-case pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+                <span className="absolute left-1 top-1 size-2.5 rounded-tl-sm border-l-2 border-t-2 border-amber-400/70" />
+                <span className="absolute right-1 top-1 size-2.5 rounded-tr-sm border-r-2 border-t-2 border-amber-400/70" />
+                <span className="absolute bottom-1 left-1 size-2.5 rounded-bl-sm border-b-2 border-l-2 border-amber-400/70" />
+                <span className="absolute bottom-1 right-1 size-2.5 rounded-br-sm border-b-2 border-r-2 border-amber-400/70" />
+            </div>
+            <div className="relative flex items-center">
+                <div className="mr-4 w-20 items-center justify-center text-center">
+                    <Package className="cs2-case-icon mx-auto size-8 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.9)]" />
+                    <div className="font-mono text-sm font-bold leading-5 tracking-[0.2em] text-amber-300/80">
+                        ??/20
+                    </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 truncate text-lg font-medium text-white">
+                            {grade.name}
+                        </div>
+                        {badgeInfo?.labelKey && (
+                            <span className="max-w-[38%] shrink-0 truncate rounded-sm border border-amber-400/60 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase leading-none tracking-widest text-amber-300">
+                                {t(badgeInfo.labelKey)}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex h-5 items-center justify-between gap-2 text-sm text-zinc-500">
+                        <span className="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap bg-amber-400 pl-1.5 pr-2.5 text-[10px] font-extrabold uppercase leading-none tracking-wide text-zinc-950 [clip-path:polygon(0_0,calc(100%-6px)_0,100%_50%,calc(100%-6px)_100%,0_100%)]">
+                            <ChevronsRight className="size-3 shrink-0 animate-pulse" />
+                            <span className="sm:hidden">
+                                {t("gradesPage.clickToOpenShort")}
+                            </span>
+                            <span className="hidden sm:inline">
+                                {t("gradesPage.clickToOpen")}
+                            </span>
+                        </span>
+                        <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-wide text-amber-300/70">
+                            {grade.date
+                                ? format(
+                                      new Date(
+                                          grade.date
+                                              .split("/")
+                                              .reverse()
+                                              .join("-")
+                                      ),
+                                      "d MMM yyyy",
+                                      { locale: getDateLocale(i18n.language) }
+                                  )
+                                : ""}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </MotionCard>
     );
 }
 

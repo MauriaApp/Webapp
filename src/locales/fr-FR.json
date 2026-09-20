@@ -120,7 +120,8 @@
       "aurion": "Aurion",
       "juniaLearning": "Junia Learning",
       "print": "Imprimer",
-      "versions": "Mises à jour"
+      "versions": "Mises à jour",
+      "settings": "Paramètres"
     },
     "help": "Une question, une idée ?",
     "logOut": "Se déconnecter",
@@ -254,6 +255,25 @@
     }
   },
   "gradesPage": {
+    "caseOpening": {
+      "title": "Ouverture de la caisse",
+      "caseName": "Caisse Mauria",
+      "contains": "Contient les raretés suivantes",
+      "aboveAverage": "Au-dessus de la moyenne",
+      "belowAverage": "En dessous de la moyenne",
+      "continue": "Continuer"
+    },
+    "rarity": {
+      "consumer": "Qualité consommateur",
+      "industrial": "Qualité industrielle",
+      "milspec": "Qualité militaire",
+      "restricted": "Restreint",
+      "classified": "Classifié",
+      "covert": "Secret",
+      "exceedinglyRare": "Extrêmement rare"
+    },
+    "clickToOpen": "Cliquer pour ouvrir la note",
+    "clickToOpenShort": "Ouvrir la note",
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "noGradesCached": "Aucune note n'a été trouvée dans le cache, et Aurion est en panne. Réessaie plus tard.",
@@ -360,6 +380,10 @@
     "visualImprovements": "Améliorations visuelles",
     "technicalImprovements": "Améliorations techniques",
     "discardButton": "D'accord !"
+  },
+  "settingsPage": {
+    "experimental": "Expérimental",
+    "cs2GradesGambling": "CS2 Grades Gambling"
   },
   "versionsPage": {
     "version": "Version",
