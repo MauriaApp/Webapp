@@ -142,6 +142,7 @@
     "loadingSchedule": "Cargando datos del horario…",
     "noImportantMessageTitle": "Ningún mensaje importante",
     "noImportantMessageBody": "¡Buen día!",
+    "goToMessage": "Mostrar el mensaje importante {{index}}",
     "aurionDownTitle": "Aurion tiene problemas",
     "aurionDownBody": "El portal va lento o no responde. Tu horario y tus notas pueden no actualizarse.",
     "wifiDownTitle": "Wi-Fi de Junia con problemas",

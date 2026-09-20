@@ -14,14 +14,21 @@ export async function fetchAssos(): Promise<AssociationData[] | null> {
     return response;
 }
 
-export async function fetchImportantMessage(): Promise<MessageEntry> {
-    const response = await apiRequest<MessageEntry>("/messages", "GET");
+export async function fetchImportantMessage(): Promise<MessageEntry[]> {
+    const response = await apiRequest<MessageEntry[] | MessageEntry>(
+        "/messages",
+        "GET"
+    );
 
-    if (!response?.title) {
-        return { title: "", message: "" };
+    if (!response) {
+        return [];
     }
 
-    return response;
+    // The API used to return a single message before moving to a list —
+    // accept both shapes while the deployed API catches up with the webapp.
+    const messages = Array.isArray(response) ? response : [response];
+
+    return messages.filter((entry) => entry?.title);
 }
 
 export async function fetchUpdates(): Promise<UpdatesEntry[] | null> {

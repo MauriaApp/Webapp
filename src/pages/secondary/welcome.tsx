@@ -102,7 +102,7 @@ export function WelcomePage() {
                 ...PREFETCH_OPTS,
             },
             {
-                queryKey: ["importantMessage"],
+                queryKey: ["importantMessages"],
                 queryFn: () =>
                     timedFetch("importantMessage", fetchImportantMessage),
                 ...PREFETCH_OPTS,

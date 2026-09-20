@@ -59,8 +59,8 @@ export function HomePage() {
         void refetch();
     };
 
-    const { data: importantMessage } = useQuery({
-        queryKey: ["importantMessage"],
+    const { data: importantMessages = [] } = useQuery({
+        queryKey: ["importantMessages"],
         queryFn: fetchImportantMessage,
         staleTime: 1000 * 60 * 5, // 5 min
         gcTime: 1000 * 60 * 5, // 5 min
@@ -96,7 +96,7 @@ export function HomePage() {
         >
             <motion.div variants={staggerGroup} initial="hidden" animate="show">
                 <WelcomeHeader firstName={firstName} />
-                <ImportantMessage message={importantMessage} />
+                <ImportantMessage messages={importantMessages} />
                 <JuniaStatusWarning status={juniaStatus} />
                 <RestaurantsSection />
 

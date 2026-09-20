@@ -142,6 +142,7 @@
     "loadingSchedule": "Loading schedule data…",
     "noImportantMessageTitle": "No important message",
     "noImportantMessageBody": "Have a nice day!",
+    "goToMessage": "Show important message {{index}}",
     "aurionDownTitle": "Aurion is having issues",
     "aurionDownBody": "The portal is slow or unreachable. Your schedule and grades may not update.",
     "wifiDownTitle": "Junia Wi-Fi disrupted",
