@@ -116,16 +116,18 @@
             hsl(var(--mauria-purple-soft)),
             hsl(var(--mauria-purple-light))
         );
-        --planning-event-default-shadow: 0 16px 32px hsl( var(--mauria-purple) / 0.24);
+        --planning-event-default-shadow: 0 16px 32px
+            hsl(var(--mauria-purple) / 0.24);
         --planning-event-default-text: hsl(var(--mauria-white));
         --planning-event-default-solid: hsl(var(--mauria-purple-soft));
-        
+
         --planning-event-epreuve-gradient: linear-gradient(
             45deg,
             hsl(var(--mauria-accent)),
             hsl(var(--mauria-accent-dark))
         );
-        --planning-event-epreuve-shadow: 0 16px 32px hsl(var(--mauria-accent) / 0.24);
+        --planning-event-epreuve-shadow: 0 16px 32px
+            hsl(var(--mauria-accent) / 0.24);
         --planning-event-epreuve-text: hsl(var(--mauria-white));
 
         --planning-event-personal-gradient: linear-gradient(
@@ -1204,18 +1206,351 @@
         animation: cs2-sweep 3.6s ease-in-out infinite;
     }
 
-    .cs2-case-icon {
+    .fdj-case {
+        background-color: #10141a;
+        background-image:
+            repeating-linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.05) 0 6px,
+                transparent 6px 12px
+            ),
+            radial-gradient(
+                ellipse at 12% 50%,
+                rgba(226, 232, 240, 0.3),
+                transparent 60%
+            ),
+            linear-gradient(90deg, #1b2028, #10141a);
+    }
+
+    .fdj-case::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 30%;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.22),
+            transparent
+        );
+        animation: cs2-sweep 3.6s ease-in-out infinite;
+    }
+
+    .reveal-icon {
         animation: cs2-wobble 4.5s ease-in-out infinite;
     }
 
-    .cs2-card:hover .cs2-case-icon {
+    .reveal-card:hover .reveal-icon {
         animation: cs2-shake 0.8s ease-in-out infinite;
+    }
+
+    /* Pokemon booster: foil pack, holo sheen and pointer glare */
+    .poke-entry-foil {
+        background-color: #09090b;
+        background-image:
+            repeating-linear-gradient(
+                115deg,
+                rgba(255, 255, 255, 0.06) 0 6px,
+                transparent 6px 12px
+            ),
+            radial-gradient(
+                ellipse at 15% 50%,
+                rgba(252, 211, 77, 0.22),
+                transparent 60%
+            ),
+            linear-gradient(155deg, #6366f1 0%, #312e81 45%, #09090b 100%);
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+    }
+
+    .poke-entry-foil::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+            110deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.35) 45%,
+            transparent 60%
+        );
+        background-size: 250% 100%;
+        animation: poke-sheen 3.2s ease-in-out infinite;
+    }
+
+    .poke-entry-empty {
+        background-color: #14161b;
+        background-image: repeating-linear-gradient(
+            115deg,
+            rgba(255, 255, 255, 0.03) 0 6px,
+            transparent 6px 12px
+        );
+    }
+
+    .poke-pack-sheen {
+        background: linear-gradient(
+            110deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.35) 45%,
+            transparent 60%
+        );
+        background-size: 250% 100%;
+        animation: poke-sheen 3.2s ease-in-out infinite;
+    }
+
+    @keyframes poke-sheen {
+        0% {
+            background-position: 120% 0;
+        }
+        100% {
+            background-position: -40% 0;
+        }
+    }
+
+    .poke-pack-float {
+        animation: poke-float 2.6s ease-in-out infinite;
+    }
+
+    @keyframes poke-float {
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        30% {
+            transform: translateY(-7px) rotate(-1.5deg);
+        }
+        70% {
+            transform: translateY(-2px) rotate(1.5deg);
+        }
+    }
+
+    .poke-holo-host {
+        --sunpillar-1: hsl(2, 100%, 73%);
+        --sunpillar-2: hsl(53, 100%, 69%);
+        --sunpillar-3: hsl(93, 100%, 69%);
+        --sunpillar-4: hsl(176, 100%, 76%);
+        --sunpillar-5: hsl(228, 100%, 74%);
+        --sunpillar-6: hsl(283, 100%, 73%);
+        --holo-space: 5%;
+        --holo-angle: 133deg;
+    }
+
+    /* Shine layer, ported from simeydotme/pokemon-cards-css (v-full-art):
+       vertical sunpillars + diagonal foil strips + radial darkening, all
+       blended in one element so the rainbow never washes the whole card.
+       Driven by --background-x/y and --pointer-x/y. */
+    .poke-shine {
+        --c1: var(--sunpillar-5);
+        --c2: var(--sunpillar-6);
+        --c3: var(--sunpillar-1);
+        --c4: var(--sunpillar-2);
+        --c5: var(--sunpillar-3);
+        --c6: var(--sunpillar-4);
+        background-image:
+            repeating-linear-gradient(
+                0deg,
+                var(--c1) calc(var(--holo-space) * 1),
+                var(--c2) calc(var(--holo-space) * 2),
+                var(--c3) calc(var(--holo-space) * 3),
+                var(--c4) calc(var(--holo-space) * 4),
+                var(--c5) calc(var(--holo-space) * 5),
+                var(--c6) calc(var(--holo-space) * 6),
+                var(--c1) calc(var(--holo-space) * 7)
+            ),
+            repeating-linear-gradient(
+                var(--holo-angle),
+                #0e152e 0%,
+                hsl(180, 10%, 60%) 3.8%,
+                hsl(180, 29%, 66%) 4.5%,
+                hsl(180, 10%, 60%) 5.2%,
+                #0e152e 10%,
+                #0e152e 12%
+            ),
+            radial-gradient(
+                farthest-corner circle at var(--pointer-x) var(--pointer-y),
+                hsla(0, 0%, 0%, 0.1) 12%,
+                hsla(0, 0%, 0%, 0.15) 20%,
+                hsla(0, 0%, 0%, 0.25) 120%
+            );
+        background-position:
+            0% var(--background-y),
+            calc(var(--background-x) + (var(--background-y) * 0.2))
+                var(--background-y),
+            var(--background-x) var(--background-y);
+        background-size: 200% 700%, 300% 100%, 200% 100%;
+        background-blend-mode: hue, hard-light;
+        mix-blend-mode: color-dodge;
+        filter: brightness(
+            calc((var(--pointer-from-center) * 0.4) + 0.4)
+        )
+            contrast(1.4) saturate(2.25);
+        opacity: var(--card-opacity);
+    }
+
+    /* Second shine layer: same three layers with rotated sunpillars and the
+       foil strips moving the opposite way, exclusion-blended on top. */
+    .poke-shine::after {
+        --c1: var(--sunpillar-6);
+        --c2: var(--sunpillar-1);
+        --c3: var(--sunpillar-2);
+        --c4: var(--sunpillar-3);
+        --c5: var(--sunpillar-4);
+        --c6: var(--sunpillar-5);
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-image:
+            repeating-linear-gradient(
+                0deg,
+                var(--c1) calc(var(--holo-space) * 1),
+                var(--c2) calc(var(--holo-space) * 2),
+                var(--c3) calc(var(--holo-space) * 3),
+                var(--c4) calc(var(--holo-space) * 4),
+                var(--c5) calc(var(--holo-space) * 5),
+                var(--c6) calc(var(--holo-space) * 6),
+                var(--c1) calc(var(--holo-space) * 7)
+            ),
+            repeating-linear-gradient(
+                var(--holo-angle),
+                #0e152e 0%,
+                hsl(180, 10%, 60%) 3.8%,
+                hsl(180, 29%, 66%) 4.5%,
+                hsl(180, 10%, 60%) 5.2%,
+                #0e152e 10%,
+                #0e152e 12%
+            ),
+            radial-gradient(
+                farthest-corner circle at var(--pointer-x) var(--pointer-y),
+                hsla(0, 0%, 0%, 0.1) 12%,
+                hsla(0, 0%, 0%, 0.15) 20%,
+                hsla(0, 0%, 0%, 0.25) 120%
+            );
+        background-position:
+            0% var(--background-y),
+            calc(
+                (var(--background-x) + (var(--background-y) * 0.2)) * -1
+            )
+                calc(var(--background-y) * -1),
+            var(--background-x) var(--background-y);
+        background-size: 200% 400%, 195% 100%, 200% 100%;
+        background-blend-mode: hue, hard-light;
+        mix-blend-mode: exclusion;
+        filter: brightness(
+            calc((var(--pointer-from-center) * 0.4) + 0.8)
+        )
+            contrast(1.5) saturate(1.25);
+    }
+
+    /* Radial highlight that follows the cursor */
+    .poke-shine::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-image: radial-gradient(
+            farthest-corner circle at var(--pointer-x) var(--pointer-y),
+            hsl(0, 0%, 100%) 0%,
+            hsla(0, 0%, 0%, 0) 40%
+        );
+        background-position: center;
+        background-size: cover;
+        mix-blend-mode: overlay;
+        opacity: 0.75;
+    }
+
+    .poke-shine.poke-shine-gold,
+    .poke-shine.poke-shine-gold::after {
+        --sunpillar-1: hsl(45, 90%, 60%);
+        --sunpillar-2: hsl(38, 85%, 55%);
+        --sunpillar-3: hsl(50, 95%, 75%);
+        --sunpillar-4: hsl(42, 80%, 50%);
+        --sunpillar-5: hsl(48, 90%, 70%);
+        --sunpillar-6: hsl(35, 75%, 45%);
+    }
+
+    .poke-glare {
+        background-image: radial-gradient(
+            farthest-corner circle at var(--pointer-x) var(--pointer-y),
+            hsl(0, 0%, 75%) 5%,
+            hsl(200, 5%, 35%) 60%,
+            hsl(320, 40%, 10%) 150%
+        );
+        background-size: 120% 150%;
+        background-position: center center;
+        mix-blend-mode: hard-light;
+        filter: brightness(1) contrast(1.2) saturate(1);
+        opacity: calc(var(--card-opacity) * 0.75);
+    }
+
+    /* Pokemon booster: the face-down card telegraphs a chase pull.
+       --hype-a/--hype-b are the tier colours, --hype-power its intensity. */
+    .poke-hype-aura {
+        position: absolute;
+        inset: -14%;
+        pointer-events: none;
+        border-radius: 50%;
+        background: conic-gradient(
+            from 0deg,
+            var(--hype-a),
+            var(--hype-b),
+            var(--hype-a)
+        );
+        filter: blur(1.8em);
+        opacity: calc(var(--hype-power) * 0.4);
+        animation: poke-hype-aura 4.2s ease-in-out infinite;
+    }
+
+    .poke-hype-spark {
+        position: absolute;
+        pointer-events: none;
+        border-radius: 9999px;
+        background: radial-gradient(circle, #fff, var(--hype-b) 60%, transparent);
+        opacity: 0.5;
+        animation: poke-hype-spark 2.6s ease-in-out infinite;
+    }
+
+    @keyframes poke-hype-aura {
+        0% {
+            transform: rotate(0deg) scale(1);
+            opacity: calc(var(--hype-power) * 0.3);
+        }
+        50% {
+            transform: rotate(180deg) scale(1.05);
+            opacity: calc(var(--hype-power) * 0.6);
+        }
+        100% {
+            transform: rotate(360deg) scale(1);
+            opacity: calc(var(--hype-power) * 0.3);
+        }
+    }
+
+    @keyframes poke-hype-spark {
+        0%,
+        100% {
+            transform: scale(0.2);
+            opacity: 0;
+        }
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        70% {
+            transform: scale(0.6);
+            opacity: 0.35;
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
         .cs2-case::after,
-        .cs2-case-icon,
-        .cs2-card:hover .cs2-case-icon {
+        .fdj-case::after,
+        .poke-entry-foil::after,
+        .poke-pack-sheen,
+        .poke-pack-float,
+        .poke-hype-aura,
+        .poke-hype-spark,
+        .reveal-icon,
+        .reveal-card:hover .reveal-icon {
             animation: none;
         }
     }

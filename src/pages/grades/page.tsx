@@ -3,7 +3,9 @@
 import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
-import { CaseOpeningOverlay } from "./case-opening-overlay";
+import { GradeRevealOverlay } from "./reveal/grade-reveal-overlay";
+import { BoosterEntryCard } from "./reveal/pokemon/booster-entry-card";
+import { BoosterOverlay } from "./reveal/pokemon/booster-overlay";
 import { GradeCard, GradeCardAnimate, UnopenedGradeCard } from "./grade-card";
 import {
     getGrades,
@@ -38,10 +40,11 @@ import {
     ChartTooltip,
     ChartConfig,
 } from "@/components/ui/chart";
-import { useCs2GradesGambling } from "@/lib/utils/experimental";
+import { useGradeRevealMode } from "@/lib/utils/experimental";
 import {
     getGradeKey,
     openGrade,
+    openGrades,
     useUnopenedGrades,
 } from "@/lib/utils/unopened-grades";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
@@ -551,6 +554,7 @@ export function GradesPage() {
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [openingGrade, setOpeningGrade] = useState<Grade | null>(null);
+    const [boosterOpen, setBoosterOpen] = useState(false);
     const { t, i18n } = useTranslation();
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     // undefined = not chosen yet (falls back to the current semester);
@@ -582,10 +586,10 @@ export function GradesPage() {
         placeholderData: (previousData) => previousData,
     });
 
-    const cs2GradesGambling = useCs2GradesGambling();
+    const revealMode = useGradeRevealMode();
     const unopenedKeys = useUnopenedGrades();
     const isUnopened = (grade: Grade) =>
-        cs2GradesGambling && unopenedKeys.has(getGradeKey(grade));
+        revealMode !== "off" && unopenedKeys.has(getGradeKey(grade));
 
     const isBusy = isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
@@ -629,22 +633,45 @@ export function GradesPage() {
     // Unopened grades stay out of the averages and the chart
     const openedFilteredGrades = useMemo(
         () =>
-            cs2GradesGambling
+            revealMode !== "off"
                 ? filteredGrades.filter(
                       (g) => !unopenedKeys.has(getGradeKey(g))
                   )
                 : filteredGrades,
-        [filteredGrades, cs2GradesGambling, unopenedKeys]
+        [filteredGrades, revealMode, unopenedKeys]
     );
     const openedDisplayedGrades = useMemo(
         () =>
-            cs2GradesGambling
+            revealMode !== "off"
                 ? displayedGrades.filter(
                       (g) => !unopenedKeys.has(getGradeKey(g))
                   )
                 : displayedGrades,
-        [displayedGrades, cs2GradesGambling, unopenedKeys]
+        [displayedGrades, revealMode, unopenedKeys]
     );
+
+    // The booster draws from every pending grade, not just the filtered view
+    const pendingGrades = useMemo(
+        () =>
+            revealMode === "pokemon"
+                ? grades.filter((g) => unopenedKeys.has(getGradeKey(g)))
+                : [],
+        [grades, revealMode, unopenedKeys]
+    );
+    const collectedGrades = useMemo(
+        () =>
+            revealMode === "pokemon"
+                ? grades.filter(
+                      (g) =>
+                          g.grade?.trim() && !unopenedKeys.has(getGradeKey(g))
+                  )
+                : [],
+        [grades, revealMode, unopenedKeys]
+    );
+
+    // Booster mode hides the pending grades entirely: they only show up as cards
+    const listedGrades =
+        revealMode === "pokemon" ? openedDisplayedGrades : displayedGrades;
 
     const hasKnownClass = useMemo(
         () => detectStudentClass(filteredGrades) !== null,
@@ -785,12 +812,22 @@ export function GradesPage() {
                                 }}
                             >
                                 <AnimatePresence mode="popLayout">
-                                    {displayedGrades.map((grade, index) =>
-                                        isUnopened(grade) ? (
+                                    {revealMode === "pokemon" && (
+                                        <BoosterEntryCard
+                                            key="booster"
+                                            count={pendingGrades.length}
+                                            onOpen={() => setBoosterOpen(true)}
+                                        />
+                                    )}
+                                    {listedGrades.map((grade, index) =>
+                                        isUnopened(grade) &&
+                                        (revealMode === "cs2" ||
+                                            revealMode === "fdj") ? (
                                             <UnopenedGradeCard
                                                 key={index}
                                                 index={index}
                                                 grade={grade}
+                                                mode={revealMode}
                                                 onOpen={setOpeningGrade}
                                             />
                                         ) : index < 8 ? (
@@ -820,11 +857,21 @@ export function GradesPage() {
                     </AnimatePresence>
                 </motion.div>
             </motion.div>
-            <CaseOpeningOverlay
+            <GradeRevealOverlay
                 grade={openingGrade}
+                mode={revealMode}
                 onClose={() => {
                     if (openingGrade) openGrade(openingGrade);
                     setOpeningGrade(null);
+                }}
+            />
+            <BoosterOverlay
+                open={boosterOpen}
+                unopened={pendingGrades}
+                collection={collectedGrades}
+                onClose={(opened) => {
+                    openGrades(opened);
+                    setBoosterOpen(false);
                 }}
             />
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>

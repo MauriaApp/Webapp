@@ -4,14 +4,11 @@ import { Grade } from "@/types/aurion";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { motion } from "framer-motion";
-import {
-    ChevronsRight,
-    Package,
-    SquareArrowOutDownRightIcon,
-} from "lucide-react";
+import { ChevronsRight, SquareArrowOutDownRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 import { fadeInIndexed } from "@/lib/motion";
+import { REVEAL_CARD_THEMES, type RevealCardMode } from "./reveal/reveal-theme";
 
 const MotionCard = motion(Card);
 
@@ -171,17 +168,21 @@ export function GradeCard({
     );
 }
 
-// Same layout as the grade cards, in a CS2 case-opening look
+// Same layout as the grade cards, dressed up by the active reveal mode
 export function UnopenedGradeCard({
     grade,
+    mode,
     onOpen,
     index = 0,
 }: {
     grade: Grade;
+    mode: RevealCardMode;
     onOpen: (grade: Grade) => void;
     index?: number;
 }) {
     const { t, i18n } = useTranslation();
+    const theme = REVEAL_CARD_THEMES[mode];
+    const CaseIcon = theme.icon;
     const badgeInfo = grade.code?.trim()
         ? getGradeBadgeInfoFromCode(grade.code)
         : null;
@@ -194,19 +195,33 @@ export function UnopenedGradeCard({
             initial="hidden"
             animate="show"
             exit="exit"
-            className="cs2-card relative cursor-pointer border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card p-4 h-full overflow-visible"
+            className="reveal-card relative cursor-pointer border-none bg-white shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card p-4 h-full overflow-visible"
             onClick={onOpen.bind(null, grade)}
         >
-            <div className="cs2-case pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
-                <span className="absolute left-1 top-1 size-2.5 rounded-tl-sm border-l-2 border-t-2 border-amber-400/70" />
-                <span className="absolute right-1 top-1 size-2.5 rounded-tr-sm border-r-2 border-t-2 border-amber-400/70" />
-                <span className="absolute bottom-1 left-1 size-2.5 rounded-bl-sm border-b-2 border-l-2 border-amber-400/70" />
-                <span className="absolute bottom-1 right-1 size-2.5 rounded-br-sm border-b-2 border-r-2 border-amber-400/70" />
+            <div
+                className={`${theme.caseClass} pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]`}
+            >
+                <span
+                    className={`absolute left-1 top-1 size-2.5 rounded-tl-sm border-l-2 border-t-2 ${theme.cornerClass}`}
+                />
+                <span
+                    className={`absolute right-1 top-1 size-2.5 rounded-tr-sm border-r-2 border-t-2 ${theme.cornerClass}`}
+                />
+                <span
+                    className={`absolute bottom-1 left-1 size-2.5 rounded-bl-sm border-b-2 border-l-2 ${theme.cornerClass}`}
+                />
+                <span
+                    className={`absolute bottom-1 right-1 size-2.5 rounded-br-sm border-b-2 border-r-2 ${theme.cornerClass}`}
+                />
             </div>
             <div className="relative flex items-center">
                 <div className="mr-4 w-20 items-center justify-center text-center">
-                    <Package className="cs2-case-icon mx-auto size-8 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.9)]" />
-                    <div className="font-mono text-sm font-bold leading-5 tracking-[0.2em] text-amber-300/80">
+                    <CaseIcon
+                        className={`reveal-icon mx-auto size-8 ${theme.iconClass}`}
+                    />
+                    <div
+                        className={`font-mono text-sm font-bold leading-5 tracking-[0.2em] ${theme.valueClass}`}
+                    >
                         ??/20
                     </div>
                 </div>
@@ -216,22 +231,28 @@ export function UnopenedGradeCard({
                             {grade.name}
                         </div>
                         {badgeInfo?.labelKey && (
-                            <span className="max-w-[38%] shrink-0 truncate rounded-sm border border-amber-400/60 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase leading-none tracking-widest text-amber-300">
+                            <span
+                                className={`max-w-[38%] shrink-0 truncate rounded-sm border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase leading-none tracking-widest ${theme.badgeClass}`}
+                            >
                                 {t(badgeInfo.labelKey)}
                             </span>
                         )}
                     </div>
                     <div className="flex h-5 items-center justify-between gap-2 text-sm text-zinc-500">
-                        <span className="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap bg-amber-400 pl-1.5 pr-2.5 text-[10px] font-extrabold uppercase leading-none tracking-wide text-zinc-950 [clip-path:polygon(0_0,calc(100%-6px)_0,100%_50%,calc(100%-6px)_100%,0_100%)]">
+                        <span
+                            className={`inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap pl-1.5 pr-2.5 text-[10px] font-extrabold uppercase leading-none tracking-wide [clip-path:polygon(0_0,calc(100%-6px)_0,100%_50%,calc(100%-6px)_100%,0_100%)] ${theme.ctaClass}`}
+                        >
                             <ChevronsRight className="size-3 shrink-0 animate-pulse" />
                             <span className="sm:hidden">
-                                {t("gradesPage.clickToOpenShort")}
+                                {t(theme.ctaShortKey)}
                             </span>
                             <span className="hidden sm:inline">
-                                {t("gradesPage.clickToOpen")}
+                                {t(theme.ctaKey)}
                             </span>
                         </span>
-                        <p className="min-w-0 truncate font-mono text-[11px] uppercase tracking-wide text-amber-300/70">
+                        <p
+                            className={`min-w-0 truncate font-mono text-[11px] uppercase tracking-wide ${theme.dateClass}`}
+                        >
                             {grade.date
                                 ? format(
                                       new Date(

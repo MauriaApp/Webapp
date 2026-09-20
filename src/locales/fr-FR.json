@@ -264,6 +264,122 @@
       "belowAverage": "En dessous de la moyenne",
       "continue": "Continuer"
     },
+    "scratchCard": {
+      "ticketName": "Mauria Grattage",
+      "scratchHere": "Grattez ici",
+      "revealAll": "Tout gratter",
+      "winner": "Gagnant",
+      "loser": "Perdu",
+      "smallPrint": "Jeu sans gain. Aucune réclamation ne sera acceptée au secrétariat. :)"
+    },
+    "booster": {
+      "openPack": "Ouvrir un booster",
+      "remaining_one": "{{count}} carte à débloquer",
+      "remaining_other": "{{count}} cartes à débloquer",
+      "remainingShort_one": "{{count}} carte",
+      "remainingShort_other": "{{count}} cartes",
+      "empty": "Aucun booster à ouvrir",
+      "emptyHint": "Reviens quand une note tombe",
+      "tapToOpen": "Appuie pour ouvrir",
+      "tapToFlip": "Appuie sur la carte pour la retourner",
+      "tapToNext": "Appuie pour la carte suivante",
+      "tearHere": "Déchirer ici",
+      "packName": "Booster Mauria",
+      "setName": "Série Junia",
+      "counter": "Carte {{current}} sur {{total}}",
+      "duplicate": "Déjà dans ta collection",
+      "summaryTitle": "Tes nouvelles cartes",
+      "cardBack": "Mauria",
+      "stage": "Base",
+      "hp": "PV",
+      "ex": "ex",
+      "illustrator": "Illus. Aurion",
+      "speciesLine": "Pokémon {{species}} — {{evaluation}}",
+      "weakness": "Faiblesse",
+      "resistance": "Résistance",
+      "retreat": "Retraite",
+      "unknownSubject": "Matière inconnue",
+      "types": {
+        "psychic": "Psy",
+        "lightning": "Électrique",
+        "metal": "Métal",
+        "water": "Eau",
+        "fighting": "Combat",
+        "fairy": "Fée",
+        "grass": "Plante",
+        "dragon": "Dragon",
+        "colorless": "Incolore",
+        "darkness": "Obscurité",
+        "fire": "Feu"
+      },
+      "treatments": {
+        "common": "Commune",
+        "uncommon": "Peu commune",
+        "holo": "Holographique",
+        "ex": "Carte ex",
+        "ar": "Illustration rare",
+        "sir": "Illustration spéciale rare"
+      },
+      "subjects": {
+        "maths": {
+          "species": "Intégrale",
+          "attack1": "Dérivée Seconde",
+          "attack2": "Théorème Fatal"
+        },
+        "physics": {
+          "species": "Particule",
+          "attack1": "Chute Libre",
+          "attack2": "Décharge de Joule"
+        },
+        "computerScience": {
+          "species": "Compilateur",
+          "attack1": "Segfault",
+          "attack2": "Récursion Infinie"
+        },
+        "english": {
+          "species": "Bilingue",
+          "attack1": "Present Perfect",
+          "attack2": "Phrasal Verb"
+        },
+        "sii": {
+          "species": "Mécanique",
+          "attack1": "Couple Moteur",
+          "attack2": "Asservissement"
+        },
+        "fhs": {
+          "species": "Rhétorique",
+          "attack1": "Dissertation",
+          "attack2": "Argument d'Autorité"
+        },
+        "eps": {
+          "species": "Athlète",
+          "attack1": "Sprint Final",
+          "attack2": "Point de Côté"
+        },
+        "lv2": {
+          "species": "Polyglotte",
+          "attack1": "Faux Ami",
+          "attack2": "Verbe Irrégulier"
+        },
+        "tipe": {
+          "species": "Projet",
+          "attack1": "Soutenance",
+          "attack2": "Deadline"
+        },
+        "pix": {
+          "species": "Certification",
+          "attack1": "QCM Piégeux",
+          "attack2": "Session Expirée"
+        },
+        "unknown": {
+          "species": "Mystère",
+          "attack1": "Coefficient Inconnu",
+          "attack2": "Note Surprise"
+        }
+      },
+      "weaknessValue": "{{type}} ×2",
+      "resistanceValue": "{{type}} −30"
+    },
     "rarity": {
       "consumer": "Qualité consommateur",
       "industrial": "Qualité industrielle",
@@ -275,6 +391,8 @@
     },
     "clickToOpen": "Cliquer pour ouvrir la note",
     "clickToOpenShort": "Ouvrir la note",
+    "clickToScratch": "Gratter pour découvrir la note",
+    "clickToScratchShort": "Gratter la note",
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "noGradesCached": "Aucune note n'a été trouvée dans le cache, et Aurion est en panne. Réessaie plus tard.",
@@ -384,7 +502,14 @@
   },
   "settingsPage": {
     "experimental": "Expérimental / Troll",
-    "cs2GradesGambling": "CS2 Grades Gambling"
+    "experimentalWarning": "Ces options sont là pour s'amuser et ne font pas partie des fonctionnalités officielles : elles peuvent bugger, s'afficher bizarrement ou évoluer sans prévenir. Tes vraies notes ne sont jamais modifiées, elles restent celles d'Aurion.",
+    "gradeRevealMode": {
+      "title": "Révélation des notes",
+      "off": "Désactivé",
+      "cs2": "Caisse CS2",
+      "fdj": "Ticket à gratter",
+      "pokemon": "Booster Pokémon"
+    }
   },
   "versionsPage": {
     "version": "Version",
