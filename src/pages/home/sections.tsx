@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { JuniaStatus } from "@/lib/api/junia-status";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ChevronDown,
@@ -153,6 +153,22 @@ export const ImportantMessage = ({
     const [index, setIndex] = useState(0);
     // Tapping a segment pins that message and stops the rotation.
     const [autoplay, setAutoplay] = useState(true);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [contentHeight, setContentHeight] = useState<number | null>(null);
+
+    // AnimatePresence swaps the message from its own render pass, so a `layout`
+    // prop on the Alert never re-measures it and the height snaps. Watch the
+    // content instead and animate the wrapper height ourselves.
+    useEffect(() => {
+        const node = contentRef.current;
+        if (!node) return;
+
+        const observer = new ResizeObserver(([entry]) => {
+            if (entry) setContentHeight(entry.contentRect.height);
+        });
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, []);
 
     const count = messages.length;
 
@@ -175,38 +191,39 @@ export const ImportantMessage = ({
             variants={fadeIn}
             className="mb-8 rounded-lg bg-white dark:bg-mauria-alert oled:bg-black"
         >
-            <MotionAlert
-                layout
-                transition={{ layout: { duration: 0.35, ease: EASE } }}
-                className="overflow-hidden border-none bg-mauria-accent/20 dark:bg-mauria-alert"
-            >
+            <MotionAlert className="overflow-hidden border-none bg-mauria-accent/20 dark:bg-mauria-alert">
                 {/* mode="wait" so the box only resizes once the old text is
                     gone — the height then eases to the new one. */}
-                <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                        key={index}
-                        layout="position"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2, ease: EASE }}
-                    >
-                        <AlertTitle className="font-bold text-black dark:text-white">
-                            {current?.title ||
-                                t("homePage.noImportantMessageTitle")}
-                        </AlertTitle>
-                        <AlertDescription className="text-black/80 dark:text-white/90">
-                            {current?.message ||
-                                t("homePage.noImportantMessageBody")}
-                        </AlertDescription>
-                    </motion.div>
-                </AnimatePresence>
+                <motion.div
+                    className="overflow-hidden"
+                    initial={false}
+                    animate={{ height: contentHeight ?? "auto" }}
+                    transition={{ duration: 0.35, ease: EASE }}
+                >
+                    <div ref={contentRef}>
+                        <AnimatePresence mode="wait" initial={false}>
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: EASE }}
+                            >
+                                <AlertTitle className="font-bold text-black dark:text-white">
+                                    {current?.title ||
+                                        t("homePage.noImportantMessageTitle")}
+                                </AlertTitle>
+                                <AlertDescription className="text-black/80 dark:text-white/90">
+                                    {current?.message ||
+                                        t("homePage.noImportantMessageBody")}
+                                </AlertDescription>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+                </motion.div>
 
                 {count > 1 && (
-                    <motion.div
-                        layout="position"
-                        className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5"
-                    >
+                    <div className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5">
                         {messages.map((entry, i) => (
                             <button
                                 key={`${i}-${entry.title}`}
@@ -250,7 +267,7 @@ export const ImportantMessage = ({
                                 </span>
                             </button>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
             </MotionAlert>
         </motion.div>
