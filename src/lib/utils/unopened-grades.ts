@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { Grade } from "@/types/aurion";
 import { readCs2GradesGambling } from "./experimental";
-import { getFromStorage, saveToStorage } from "./storage";
+import { getFromStorage, removeFromStorage, saveToStorage } from "./storage";
 
 export const KNOWN_GRADES_STORAGE_KEY = "mauria-known-grades";
 export const UNOPENED_GRADES_STORAGE_KEY = "mauria-unopened-grades";
@@ -42,6 +42,9 @@ const saveUnopenedGrades = (keys: string[]) => {
  */
 export const trackNewGrades = (grades: Grade[]) => {
     if (typeof window === "undefined") return;
+    // Opted out: never read, write or grow anything in storage
+    if (!readCs2GradesGambling()) return;
+    if (!Array.isArray(grades)) return;
 
     const keys = grades.filter((grade) => grade.grade?.trim()).map(getGradeKey);
     const known = readList(KNOWN_GRADES_STORAGE_KEY);
@@ -52,19 +55,30 @@ export const trackNewGrades = (grades: Grade[]) => {
 
         if (fresh.length === 0) return;
 
-        if (readCs2GradesGambling()) {
-            const unopened = readUnopenedGrades();
-            saveUnopenedGrades([
-                ...unopened,
-                ...fresh.filter((key) => !unopened.includes(key)),
-            ]);
-        }
+        const unopened = readUnopenedGrades();
+        saveUnopenedGrades([
+            ...unopened,
+            ...fresh.filter((key) => !unopened.includes(key)),
+        ]);
     }
 
     saveToStorage(
         KNOWN_GRADES_STORAGE_KEY,
         JSON.stringify(Array.from(new Set([...(known ?? []), ...keys])))
     );
+};
+
+/**
+ * Wipes every trace of the feature. Called whenever the toggle flips, so
+ * turning it off leaves nothing behind and turning it on starts from a clean
+ * slate instead of flagging grades seen while it was off.
+ */
+export const resetGradeTracking = () => {
+    if (typeof window === "undefined") return;
+
+    removeFromStorage(KNOWN_GRADES_STORAGE_KEY);
+    removeFromStorage(UNOPENED_GRADES_STORAGE_KEY);
+    window.dispatchEvent(new Event(UNOPENED_GRADES_EVENT));
 };
 
 export const openGrade = (grade: Grade) => {
@@ -89,5 +103,7 @@ export const useUnopenedGrades = (): Set<string> => {
         };
     }, []);
 
-    return new Set(unopened);
+    // Memoised: a fresh Set on every render would invalidate the callers'
+    // useMemo deps each time, even for users who never enabled the feature
+    return useMemo(() => new Set(unopened), [unopened]);
 };

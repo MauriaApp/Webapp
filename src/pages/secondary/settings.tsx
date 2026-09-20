@@ -42,6 +42,7 @@ import {
     setCs2GradesGambling,
     useCs2GradesGambling,
 } from "@/lib/utils/experimental";
+import { resetGradeTracking } from "@/lib/utils/unopened-grades";
 import {
     readRestaurantCampus,
     setRestaurantCampus,
@@ -281,7 +282,10 @@ export function SettingsPage() {
                 <Switch
                     id="cs2-grades-gambling"
                     checked={cs2GradesGambling}
-                    onCheckedChange={setCs2GradesGambling}
+                    onCheckedChange={(enabled) => {
+                        setCs2GradesGambling(enabled);
+                        resetGradeTracking();
+                    }}
                 />
             </div>
         </div>
