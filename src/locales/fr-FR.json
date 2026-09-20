@@ -264,6 +264,14 @@
       "belowAverage": "En dessous de la moyenne",
       "continue": "Continuer"
     },
+    "scratchCard": {
+      "ticketName": "Mauria Grattage",
+      "scratchHere": "Grattez ici",
+      "revealAll": "Tout gratter",
+      "winner": "Gagnant",
+      "loser": "Perdu",
+      "smallPrint": "Jeu sans gain. Aucune réclamation ne sera acceptée au secrétariat. :)"
+    },
     "rarity": {
       "consumer": "Qualité consommateur",
       "industrial": "Qualité industrielle",
@@ -275,6 +283,8 @@
     },
     "clickToOpen": "Cliquer pour ouvrir la note",
     "clickToOpenShort": "Ouvrir la note",
+    "clickToScratch": "Gratter pour découvrir la note",
+    "clickToScratchShort": "Gratter la note",
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "noGradesCached": "Aucune note n'a été trouvée dans le cache, et Aurion est en panne. Réessaie plus tard.",
@@ -384,7 +394,12 @@
   },
   "settingsPage": {
     "experimental": "Expérimental / Troll",
-    "cs2GradesGambling": "CS2 Grades Gambling"
+    "gradeRevealMode": {
+      "title": "Révélation des notes",
+      "off": "Désactivé",
+      "cs2": "Caisse CS2",
+      "fdj": "Ticket à gratter"
+    }
   },
   "versionsPage": {
     "version": "Version",

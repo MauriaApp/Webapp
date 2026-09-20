@@ -1204,18 +1204,50 @@
         animation: cs2-sweep 3.6s ease-in-out infinite;
     }
 
-    .cs2-case-icon {
+    .fdj-case {
+        background-color: #10141a;
+        background-image:
+            repeating-linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.05) 0 6px,
+                transparent 6px 12px
+            ),
+            radial-gradient(
+                ellipse at 12% 50%,
+                rgba(226, 232, 240, 0.3),
+                transparent 60%
+            ),
+            linear-gradient(90deg, #1b2028, #10141a);
+    }
+
+    .fdj-case::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 30%;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.22),
+            transparent
+        );
+        animation: cs2-sweep 3.6s ease-in-out infinite;
+    }
+
+    .reveal-icon {
         animation: cs2-wobble 4.5s ease-in-out infinite;
     }
 
-    .cs2-card:hover .cs2-case-icon {
+    .reveal-card:hover .reveal-icon {
         animation: cs2-shake 0.8s ease-in-out infinite;
     }
 
     @media (prefers-reduced-motion: reduce) {
         .cs2-case::after,
-        .cs2-case-icon,
-        .cs2-card:hover .cs2-case-icon {
+        .fdj-case::after,
+        .reveal-icon,
+        .reveal-card:hover .reveal-icon {
             animation: none;
         }
     }

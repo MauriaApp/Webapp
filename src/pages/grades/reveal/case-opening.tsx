@@ -1,22 +1,18 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { format } from "date-fns";
 import { ArrowDown, ArrowUp, Package } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Grade } from "@/types/aurion";
 import { Button } from "@/components/ui/button";
-import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
-import { getDateLocale } from "@/lib/utils/translations";
 import {
     GRADE_RARITIES,
     GRADE_SCALE,
     formatGradeValue,
     getRarityForGrade,
-    parseGradeValue,
     type GradeRarity,
 } from "@/lib/utils/grade-rarity";
+import { useGradeReveal } from "./use-grade-reveal";
 
 const ITEM_WIDTH = 96;
 const ITEM_GAP = 8;
@@ -129,32 +125,31 @@ function RarityLegend({ t }: { t: (key: string) => string }) {
     );
 }
 
-function CaseOpening({
+/** Full-screen CS2-style case opening for an unopened grade. */
+export function CaseOpening({
     grade,
     onClose,
 }: {
     grade: Grade;
     onClose: () => void;
 }) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const reducedMotion = useReducedMotion();
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(0);
     const [revealed, setRevealed] = useState(false);
 
-    const wonValue = parseGradeValue(grade.grade);
-    const wonRarity = getRarityForGrade(wonValue ?? 0);
     // Covert / gold get the full CS2 treatment: flash, rings and a shake
-    const bigWin =
-        wonRarity.id === "covert" || wonRarity.id === "exceedingly-rare";
-    const avgValue = parseGradeValue(grade.average);
-    const delta =
-        wonValue !== null && avgValue !== null ? wonValue - avgValue : null;
-    const above = delta !== null && delta >= 0;
-    const trendColor = above ? "#22c55e" : "#ef4444";
-    const badgeInfo = grade.code?.trim()
-        ? getGradeBadgeInfoFromCode(grade.code)
-        : null;
+    const {
+        value: wonValue,
+        rarity: wonRarity,
+        bigWin,
+        delta,
+        above,
+        trendColor,
+        subjectLabel,
+        dateLabel,
+    } = useGradeReveal(grade);
 
     const { items, jitter } = useMemo(() => {
         const reel = Array.from({ length: REEL_LENGTH }, () =>
@@ -245,7 +240,7 @@ function CaseOpening({
             >
                 <div className="relative mb-6 flex items-center gap-3 px-6 py-2">
                     <CornerBrackets />
-                    <Package className="cs2-case-icon size-6 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.9)]" />
+                    <Package className="reveal-icon size-6 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.9)]" />
                     <div className="min-w-0">
                         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-400/80">
                             {t("gradesPage.caseOpening.caseName")}
@@ -432,27 +427,7 @@ function CaseOpening({
                                 )}
 
                                 <p className="font-mono text-xs uppercase tracking-wider text-zinc-500">
-                                    {[
-                                        badgeInfo?.labelKey
-                                            ? t(badgeInfo.labelKey)
-                                            : null,
-                                        grade.date
-                                            ? format(
-                                                  new Date(
-                                                      grade.date
-                                                          .split("/")
-                                                          .reverse()
-                                                          .join("-")
-                                                  ),
-                                                  "d MMM yyyy",
-                                                  {
-                                                      locale: getDateLocale(
-                                                          i18n.language
-                                                      ),
-                                                  }
-                                              )
-                                            : null,
-                                    ]
+                                    {[subjectLabel, dateLabel]
                                         .filter(Boolean)
                                         .join(" — ")}
                                 </p>
@@ -469,27 +444,5 @@ function CaseOpening({
                 </div>
             </motion.div>
         </motion.div>
-    );
-}
-
-/** Full-screen CS2-style case opening for an unopened grade. */
-export function CaseOpeningOverlay({
-    grade,
-    onClose,
-}: {
-    grade: Grade | null;
-    onClose: () => void;
-}) {
-    return createPortal(
-        <AnimatePresence>
-            {grade && (
-                <CaseOpening
-                    key={`${grade.date}|${grade.code}|${grade.name}`}
-                    grade={grade}
-                    onClose={onClose}
-                />
-            )}
-        </AnimatePresence>,
-        document.body
     );
 }

@@ -264,6 +264,14 @@
       "belowAverage": "Below class average",
       "continue": "Continue"
     },
+    "scratchCard": {
+      "ticketName": "Mauria Scratch",
+      "scratchHere": "Scratch here",
+      "revealAll": "Scratch it all",
+      "winner": "Winner",
+      "loser": "No win",
+      "smallPrint": "No-prize game. No claim will be accepted at the registrar's office. :)"
+    },
     "rarity": {
       "consumer": "Consumer Grade",
       "industrial": "Industrial Grade",
@@ -275,6 +283,8 @@
     },
     "clickToOpen": "Click to open the grade",
     "clickToOpenShort": "Open the grade",
+    "clickToScratch": "Scratch to reveal the grade",
+    "clickToScratchShort": "Scratch the grade",
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
     "noGradesCached": "No grades were found in the cache, and Aurion is down. Try again later.",
@@ -384,7 +394,12 @@
   },
   "settingsPage": {
     "experimental": "Experimental / Troll",
-    "cs2GradesGambling": "CS2 Grades Gambling"
+    "gradeRevealMode": {
+      "title": "Grade reveal",
+      "off": "Disabled",
+      "cs2": "CS2 case",
+      "fdj": "Scratch ticket"
+    }
   },
   "versionsPage": {
     "version": "Version",

@@ -29,7 +29,6 @@ import {
     type BackgroundName,
 } from "@/components/background-provider";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme-provider";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import type { SizeOption } from "@/lib/utils/scale";
@@ -39,8 +38,10 @@ import {
     type LocaleOption,
 } from "@/lib/utils/translations";
 import {
-    setCs2GradesGambling,
-    useCs2GradesGambling,
+    GRADE_REVEAL_MODES,
+    setGradeRevealMode,
+    useGradeRevealMode,
+    type GradeRevealMode,
 } from "@/lib/utils/experimental";
 import { resetGradeTracking } from "@/lib/utils/unopened-grades";
 import {
@@ -53,11 +54,23 @@ import {
 export function SettingsPage() {
     const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
-    const cs2GradesGambling = useCs2GradesGambling();
+    const gradeRevealMode = useGradeRevealMode();
     const { background, setBackground } = useBackground();
     const selectedBackgroundLabel = t(
         `sidebar.backgroundParameter.${background}`
     );
+
+    const handleGradeRevealModeChange = (value: string) => {
+        if (!GRADE_REVEAL_MODES.includes(value as GradeRevealMode)) return;
+
+        const mode = value as GradeRevealMode;
+        setGradeRevealMode(mode);
+        // Switching between two effects keeps the grades waiting to be opened,
+        // only leaving or entering "off" starts from a clean slate
+        if ((gradeRevealMode === "off") !== (mode === "off")) {
+            resetGradeTracking();
+        }
+    };
 
     const handleBackgroundChange = (value: string) => {
         if (!value) return;
@@ -272,21 +285,42 @@ export function SettingsPage() {
             <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
                     <Dices className="h-5 w-5 shrink-0" />
-                    <Label
-                        htmlFor="cs2-grades-gambling"
-                        className="cursor-pointer text-left"
-                    >
-                        {t("settingsPage.cs2GradesGambling")}
-                    </Label>
+                    <div className="flex min-w-0 flex-col items-start">
+                        <Label className="cursor-default text-left">
+                            {t("settingsPage.gradeRevealMode.title")}
+                        </Label>
+                        <span className="text-xs text-muted-foreground text-left">
+                            {t(
+                                `settingsPage.gradeRevealMode.${gradeRevealMode}`
+                            )}
+                        </span>
+                    </div>
                 </div>
-                <Switch
-                    id="cs2-grades-gambling"
-                    checked={cs2GradesGambling}
-                    onCheckedChange={(enabled) => {
-                        setCs2GradesGambling(enabled);
-                        resetGradeTracking();
-                    }}
-                />
+                <div className="flex shrink-0 justify-end">
+                    <Select
+                        value={gradeRevealMode}
+                        onValueChange={handleGradeRevealModeChange}
+                    >
+                        <SelectTrigger
+                            className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs focus:ring-0 focus:ring-offset-0"
+                            aria-label={t("settingsPage.gradeRevealMode.title")}
+                        >
+                            <SelectValue
+                                placeholder={t(
+                                    "settingsPage.gradeRevealMode.title"
+                                )}
+                                className="!items-end flex"
+                            />
+                        </SelectTrigger>
+                        <SelectContent className="text-xs">
+                            {GRADE_REVEAL_MODES.map((mode) => (
+                                <SelectItem key={mode} value={mode}>
+                                    {t(`settingsPage.gradeRevealMode.${mode}`)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
         </div>
     );

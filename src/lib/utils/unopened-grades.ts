@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { Grade } from "@/types/aurion";
-import { readCs2GradesGambling } from "./experimental";
+import { readGradeRevealMode } from "./experimental";
 import { getFromStorage, removeFromStorage, saveToStorage } from "./storage";
 
 export const KNOWN_GRADES_STORAGE_KEY = "mauria-known-grades";
@@ -43,7 +43,7 @@ const saveUnopenedGrades = (keys: string[]) => {
 export const trackNewGrades = (grades: Grade[]) => {
     if (typeof window === "undefined") return;
     // Opted out: never read, write or grow anything in storage
-    if (!readCs2GradesGambling()) return;
+    if (readGradeRevealMode() === "off") return;
     if (!Array.isArray(grades)) return;
 
     const keys = grades.filter((grade) => grade.grade?.trim()).map(getGradeKey);
@@ -69,9 +69,10 @@ export const trackNewGrades = (grades: Grade[]) => {
 };
 
 /**
- * Wipes every trace of the feature. Called whenever the toggle flips, so
- * turning it off leaves nothing behind and turning it on starts from a clean
- * slate instead of flagging grades seen while it was off.
+ * Wipes every trace of the feature. Called when the reveal setting leaves or
+ * enters "off", so disabling it leaves nothing behind and enabling it starts
+ * from a clean slate instead of flagging grades seen while it was off.
+ * Switching between two reveal effects keeps the pending grades untouched.
  */
 export const resetGradeTracking = () => {
     if (typeof window === "undefined") return;

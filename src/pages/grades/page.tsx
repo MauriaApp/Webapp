@@ -3,7 +3,7 @@
 import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
-import { CaseOpeningOverlay } from "./case-opening-overlay";
+import { GradeRevealOverlay } from "./reveal/grade-reveal-overlay";
 import { GradeCard, GradeCardAnimate, UnopenedGradeCard } from "./grade-card";
 import {
     getGrades,
@@ -38,7 +38,7 @@ import {
     ChartTooltip,
     ChartConfig,
 } from "@/components/ui/chart";
-import { useCs2GradesGambling } from "@/lib/utils/experimental";
+import { useGradeRevealMode } from "@/lib/utils/experimental";
 import {
     getGradeKey,
     openGrade,
@@ -582,10 +582,10 @@ export function GradesPage() {
         placeholderData: (previousData) => previousData,
     });
 
-    const cs2GradesGambling = useCs2GradesGambling();
+    const revealMode = useGradeRevealMode();
     const unopenedKeys = useUnopenedGrades();
     const isUnopened = (grade: Grade) =>
-        cs2GradesGambling && unopenedKeys.has(getGradeKey(grade));
+        revealMode !== "off" && unopenedKeys.has(getGradeKey(grade));
 
     const isBusy = isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
@@ -629,21 +629,21 @@ export function GradesPage() {
     // Unopened grades stay out of the averages and the chart
     const openedFilteredGrades = useMemo(
         () =>
-            cs2GradesGambling
+            revealMode !== "off"
                 ? filteredGrades.filter(
                       (g) => !unopenedKeys.has(getGradeKey(g))
                   )
                 : filteredGrades,
-        [filteredGrades, cs2GradesGambling, unopenedKeys]
+        [filteredGrades, revealMode, unopenedKeys]
     );
     const openedDisplayedGrades = useMemo(
         () =>
-            cs2GradesGambling
+            revealMode !== "off"
                 ? displayedGrades.filter(
                       (g) => !unopenedKeys.has(getGradeKey(g))
                   )
                 : displayedGrades,
-        [displayedGrades, cs2GradesGambling, unopenedKeys]
+        [displayedGrades, revealMode, unopenedKeys]
     );
 
     const hasKnownClass = useMemo(
@@ -786,11 +786,13 @@ export function GradesPage() {
                             >
                                 <AnimatePresence mode="popLayout">
                                     {displayedGrades.map((grade, index) =>
-                                        isUnopened(grade) ? (
+                                        isUnopened(grade) &&
+                                        revealMode !== "off" ? (
                                             <UnopenedGradeCard
                                                 key={index}
                                                 index={index}
                                                 grade={grade}
+                                                mode={revealMode}
                                                 onOpen={setOpeningGrade}
                                             />
                                         ) : index < 8 ? (
@@ -820,8 +822,9 @@ export function GradesPage() {
                     </AnimatePresence>
                 </motion.div>
             </motion.div>
-            <CaseOpeningOverlay
+            <GradeRevealOverlay
                 grade={openingGrade}
+                mode={revealMode}
                 onClose={() => {
                     if (openingGrade) openGrade(openingGrade);
                     setOpeningGrade(null);

@@ -264,6 +264,14 @@
       "belowAverage": "Por debajo de la media",
       "continue": "Continuar"
     },
+    "scratchCard": {
+      "ticketName": "Mauria Rasca",
+      "scratchHere": "Rasca aquí",
+      "revealAll": "Rascar todo",
+      "winner": "Ganador",
+      "loser": "Sin premio",
+      "smallPrint": "Juego sin premio. No se aceptarán reclamaciones en secretaría. :)"
+    },
     "rarity": {
       "consumer": "Calidad consumidor",
       "industrial": "Calidad industrial",
@@ -275,6 +283,8 @@
     },
     "clickToOpen": "Haz clic para abrir la nota",
     "clickToOpenShort": "Abrir la nota",
+    "clickToScratch": "Rasca para descubrir la nota",
+    "clickToScratchShort": "Rascar la nota",
     "noGrades": "Todavía no hay notas.",
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
     "noGradesCached": "No se encontraron notas en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
@@ -384,7 +394,12 @@
   },
   "settingsPage": {
     "experimental": "Experimental / Troll",
-    "cs2GradesGambling": "CS2 Grades Gambling"
+    "gradeRevealMode": {
+      "title": "Revelación de notas",
+      "off": "Desactivado",
+      "cs2": "Caja CS2",
+      "fdj": "Boleto rascable"
+    }
   },
   "versionsPage": {
     "version": "Versión",
