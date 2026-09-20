@@ -272,6 +272,114 @@
       "loser": "No win",
       "smallPrint": "No-prize game. No claim will be accepted at the registrar's office. :)"
     },
+    "booster": {
+      "openPack": "Open a booster",
+      "remaining_one": "{{count}} card left to unlock",
+      "remaining_other": "{{count}} cards left to unlock",
+      "remainingShort_one": "{{count}} card",
+      "remainingShort_other": "{{count}} cards",
+      "empty": "No booster to open",
+      "emptyHint": "Come back when a grade drops",
+      "tapToOpen": "Tap to open",
+      "tapToFlip": "Tap the card to flip it",
+      "tapToNext": "Tap for the next card",
+      "tearHere": "Tear here",
+      "packName": "Mauria Booster",
+      "setName": "Junia Series",
+      "counter": "Card {{current}} of {{total}}",
+      "duplicate": "Already in your collection",
+      "summaryTitle": "Your new cards",
+      "cardBack": "Mauria",
+      "stage": "Basic",
+      "hp": "HP",
+      "ex": "ex",
+      "illustrator": "Illus. Aurion",
+      "speciesLine": "{{species}} Pokémon — {{evaluation}}",
+      "weakness": "Weakness",
+      "resistance": "Resistance",
+      "retreat": "Retreat",
+      "unknownSubject": "Unknown subject",
+      "types": {
+        "psychic": "Psychic",
+        "lightning": "Lightning",
+        "metal": "Metal",
+        "water": "Water",
+        "fighting": "Fighting",
+        "fairy": "Fairy",
+        "grass": "Grass",
+        "dragon": "Dragon",
+        "colorless": "Colorless",
+        "darkness": "Darkness",
+        "fire": "Fire"
+      },
+      "treatments": {
+        "common": "Common",
+        "uncommon": "Uncommon",
+        "holo": "Holo rare",
+        "ex": "ex card",
+        "ar": "Illustration rare",
+        "sir": "Special illustration rare"
+      },
+      "subjects": {
+        "maths": {
+          "species": "Integral",
+          "attack1": "Second Derivative",
+          "attack2": "Fatal Theorem"
+        },
+        "physics": {
+          "species": "Particle",
+          "attack1": "Free Fall",
+          "attack2": "Joule Discharge"
+        },
+        "computerScience": {
+          "species": "Compiler",
+          "attack1": "Segfault",
+          "attack2": "Infinite Recursion"
+        },
+        "english": {
+          "species": "Bilingual",
+          "attack1": "Present Perfect",
+          "attack2": "Phrasal Verb"
+        },
+        "sii": {
+          "species": "Mechanical",
+          "attack1": "Motor Torque",
+          "attack2": "Feedback Loop"
+        },
+        "fhs": {
+          "species": "Rhetoric",
+          "attack1": "Dissertation",
+          "attack2": "Appeal to Authority"
+        },
+        "eps": {
+          "species": "Athlete",
+          "attack1": "Final Sprint",
+          "attack2": "Side Stitch"
+        },
+        "lv2": {
+          "species": "Polyglot",
+          "attack1": "False Friend",
+          "attack2": "Irregular Verb"
+        },
+        "tipe": {
+          "species": "Project",
+          "attack1": "Oral Defense",
+          "attack2": "Deadline"
+        },
+        "pix": {
+          "species": "Certification",
+          "attack1": "Trick Question",
+          "attack2": "Session Expired"
+        },
+        "unknown": {
+          "species": "Mystery",
+          "attack1": "Unknown Coefficient",
+          "attack2": "Surprise Grade"
+        }
+      },
+      "weaknessValue": "{{type}} ×2",
+      "resistanceValue": "{{type}} −30"
+    },
     "rarity": {
       "consumer": "Consumer Grade",
       "industrial": "Industrial Grade",
@@ -394,11 +502,13 @@
   },
   "settingsPage": {
     "experimental": "Experimental / Troll",
+    "experimentalWarning": "These options are just for fun and aren't official features: they may glitch, render oddly or change without notice. Your real grades are never altered — they stay the ones from Aurion.",
     "gradeRevealMode": {
       "title": "Grade reveal",
       "off": "Disabled",
       "cs2": "CS2 case",
-      "fdj": "Scratch ticket"
+      "fdj": "Scratch ticket",
+      "pokemon": "Pokémon booster"
     }
   },
   "versionsPage": {

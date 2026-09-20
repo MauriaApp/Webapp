@@ -6,7 +6,7 @@ import { getFromStorage, removeFromStorage, saveToStorage } from "./storage";
  * How a freshly published grade is revealed. "off" disables the whole
  * unopened-grade tracking, the other modes each render their own overlay.
  */
-export const GRADE_REVEAL_MODES = ["off", "cs2", "fdj"] as const;
+export const GRADE_REVEAL_MODES = ["off", "cs2", "fdj", "pokemon"] as const;
 
 export type GradeRevealMode = (typeof GRADE_REVEAL_MODES)[number];
 

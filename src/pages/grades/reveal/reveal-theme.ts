@@ -1,6 +1,7 @@
 import { Coins, Package, type LucideIcon } from "lucide-react";
 
-import type { GradeRevealMode } from "@/lib/utils/experimental";
+/** The modes that dress up each unopened grade with its own card */
+export type RevealCardMode = "cs2" | "fdj";
 
 /**
  * Look of the unopened grade card for each reveal mode. The layout is shared,
@@ -20,10 +21,7 @@ export type RevealCardTheme = {
     ctaShortKey: string;
 };
 
-export const REVEAL_CARD_THEMES: Record<
-    Exclude<GradeRevealMode, "off">,
-    RevealCardTheme
-> = {
+export const REVEAL_CARD_THEMES: Record<RevealCardMode, RevealCardTheme> = {
     cs2: {
         icon: Package,
         caseClass: "cs2-case",

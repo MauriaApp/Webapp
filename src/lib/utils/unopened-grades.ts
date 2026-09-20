@@ -82,11 +82,15 @@ export const resetGradeTracking = () => {
     window.dispatchEvent(new Event(UNOPENED_GRADES_EVENT));
 };
 
-export const openGrade = (grade: Grade) => {
-    if (typeof window === "undefined") return;
+export const openGrade = (grade: Grade) => openGrades([grade]);
 
-    const key = getGradeKey(grade);
-    saveUnopenedGrades(readUnopenedGrades().filter((k) => k !== key));
+/** Marks a whole booster worth of grades as opened in one write. */
+export const openGrades = (grades: Grade[]) => {
+    if (typeof window === "undefined") return;
+    if (grades.length === 0) return;
+
+    const keys = new Set(grades.map(getGradeKey));
+    saveUnopenedGrades(readUnopenedGrades().filter((key) => !keys.has(key)));
 };
 
 export const useUnopenedGrades = (): Set<string> => {

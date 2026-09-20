@@ -272,6 +272,114 @@
       "loser": "Sin premio",
       "smallPrint": "Juego sin premio. No se aceptarán reclamaciones en secretaría. :)"
     },
+    "booster": {
+      "openPack": "Abrir un sobre",
+      "remaining_one": "{{count}} carta por desbloquear",
+      "remaining_other": "{{count}} cartas por desbloquear",
+      "remainingShort_one": "{{count}} carta",
+      "remainingShort_other": "{{count}} cartas",
+      "empty": "No hay sobres que abrir",
+      "emptyHint": "Vuelve cuando llegue una nota",
+      "tapToOpen": "Toca para abrir",
+      "tapToFlip": "Toca la carta para darle la vuelta",
+      "tapToNext": "Toca para la siguiente carta",
+      "tearHere": "Rasgar aquí",
+      "packName": "Sobre Mauria",
+      "setName": "Serie Junia",
+      "counter": "Carta {{current}} de {{total}}",
+      "duplicate": "Ya está en tu colección",
+      "summaryTitle": "Tus cartas nuevas",
+      "cardBack": "Mauria",
+      "stage": "Básico",
+      "hp": "PS",
+      "ex": "ex",
+      "illustrator": "Ilus. Aurion",
+      "speciesLine": "Pokémon {{species}} — {{evaluation}}",
+      "weakness": "Debilidad",
+      "resistance": "Resistencia",
+      "retreat": "Retirada",
+      "unknownSubject": "Asignatura desconocida",
+      "types": {
+        "psychic": "Psíquico",
+        "lightning": "Rayo",
+        "metal": "Metal",
+        "water": "Agua",
+        "fighting": "Lucha",
+        "fairy": "Hada",
+        "grass": "Planta",
+        "dragon": "Dragón",
+        "colorless": "Incoloro",
+        "darkness": "Oscuridad",
+        "fire": "Fuego"
+      },
+      "treatments": {
+        "common": "Común",
+        "uncommon": "Poco común",
+        "holo": "Holográfica",
+        "ex": "Carta ex",
+        "ar": "Ilustración rara",
+        "sir": "Ilustración especial rara"
+      },
+      "subjects": {
+        "maths": {
+          "species": "Integral",
+          "attack1": "Derivada Segunda",
+          "attack2": "Teorema Fatal"
+        },
+        "physics": {
+          "species": "Partícula",
+          "attack1": "Caída Libre",
+          "attack2": "Descarga de Joule"
+        },
+        "computerScience": {
+          "species": "Compilador",
+          "attack1": "Segfault",
+          "attack2": "Recursión Infinita"
+        },
+        "english": {
+          "species": "Bilingüe",
+          "attack1": "Present Perfect",
+          "attack2": "Phrasal Verb"
+        },
+        "sii": {
+          "species": "Mecánico",
+          "attack1": "Par Motor",
+          "attack2": "Servocontrol"
+        },
+        "fhs": {
+          "species": "Retórica",
+          "attack1": "Disertación",
+          "attack2": "Argumento de Autoridad"
+        },
+        "eps": {
+          "species": "Atleta",
+          "attack1": "Sprint Final",
+          "attack2": "Flato"
+        },
+        "lv2": {
+          "species": "Políglota",
+          "attack1": "Falso Amigo",
+          "attack2": "Verbo Irregular"
+        },
+        "tipe": {
+          "species": "Proyecto",
+          "attack1": "Defensa Oral",
+          "attack2": "Fecha Límite"
+        },
+        "pix": {
+          "species": "Certificación",
+          "attack1": "Pregunta Trampa",
+          "attack2": "Sesión Caducada"
+        },
+        "unknown": {
+          "species": "Misterio",
+          "attack1": "Coeficiente Desconocido",
+          "attack2": "Nota Sorpresa"
+        }
+      },
+      "weaknessValue": "{{type}} ×2",
+      "resistanceValue": "{{type}} −30"
+    },
     "rarity": {
       "consumer": "Calidad consumidor",
       "industrial": "Calidad industrial",
@@ -394,11 +502,13 @@
   },
   "settingsPage": {
     "experimental": "Experimental / Troll",
+    "experimentalWarning": "Estas opciones son solo para divertirse y no forman parte de las funciones oficiales: pueden fallar, verse raro o cambiar sin aviso. Tus notas reales nunca se modifican, siguen siendo las de Aurion.",
     "gradeRevealMode": {
       "title": "Revelación de notas",
       "off": "Desactivado",
       "cs2": "Caja CS2",
-      "fdj": "Boleto rascable"
+      "fdj": "Boleto rascable",
+      "pokemon": "Sobre Pokémon"
     }
   },
   "versionsPage": {

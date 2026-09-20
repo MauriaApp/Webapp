@@ -8,8 +8,7 @@ import { ChevronsRight, SquareArrowOutDownRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 import { fadeInIndexed } from "@/lib/motion";
-import type { GradeRevealMode } from "@/lib/utils/experimental";
-import { REVEAL_CARD_THEMES } from "./reveal/reveal-theme";
+import { REVEAL_CARD_THEMES, type RevealCardMode } from "./reveal/reveal-theme";
 
 const MotionCard = motion(Card);
 
@@ -177,7 +176,7 @@ export function UnopenedGradeCard({
     index = 0,
 }: {
     grade: Grade;
-    mode: Exclude<GradeRevealMode, "off">;
+    mode: RevealCardMode;
     onOpen: (grade: Grade) => void;
     index?: number;
 }) {

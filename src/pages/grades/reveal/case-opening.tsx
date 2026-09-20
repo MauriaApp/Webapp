@@ -40,7 +40,8 @@ function randomGradeValue(): number {
                 ? [15, 18]
                 : [18, GRADE_SCALE];
     const [min, max] = range as [number, number];
-    return Math.round((min + Math.random() * (max - min)) * 2) / 2;
+    // Any decimal, not just .0 and .5: Aurion grades land anywhere
+    return Math.round((min + Math.random() * (max - min)) * 10) / 10;
 }
 
 /** The "0 – 8", "18 – 20" … span covered by each rarity tier. */
