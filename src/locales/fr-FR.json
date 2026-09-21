@@ -478,6 +478,7 @@
     "noDocumentsPlaceholder": "Aucun document n'est disponible pour le moment.",
     "noDocumentsCached": "Aucun document n'a été trouvé dans le cache, et Aurion est en panne. Réessaie plus tard.",
     "downloadSuccess": "{{filename}} téléchargé",
+    "downloadStarted": "Téléchargement lancé dans le navigateur",
     "downloadError": "Échec du téléchargement",
     "loadingHint": "C'est normal si c'est long, la récupération prend environ 30 secondes"
   },

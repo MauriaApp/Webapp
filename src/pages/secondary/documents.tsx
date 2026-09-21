@@ -82,10 +82,17 @@ export function DocumentsPage() {
         const id = documentId(doc);
         if (downloadingId === id) return;
         setDownloadingId(id);
-        const filename = await downloadDocument(doc);
+        const outcome = await downloadDocument(doc);
         setDownloadingId(null);
-        if (filename) {
-            toast.success(t("documentsPage.downloadSuccess", { filename }));
+        if (outcome.status === "saved") {
+            toast.success(
+                t("documentsPage.downloadSuccess", {
+                    filename: outcome.filename,
+                })
+            );
+        } else if (outcome.status === "handedOff") {
+            // The system browser took over — we never see the save complete.
+            toast.success(t("documentsPage.downloadStarted"));
         } else {
             toast.error(t("documentsPage.downloadError"));
         }

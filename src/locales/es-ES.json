@@ -478,6 +478,7 @@
     "noDocumentsPlaceholder": "No hay documentos disponibles por el momento.",
     "noDocumentsCached": "No se encontraron documentos en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
     "downloadSuccess": "{{filename}} descargado",
+    "downloadStarted": "Descarga iniciada en el navegador",
     "downloadError": "Error en la descarga",
     "loadingHint": "Es normal si tarda, la recuperación tarda unos 30 segundos"
   },

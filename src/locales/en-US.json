@@ -478,6 +478,7 @@
     "noDocumentsPlaceholder": "No documents are available at the moment.",
     "noDocumentsCached": "No documents were found in the cache, and Aurion is down. Try again later.",
     "downloadSuccess": "{{filename}} downloaded",
+    "downloadStarted": "Download started in your browser",
     "downloadError": "Download failed",
     "loadingHint": "It's normal if it takes a while, fetching takes about 30 seconds"
   },
