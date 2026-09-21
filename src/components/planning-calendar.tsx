@@ -1,6 +1,6 @@
 import { forwardRef, memo } from "react";
 import FullCalendar from "@fullcalendar/react";
-import { EventClickArg, EventSourceInput } from "@fullcalendar/core";
+import { EventClickArg, EventContentArg, EventSourceInput } from "@fullcalendar/core";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -29,8 +29,13 @@ export const PlanningCalendar = forwardRef<
     {
         eventSources: EventSourceInput[];
         onEventClick?: (info: EventClickArg) => void;
+        /** Extra classNames per event, e.g. to theme the lesson happening now. */
+        eventClassNames?: (arg: EventContentArg) => string[];
     }
->(function PlanningCalendar({ eventSources, onEventClick }, ref) {
+>(function PlanningCalendar(
+    { eventSources, onEventClick, eventClassNames },
+    ref
+) {
     const { t, i18n } = useTranslation();
 
     return (
@@ -68,6 +73,7 @@ export const PlanningCalendar = forwardRef<
             firstDay={1}
             hiddenDays={[0]}
             eventSources={eventSources}
+            eventClassNames={eventClassNames}
             eventColor="var(--planning-event-default-solid)"
             eventContent={(arg) => {
                 // Same reading as the drawer and the home cards:

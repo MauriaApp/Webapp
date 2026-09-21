@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, DoorOpen, Loader2, Search, User, Users } from "lucide-react";
+import {
+    ArrowLeft,
+    DoorOpen,
+    Loader2,
+    Search,
+    Users,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type FullCalendar from "@fullcalendar/react";
+import type { EventContentArg } from "@fullcalendar/core";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,24 +31,47 @@ import {
 } from "@/lib/api/palantir";
 import { PalantirEntity, PalantirEntityKind } from "@/types/palantir";
 import { Lesson } from "@/types/aurion";
+import { usePalantirTheme } from "@/lib/utils/experimental";
+import { cn } from "@/lib/utils/cn";
+import { PalantirBackdrop } from "./palantir-backdrop";
+import "./palantir-theme.css";
 
 const DEBOUNCE_MS = 300;
 
 const kindIcons = {
     room: DoorOpen,
-    teacher: User,
     group: Users,
 } as const;
 
 export function PalantirPage() {
     const { t } = useTranslation();
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
+    // Opt-in troll skin; off unless turned on in the experimental settings.
+    const classified = usePalantirTheme();
 
     const [rawQuery, setRawQuery] = useState("");
     const [query, setQuery] = useState("");
     const [kind, setKind] = useState<PalantirEntityKind | null>(null);
     const [selected, setSelected] = useState<PalantirEntity | null>(null);
     const calendarRef = useRef<FullCalendar>(null);
+
+    // The lesson happening now glows in the calendar; the clock is polled so
+    // the glow follows it.
+    const [now, setNow] = useState(() => Date.now());
+    useEffect(() => {
+        if (!classified) return;
+        const id = window.setInterval(() => setNow(Date.now()), 30_000);
+        return () => window.clearInterval(id);
+    }, [classified]);
+
+    const eventClassNames = useCallback(
+        (arg: EventContentArg) => {
+            const start = arg.event.start?.getTime() ?? 0;
+            const end = arg.event.end?.getTime() ?? 0;
+            return start <= now && now < end ? ["pv-event-now"] : [];
+        },
+        [now]
+    );
 
     // Typing shouldn't fire a request per keystroke: the index is in the API's
     // memory, but the round trip still isn't free.
@@ -82,7 +112,9 @@ export function PalantirPage() {
         queryKey: ["palantir", "planning", selected?.kind, selected?.id],
         queryFn: async () => {
             if (!selected) return [];
-            return (await fetchPalantirPlanning(selected.kind, selected.id)) ?? [];
+            return (
+                (await fetchPalantirPlanning(selected.kind, selected.id)) ?? []
+            );
         },
         enabled: Boolean(selected),
         staleTime: 1000 * 60 * 5,
@@ -92,7 +124,6 @@ export function PalantirPage() {
         () => [
             { value: null, label: t("palantirPage.kinds.all") },
             { value: "room", label: t("palantirPage.kinds.room") },
-            { value: "teacher", label: t("palantirPage.kinds.teacher") },
             { value: "group", label: t("palantirPage.kinds.group") },
         ],
         [t]
@@ -110,8 +141,9 @@ export function PalantirPage() {
                 variants={staggerGroup}
                 initial="hidden"
                 animate="show"
-                className="space-y-4 py-4"
+                className={cn("space-y-4 py-4", classified && "palantir-void")}
             >
+                {classified && <PalantirBackdrop compact />}
                 <motion.div variants={fadeIn} className="space-y-2">
                     <Button
                         variant="outline"
@@ -160,6 +192,9 @@ export function PalantirPage() {
                         <PlanningCalendar
                             ref={calendarRef}
                             eventSources={[lessons]}
+                            eventClassNames={
+                                classified ? eventClassNames : undefined
+                            }
                         />
                     </motion.section>
                 )}
@@ -172,8 +207,11 @@ export function PalantirPage() {
             variants={staggerGroup}
             initial="hidden"
             animate="show"
-            className="space-y-4 py-4"
+            className={cn("space-y-4 py-4", classified && "palantir-void")}
         >
+            {classified && (
+                <PalantirBackdrop compact={query.length > 0 || building} />
+            )}
             <motion.div variants={fadeIn} className="space-y-1">
                 <h2 className="text-xl font-bold">{t("palantirPage.title")}</h2>
                 <p className="text-sm text-muted-foreground">
@@ -225,97 +263,108 @@ export function PalantirPage() {
                 </motion.div>
             )}
 
-            <AnimatePresence mode="popLayout">
-                {query.length === 0 ? (
-                    <motion.p
-                        key="hint"
-                        variants={fadeIn}
-                        className="py-12 text-center text-sm text-muted-foreground"
-                    >
-                        {t("palantirPage.hint")}
-                    </motion.p>
-                ) : searching && results.length === 0 ? (
-                    <motion.div
-                        key="searching"
-                        variants={fadeIn}
-                        className="flex justify-center py-12"
-                    >
-                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                    </motion.div>
-                ) : results.length === 0 ? (
-                    <motion.div key="empty" variants={fadeIn}>
-                        <div className="text-center py-12">
-                            <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
-                                {aurionDown && indexEmpty ? (
-                                    <AurionDownState
-                                        message={t(
-                                            "palantirPage.aurionDownMessage"
-                                        )}
-                                    />
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">
-                                        {indexEmpty
-                                            ? t("palantirPage.indexing.wait")
-                                            : t("palantirPage.noResults")}
-                                    </p>
-                                )}
+            <div className="flex flex-1 flex-col justify-end">
+                <AnimatePresence mode="popLayout">
+                    {query.length === 0 ? (
+                        <motion.p
+                            key="hint"
+                            variants={fadeIn}
+                            className="pb-6 pt-16 text-center text-sm text-muted-foreground"
+                        >
+                            {t("palantirPage.hint")}
+                        </motion.p>
+                    ) : searching && results.length === 0 ? (
+                        <motion.div
+                            key="searching"
+                            variants={fadeIn}
+                            className="flex justify-center py-12"
+                        >
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                        </motion.div>
+                    ) : results.length === 0 ? (
+                        <motion.div key="empty" variants={fadeIn}>
+                            <div className="text-center py-12">
+                                <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
+                                    {aurionDown && indexEmpty ? (
+                                        <AurionDownState
+                                            message={t(
+                                                "palantirPage.aurionDownMessage"
+                                            )}
+                                        />
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">
+                                            {indexEmpty
+                                                ? t(
+                                                      "palantirPage.indexing.wait"
+                                                  )
+                                                : t("palantirPage.noResults")}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                ) : (
-                    <motion.ul
-                        key="results"
-                        variants={staggerGroup}
-                        className="space-y-2"
-                    >
-                        {results.map((entity) => {
-                            const Icon = kindIcons[entity.kind];
-                            return (
-                                <motion.li
-                                    key={`${entity.kind}-${entity.id}`}
-                                    variants={fadeIn}
-                                >
-                                    <button
-                                        type="button"
-                                        onClick={() => setSelected(entity)}
-                                        className="w-full text-left"
+                        </motion.div>
+                    ) : (
+                        <motion.ul
+                            key="results"
+                            variants={staggerGroup}
+                            className="space-y-2"
+                        >
+                            {results.map((entity) => {
+                                // Unknown kinds can still sit in the persisted
+                                // React Query cache (e.g. "teacher" entries
+                                // from before they were dropped): fall back
+                                // to the search glyph rather than crash.
+                                const Icon = kindIcons[entity.kind] ?? Search;
+                                return (
+                                    <motion.li
+                                        key={`${entity.kind}-${entity.id}`}
+                                        variants={fadeIn}
                                     >
-                                        <Card className="transition-colors hover:bg-mauria-purple/5 dark:hover:bg-white/5">
-                                            <CardContent className="flex items-center gap-3 py-3">
-                                                <Icon className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="truncate text-sm font-medium">
-                                                        {entity.label}
-                                                    </p>
-                                                    {entity.detail && (
-                                                        <p className="truncate text-xs text-muted-foreground">
-                                                            {entity.detail}
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelected(entity)}
+                                            className="w-full text-left"
+                                        >
+                                            <Card className="transition-colors hover:bg-mauria-purple/5 dark:hover:bg-white/5">
+                                                <CardContent className="flex items-center gap-3 py-3">
+                                                    <Icon className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="truncate text-sm font-medium">
+                                                            {entity.label}
                                                         </p>
-                                                    )}
-                                                </div>
-                                                {entity.type === "Promotion" ? (
-                                                    <Badge variant="secondary">
-                                                        {t(
-                                                            "palantirPage.promotion"
+                                                        {entity.detail && (
+                                                            <p className="truncate text-xs text-muted-foreground">
+                                                                {entity.detail}
+                                                            </p>
                                                         )}
-                                                    </Badge>
-                                                ) : entity.count > 0 ? (
-                                                    <Badge variant="secondary">
-                                                        {t(
-                                                            "palantirPage.lessonCount",
-                                                            { count: entity.count }
-                                                        )}
-                                                    </Badge>
-                                                ) : null}
-                                            </CardContent>
-                                        </Card>
-                                    </button>
-                                </motion.li>
-                            );
-                        })}
-                    </motion.ul>
-                )}
-            </AnimatePresence>
+                                                    </div>
+                                                    {entity.type ===
+                                                    "Promotion" ? (
+                                                        <Badge variant="secondary">
+                                                            {t(
+                                                                "palantirPage.promotion"
+                                                            )}
+                                                        </Badge>
+                                                    ) : entity.count > 0 ? (
+                                                        <Badge variant="secondary">
+                                                            {t(
+                                                                "palantirPage.lessonCount",
+                                                                {
+                                                                    count: entity.count,
+                                                                }
+                                                            )}
+                                                        </Badge>
+                                                    ) : null}
+                                                </CardContent>
+                                            </Card>
+                                        </button>
+                                    </motion.li>
+                                );
+                            })}
+                        </motion.ul>
+                    )}
+                </AnimatePresence>
+            </div>
         </motion.div>
     );
 }

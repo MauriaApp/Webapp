@@ -1,11 +1,11 @@
-export type PalantirEntityKind = "room" | "teacher" | "group";
+export type PalantirEntityKind = "room" | "group";
 
 export interface PalantirEntity {
     kind: PalantirEntityKind;
     /** Opaque key handed back to the API to get the schedule. */
     id: string;
     label: string;
-    /** Secondary line: the promotion for a group, the full name for a room. */
+    /** Secondary line: the class for a group, the full name for a room. */
     detail: string;
     /** Aurion's own kind for a group: "Promotion" or "Planning". */
     type: string;
@@ -30,7 +30,6 @@ export interface PalantirIndexStatus {
     counts: {
         lessons: number;
         rooms: number;
-        teachers: number;
         groups: number;
     };
 }

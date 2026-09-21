@@ -13,6 +13,7 @@ import {
     UtensilsCrossed,
     TriangleAlert,
     Dices,
+    Radar,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,7 @@ import {
     type BackgroundName,
 } from "@/components/background-provider";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme-provider";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import type { SizeOption } from "@/lib/utils/scale";
@@ -40,7 +42,9 @@ import {
 import {
     GRADE_REVEAL_MODES,
     setGradeRevealMode,
+    setPalantirTheme,
     useGradeRevealMode,
+    usePalantirTheme,
     type GradeRevealMode,
 } from "@/lib/utils/experimental";
 import { resetGradeTracking } from "@/lib/utils/unopened-grades";
@@ -55,6 +59,7 @@ export function SettingsPage() {
     const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
     const gradeRevealMode = useGradeRevealMode();
+    const palantirTheme = usePalantirTheme();
     const { background, setBackground } = useBackground();
     const selectedBackgroundLabel = t(
         `sidebar.backgroundParameter.${background}`
@@ -324,6 +329,31 @@ export function SettingsPage() {
                             ))}
                         </SelectContent>
                     </Select>
+                </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                    <Radar className="h-5 w-5 shrink-0" />
+                    <div className="flex min-w-0 flex-col items-start">
+                        <Label
+                            htmlFor="palantir-theme"
+                            className="cursor-pointer text-left"
+                        >
+                            {t("settingsPage.palantirTheme.title")}
+                        </Label>
+                        <span className="text-xs text-muted-foreground text-left">
+                            {t("settingsPage.palantirTheme.description")}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex shrink-0 justify-end">
+                    <Switch
+                        id="palantir-theme"
+                        checked={palantirTheme}
+                        onCheckedChange={setPalantirTheme}
+                        aria-label={t("settingsPage.palantirTheme.title")}
+                    />
                 </div>
             </div>
         </div>

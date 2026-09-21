@@ -511,6 +511,10 @@
       "cs2": "CS2 case",
       "fdj": "Scratch ticket",
       "pokemon": "Pokémon booster"
+    },
+    "palantirTheme": {
+      "title": "Palantir theme",
+      "description": "Black-hole ambiance on Palantir's search and calendar"
     }
   },
   "versionsPage": {
@@ -547,8 +551,8 @@
   },
   "palantirPage": {
     "title": "Palantir",
-    "subtitle": "Search for a room, a teacher or a class, and see its schedule.",
-    "placeholder": "Room, teacher, class…",
+    "subtitle": "Search for a room or a class, and see its schedule.",
+    "placeholder": "Room, class…",
     "hint": "Type at least one character to start searching.",
     "noResults": "No results.",
     "noLessons": "No lesson over the indexed period.",
@@ -562,7 +566,6 @@
     "kinds": {
       "all": "All",
       "room": "Rooms",
-      "teacher": "Teachers",
       "group": "Classes"
     },
     "indexing": {

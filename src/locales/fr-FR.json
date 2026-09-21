@@ -511,6 +511,10 @@
       "cs2": "Caisse CS2",
       "fdj": "Ticket à gratter",
       "pokemon": "Booster Pokémon"
+    },
+    "palantirTheme": {
+      "title": "Thème Palantir",
+      "description": "Ambiance trou noir sur la recherche et le planning de Palantir"
     }
   },
   "versionsPage": {
@@ -547,27 +551,26 @@
   },
   "palantirPage": {
     "title": "Palantir",
-    "subtitle": "Cherchez une salle, un enseignant ou une promotion, et voyez son emploi du temps.",
-    "placeholder": "Salle, enseignant, promotion…",
+    "subtitle": "Cherchez une salle ou une classe, et voyez son emploi du temps.",
+    "placeholder": "Salle, classe…",
     "hint": "Tapez au moins un caractère pour lancer la recherche.",
     "noResults": "Aucun résultat.",
     "noLessons": "Aucun cours sur la période indexée.",
     "back": "Retour",
     "loading": "Chargement de l'emploi du temps…",
     "loadingGroup": "Récupération en direct sur Aurion, ça prend une quinzaine de secondes…",
-    "promotion": "Promotion",
+    "promotion": "Classe",
     "lessonCount_one": "{{count}} cours",
     "lessonCount_other": "{{count}} cours",
     "aurionDownMessage": "Aurion est injoignable, l'index ne peut pas être construit.",
     "kinds": {
       "all": "Tout",
       "room": "Salles",
-      "teacher": "Enseignants",
-      "group": "Promotions"
+      "group": "Classes"
     },
     "indexing": {
       "title": "Indexation des plannings",
-      "plannings": "Énumération des promotions…",
+      "plannings": "Énumération des classes…",
       "events": "{{done}} / {{total}} plannings récupérés",
       "wait": "L'index se construit, réessayez dans une minute."
     }
