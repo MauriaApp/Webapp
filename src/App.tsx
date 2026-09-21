@@ -27,6 +27,7 @@ import { DocumentsPage } from "./pages/secondary/documents";
 import { VersionsPage } from "./pages/secondary/versions";
 import { PrintPage } from "./pages/secondary/print";
 import { SettingsPage } from "./pages/secondary/settings";
+import { PalantirPage } from "./pages/palantir/page";
 import { PlanningPreviewPage } from "./pages/dev/planning-preview";
 import * as Sentry from "@sentry/react";
 
@@ -98,6 +99,7 @@ function AppRoutes() {
                         element={<DocumentsPage />}
                     />
                     <Route path="/print" element={<PrintPage />} />
+                    <Route path="/palantir" element={<PalantirPage />} />
                     <Route path="/agenda" element={<AgendaPage />} />
                     <Route path="/versions" element={<VersionsPage />} />
                     <Route path="/settings" element={<SettingsPage />} />

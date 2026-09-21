@@ -1,0 +1,682 @@
+/*
+ * "Singularity" — the experimental skin for the Palantir page.
+ *
+ * Everything is scoped under .palantir-void, a class only the Palantir page
+ * ever sets. The shared PlanningCalendar, the real planning page and the rest
+ * of the app cannot be reached by any rule in this file.
+ *
+ * Cost when the toggle is off: none at runtime. The selectors below never
+ * match, and an unmatched rule costs a browser nothing in style, layout or
+ * paint — it is only indexed by its rightmost selector.
+ *
+ * Cost when the toggle is on: every animation drives transform or opacity
+ * only, so they run on the compositor. backdrop-filter is used on two
+ * elements at most, never on the result rows, which can be numerous.
+ *
+ * The calendar is re-skinned through the --planning-* custom properties that
+ * planning.css already reads, rather than by stacking !important.
+ */
+
+.palantir-void {
+    --pv-ink: #f0edff;
+    --pv-dim: #9a93d4;
+    --pv-violet: #8b5cf6;
+    --pv-amber: #ffb057;
+    --pv-edge: rgba(139, 92, 246, 0.28);
+    --pv-glass: rgba(18, 13, 40, 0.72);
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    /* Header, page padding and bottom bar: what is left is the void. */
+    min-height: calc(100dvh - 11rem);
+    color: var(--pv-ink);
+}
+
+/*
+ * FilterCarousel fades its edges with `from-background`, which is the app's
+ * light surface and showed up as two white blocks over the void.
+ */
+.palantir-void .from-background {
+    display: none;
+}
+
+/* ------------------------------------------------------------- backdrop -- */
+
+/*
+ * Absolute inside the page, never fixed.
+ *
+ * Mauria's header carries z-10 but is not positioned, so that z-index is
+ * inert and any positioned element painted later covers it — stacking, not
+ * geometry, decides. The page itself starts below the header, so the
+ * backdrop must never reach up: top is flush with the page top. Only the
+ * side and bottom insets bleed — sideways to the screen edges, downwards
+ * under the bottom bar. The layout root is overflow-hidden, so none of that
+ * can create a scrollbar.
+ */
+.palantir-void .pv-backdrop {
+    position: absolute;
+    top: 0;
+    right: -1rem;
+    bottom: -7rem;
+    left: -1rem;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse 75% 55% at 50% 42%,
+            rgba(76, 29, 149, 0.28),
+            transparent 72%
+        ),
+        radial-gradient(
+            circle at 50% 112%,
+            rgba(139, 92, 246, 0.16),
+            transparent 60%
+        ),
+        #05030f;
+}
+
+/* Everything the page renders sits above the void. */
+.palantir-void > *:not(.pv-backdrop) {
+    position: relative;
+    z-index: 1;
+}
+
+.palantir-void .pv-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+ * Three star layers at different scales, each blinking at its own pace. They
+ * never drift on their own; they do answer the tilt parallax, each by its own
+ * depth (--pv-depth, driven by --pv-px/--pv-py set from JS). The -16px
+ * overscan is what lets them move without uncovering an edge.
+ */
+.palantir-void .pv-stars {
+    position: absolute;
+    inset: -16px;
+    transform: translate3d(
+        calc(var(--pv-px, 0) * var(--pv-depth, 4) * 1px),
+        calc(var(--pv-py, 0) * var(--pv-depth, 4) * 1px),
+        0
+    );
+    will-change: transform;
+}
+
+.palantir-void .pv-stars-far {
+    background-image:
+        radial-gradient(
+            1px 1px at 20% 30%,
+            rgba(255, 255, 255, 0.85),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 70% 60%,
+            rgba(214, 205, 255, 0.7),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 45% 80%,
+            rgba(255, 255, 255, 0.6),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 85% 20%,
+            rgba(255, 236, 210, 0.7),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 12% 68%,
+            rgba(255, 255, 255, 0.6),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 58% 12%,
+            rgba(214, 205, 255, 0.55),
+            transparent
+        );
+    background-size:
+        170px 170px,
+        230px 230px,
+        290px 290px,
+        200px 200px,
+        260px 260px,
+        320px 320px;
+    opacity: 0.75;
+    animation: pv-twinkle-far 11s ease-in-out infinite;
+    --pv-depth: 6;
+}
+
+.palantir-void .pv-stars-near {
+    background-image:
+        radial-gradient(
+            2px 2px at 30% 40%,
+            rgba(255, 255, 255, 0.95),
+            transparent
+        ),
+        radial-gradient(
+            1.6px 1.6px at 75% 25%,
+            rgba(255, 226, 190, 0.9),
+            transparent
+        ),
+        radial-gradient(
+            1.8px 1.8px at 55% 75%,
+            rgba(220, 210, 255, 0.85),
+            transparent
+        );
+    background-size:
+        420px 420px,
+        560px 560px,
+        640px 640px;
+    opacity: 0.9;
+    animation: pv-twinkle 7s ease-in-out infinite;
+    --pv-depth: 12;
+}
+
+/* Third, fine-grained layer: distant dust, the deepest of the three. */
+.palantir-void .pv-stars-dust {
+    background-image:
+        radial-gradient(
+            0.8px 0.8px at 15% 20%,
+            rgba(255, 255, 255, 0.5),
+            transparent
+        ),
+        radial-gradient(
+            0.8px 0.8px at 62% 45%,
+            rgba(220, 214, 255, 0.45),
+            transparent
+        ),
+        radial-gradient(
+            1px 1px at 33% 72%,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        ),
+        radial-gradient(
+            0.8px 0.8px at 82% 64%,
+            rgba(255, 240, 225, 0.4),
+            transparent
+        );
+    background-size:
+        130px 130px,
+        180px 180px,
+        150px 150px,
+        210px 210px;
+    opacity: 0.55;
+    animation: pv-twinkle-dim 8.5s ease-in-out infinite;
+    --pv-depth: 3;
+}
+
+/* Slow-moving cloud, so the void is never a flat black. */
+.palantir-void .pv-nebula {
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(
+            ellipse 40% 30% at 25% 30%,
+            rgba(129, 60, 230, 0.28),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 35% 25% at 78% 65%,
+            rgba(80, 60, 230, 0.16),
+            transparent 70%
+        );
+    filter: blur(40px);
+    animation: pv-nebula 80s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.palantir-void .pv-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse 85% 75% at 50% 42%,
+        transparent 45%,
+        rgba(5, 3, 15, 0.92) 100%
+    );
+}
+
+/*
+ * Film grain: a static photo-noise layer, its offset re-drawn in discrete
+ * steps so the eye reads analog film rather than a dirty overlay. The -80px
+ * overscan covers the jitter; the noise itself is a tiny inline SVG.
+ */
+.palantir-void .pv-grain {
+    position: absolute;
+    inset: -80px;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.045;
+    animation: pv-grain 0.8s steps(1, end) infinite;
+}
+
+@keyframes pv-grain {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    25% {
+        transform: translate3d(-48px, 32px, 0);
+    }
+    50% {
+        transform: translate3d(36px, -44px, 0);
+    }
+    75% {
+        transform: translate3d(-24px, -52px, 0);
+    }
+    100% {
+        transform: translate3d(44px, 24px, 0);
+    }
+}
+
+@keyframes pv-twinkle {
+    0%,
+    100% {
+        opacity: 0.9;
+    }
+    50% {
+        opacity: 0.45;
+    }
+}
+
+@keyframes pv-twinkle-far {
+    0%,
+    100% {
+        opacity: 0.75;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes pv-twinkle-dim {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+@keyframes pv-nebula {
+    to {
+        transform: translate3d(6%, -4%, 0) scale(1.15);
+    }
+}
+
+@keyframes pv-sweep {
+    0% {
+        transform: translateX(-120%);
+    }
+    100% {
+        transform: translateX(220%);
+    }
+}
+
+/* -------------------------------------------------------------- content -- */
+
+.palantir-void h2 {
+    /* A light wave crossing the letters on a loop, same mechanic as the
+     * "Mauria" shimmer on the welcome page (globals.css), recolored for
+     * the void: a warm-white band sliding over dim violet-white. */
+    background-image: linear-gradient(
+        100deg,
+        #cdc7f0 0%,
+        #cdc7f0 44%,
+        #fff6e8 50%,
+        #cdc7f0 56%,
+        #cdc7f0 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    filter: drop-shadow(0 0 14px rgba(255, 176, 87, 0.35));
+    animation: pv-title 3.5s ease-in-out infinite;
+}
+
+@keyframes pv-title {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+/*
+ * Primary text stays near-white; only what the markup already marks as
+ * secondary is dimmed. Tinting every <p> would wash out the main line of each
+ * result row, which is the one thing that has to be readable at a glance.
+ */
+.palantir-void p,
+.palantir-void label {
+    color: var(--pv-ink);
+}
+
+.palantir-void .text-muted-foreground {
+    color: var(--pv-dim);
+}
+
+/* Search field: the one glass panel worth a blur. */
+.palantir-void input {
+    background: var(--pv-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--pv-edge);
+    border-radius: 0.75rem;
+    color: var(--pv-ink);
+    caret-color: var(--pv-amber);
+    letter-spacing: 0.02em;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+    /* Idle and focus are two static box-shadows: this transition is what
+     * carries the field from one to the other. */
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.35s ease;
+    animation: pv-breathe 5s ease-in-out infinite;
+}
+
+.palantir-void input::placeholder {
+    color: rgba(154, 147, 212, 0.65);
+}
+
+.palantir-void input:focus-visible {
+    border-color: rgba(255, 176, 87, 0.7);
+    box-shadow:
+        0 0 0 1px rgba(255, 176, 87, 0.35),
+        0 0 26px -6px rgba(255, 176, 87, 0.5);
+}
+
+/*
+ * The search field breathes: a violet aura swells and ebbs around it, idle
+ * or focused alike. The breathing lives on `filter`, never on box-shadow —
+ * an animated shadow cannot hand its current value over to a transition,
+ * so the two effects would snap at each other instead of cross-fading.
+ */
+@keyframes pv-breathe {
+    0%,
+    100% {
+        filter: drop-shadow(0 10px 18px rgba(139, 92, 246, 0.35));
+    }
+    50% {
+        filter: drop-shadow(0 12px 22px rgba(139, 92, 246, 0.55));
+    }
+}
+
+/*
+ * Result rows: solid glass (no blur — there can be dozens), lifted in 3D on
+ * press, with a light sweep crossing them.
+ */
+.palantir-void .bg-card,
+.palantir-void .bg-mauria-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        145deg,
+        rgba(30, 22, 62, 0.92),
+        rgba(12, 8, 30, 0.92)
+    );
+    border: 1px solid var(--pv-edge);
+    border-radius: 0.85rem;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.06) inset,
+        0 18px 34px -22px rgba(139, 92, 246, 0.9);
+    transition:
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.palantir-void .bg-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40%;
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(255, 214, 170, 0.12),
+        transparent
+    );
+    transform: translateX(-120%);
+    pointer-events: none;
+}
+
+/*
+ * The lift is deliberately tiny: a result row spans nearly the whole page,
+ * and anything past a few pixels of translateZ would spill past the page's
+ * side padding.
+ */
+.palantir-void button:hover .bg-card,
+.palantir-void button:focus-visible .bg-card {
+    transform: perspective(700px) translateZ(4px) rotateX(1deg);
+    border-color: rgba(255, 176, 87, 0.55);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1) inset,
+        0 26px 44px -24px rgba(255, 176, 87, 0.7);
+}
+
+.palantir-void button:hover .bg-card::after {
+    animation: pv-sweep 0.9s ease-out;
+}
+
+.palantir-void button:active .bg-card {
+    transform: perspective(700px) translateZ(1px);
+}
+
+.palantir-void .bg-secondary {
+    background: rgba(255, 176, 87, 0.12);
+    border: 1px solid rgba(255, 176, 87, 0.4);
+    color: #ffd9a8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.palantir-void svg {
+    color: var(--pv-amber);
+    filter: drop-shadow(0 0 6px rgba(255, 176, 87, 0.45));
+}
+
+/*
+ * The search glyph: pulled out of the muted violet it ships in, so the room
+ * left for it inside the field reads as used, not as dead space. It also
+ * needs to sit above the field itself: the backdrop-filter below makes the
+ * input a stacking context painted after its z-auto sibling, which would
+ * bury the glyph under the glass.
+ */
+.palantir-void .relative > svg.text-muted-foreground {
+    color: var(--pv-amber);
+    z-index: 1;
+}
+
+/* Back button and filter chips. */
+.palantir-void button[class*="border"] {
+    background: var(--pv-glass);
+    border-color: var(--pv-edge);
+    color: var(--pv-ink);
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/*
+ * The chip that is on. `aria-pressed` is what the carousel itself marks it
+ * with, so this cannot drift out of sync with the component. It must come
+ * after the rule above: both selectors carry the same weight, and the one
+ * that is selected does carry a `border-*` class too.
+ */
+.palantir-void button[aria-pressed="true"] {
+    background: rgba(139, 92, 246, 0.16);
+    border-color: rgba(196, 181, 253, 0.65);
+    color: var(--pv-ink);
+    box-shadow: 0 0 12px -4px rgba(167, 139, 250, 0.55);
+}
+
+/* Progress bar of the weekly indexing. */
+.palantir-void [role="progressbar"] {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.palantir-void [role="progressbar"] > * {
+    background: linear-gradient(90deg, var(--pv-violet), var(--pv-amber));
+}
+
+/* ------------------------------------------------------------- calendar -- */
+
+/*
+ * Readability first: the void only supplies the background and the chrome,
+ * while event text stays near-white on a solid, well-separated surface.
+ */
+.palantir-void .fc {
+    --planning-grid-background: rgba(5, 3, 15, 0.82);
+    --planning-slot-border-color: rgba(139, 92, 246, 0.2);
+    --planning-today-background: rgba(139, 92, 246, 0.12);
+
+    --planning-button-text: var(--pv-ink);
+    --planning-button-background: rgba(24, 17, 52, 0.9);
+    --planning-button-shadow: 0 10px 24px -16px rgba(139, 92, 246, 0.9);
+    /* Same treatment as the selected filter chip: a light violet tint, a
+     * brighter ring (as a shadow — the toolbar buttons carry no border) and
+     * a small glow. */
+    --planning-button-active-gradient: rgba(139, 92, 246, 0.16);
+    --planning-button-active-shadow:
+        0 0 0 1px rgba(196, 181, 253, 0.65),
+        0 0 12px -4px rgba(167, 139, 250, 0.55);
+    --planning-button-active-text: var(--pv-ink);
+
+    --planning-event-default-gradient: linear-gradient(
+        160deg,
+        rgba(76, 46, 140, 0.96),
+        rgba(30, 18, 66, 0.96)
+    );
+    --planning-event-default-solid: #4c2e8c;
+    --planning-event-default-text: #f4f2ff;
+    --planning-event-default-shadow: 0 8px 18px -12px rgba(0, 0, 0, 0.9);
+
+    --planning-event-epreuve-gradient: linear-gradient(
+        160deg,
+        rgba(190, 70, 50, 0.96),
+        rgba(92, 24, 20, 0.96)
+    );
+    --planning-event-epreuve-text: #fff1e8;
+    --planning-event-epreuve-shadow: 0 0 18px -6px rgba(248, 113, 113, 0.8);
+
+    --planning-event-personal-gradient: linear-gradient(
+        160deg,
+        rgba(180, 120, 40, 0.96),
+        rgba(92, 58, 12, 0.96)
+    );
+    --planning-event-personal-text: #fff6e8;
+    --planning-event-personal-shadow: 0 0 18px -6px rgba(255, 176, 87, 0.7);
+
+    color: var(--pv-ink);
+    border-radius: 0.85rem;
+    overflow: hidden;
+    border: 1px solid var(--pv-edge);
+    box-shadow: 0 30px 60px -40px rgba(139, 92, 246, 0.9);
+}
+
+.palantir-void .fc a,
+.palantir-void .fc .fc-col-header-cell-cushion,
+.palantir-void .fc .fc-timegrid-slot-label-cushion {
+    color: var(--pv-ink);
+}
+
+.palantir-void .fc .fc-col-header-cell {
+    background: rgba(24, 17, 52, 0.85);
+}
+
+/* An amber edge so each lesson reads as a distinct shard. */
+.palantir-void .fc .fc-timegrid-event {
+    border-left: 2px solid rgba(255, 176, 87, 0.65);
+}
+
+/*
+ * The calendar's active view button ("Semaine"/"Jour") carries
+ * aria-pressed too — FullCalendar sets it itself — so it inherits the chip
+ * rule above wholesale. Only its ring needs help: toolbar buttons have no
+ * border for the chip's border-color to show on, so the ring rides the
+ * shadow instead.
+ */
+.palantir-void .fc button[aria-pressed="true"] {
+    box-shadow:
+        0 0 0 1px rgba(196, 181, 253, 0.65),
+        0 0 12px -4px rgba(167, 139, 250, 0.55);
+}
+
+/* The calendar keeps its own icons legible rather than amber-on-dark. */
+.palantir-void .fc svg {
+    color: inherit;
+    filter: none;
+}
+
+/*
+ * The lesson happening now: a slow amber pulse, so the day's current block
+ * reads at a glance. The class itself comes from the page (eventClassNames),
+ * refreshed every half minute. planning.css puts !important on every event
+ * shadow, which no animation can beat — so the outer glow rides the very
+ * custom properties those rules read, and the pulse is an inset haze on a
+ * pseudo-element, outside their reach entirely.
+ */
+.palantir-void .fc .pv-event-now {
+    --planning-event-default-shadow: 0 8px 18px -12px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 176, 87, 0.5), 0 0 24px -4px rgba(255, 176, 87, 0.6);
+    --planning-event-epreuve-shadow: 0 0 18px -6px rgba(248, 113, 113, 0.8),
+        0 0 0 1px rgba(255, 176, 87, 0.5), 0 0 24px -4px rgba(255, 176, 87, 0.6);
+    --planning-event-personal-shadow: 0 0 18px -6px rgba(255, 176, 87, 0.7),
+        0 0 0 1px rgba(255, 176, 87, 0.5), 0 0 24px -4px rgba(255, 176, 87, 0.6);
+    --planning-event-colle-shadow: 0 16px 30px rgba(126, 110, 247, 0.22),
+        0 0 0 1px rgba(255, 176, 87, 0.5), 0 0 24px -4px rgba(255, 176, 87, 0.6);
+    --planning-event-autogere-shadow: 0 16px 30px rgba(126, 110, 247, 0.22),
+        0 0 0 1px rgba(255, 176, 87, 0.5), 0 0 24px -4px rgba(255, 176, 87, 0.6);
+}
+
+.palantir-void .fc .pv-event-now::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 18px rgba(255, 176, 87, 0.5);
+    opacity: 0.4;
+    animation: pv-now 2.4s ease-in-out infinite;
+}
+
+@keyframes pv-now {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-void .pv-stars,
+    .palantir-void .pv-nebula,
+    .palantir-void .pv-grain,
+    .palantir-void h2,
+    .palantir-void input,
+    .palantir-void .fc .pv-event-now::after,
+    .palantir-void button:hover .bg-card::after {
+        animation: none;
+    }
+
+    .palantir-void .bg-card,
+    .palantir-void button:hover .bg-card,
+    .palantir-void button:active .bg-card {
+        transform: none;
+        transition: none;
+    }
+}

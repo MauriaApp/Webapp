@@ -63,3 +63,45 @@ export const useGradeRevealMode = (): GradeRevealMode => {
 
     return mode;
 };
+
+/**
+ * Palantir's "singularity" skin: a black-hole console for the search and the
+ * calendar. Purely cosmetic, scoped to the Palantir page — the real planning
+ * keeps the user's theme. Off unless explicitly turned on.
+ */
+export const PALANTIR_THEME_STORAGE_KEY = "mauria-palantir-void";
+
+const PALANTIR_THEME_EVENT = "mauria-palantir-theme-change";
+
+export const readPalantirTheme = (): boolean => {
+    if (typeof window === "undefined") {
+        return false;
+    }
+    return getFromStorage(PALANTIR_THEME_STORAGE_KEY) === "true";
+};
+
+export const setPalantirTheme = (enabled: boolean) => {
+    if (typeof window === "undefined") {
+        return;
+    }
+    saveToStorage(PALANTIR_THEME_STORAGE_KEY, String(enabled));
+    window.dispatchEvent(new Event(PALANTIR_THEME_EVENT));
+};
+
+export const usePalantirTheme = (): boolean => {
+    const [enabled, setEnabled] = useState<boolean>(readPalantirTheme);
+
+    useEffect(() => {
+        const handler = () => setEnabled(readPalantirTheme());
+
+        window.addEventListener(PALANTIR_THEME_EVENT, handler);
+        window.addEventListener("storage", handler);
+
+        return () => {
+            window.removeEventListener(PALANTIR_THEME_EVENT, handler);
+            window.removeEventListener("storage", handler);
+        };
+    }, []);
+
+    return enabled;
+};
