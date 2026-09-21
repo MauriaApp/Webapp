@@ -121,7 +121,8 @@
       "juniaLearning": "Junia Learning",
       "print": "Imprimer",
       "versions": "Mises à jour",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "palantir": "Palantir"
     },
     "help": "Une question, une idée ?",
     "logOut": "Se déconnecter",
@@ -542,6 +543,33 @@
       "sending": "Envoi…",
       "error": "Échec de l'envoi",
       "tooLarge": "Fichier trop volumineux (100 Mo max)"
+    }
+  },
+  "palantirPage": {
+    "title": "Palantir",
+    "subtitle": "Cherchez une salle, un enseignant ou une promotion, et voyez son emploi du temps.",
+    "placeholder": "Salle, enseignant, promotion…",
+    "hint": "Tapez au moins un caractère pour lancer la recherche.",
+    "noResults": "Aucun résultat.",
+    "noLessons": "Aucun cours sur la période indexée.",
+    "back": "Retour",
+    "loading": "Chargement de l'emploi du temps…",
+    "loadingGroup": "Récupération en direct sur Aurion, ça prend une quinzaine de secondes…",
+    "promotion": "Promotion",
+    "lessonCount_one": "{{count}} cours",
+    "lessonCount_other": "{{count}} cours",
+    "aurionDownMessage": "Aurion est injoignable, l'index ne peut pas être construit.",
+    "kinds": {
+      "all": "Tout",
+      "room": "Salles",
+      "teacher": "Enseignants",
+      "group": "Promotions"
+    },
+    "indexing": {
+      "title": "Indexation des plannings",
+      "plannings": "Énumération des promotions…",
+      "events": "{{done}} / {{total}} plannings récupérés",
+      "wait": "L'index se construit, réessayez dans une minute."
     }
   }
 }

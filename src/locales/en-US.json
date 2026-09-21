@@ -121,7 +121,8 @@
       "juniaLearning": "Junia Learning",
       "print": "Print",
       "versions": "Updates",
-      "settings": "Settings"
+      "settings": "Settings",
+      "palantir": "Palantir"
     },
     "help": "A question, an idea?",
     "logOut": "Log Out",
@@ -542,6 +543,33 @@
       "sending": "Uploading…",
       "error": "Upload failed",
       "tooLarge": "File too large (100 MB max)"
+    }
+  },
+  "palantirPage": {
+    "title": "Palantir",
+    "subtitle": "Search for a room, a teacher or a class, and see its schedule.",
+    "placeholder": "Room, teacher, class…",
+    "hint": "Type at least one character to start searching.",
+    "noResults": "No results.",
+    "noLessons": "No lesson over the indexed period.",
+    "back": "Back",
+    "loading": "Loading the schedule…",
+    "loadingGroup": "Fetching live from Aurion, this takes about fifteen seconds…",
+    "promotion": "Class",
+    "lessonCount_one": "{{count}} lesson",
+    "lessonCount_other": "{{count}} lessons",
+    "aurionDownMessage": "Aurion is unreachable, the index cannot be built.",
+    "kinds": {
+      "all": "All",
+      "room": "Rooms",
+      "teacher": "Teachers",
+      "group": "Classes"
+    },
+    "indexing": {
+      "title": "Indexing schedules",
+      "plannings": "Listing the classes…",
+      "events": "{{done}} / {{total}} schedules fetched",
+      "wait": "The index is building, try again in a minute."
     }
   }
 }

@@ -121,7 +121,8 @@
       "juniaLearning": "Junia Learning",
       "print": "Imprimir",
       "versions": "Actualizaciones",
-      "settings": "Ajustes"
+      "settings": "Ajustes",
+      "palantir": "Palantir"
     },
     "help": "¿Una pregunta, una idea?",
     "logOut": "Cerrar sesión",
@@ -542,6 +543,33 @@
       "sending": "Enviando…",
       "error": "Error al enviar",
       "tooLarge": "Archivo demasiado grande (máx. 100 MB)"
+    }
+  },
+  "palantirPage": {
+    "title": "Palantir",
+    "subtitle": "Busca un aula, un profesor o una promoción, y mira su horario.",
+    "placeholder": "Aula, profesor, promoción…",
+    "hint": "Escribe al menos un carácter para buscar.",
+    "noResults": "Sin resultados.",
+    "noLessons": "Ninguna clase en el periodo indexado.",
+    "back": "Volver",
+    "loading": "Cargando el horario…",
+    "loadingGroup": "Consultando Aurion en directo, tarda unos quince segundos…",
+    "promotion": "Promoción",
+    "lessonCount_one": "{{count}} clase",
+    "lessonCount_other": "{{count}} clases",
+    "aurionDownMessage": "Aurion no responde, el índice no se puede construir.",
+    "kinds": {
+      "all": "Todo",
+      "room": "Aulas",
+      "teacher": "Profesores",
+      "group": "Promociones"
+    },
+    "indexing": {
+      "title": "Indexando horarios",
+      "plannings": "Enumerando las promociones…",
+      "events": "{{done}} / {{total}} horarios recuperados",
+      "wait": "El índice se está construyendo, inténtalo en un minuto."
     }
   }
 }
