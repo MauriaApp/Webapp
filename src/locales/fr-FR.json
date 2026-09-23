@@ -481,7 +481,7 @@
     "downloadSuccess": "{{filename}} téléchargé",
     "downloadStarted": "Téléchargement lancé dans le navigateur",
     "downloadError": "Échec du téléchargement",
-    "loadingHint": "C'est normal si c'est long, la récupération prend environ 30 secondes"
+    "loadingHint": "C'est normal si c'est long, la récupération prend environ 20 secondes"
   },
   "drawerPlanningContent": {
     "place": "Lieu",

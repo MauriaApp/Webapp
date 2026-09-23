@@ -1,47 +1,58 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useIsFetching } from "@tanstack/react-query";
-
-// Expected durations (ms) for the slow Aurion-scraping queries, measured
-// from the backend timings.  Fast queries (colles, menu, rooms) are under
-// 1s and don't need a progress ring.
-const SLOW_QUERIES: { key: string[]; duration: number }[] = [
-    { key: ["documents"], duration: 24000 },
-    { key: ["grades"], duration: 17000 },
-    { key: ["planning"], duration: 10000 },
-    { key: ["absences"], duration: 8000 },
-];
+import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { expectedFetchDuration, type SlowQueryKey } from "@/lib/api/junia-status";
 
 const DEFAULT_DURATION = 2000; // fallback for unknown/fast queries
 
 /**
- * Returns a 0–100 progress value that estimates how far along the
- * slowest in-progress fetch is.  Uses the same fake-progress technique
- * as the welcome bar (elapsed / expectedDuration with wobble), clamped
- * to a 5%–97% range while fetching, then ramps to 100% over ~800ms when
- * all fetches complete.
+ * Returns `{ progress, visible, done }`:
+ * - `progress` is a 0–100 value estimating how far along the slowest
+ *   in-progress fetch is, using the same fake-progress technique as the
+ *   welcome bar (elapsed / expectedDuration with wobble), clamped to a
+ *   5%–97% range while fetching, then ramped to 100% over ~800ms when all
+ *   fetches complete.
+ * - `visible` drives whether the ring is shown, and flips to false after
+ *   the ramp. `progress` stays at 100 from there on, so the ring retracts
+ *   (fade/scale out) as a full circle instead of unwinding back to 0.
+ * - `done` flips to true the moment the circle completes — everything is
+ *   fetched — for the closing check to draw inside the ring. It resets on
+ *   the next fetch cycle.
  *
- * Returns 0 when nothing is fetching and the ramp has finished.
+ * `progress` is 0 only before the first fetch cycle; each new cycle snaps
+ * it back to 5%.
  */
 export function useFetchProgress() {
     const fetchCount = useIsFetching();
     const isFetching = fetchCount > 0;
+    const status = useJuniaStatus();
 
     // Check which slow queries are currently in progress.
-    const activeSlow = SLOW_QUERIES.map((q) => ({
-        ...q,
-        fetching: useIsFetching({ queryKey: q.key }) > 0,
-    }));
+    const documentsFetching = useIsFetching({ queryKey: ["documents"] }) > 0;
+    const gradesFetching = useIsFetching({ queryKey: ["grades"] }) > 0;
+    const planningFetching = useIsFetching({ queryKey: ["planning"] }) > 0;
+    const absencesFetching = useIsFetching({ queryKey: ["absences"] }) > 0;
+    const activeSlow: { key: SlowQueryKey; fetching: boolean }[] = [
+        { key: "documents", fetching: documentsFetching },
+        { key: "grades", fetching: gradesFetching },
+        { key: "planning", fetching: planningFetching },
+        { key: "absences", fetching: absencesFetching },
+    ];
 
     // The expected duration is the max among all in-progress slow queries.
     // If only fast queries are running, use the default.
     const maxDuration = useMemo(() => {
         const active = activeSlow.filter((q) => q.fetching);
         if (active.length === 0) return DEFAULT_DURATION;
-        return Math.max(...active.map((q) => q.duration));
+        return Math.max(
+            ...active.map((q) => expectedFetchDuration(status, q.key))
+        );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeSlow.map((q) => q.fetching).join()]);
+    }, [activeSlow.map((q) => q.fetching).join(), status]);
 
     const [progress, setProgress] = useState(0);
+    const [visible, setVisible] = useState(false);
+    const [done, setDone] = useState(false);
     const startRef = useRef<number | null>(null);
     const progressRef = useRef(0);
 
@@ -52,6 +63,7 @@ export function useFetchProgress() {
             startRef.current = null;
             if (rampFrom <= 0) return;
 
+            let hideId = 0;
             const rampStart = Date.now();
             const rampId = window.setInterval(() => {
                 const elapsed = Date.now() - rampStart;
@@ -62,14 +74,20 @@ export function useFetchProgress() {
                 setProgress(value);
                 if (t >= 1) {
                     window.clearInterval(rampId);
-                    // Hide after a brief pause.
-                    window.setTimeout(() => {
-                        progressRef.current = 0;
-                        setProgress(0);
+                    // The circle is complete: everything is done, time for
+                    // the closing check.
+                    setDone(true);
+                    // Hide after a brief pause. The value stays at 100 so
+                    // the ring retracts as a full circle.
+                    hideId = window.setTimeout(() => {
+                        setVisible(false);
                     }, 300);
                 }
             }, 16);
-            return () => window.clearInterval(rampId);
+            return () => {
+                window.clearInterval(rampId);
+                window.clearTimeout(hideId);
+            };
         }
 
         // Start or continue tracking.
@@ -77,6 +95,8 @@ export function useFetchProgress() {
             startRef.current = Date.now();
             progressRef.current = 5;
             setProgress(5);
+            setVisible(true);
+            setDone(false);
         }
 
         // Work in a 0–1 ratio internally (5%..95% range).
@@ -108,5 +128,5 @@ export function useFetchProgress() {
         return () => window.clearInterval(interval);
     }, [isFetching, maxDuration]);
 
-    return progress;
+    return { progress, visible, done };
 }

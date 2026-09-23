@@ -16,6 +16,8 @@ import { fetchAbsences, fetchGrades, fetchPlanning } from "@/lib/api/aurion";
 import { fetchImportantMessage } from "@/lib/api/supa";
 import { fetchDailyMenu } from "@/lib/api/lacatho";
 import { saveToStorage } from "@/lib/utils/storage";
+import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { expectedFetchDuration } from "@/lib/api/junia-status";
 import { useTranslation } from "react-i18next";
 import { Absence, Grade, Lesson } from "@/types/aurion";
 
@@ -69,36 +71,35 @@ export function WelcomePage() {
     const results = useQueries({
         queries: [
             {
+                // The fetch itself logs [fetch] start/done (elapsed vs
+                // BadJunia's expected duration) from the API layer.
                 queryKey: ["planning"],
-                queryFn: (): Promise<Lesson[]> =>
-                    timedFetch("planning", async () => {
-                        const res = await fetchPlanning();
-                        if (!res?.success)
-                            throw new Error("Failed to fetch planning");
-                        return res.data ?? [];
-                    }),
+                queryFn: async (): Promise<Lesson[]> => {
+                    const res = await fetchPlanning();
+                    if (!res?.success)
+                        throw new Error("Failed to fetch planning");
+                    return res.data ?? [];
+                },
                 ...PREFETCH_OPTS,
             },
             {
                 queryKey: ["grades"],
-                queryFn: (): Promise<Grade[]> =>
-                    timedFetch("grades", async () => {
-                        const res = await fetchGrades();
-                        if (!res?.success)
-                            throw new Error("Failed to fetch grades");
-                        return res.data ?? [];
-                    }),
+                queryFn: async (): Promise<Grade[]> => {
+                    const res = await fetchGrades();
+                    if (!res?.success)
+                        throw new Error("Failed to fetch grades");
+                    return res.data ?? [];
+                },
                 ...PREFETCH_OPTS,
             },
             {
                 queryKey: ["absences"],
-                queryFn: (): Promise<Absence[]> =>
-                    timedFetch("absences", async () => {
-                        const res = await fetchAbsences();
-                        if (!res?.success)
-                            throw new Error("Failed to fetch absences");
-                        return res.data ?? [];
-                    }),
+                queryFn: async (): Promise<Absence[]> => {
+                    const res = await fetchAbsences();
+                    if (!res?.success)
+                        throw new Error("Failed to fetch absences");
+                    return res.data ?? [];
+                },
                 ...PREFETCH_OPTS,
             },
             {
@@ -144,9 +145,16 @@ export function WelcomePage() {
         return () => window.clearInterval(id);
     }, [isBusy]);
 
-    // Fake progress effect, with irregularities. Tuned to target ~10s
-    // (planning takes ~9s). When the planning finishes early, the bar
-    // smoothly ramps to 100% over ~800ms instead of teleporting.
+    // Fake progress effect, with irregularities. Targets the expected
+    // planning duration from BadJunia's per-page timings (fallback ~10s).
+    // When the planning finishes early, the bar smoothly ramps to 100% over
+    // ~800ms instead of teleporting.
+    const status = useJuniaStatus();
+    // Latest BadJunia timings, read once per busy cycle so a status refresh
+    // never restarts the bar mid-fetch.
+    const statusRef = useRef(status);
+    statusRef.current = status;
+
     const progressRef = useRef(0);
     useEffect(() => {
         if (!isBusy) {
@@ -181,11 +189,17 @@ export function WelcomePage() {
 
         setProgress(0);
         progressRef.current = 0;
+        // The button only blocks on the planning, so the bar targets its
+        // expected duration.
+        const expectedMs = expectedFetchDuration(
+            statusRef.current,
+            "planning"
+        );
         const start = Date.now();
         let current = 0;
         const interval = window.setInterval(() => {
             const elapsed = Date.now() - start;
-            const base = Math.min(0.97, elapsed / 10000);
+            const base = Math.min(0.97, elapsed / expectedMs);
             const burst = Math.random() < 0.22 ? Math.random() * 0.1 : 0;
             const wobble = (Math.random() - 0.5) * 0.04;
             const target = Math.min(0.97, base + wobble + burst);

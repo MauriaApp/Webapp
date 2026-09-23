@@ -481,7 +481,7 @@
     "downloadSuccess": "{{filename}} downloaded",
     "downloadStarted": "Download started in your browser",
     "downloadError": "Download failed",
-    "loadingHint": "It's normal if it takes a while, fetching takes about 30 seconds"
+    "loadingHint": "It's normal if it takes a while, fetching takes about 20 seconds"
   },
   "drawerPlanningContent": {
     "place": "Place",
