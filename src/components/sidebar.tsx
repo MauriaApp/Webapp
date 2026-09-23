@@ -160,6 +160,7 @@ export default function Sidebar() {
                         <Button
                             variant="ghost"
                             size="sm"
+                            disabled
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
                             onClick={() => handleNavigate("/palantir")}
                         >
@@ -170,7 +171,7 @@ export default function Sidebar() {
                                     variant="secondary"
                                     className="px-1.5 py-0 text-[10px] font-semibold"
                                 >
-                                    Beta
+                                    Maintenance
                                 </Badge>
                             </span>
                         </Button>
