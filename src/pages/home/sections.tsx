@@ -179,12 +179,38 @@ export const ImportantMessage = ({
         }
     }, [count, index]);
 
+    // Advance on a real timer rather than the progress bar's
+    // onAnimationComplete: the app-level AnimatePresence (App.tsx) uses
+    // initial={false}, which silently skips every motion component's mount
+    // animation on the very first route render — including this bar on a
+    // cold load — so its completion callback never fired and the carousel
+    // stayed stuck on the first message until the page remounted (e.g. by
+    // navigating away and back). A timeout always fires regardless.
+    useEffect(() => {
+        if (!autoplay || count <= 1) return;
+        const timer = setTimeout(() => {
+            setIndex((i) => (i + 1) % count);
+        }, MESSAGE_DURATION * 1000);
+        return () => clearTimeout(timer);
+    }, [autoplay, count, index]);
+
+    // Same reasoning for the bar's fill animation: render it collapsed, then
+    // flip it a frame later so the scaleX transition is always a real prop
+    // change on an already-mounted element instead of a (possibly
+    // suppressed) mount animation.
+    const [fillActive, setFillActive] = useState(false);
+    useEffect(() => {
+        setFillActive(false);
+        if (!autoplay || count <= 1) return;
+        const id = requestAnimationFrame(() => setFillActive(true));
+        return () => cancelAnimationFrame(id);
+    }, [index, autoplay, count]);
+
     const current = messages[Math.min(index, Math.max(count - 1, 0))];
     const goTo = (target: number) => {
         setIndex(target);
         setAutoplay(false);
     };
-    const next = () => setIndex((i) => (i + 1) % count);
 
     return (
         <motion.div
@@ -224,49 +250,44 @@ export const ImportantMessage = ({
 
                 {count > 1 && (
                     <div className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5">
-                        {messages.map((entry, i) => (
-                            <button
-                                key={`${i}-${entry.title}`}
-                                type="button"
-                                aria-label={t("homePage.goToMessage", {
-                                    index: i + 1,
-                                })}
-                                aria-current={i === index}
-                                onClick={() => goTo(i)}
-                                className="group flex h-3 flex-1 cursor-pointer items-center"
-                            >
-                                <span className="block h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/20">
-                                    <motion.span
-                                        key={`${i}-${index}-${String(autoplay)}`}
-                                        className="block h-full origin-left rounded-full bg-mauria-purple dark:bg-white"
-                                        initial={{
-                                            scaleX:
-                                                i < index ||
-                                                (i === index && !autoplay)
-                                                    ? 1
-                                                    : 0,
-                                        }}
-                                        animate={{
-                                            scaleX: i <= index ? 1 : 0,
-                                        }}
-                                        transition={
-                                            i === index && autoplay
-                                                ? {
-                                                      duration:
-                                                          MESSAGE_DURATION,
-                                                      ease: "linear",
-                                                  }
-                                                : { duration: 0 }
-                                        }
-                                        onAnimationComplete={() => {
-                                            if (i === index && autoplay) {
-                                                next();
+                        {messages.map((entry, i) => {
+                            const animating = i === index && autoplay;
+                            const filled =
+                                i < index ||
+                                (i === index && (fillActive || !autoplay));
+
+                            return (
+                                <button
+                                    key={`${i}-${entry.title}`}
+                                    type="button"
+                                    aria-label={t("homePage.goToMessage", {
+                                        index: i + 1,
+                                    })}
+                                    aria-current={i === index}
+                                    onClick={() => goTo(i)}
+                                    className="group flex h-3 flex-1 cursor-pointer items-center"
+                                >
+                                    <span className="block h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/20">
+                                        <motion.span
+                                            className="block h-full origin-left rounded-full bg-mauria-purple dark:bg-white"
+                                            initial={false}
+                                            animate={{
+                                                scaleX: filled ? 1 : 0,
+                                            }}
+                                            transition={
+                                                animating
+                                                    ? {
+                                                          duration:
+                                                              MESSAGE_DURATION,
+                                                          ease: "linear",
+                                                      }
+                                                    : { duration: 0 }
                                             }
-                                        }}
-                                    />
-                                </span>
-                            </button>
-                        ))}
+                                        />
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 )}
             </MotionAlert>
