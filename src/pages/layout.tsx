@@ -30,9 +30,13 @@ export default function RootLayout() {
     const { t } = useTranslation();
     const { background } = useBackground();
     const activeFetches = useIsFetching();
-    const fetchProgress = useFetchProgress();
+    const {
+        progress: fetchProgress,
+        visible: fetchSpinnerVisible,
+        done: fetchDone,
+    } = useFetchProgress();
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
-    const showGlobalSpinner = activeFetches > 0 || fetchProgress > 0;
+    const showGlobalSpinner = activeFetches > 0 || fetchSpinnerVisible;
     const [renderSpinner, setRenderSpinner] = useState(showGlobalSpinner);
     // While Aurion is down the ring is replaced by a crashed-server icon that
     // only exists for its blink animation. Only one blink plays at a time:
@@ -151,11 +155,54 @@ export default function RootLayout() {
                                 }}
                                 className="flex items-center text-white origin-center"
                             >
-                                <ProgressRing
-                                    value={fetchProgress}
-                                    size={28}
-                                    strokeWidth={3}
-                                />
+                                <div className="relative">
+                                    <ProgressRing
+                                        value={fetchProgress}
+                                        size={28}
+                                        strokeWidth={3}
+                                    />
+                                    {/* Everything fetched: a check draws
+                                        itself inside the completed circle,
+                                        then leaves with it at fade-out. */}
+                                    <AnimatePresence>
+                                        {fetchDone && (
+                                            <motion.svg
+                                                key="completion-check"
+                                                viewBox="0 0 28 28"
+                                                className="absolute inset-0"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{
+                                                    duration: 0.2,
+                                                    ease: "easeOut",
+                                                }}
+                                            >
+                                                <motion.path
+                                                    d="M9.5 14.5 L12.8 17.8 L18.5 10.8"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth={3}
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    initial={{
+                                                        pathLength: 0,
+                                                        opacity: 0,
+                                                    }}
+                                                    animate={{
+                                                        pathLength: 1,
+                                                        opacity: 1,
+                                                    }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{
+                                                        duration: 0.35,
+                                                        ease: [0.16, 1, 0.3, 1],
+                                                    }}
+                                                />
+                                            </motion.svg>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                                 <span className="sr-only">
                                     {t("common.loading")}
                                 </span>

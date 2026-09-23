@@ -1,6 +1,70 @@
 import { Lesson, Grade, Absence, AurionDocument, DocumentsResult } from "@/types/aurion";
 import { apiRequest, APIResponse, API_URL } from "./helper";
 import { getFromStorage, saveToStorage } from "../utils/storage";
+import { queryClient } from "@/lib/query-client";
+import {
+    expectedFetchDuration,
+    fetchJuniaStatus,
+    isAurionSessionWarm,
+    markAurionSession,
+    type JuniaStatus,
+    type SlowQueryKey,
+} from "./junia-status";
+
+const JUNIA_STATUS_STALE_MS = 1000 * 60; // same as useJuniaStatus
+
+/**
+ * Make sure BadJunia's timings are in the query cache before timing a fetch
+ * against them. Awaits the shared juniaStatus query when it has no fresh
+ * data yet (deduplicated across concurrent fetches), outside the measured
+ * window. Returns null when the status is unreachable — the caller then
+ * falls back to the measured constants.
+ */
+async function ensureJuniaStatus(): Promise<JuniaStatus | null> {
+    try {
+        const status = await queryClient.ensureQueryData({
+            queryKey: ["juniaStatus"],
+            queryFn: fetchJuniaStatus,
+            staleTime: JUNIA_STATUS_STALE_MS,
+        });
+        return status ?? null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Wrap one of the slow Aurion fetches with console timing: logs the start,
+ * then the elapsed time against the BadJunia-estimated duration. Applied in
+ * the API layer so every page that fetches logs, not just the welcome one.
+ */
+async function timedAurionFetch<T>(
+    key: SlowQueryKey,
+    fn: () => Promise<T>
+): Promise<T> {
+    // Load BadJunia's timings first (outside the measured window) so the
+    // expected value is theirs, not the fallback constants.
+    const status = await ensureJuniaStatus();
+    const expected = expectedFetchDuration(status, key);
+    const warm = isAurionSessionWarm();
+    const start = performance.now();
+    console.log(
+        `[fetch] ${key} — start (expected ${expected}ms, ${
+            warm ? "warm session" : "cold session"
+        })`
+    );
+    try {
+        return await fn();
+    } finally {
+        // The session (and its home tokens) are cached now: the next fetch
+        // within the API's TTL only pays the feature page.
+        markAurionSession();
+        const elapsed = Math.round(performance.now() - start);
+        console.log(
+            `[fetch] ${key} — done in ${elapsed}ms (expected ${expected}ms)`
+        );
+    }
+}
 
 type PlanningEntry = APIResponse<Lesson[]>;
 type GradeEntry = APIResponse<Grade[]>;
@@ -17,14 +81,14 @@ export function setSession(email: string, password: string) {
     saveToStorage("password", password);
 }
 
-export function fetchUser({
+export async function fetchUser({
     email,
     password,
 }: {
     email: string;
     password: string;
 }) {
-    return apiRequest<{ success: boolean; error?: string }>(
+    const data = await apiRequest<{ success: boolean; error?: string }>(
         "/aurion/login",
         "POST",
         {
@@ -32,6 +96,14 @@ export function fetchUser({
             password,
         }
     );
+    if (data?.success) {
+        // The API caches this fresh session and warms the home-page tokens
+        // in the background: the session is fully warm once that page has
+        // loaded, hence the delayed warm mark.
+        const status = await ensureJuniaStatus();
+        markAurionSession(status?.aurionTimes.home ?? 4500);
+    }
+    return data;
 }
 
 export async function fetchPlanning(params?: {
@@ -45,37 +117,25 @@ export async function fetchPlanning(params?: {
 
     const body = start && end ? { start, end, ...session } : session;
 
-    const data = await apiRequest<PlanningEntry>(
-        `/aurion/planning`,
-        "POST",
-        body
+    return timedAurionFetch("planning", () =>
+        apiRequest<PlanningEntry>(`/aurion/planning`, "POST", body)
     );
-    if (data?.success) {
-        return data;
-    }
-    return null;
 }
 
 export async function fetchGrades(): Promise<GradeEntry | null> {
     const session = getSession();
     if (!session) return null;
-    const data = await apiRequest<GradeEntry>(
-        "/aurion/grades",
-        "POST",
-        session
+    return timedAurionFetch("grades", () =>
+        apiRequest<GradeEntry>("/aurion/grades", "POST", session)
     );
-    return data;
 }
 
 export async function fetchAbsences(): Promise<AbsenceEntry | null> {
     const session = getSession();
     if (!session) return null;
-    const data = await apiRequest<AbsenceEntry>(
-        "/aurion/absences",
-        "POST",
-        session
+    return timedAurionFetch("absences", () =>
+        apiRequest<AbsenceEntry>("/aurion/absences", "POST", session)
     );
-    return data;
 }
 
 type DocumentEntry = APIResponse<DocumentsResult>;
@@ -83,12 +143,9 @@ type DocumentEntry = APIResponse<DocumentsResult>;
 export async function fetchDocuments(): Promise<DocumentEntry | null> {
     const session = getSession();
     if (!session) return null;
-    const data = await apiRequest<DocumentEntry>(
-        "/aurion/documents",
-        "POST",
-        session
+    return timedAurionFetch("documents", () =>
+        apiRequest<DocumentEntry>("/aurion/documents", "POST", session)
     );
-    return data;
 }
 
 /**
