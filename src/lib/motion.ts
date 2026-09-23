@@ -27,7 +27,7 @@ export const fadeIn: Variants = {
  */
 export const staggerGroup: Variants = {
     hidden: {},
-    show: { transition: { delayChildren: 0.04, staggerChildren: 0.09 } },
+    show: { transition: { delayChildren: 0.15, staggerChildren: 0.09 } },
 };
 
 /**
