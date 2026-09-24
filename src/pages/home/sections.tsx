@@ -252,9 +252,11 @@ export const ImportantMessage = ({
                     <div className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5">
                         {messages.map((entry, i) => {
                             const animating = i === index && autoplay;
+                            // Only the current segment is ever lit — past
+                            // segments are not kept filled, so switching
+                            // (auto or by click) always clears the old one.
                             const filled =
-                                i < index ||
-                                (i === index && (fillActive || !autoplay));
+                                i === index && (fillActive || !autoplay);
 
                             return (
                                 <button
