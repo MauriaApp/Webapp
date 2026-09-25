@@ -1483,72 +1483,12 @@
         opacity: calc(var(--card-opacity) * 0.75);
     }
 
-    /* Pokemon booster: the face-down card telegraphs a chase pull.
-       --hype-a/--hype-b are the tier colours, --hype-power its intensity. */
-    .poke-hype-aura {
-        position: absolute;
-        inset: -14%;
-        pointer-events: none;
-        border-radius: 50%;
-        background: conic-gradient(
-            from 0deg,
-            var(--hype-a),
-            var(--hype-b),
-            var(--hype-a)
-        );
-        filter: blur(1.8em);
-        opacity: calc(var(--hype-power) * 0.4);
-        animation: poke-hype-aura 4.2s ease-in-out infinite;
-    }
-
-    .poke-hype-spark {
-        position: absolute;
-        pointer-events: none;
-        border-radius: 9999px;
-        background: radial-gradient(circle, #fff, var(--hype-b) 60%, transparent);
-        opacity: 0.5;
-        animation: poke-hype-spark 2.6s ease-in-out infinite;
-    }
-
-    @keyframes poke-hype-aura {
-        0% {
-            transform: rotate(0deg) scale(1);
-            opacity: calc(var(--hype-power) * 0.3);
-        }
-        50% {
-            transform: rotate(180deg) scale(1.05);
-            opacity: calc(var(--hype-power) * 0.6);
-        }
-        100% {
-            transform: rotate(360deg) scale(1);
-            opacity: calc(var(--hype-power) * 0.3);
-        }
-    }
-
-    @keyframes poke-hype-spark {
-        0%,
-        100% {
-            transform: scale(0.2);
-            opacity: 0;
-        }
-        40% {
-            transform: scale(1);
-            opacity: 1;
-        }
-        70% {
-            transform: scale(0.6);
-            opacity: 0.35;
-        }
-    }
-
     @media (prefers-reduced-motion: reduce) {
         .cs2-case::after,
         .fdj-case::after,
         .poke-entry-foil::after,
         .poke-pack-sheen,
         .poke-pack-float,
-        .poke-hype-aura,
-        .poke-hype-spark,
         .reveal-icon,
         .reveal-card:hover .reveal-icon {
             animation: none;

@@ -8,7 +8,7 @@ import { Particles } from "@/components/ui/shadcn-io/particles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useIsFetching } from "@tanstack/react-query";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import { GridPattern } from "@/components/ui/shadcn-io/grid-pattern";
@@ -28,6 +28,8 @@ const PageTransitionMemo = memo(PageTransition);
 
 export default function RootLayout() {
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const location = useLocation();
     const { background } = useBackground();
     const activeFetches = useIsFetching();
     const {
@@ -135,7 +137,12 @@ export default function RootLayout() {
             <NewUpdateDrawer />
             {/* Header */}
             <header className="flex items-center justify-between px-4 pb-4 pt-safe-offset-4 bg-mauria-purple oled:bg-black z-10">
-                <h1 className="text-2xl font-bold text-white">
+                <h1
+                    className="text-2xl font-bold text-white cursor-pointer"
+                    onClick={() => {
+                        if (location.pathname !== "/") navigate("/");
+                    }}
+                >
                     {t("welcome.mauria")}
                 </h1>
                 {/* <Button variant="ghost" size="icon" className="text-white">

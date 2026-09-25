@@ -7,15 +7,14 @@ import type { Grade } from "@/types/aurion";
 import { Button } from "@/components/ui/button";
 import {
     buildBoosterCard,
+    CARD_TREATMENTS,
     isFullArt,
     mulberry32,
-    subjectIdOf,
     type BoosterCard,
 } from "./card-data";
 import { CardBack, PokemonCard } from "./pokemon-card";
 
-const COMMONS_PER_PACK = 5;
-const MAX_PULLS = 3;
+export const MAX_CARDS_PER_PACK = 6;
 
 type Phase = "pack" | "tearing" | "cards" | "summary";
 
@@ -26,39 +25,6 @@ const shuffle = <T,>(items: T[], random: () => number): T[] => {
         [copy[index], copy[swap]] = [copy[swap], copy[index]];
     }
     return copy;
-};
-
-/**
- * Duplicates shown before the chase cards. A real booster is a grab bag, so
- * the commons are spread across as many subjects as the collection allows:
- * one card per subject in round-robin before a subject can repeat.
- */
-const pickCommons = (
-    collection: Grade[],
-    random: () => number
-): Grade[] => {
-    const bySubject = new Map<string, Grade[]>();
-    for (const grade of shuffle(collection, random)) {
-        const id = subjectIdOf(grade);
-        const bucket = bySubject.get(id);
-        if (bucket) bucket.push(grade);
-        else bySubject.set(id, [grade]);
-    }
-
-    const buckets = shuffle([...bySubject.values()], random);
-    const picked: Grade[] = [];
-    for (let round = 0; picked.length < COMMONS_PER_PACK; round++) {
-        const before = picked.length;
-        for (const bucket of buckets) {
-            const grade = bucket[round];
-            if (!grade) continue;
-            picked.push(grade);
-            if (picked.length === COMMONS_PER_PACK) return picked;
-        }
-        // Collection exhausted: hand out what there is
-        if (picked.length === before) break;
-    }
-    return picked;
 };
 
 /** Tilt + glare, driven straight through the DOM to stay smooth on mobile.
@@ -447,10 +413,20 @@ function CardStage({
                     className="relative"
                     style={{ transformStyle: "preserve-3d", width }}
                     initial={{ rotateY: 180 }}
-                    animate={{ rotateY: faceUp ? 0 : 180 }}
+                    animate={{
+                        rotateY: faceUp ? 0 : 180,
+                        // The rarer the card, the harder it pops out
+                        scale:
+                            faceUp && !reducedMotion
+                                ? [1, 1 + 0.025 * (tierOf(card) + 1), 1]
+                                : 1,
+                    }}
                     transition={{
-                        duration: reducedMotion ? 0 : 0.65,
-                        ease: [0.2, 0.8, 0.2, 1],
+                        rotateY: {
+                            duration: reducedMotion ? 0 : 0.65,
+                            ease: [0.2, 0.8, 0.2, 1],
+                        },
+                        scale: { duration: 0.6, times: [0, 0.35, 1] },
                     }}
                 >
                     <div
@@ -471,7 +447,7 @@ function CardStage({
                             pointerEvents: faceUp ? "none" : "auto",
                         }}
                     >
-                        <CardBack width={width} hype={card.isNew} />
+                        <CardBack width={width} />
                     </div>
                 </motion.div>
             </div>
@@ -479,13 +455,198 @@ function CardStage({
     );
 }
 
+/**
+ * Anticipation while the card is still face down. Same colors whatever lies
+ * underneath, so the wait builds hype without giving the rarity away.
+ */
+const WAITING_GLOW =
+    "conic-gradient(from 0deg, #fcd34d, #67e8f9, #c084fc, #fcd34d)";
+
+function WaitingGlow() {
+    return (
+        <motion.span
+            className="pointer-events-none absolute inset-[-10%] rounded-full blur-2xl"
+            style={{ background: WAITING_GLOW }}
+            initial={{ opacity: 0 }}
+            animate={{
+                opacity: [0.3, 0.6, 0.3],
+                rotate: 360,
+                scale: [1, 1.06, 1],
+            }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+            transition={{
+                opacity: { duration: 2, repeat: Infinity },
+                scale: { duration: 2, repeat: Infinity },
+                rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+            }}
+        />
+    );
+}
+
+const EMBER_COLORS = ["#fcd34d", "#67e8f9", "#c084fc"];
+
+function WaitingEmbers() {
+    const embers = useMemo(
+        () =>
+            Array.from({ length: 16 }, (_, index) => ({
+                left: -8 + Math.random() * 116,
+                top: 55 + Math.random() * 50,
+                rise: 120 + Math.random() * 160,
+                drift: (Math.random() - 0.5) * 40,
+                size: 2 + Math.random() * 4,
+                duration: 1.8 + Math.random() * 1.6,
+                delay: Math.random() * 2.5,
+                color: EMBER_COLORS[index % EMBER_COLORS.length],
+            })),
+        []
+    );
+
+    return (
+        <motion.div
+            className="pointer-events-none absolute inset-0"
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+        >
+            {embers.map((ember, index) => (
+                <motion.span
+                    key={index}
+                    className="absolute rounded-full bg-white"
+                    style={{
+                        left: `${ember.left}%`,
+                        top: `${ember.top}%`,
+                        width: ember.size,
+                        height: ember.size,
+                        boxShadow: `0 0 6px 2px ${ember.color}`,
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{
+                        y: [0, -ember.rise],
+                        x: [0, ember.drift],
+                        opacity: [0, 1, 0.8, 0],
+                        scale: [0.4, 1, 0.6],
+                    }}
+                    transition={{
+                        duration: ember.duration,
+                        delay: ember.delay,
+                        repeat: Infinity,
+                        ease: "easeOut",
+                    }}
+                />
+            ))}
+        </motion.div>
+    );
+}
+
+/** 0 (common) to 5 (sir): drives how loud the reveal is */
+const tierOf = (card: BoosterCard): number =>
+    CARD_TREATMENTS.indexOf(card.treatment);
+
+const RAINBOW = ["#f87171", "#fbbf24", "#4ade80", "#38bdf8", "#c084fc"];
+
+/**
+ * Burst fired as the card lands face up. It only plays once the grade is on
+ * screen, so it can scale with the rarity without spoiling the flip: a common
+ * gets a small ring, a full-art gets light rays and a shower of sparks.
+ */
+function RevealBurst({ card }: { card: BoosterCard }) {
+    const tier = tierOf(card);
+    const accent = card.subject.accent;
+    const rainbow = card.treatment === "sir";
+
+    const sparks = useMemo(() => {
+        const count = 6 + tier * 4;
+        return Array.from({ length: count }, (_, index) => ({
+            angle: (index / count) * Math.PI * 2 + Math.random() * 0.5,
+            distance: 110 + tier * 22 + Math.random() * 60,
+            size: 3 + Math.random() * (3 + tier),
+            delay: 0.12 + Math.random() * 0.15,
+            color: rainbow ? RAINBOW[index % RAINBOW.length] : accent,
+        }));
+    }, [tier, accent, rainbow]);
+
+    return (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            {/* Shockwave */}
+            <motion.span
+                className="absolute inset-0 rounded-[1.2rem]"
+                style={{
+                    border: `${2 + tier}px solid ${accent}`,
+                    boxShadow: `0 0 ${12 + tier * 6}px ${accent}, inset 0 0 ${
+                        12 + tier * 6
+                    }px ${accent}`,
+                }}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1.25 + tier * 0.08, opacity: [0, 1, 0] }}
+                transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+            />
+
+            {/* Sparks thrown off the card */}
+            {sparks.map((spark, index) => (
+                <motion.span
+                    key={index}
+                    className="absolute rounded-full bg-white"
+                    style={{
+                        width: spark.size,
+                        height: spark.size,
+                        boxShadow: `0 0 8px 2px ${spark.color}`,
+                    }}
+                    initial={{ x: 0, y: 0, opacity: 0, scale: 0.3 }}
+                    animate={{
+                        x: Math.cos(spark.angle) * spark.distance,
+                        y: Math.sin(spark.angle) * spark.distance,
+                        opacity: [0, 1, 1, 0],
+                        scale: [0.3, 1, 0.8, 0],
+                    }}
+                    transition={{
+                        duration: 0.8 + tier * 0.05,
+                        times: [0, 0.2, 0.6, 1],
+                        delay: spark.delay,
+                        ease: "easeOut",
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
+/** Light rays spinning behind a rare card, painted under the card itself */
+function RevealRays({ card }: { card: BoosterCard }) {
+    const tier = tierOf(card);
+    const colors = card.treatment === "sir" ? RAINBOW : [card.subject.accent];
+    const rays = colors
+        .map((color) => `${color}aa 0deg 8deg, transparent 8deg 24deg`)
+        .join(", ");
+    const mask = "radial-gradient(circle, black 15%, transparent 60%)";
+
+    return (
+        <motion.span
+            className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[260%] rounded-full"
+            style={{
+                x: "-50%",
+                y: "-50%",
+                background: `repeating-conic-gradient(from 0deg, ${rays})`,
+                maskImage: mask,
+                WebkitMaskImage: mask,
+            }}
+            initial={{ opacity: 0, rotate: 0, scale: 0.6 }}
+            animate={{
+                opacity: [0, 0.5 + tier * 0.08, 0.35],
+                rotate: 90,
+                scale: 1,
+            }}
+            transition={{
+                opacity: { duration: 0.9, delay: 0.1, times: [0, 0.3, 1] },
+                scale: { duration: 0.6, delay: 0.1, ease: "easeOut" },
+                rotate: { duration: 12, ease: "linear" },
+            }}
+        />
+    );
+}
+
 function Booster({
     unopened,
-    collection,
     onClose,
 }: {
     unopened: Grade[];
-    collection: Grade[];
     onClose: (opened: Grade[]) => void;
 }) {
     const { t } = useTranslation();
@@ -519,16 +680,11 @@ function Booster({
         if (unopened.length === 0) return [];
 
         const random = mulberry32(packSeed);
-        const pulls =
-            1 + Math.floor(random() * Math.min(MAX_PULLS, unopened.length));
+        const pulls = Math.min(MAX_CARDS_PER_PACK, unopened.length);
         const chase = shuffle(unopened, random).slice(0, pulls);
-        const commons = pickCommons(collection, random);
 
-        return [
-            ...commons.map((grade) => buildBoosterCard(grade, false)),
-            ...chase.map((grade) => buildBoosterCard(grade, true)),
-        ];
-    }, [unopened, collection, packSeed]);
+        return chase.map((grade) => buildBoosterCard(grade, true));
+    }, [unopened, packSeed]);
 
     const newCards = useMemo(() => deck.filter((card) => card.isNew), [deck]);
     const card = deck[index];
@@ -546,8 +702,15 @@ function Booster({
     const tapCard = () => {
         if (!faceUp) {
             setFaceUp(true);
-            if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-                navigator.vibrate(card?.isNew ? [12, 40, 24] : 8);
+            if (
+                card &&
+                typeof navigator !== "undefined" &&
+                "vibrate" in navigator
+            ) {
+                const tier = tierOf(card);
+                navigator.vibrate(
+                    tier >= 4 ? [12, 40, 24, 40, 60] : [12, 40, 12 + tier * 6]
+                );
             }
             return;
         }
@@ -609,6 +772,37 @@ function Booster({
                 )}
             </AnimatePresence>
 
+            {/* Full-art pulls light up the whole screen */}
+            <AnimatePresence>
+                {phase === "cards" &&
+                    faceUp &&
+                    card &&
+                    isFullArt(card.treatment) &&
+                    !reducedMotion && (
+                        <motion.span
+                            key={`full-art-flash-${index}`}
+                            className="pointer-events-none absolute inset-0"
+                            style={{
+                                background: `radial-gradient(circle at 50% 45%, #fff 0%, ${card.subject.accent} 40%, transparent 75%)`,
+                            }}
+                            initial={{ opacity: 0 }}
+                            animate={{
+                                opacity: [
+                                    0,
+                                    card.treatment === "sir" ? 0.85 : 0.6,
+                                    0,
+                                ],
+                            }}
+                            exit={{ opacity: 0 }}
+                            transition={{
+                                duration: 0.7,
+                                delay: 0.1,
+                                times: [0, 0.25, 1],
+                            }}
+                        />
+                    )}
+            </AnimatePresence>
+
             {phase === "cards" && card && (
                 <div className="relative flex w-full flex-col items-center gap-4">
                     <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/60">
@@ -627,6 +821,10 @@ function Booster({
                             </>
                         )}
 
+                        {faceUp && tierOf(card) >= 3 && !reducedMotion && (
+                            <RevealRays key={`rays-${index}`} card={card} />
+                        )}
+
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={index}
@@ -639,23 +837,30 @@ function Booster({
                                     transition: { duration: 0.25 },
                                 }}
                                 transition={{ duration: 0.35, ease: "easeOut" }}
+                                className="relative"
                             >
+                                {/* Inside the card's wrapper so the wait
+                                    effects come and go with the card itself */}
+                                <AnimatePresence>
+                                    {!faceUp && !reducedMotion && (
+                                        <WaitingGlow key="glow" />
+                                    )}
+                                </AnimatePresence>
                                 <CardStage
                                     card={card}
                                     faceUp={faceUp}
                                     onTap={tapCard}
                                 />
+                                <AnimatePresence>
+                                    {!faceUp && !reducedMotion && (
+                                        <WaitingEmbers key="embers" />
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         </AnimatePresence>
 
-                        {/* Chase aura, before you even know what it is */}
-                        {card.isNew && !reducedMotion && (
-                            <motion.span
-                                className="pointer-events-none absolute inset-[-12%] -z-10 rounded-[2rem] blur-2xl"
-                                style={{ background: card.subject.accent }}
-                                animate={{ opacity: [0.25, 0.6, 0.25] }}
-                                transition={{ duration: 1.8, repeat: Infinity }}
-                            />
+                        {faceUp && !reducedMotion && (
+                            <RevealBurst key={`burst-${index}`} card={card} />
                         )}
                     </div>
 
@@ -758,23 +963,16 @@ function Booster({
 export function BoosterOverlay({
     open,
     unopened,
-    collection,
     onClose,
 }: {
     open: boolean;
     unopened: Grade[];
-    collection: Grade[];
     onClose: (opened: Grade[]) => void;
 }) {
     return createPortal(
         <AnimatePresence>
             {open && (
-                <Booster
-                    key="booster"
-                    unopened={unopened}
-                    collection={collection}
-                    onClose={onClose}
-                />
+                <Booster key="booster" unopened={unopened} onClose={onClose} />
             )}
         </AnimatePresence>,
         document.body

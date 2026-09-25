@@ -279,6 +279,8 @@
       "remaining_other": "{{count}} cartas por desbloquear",
       "remainingShort_one": "{{count}} carta",
       "remainingShort_other": "{{count}} cartas",
+      "packCount_one": "{{count}}x",
+      "packCount_other": "{{count}}x",
       "empty": "No hay sobres que abrir",
       "emptyHint": "Vuelve cuando llegue una nota",
       "tapToOpen": "Toca para abrir",
