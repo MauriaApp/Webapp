@@ -279,6 +279,8 @@
       "remaining_other": "{{count}} cards left to unlock",
       "remainingShort_one": "{{count}} card",
       "remainingShort_other": "{{count}} cards",
+      "packCount_one": "{{count}}x",
+      "packCount_other": "{{count}}x",
       "empty": "No booster to open",
       "emptyHint": "Come back when a grade drops",
       "tapToOpen": "Tap to open",

@@ -35,6 +35,62 @@ const mulberry32 = (seed: number) => () => {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 };
 
+/** Four-pointed twinkle, as printed all over real scratch tickets */
+const STAR_CLIP =
+    "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)";
+
+/** Glints twinkling on the untouched foil, begging to be scratched */
+function FoilGlints({ cleared }: { cleared: boolean }) {
+    const glints = useMemo(
+        () =>
+            Array.from({ length: 6 }, () => ({
+                left: 8 + Math.random() * 84,
+                top: 12 + Math.random() * 76,
+                size: 10 + Math.random() * 8,
+                delay: Math.random() * 2.4,
+                pause: 1.2 + Math.random() * 1.6,
+            })),
+        []
+    );
+
+    return (
+        <div
+            className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+            style={{ opacity: cleared ? 0 : 1 }}
+        >
+            {glints.map((glint, index) => (
+                <motion.span
+                    key={index}
+                    className="absolute bg-white"
+                    style={{
+                        left: `${glint.left}%`,
+                        top: `${glint.top}%`,
+                        width: glint.size,
+                        height: glint.size,
+                        clipPath: STAR_CLIP,
+                        filter: "drop-shadow(0 0 3px #fff)",
+                    }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                        scale: [0, 1, 0],
+                        opacity: [0, 1, 0],
+                        rotate: [0, 90],
+                    }}
+                    transition={{
+                        duration: 1.1,
+                        delay: glint.delay,
+                        repeat: Infinity,
+                        repeatDelay: glint.pause,
+                        ease: "easeInOut",
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
+type Flake = { id: number; x: number; y: number; drift: number; spin: number };
+
 /** The silver foil: an opaque canvas the user erases with the pointer. */
 function ScratchFoil({
     label,
@@ -49,6 +105,9 @@ function ScratchFoil({
     const lastPoint = useRef<{ x: number; y: number } | null>(null);
     const strokes = useRef(0);
     const done = useRef(false);
+    // Foil shavings falling off the coin while scratching
+    const [flakes, setFlakes] = useState<Flake[]>([]);
+    const flakeId = useRef(0);
 
     const paintFoil = useCallback(
         (canvas: HTMLCanvasElement) => {
@@ -160,8 +219,19 @@ function ScratchFoil({
             ctx.fill();
             lastPoint.current = { x, y };
 
-            // Reading back pixels is the expensive part: only every few strokes
             strokes.current++;
+            if (strokes.current % 3 === 0) {
+                const flake: Flake = {
+                    id: flakeId.current++,
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top,
+                    drift: (Math.random() - 0.5) * 50,
+                    spin: (Math.random() - 0.5) * 720,
+                };
+                setFlakes((current) => [...current.slice(-30), flake]);
+            }
+
+            // Reading back pixels is the expensive part: only every few strokes
             if (
                 strokes.current % 6 === 0 &&
                 measure(canvas) >= SCRATCH_THRESHOLD
@@ -173,30 +243,57 @@ function ScratchFoil({
     );
 
     return (
-        <canvas
-            ref={canvasRef}
-            className="absolute inset-0 size-full cursor-grab rounded-lg transition-opacity duration-500 active:cursor-grabbing"
-            style={{
-                touchAction: "none",
-                opacity: cleared ? 0 : 1,
-                pointerEvents: cleared ? "none" : "auto",
-            }}
-            onPointerDown={(event) => {
-                event.currentTarget.setPointerCapture(event.pointerId);
-                lastPoint.current = null;
-                scratch(event);
-            }}
-            onPointerMove={(event) => {
-                if (event.buttons === 0) return;
-                scratch(event);
-            }}
-            onPointerUp={() => {
-                lastPoint.current = null;
-            }}
-            onPointerCancel={() => {
-                lastPoint.current = null;
-            }}
-        />
+        <>
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 size-full cursor-grab rounded-lg transition-opacity duration-500 active:cursor-grabbing"
+                style={{
+                    touchAction: "none",
+                    opacity: cleared ? 0 : 1,
+                    pointerEvents: cleared ? "none" : "auto",
+                }}
+                onPointerDown={(event) => {
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                    lastPoint.current = null;
+                    scratch(event);
+                }}
+                onPointerMove={(event) => {
+                    if (event.buttons === 0) return;
+                    scratch(event);
+                }}
+                onPointerUp={() => {
+                    lastPoint.current = null;
+                }}
+                onPointerCancel={() => {
+                    lastPoint.current = null;
+                }}
+            />
+            <FoilGlints cleared={cleared} />
+            {flakes.map((flake) => (
+                <motion.span
+                    key={flake.id}
+                    className="pointer-events-none absolute size-1.5 rounded-[1px]"
+                    style={{
+                        left: flake.x,
+                        top: flake.y,
+                        background: "linear-gradient(135deg, #eef1f5, #8b939e)",
+                    }}
+                    initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+                    animate={{
+                        x: flake.drift,
+                        y: 60 + Math.abs(flake.drift),
+                        opacity: 0,
+                        rotate: flake.spin,
+                    }}
+                    transition={{ duration: 0.7, ease: "easeIn" }}
+                    onAnimationComplete={() =>
+                        setFlakes((current) =>
+                            current.filter((entry) => entry.id !== flake.id)
+                        )
+                    }
+                />
+            ))}
+        </>
     );
 }
 
@@ -522,6 +619,28 @@ export function ScratchCard({
                         )}
                     </Button>
                 </div>
+
+                {/* Gleam across the whole ticket once it pays out */}
+                {revealed && !reducedMotion && (
+                    <motion.span
+                        className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -skew-x-12"
+                        style={{
+                            background: bigWin
+                                ? "linear-gradient(90deg, transparent, rgba(250,204,21,0.45), rgba(255,255,255,0.8), rgba(250,204,21,0.45), transparent)"
+                                : "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
+                            mixBlendMode: "overlay",
+                        }}
+                        initial={{ x: "-120%" }}
+                        animate={{ x: "260%" }}
+                        transition={{
+                            duration: 0.9,
+                            delay: 0.2,
+                            ease: "easeInOut",
+                            repeat: bigWin ? 1 : 0,
+                            repeatDelay: 0.4,
+                        }}
+                    />
+                )}
             </motion.div>
 
             {revealed && !reducedMotion && coinCount > 0 && (

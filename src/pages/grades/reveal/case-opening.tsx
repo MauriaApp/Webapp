@@ -44,6 +44,63 @@ function randomGradeValue(): number {
     return Math.round((min + Math.random() * (max - min)) * 10) / 10;
 }
 
+/**
+ * Weapon-drop sparks thrown off the winning item: hot streaks that arc down
+ * under gravity. The rarer the grade, the bigger the shower.
+ */
+function DropSparks({ rarity }: { rarity: GradeRarity }) {
+    const tier = GRADE_RARITIES.indexOf(rarity);
+
+    const sparks = useMemo(() => {
+        const count = 8 + tier * 5;
+        return Array.from({ length: count }, (_, index) => {
+            const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.6;
+            const speed = 90 + Math.random() * (60 + tier * 25);
+            return {
+                dx: Math.cos(angle) * speed,
+                dy: Math.sin(angle) * speed,
+                length: 6 + Math.random() * 10,
+                duration: 0.7 + Math.random() * 0.5,
+                delay: Math.random() * 0.12,
+                color: index % 3 === 0 ? "#fde68a" : rarity.color,
+            };
+        });
+    }, [tier, rarity.color]);
+
+    return (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-10">
+            {sparks.map((spark, index) => (
+                <motion.span
+                    key={index}
+                    className="absolute left-0 top-0 w-[2px] rounded-full"
+                    style={{
+                        height: spark.length,
+                        background: spark.color,
+                        boxShadow: `0 0 6px 1px ${spark.color}`,
+                    }}
+                    initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+                    animate={{
+                        // Out along the angle, then gravity takes over
+                        x: [0, spark.dx * 0.7, spark.dx],
+                        y: [0, spark.dy * 0.6, spark.dy + 90],
+                        rotate: [
+                            (Math.atan2(spark.dy, spark.dx) * 180) / Math.PI +
+                                90,
+                            180,
+                        ],
+                        opacity: [1, 1, 0],
+                    }}
+                    transition={{
+                        duration: spark.duration,
+                        delay: spark.delay,
+                        ease: "easeOut",
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
+
 /** The "0 – 8", "18 – 20" … span covered by each rarity tier. */
 function rarityRange(index: number): string {
     const min = GRADE_RARITIES[index]!.min;
@@ -137,6 +194,9 @@ export function CaseOpening({
     const { t } = useTranslation();
     const reducedMotion = useReducedMotion();
     const containerRef = useRef<HTMLDivElement>(null);
+    const tickerGlowRef = useRef<HTMLDivElement>(null);
+    const lastTick = useRef<number | null>(null);
+    const lastBuzz = useRef(0);
     const [containerWidth, setContainerWidth] = useState(0);
     const [revealed, setRevealed] = useState(false);
 
@@ -176,6 +236,31 @@ export function CaseOpening({
         -(WINNER_INDEX * PITCH + ITEM_WIDTH / 2 - containerWidth / 2) + jitter;
     const ready = containerWidth > 0;
     const spin = ready && !reducedMotion && wonValue !== null;
+
+    // Every item crossing the ticker flashes it, like the CS2 reel "tick".
+    // Straight through the DOM: this fires dozens of times per spin.
+    const onReelUpdate = (latest: { x?: unknown }) => {
+        if (!spin || typeof latest.x !== "number") return;
+        const tick = Math.floor((containerWidth / 2 - latest.x) / PITCH);
+        if (tick === lastTick.current) return;
+        const first = lastTick.current === null;
+        lastTick.current = tick;
+        if (first) return;
+
+        tickerGlowRef.current?.animate(
+            [
+                { opacity: 1, transform: "translateX(-50%) scaleX(1)" },
+                { opacity: 0, transform: "translateX(-50%) scaleX(3)" },
+            ],
+            { duration: 220, easing: "ease-out" }
+        );
+        // At full speed this would be one long buzz: cap the tick rate
+        const now = performance.now();
+        if ("vibrate" in navigator && now - lastBuzz.current > 60) {
+            lastBuzz.current = now;
+            navigator.vibrate(4);
+        }
+    };
 
     // Nothing to spin for (unparseable grade or reduced motion): reveal at once
     useLayoutEffect(() => {
@@ -270,6 +355,9 @@ export function CaseOpening({
                                 }}
                             />
                         ))}
+                    {revealed && !reducedMotion && (
+                        <DropSparks rarity={wonRarity} />
+                    )}
                     <div
                         ref={containerRef}
                         className="relative w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]"
@@ -289,6 +377,7 @@ export function CaseOpening({
                                           }
                                         : { duration: 0 }
                                 }
+                                onUpdate={onReelUpdate}
                                 onAnimationComplete={() => setRevealed(true)}
                             >
                                 {items.map((item, index) => (
@@ -318,6 +407,11 @@ export function CaseOpening({
                         )}
 
                         <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-amber-400 shadow-[0_0_10px_2px_rgba(245,158,11,0.7)]" />
+                        <div
+                            ref={tickerGlowRef}
+                            className="pointer-events-none absolute inset-y-0 left-1/2 w-2 bg-amber-300 opacity-0 blur-[3px]"
+                            style={{ transform: "translateX(-50%)" }}
+                        />
                         <div
                             className="pointer-events-none absolute left-1/2 top-0 size-0 -translate-x-1/2"
                             style={{

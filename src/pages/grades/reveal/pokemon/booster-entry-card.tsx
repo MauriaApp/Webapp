@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Card } from "@/components/ui/card";
 import { fadeInIndexed } from "@/lib/motion";
+import { MAX_CARDS_PER_PACK } from "./booster-overlay";
 
 const MotionCard = motion(Card);
 
@@ -31,6 +32,7 @@ export function BoosterEntryCard({
 }) {
     const { t } = useTranslation();
     const empty = count === 0;
+    const packs = Math.ceil(count / MAX_CARDS_PER_PACK);
 
     return (
         <MotionCard
@@ -66,14 +68,21 @@ export function BoosterEntryCard({
                 />
             </div>
             <div className="relative flex items-center">
-                <div className="mr-4 flex w-20 items-center justify-center">
+                <div className="mr-4 w-20 items-center justify-center text-center">
                     <PlayingCardsFan
                         className={
                             empty
-                                ? "size-8 text-zinc-400"
-                                : `reveal-icon size-8 ${POKE_ICON}`
+                                ? "mx-auto size-8 text-zinc-400"
+                                : `reveal-icon mx-auto size-8 ${POKE_ICON}`
                         }
                     />
+                    {!empty && (
+                        <div className="font-mono text-sm font-bold leading-5 tracking-[0.2em] text-amber-200">
+                            {t("gradesPage.booster.packCount", {
+                                count: packs,
+                            })}
+                        </div>
+                    )}
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex-1 min-w-0 truncate text-lg font-medium text-white">

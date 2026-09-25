@@ -279,6 +279,8 @@
       "remaining_other": "{{count}} cartes à débloquer",
       "remainingShort_one": "{{count}} carte",
       "remainingShort_other": "{{count}} cartes",
+      "packCount_one": "{{count}}x",
+      "packCount_other": "{{count}}x",
       "empty": "Aucun booster à ouvrir",
       "emptyHint": "Reviens quand une note tombe",
       "tapToOpen": "Appuie pour ouvrir",

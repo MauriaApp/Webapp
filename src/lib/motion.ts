@@ -13,11 +13,11 @@ export const fadeIn: Variants = {
     hidden: { opacity: 0 },
     show: {
         opacity: 1,
-        transition: { duration: 0.4, ease: EASE },
+        transition: { duration: 1.0, ease: EASE },
     },
     exit: {
         opacity: 0,
-        transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
     },
 };
 
@@ -27,7 +27,7 @@ export const fadeIn: Variants = {
  */
 export const staggerGroup: Variants = {
     hidden: {},
-    show: { transition: { delayChildren: 0.15, staggerChildren: 0.09 } },
+    show: { transition: { delayChildren: 0.04, staggerChildren: 0.09 } },
 };
 
 /**
@@ -40,7 +40,7 @@ export const fadeInIndexed: Variants = {
     hidden: { opacity: 0 },
     show: (i = 0) => ({
         opacity: 1,
-        transition: { duration: 0.4, ease: EASE, delay: 0.04 + i * 0.055 },
+        transition: { duration: 0.4, ease: EASE, delay: 0.04 + i * 0.1 },
     }),
     exit: {
         opacity: 0,

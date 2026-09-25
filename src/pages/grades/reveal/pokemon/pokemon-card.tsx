@@ -333,27 +333,7 @@ export function PokemonCard({
     );
 }
 
-/**
- * The face-down card of a freshly published grade gets a glow: it says "a new
- * grade is coming", nothing about what it is worth — the flip can still be a
- * disappointment. Duplicates stay strictly plain.
- */
-const HYPE = { a: "#fcd34d", b: "#67e8f9", power: 0.8 };
-
-/** A few sparks on the card edges, kept far apart so they stay readable */
-const SPARK_SLOTS = [
-    { top: "12%", left: "-5%" },
-    { top: "70%", left: "103%" },
-    { top: "96%", left: "22%" },
-];
-
-export function CardBack({
-    width,
-    hype = false,
-}: {
-    width: number;
-    hype?: boolean;
-}) {
+export function CardBack({ width }: { width: number }) {
     const { t } = useTranslation();
 
     return (
@@ -363,33 +343,9 @@ export function CardBack({
                 {
                     width,
                     fontSize: width / 20,
-                    ...(hype
-                        ? {
-                              "--hype-a": HYPE.a,
-                              "--hype-b": HYPE.b,
-                              "--hype-power": HYPE.power,
-                          }
-                        : {}),
                 } as CSSProperties
             }
         >
-            {hype && (
-                <>
-                    <span className="poke-hype-aura" />
-                    {SPARK_SLOTS.map((slot, index) => (
-                        <span
-                            key={index}
-                            className="poke-hype-spark"
-                            style={{
-                                ...slot,
-                                width: `${0.45 + (index % 2) * 0.15}em`,
-                                height: `${0.45 + (index % 2) * 0.15}em`,
-                                animationDelay: `${index * 0.6}s`,
-                            }}
-                        />
-                    ))}
-                </>
-            )}
             <div
                 className="relative overflow-hidden rounded-[0.9em]"
                 style={{

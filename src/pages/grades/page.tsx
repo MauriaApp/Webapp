@@ -658,17 +658,6 @@ export function GradesPage() {
                 : [],
         [grades, revealMode, unopenedKeys]
     );
-    const collectedGrades = useMemo(
-        () =>
-            revealMode === "pokemon"
-                ? grades.filter(
-                      (g) =>
-                          g.grade?.trim() && !unopenedKeys.has(getGradeKey(g))
-                  )
-                : [],
-        [grades, revealMode, unopenedKeys]
-    );
-
     // Booster mode hides the pending grades entirely: they only show up as cards
     const listedGrades =
         revealMode === "pokemon" ? openedDisplayedGrades : displayedGrades;
@@ -868,7 +857,6 @@ export function GradesPage() {
             <BoosterOverlay
                 open={boosterOpen}
                 unopened={pendingGrades}
-                collection={collectedGrades}
                 onClose={(opened) => {
                     openGrades(opened);
                     setBoosterOpen(false);

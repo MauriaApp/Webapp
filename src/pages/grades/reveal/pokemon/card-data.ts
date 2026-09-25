@@ -206,14 +206,6 @@ export const mulberry32 = (seed: number) => () => {
 const subjectIdFromLabelKey = (labelKey: string | null | undefined): string =>
     labelKey?.split(".").pop() ?? "unknown";
 
-/** Which subject a grade belongs to, as used to group the cards of a pack */
-export const subjectIdOf = (grade: Grade): string =>
-    subjectIdFromLabelKey(
-        grade.code?.trim()
-            ? getGradeBadgeInfoFromCode(grade.code)?.labelKey
-            : null
-    );
-
 /**
  * Treatment straight from the grade, on the same /20 thresholds the CS2
  * case opening uses for its rarities: no roll, a given grade always prints
