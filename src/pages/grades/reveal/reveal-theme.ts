@@ -1,7 +1,7 @@
-import { Coins, Package, type LucideIcon } from "lucide-react";
+import { Cherry, Coins, Package, type LucideIcon } from "lucide-react";
 
 /** The modes that dress up each unopened grade with its own card */
-export type RevealCardMode = "cs2" | "fdj";
+export type RevealCardMode = "cs2" | "fdj" | "slots";
 
 /**
  * Look of the unopened grade card for each reveal mode. The layout is shared,
@@ -37,13 +37,27 @@ export const REVEAL_CARD_THEMES: Record<RevealCardMode, RevealCardTheme> = {
     fdj: {
         icon: Coins,
         caseClass: "fdj-case",
-        cornerClass: "border-zinc-200/70",
-        iconClass: "text-zinc-100 drop-shadow-[0_0_8px_rgba(226,232,240,0.85)]",
-        valueClass: "text-zinc-200/80",
-        badgeClass: "border-zinc-200/60 text-zinc-100",
-        ctaClass: "bg-zinc-100 text-zinc-950",
-        dateClass: "text-zinc-200/70",
+        cornerClass: "border-amber-300/70",
+        iconClass: "text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.85)]",
+        // The hidden grade sits under a strip of silver foil
+        valueClass:
+            "mt-1.5 rounded-sm bg-[linear-gradient(135deg,#9aa1ab,#eef1f5_45%,#b9c0c9_70%,#e3e7ec)] text-zinc-600 shadow-[0_1px_3px_rgba(0,0,0,0.4)]",
+        badgeClass: "border-amber-300/60 text-amber-200",
+        ctaClass: "bg-amber-400 text-emerald-950",
+        dateClass: "text-emerald-100/70",
         ctaKey: "gradesPage.clickToScratch",
         ctaShortKey: "gradesPage.clickToScratchShort",
+    },
+    slots: {
+        icon: Cherry,
+        caseClass: "slots-case",
+        cornerClass: "border-yellow-300/70",
+        iconClass: "text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.9)]",
+        valueClass: "text-yellow-200/80",
+        badgeClass: "border-yellow-300/60 text-yellow-200",
+        ctaClass: "bg-rose-500 text-white",
+        dateClass: "text-yellow-200/70",
+        ctaKey: "gradesPage.clickToSpin",
+        ctaShortKey: "gradesPage.clickToSpinShort",
     },
 };

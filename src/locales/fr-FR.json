@@ -271,7 +271,15 @@
       "revealAll": "Tout gratter",
       "winner": "Gagnant",
       "loser": "Perdu",
+      "upTo": "Jusqu'à",
       "smallPrint": "Jeu sans gain. Aucune réclamation ne sera acceptée au secrétariat. :)"
+    },
+    "slotMachine": {
+      "machineName": "Mauria Jackpot",
+      "pullLever": "Tirez le levier",
+      "lever": "Levier de la machine à sous",
+      "total": "Total",
+      "jackpot": "Jackpot !"
     },
     "booster": {
       "openPack": "Ouvrir un booster",
@@ -396,6 +404,8 @@
     "clickToOpenShort": "Ouvrir la note",
     "clickToScratch": "Gratter pour découvrir la note",
     "clickToScratchShort": "Gratter la note",
+    "clickToSpin": "Tirer le levier pour révéler la note",
+    "clickToSpinShort": "Tirer le levier",
     "noGrades": "Aucune note pour l'instant.",
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "noGradesCached": "Aucune note n'a été trouvée dans le cache, et Aurion est en panne. Réessaie plus tard.",
@@ -512,7 +522,8 @@
       "off": "Désactivé",
       "cs2": "Caisse CS2",
       "fdj": "Ticket à gratter",
-      "pokemon": "Booster Pokémon"
+      "pokemon": "Booster Pokémon",
+      "slots": "Machine à sous"
     },
     "palantirTheme": {
       "title": "Thème Palantir",

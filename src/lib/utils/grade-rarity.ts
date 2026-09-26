@@ -81,6 +81,22 @@ export function getRarityForGrade(value: number): GradeRarity {
     return rarity;
 }
 
+/** Plausible-looking filler grades: mostly average, rarely excellent. */
+export function randomGradeValue(): number {
+    const roll = Math.random();
+    const range =
+        roll < 0.12
+            ? [2, 8]
+            : roll < 0.75
+              ? [8, 15]
+              : roll < 0.96
+                ? [15, 18]
+                : [18, GRADE_SCALE];
+    const [min, max] = range as [number, number];
+    // Any decimal, not just .0 and .5: Aurion grades land anywhere
+    return Math.round((min + Math.random() * (max - min)) * 10) / 10;
+}
+
 /** Reel values always carry one decimal, like "14.0" / "8.5". */
 export function formatGradeValue(value: number): string {
     return value.toFixed(1);

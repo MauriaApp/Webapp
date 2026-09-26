@@ -5,6 +5,7 @@ import { Grade } from "@/types/aurion";
 import type { GradeRevealMode } from "@/lib/utils/experimental";
 import { CaseOpening } from "./case-opening";
 import { ScratchCard } from "./scratch-card";
+import { SlotMachine } from "./slot-machine";
 
 /**
  * Renders the reveal effect picked in the settings. Every mode gets the same
@@ -28,6 +29,9 @@ export function GradeRevealOverlay({
             )}
             {grade && mode === "fdj" && (
                 <ScratchCard key={key} grade={grade} onClose={onClose} />
+            )}
+            {grade && mode === "slots" && (
+                <SlotMachine key={key} grade={grade} onClose={onClose} />
             )}
         </AnimatePresence>,
         document.body

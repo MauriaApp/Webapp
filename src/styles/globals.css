@@ -1156,6 +1156,34 @@
     }
 }
 
+/* Scratch ticket: security foil drifting through the rainbow */
+@keyframes fdj-holo {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 0 200px;
+    }
+}
+
+@keyframes fdj-rays {
+    to {
+        rotate: 360deg;
+    }
+}
+
+/* Slot machine marquee: every third bulb lit, the pattern chases along */
+@keyframes slot-bulb {
+    0%,
+    33% {
+        opacity: 1;
+    }
+    34%,
+    100% {
+        opacity: 0.18;
+    }
+}
+
 /* Hover: frequent, small horizontal shake */
 @keyframes cs2-shake {
     0%,
@@ -1207,19 +1235,19 @@
     }
 
     .fdj-case {
-        background-color: #10141a;
+        background-color: #053d2e;
         background-image:
-            repeating-linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.05) 0 6px,
-                transparent 6px 12px
+            repeating-conic-gradient(
+                from 0deg at 10% 50%,
+                rgba(255, 255, 255, 0.06) 0deg 7deg,
+                transparent 7deg 14deg
             ),
             radial-gradient(
-                ellipse at 12% 50%,
-                rgba(226, 232, 240, 0.3),
+                ellipse at 10% 50%,
+                rgba(52, 211, 153, 0.45),
                 transparent 60%
             ),
-            linear-gradient(90deg, #1b2028, #10141a);
+            linear-gradient(90deg, #065f46, #053d2e);
     }
 
     .fdj-case::after {
@@ -1235,6 +1263,98 @@
             transparent
         );
         animation: cs2-sweep 3.6s ease-in-out infinite;
+    }
+
+    .slots-case {
+        background-color: #14060a;
+        background-image:
+            radial-gradient(
+                circle,
+                rgba(253, 224, 71, 0.75) 1.2px,
+                transparent 1.8px
+            ),
+            radial-gradient(
+                circle,
+                rgba(253, 224, 71, 0.75) 1.2px,
+                transparent 1.8px
+            ),
+            radial-gradient(
+                ellipse at 12% 50%,
+                rgba(244, 63, 94, 0.32),
+                transparent 60%
+            ),
+            linear-gradient(90deg, #2a0a12, #14060a);
+        background-size:
+            10px 6px,
+            10px 6px,
+            auto,
+            auto;
+        background-position:
+            0 1px,
+            5px calc(100% - 1px),
+            0 0,
+            0 0;
+        background-repeat: repeat-x, repeat-x, no-repeat, no-repeat;
+    }
+
+    .slots-case::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 30%;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(253, 224, 71, 0.18),
+            transparent
+        );
+        animation: cs2-sweep 3.6s ease-in-out infinite;
+    }
+
+    .fdj-holo {
+        background-image: linear-gradient(
+            180deg,
+            #f0abfc,
+            #93c5fd,
+            #86efac,
+            #fde68a,
+            #fca5a5,
+            #f0abfc
+        );
+        background-size: 100% 200px;
+        opacity: 0.75;
+        mix-blend-mode: screen;
+        box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.4);
+        animation: fdj-holo 4s linear infinite;
+    }
+
+    .fdj-rays {
+        animation: fdj-rays 60s linear infinite;
+    }
+
+    .slot-bulb {
+        --bulb-speed: 1.2s;
+        background: radial-gradient(
+            circle at 35% 35%,
+            #fff,
+            var(--bulb-color, #fde047) 45%
+        );
+        box-shadow: 0 0 6px 1px var(--bulb-color, #fde047);
+        animation: slot-bulb var(--bulb-speed) steps(1) infinite;
+        transition: background 0.3s;
+    }
+
+    .slot-bulb:nth-child(3n + 2) {
+        animation-delay: calc(var(--bulb-speed) * -0.333);
+    }
+
+    .slot-bulb:nth-child(3n) {
+        animation-delay: calc(var(--bulb-speed) * -0.667);
+    }
+
+    .slot-bulbs-fast .slot-bulb {
+        --bulb-speed: 0.36s;
     }
 
     .reveal-icon {
@@ -1486,6 +1606,10 @@
     @media (prefers-reduced-motion: reduce) {
         .cs2-case::after,
         .fdj-case::after,
+        .slots-case::after,
+        .slot-bulb,
+        .fdj-holo,
+        .fdj-rays,
         .poke-entry-foil::after,
         .poke-pack-sheen,
         .poke-pack-float,

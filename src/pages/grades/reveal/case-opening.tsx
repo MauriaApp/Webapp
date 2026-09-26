@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowDown, ArrowUp, Package } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -10,8 +10,10 @@ import {
     GRADE_SCALE,
     formatGradeValue,
     getRarityForGrade,
+    randomGradeValue,
     type GradeRarity,
 } from "@/lib/utils/grade-rarity";
+import { playSound } from "@/lib/utils/sfx";
 import { useGradeReveal } from "./use-grade-reveal";
 
 const ITEM_WIDTH = 96;
@@ -20,6 +22,8 @@ const PITCH = ITEM_WIDTH + ITEM_GAP;
 const REEL_LENGTH = 64;
 const WINNER_INDEX = 58;
 const SPIN_DURATION = 6.2;
+/** Closer ticks than this blur into one buzz at full reel speed */
+const MIN_TICK_GAP_MS = 30;
 
 type ReelItem = { value: number; rarity: GradeRarity };
 
@@ -27,22 +31,6 @@ const makeItem = (value: number): ReelItem => ({
     value,
     rarity: getRarityForGrade(value),
 });
-
-/** Plausible-looking filler grades: mostly average, rarely excellent. */
-function randomGradeValue(): number {
-    const roll = Math.random();
-    const range =
-        roll < 0.12
-            ? [2, 8]
-            : roll < 0.75
-              ? [8, 15]
-              : roll < 0.96
-                ? [15, 18]
-                : [18, GRADE_SCALE];
-    const [min, max] = range as [number, number];
-    // Any decimal, not just .0 and .5: Aurion grades land anywhere
-    return Math.round((min + Math.random() * (max - min)) * 10) / 10;
-}
 
 /**
  * Weapon-drop sparks thrown off the winning item: hot streaks that arc down
@@ -197,6 +185,7 @@ export function CaseOpening({
     const tickerGlowRef = useRef<HTMLDivElement>(null);
     const lastTick = useRef<number | null>(null);
     const lastBuzz = useRef(0);
+    const lastTickSound = useRef(0);
     const [containerWidth, setContainerWidth] = useState(0);
     const [revealed, setRevealed] = useState(false);
 
@@ -256,11 +245,20 @@ export function CaseOpening({
         );
         // At full speed this would be one long buzz: cap the tick rate
         const now = performance.now();
+        if (now - lastTickSound.current > MIN_TICK_GAP_MS) {
+            lastTickSound.current = now;
+            playSound("cs2Tick", 0.6);
+        }
         if ("vibrate" in navigator && now - lastBuzz.current > 60) {
             lastBuzz.current = now;
             navigator.vibrate(4);
         }
     };
+
+    // The weapon drop, only after an actual spin
+    useEffect(() => {
+        if (revealed && spin) playSound("cs2Reveal");
+    }, [revealed, spin]);
 
     // Nothing to spin for (unparseable grade or reduced motion): reveal at once
     useLayoutEffect(() => {

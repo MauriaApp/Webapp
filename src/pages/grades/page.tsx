@@ -41,6 +41,7 @@ import {
     ChartConfig,
 } from "@/components/ui/chart";
 import { useGradeRevealMode } from "@/lib/utils/experimental";
+import { unlockSounds } from "@/lib/utils/sfx";
 import {
     getGradeKey,
     openGrade,
@@ -811,13 +812,23 @@ export function GradesPage() {
                                     {listedGrades.map((grade, index) =>
                                         isUnopened(grade) &&
                                         (revealMode === "cs2" ||
-                                            revealMode === "fdj") ? (
+                                            revealMode === "fdj" ||
+                                            revealMode === "slots") ? (
                                             <UnopenedGradeCard
                                                 key={index}
                                                 index={index}
                                                 grade={grade}
                                                 mode={revealMode}
-                                                onOpen={setOpeningGrade}
+                                                onOpen={(grade) => {
+                                                    // Audio may only start inside this click
+                                                    if (revealMode === "cs2") {
+                                                        unlockSounds(
+                                                            "cs2Tick",
+                                                            "cs2Reveal"
+                                                        );
+                                                    }
+                                                    setOpeningGrade(grade);
+                                                }}
                                             />
                                         ) : index < 8 ? (
                                             <AnimatedGradeCard
