@@ -271,7 +271,15 @@
       "revealAll": "Scratch it all",
       "winner": "Winner",
       "loser": "No win",
+      "upTo": "Up to",
       "smallPrint": "No-prize game. No claim will be accepted at the registrar's office. :)"
+    },
+    "slotMachine": {
+      "machineName": "Mauria Jackpot",
+      "pullLever": "Pull the lever",
+      "lever": "Slot machine lever",
+      "total": "Total",
+      "jackpot": "Jackpot!"
     },
     "booster": {
       "openPack": "Open a booster",
@@ -383,6 +391,31 @@
       "weaknessValue": "{{type}} ×2",
       "resistanceValue": "{{type}} −30"
     },
+    "lootbox": {
+      "openBox": "Open a lootbox",
+      "boxCount_one": "{{count}}x",
+      "boxCount_other": "{{count}}x",
+      "remaining_one": "{{count}} grade to unlock",
+      "remaining_other": "{{count}} grades to unlock",
+      "remainingShort_one": "{{count}} grade",
+      "remainingShort_other": "{{count}} grades",
+      "empty": "No lootbox to open",
+      "emptyHint": "Come back when a grade drops",
+      "tapToOpen": "Open",
+      "boxName": "Mauria Lootbox",
+      "open": "Open",
+      "tapToReveal": "Tap a grade to reveal it",
+      "contents_one": "{{count}} grade inside",
+      "contents_other": "{{count}} grades inside",
+      "boxesLeft_one": "{{count}} more lootbox after this one",
+      "boxesLeft_other": "{{count}} more lootboxes after this one",
+      "rarity": {
+        "common": "Common",
+        "rare": "Rare",
+        "epic": "Epic",
+        "legendary": "Legendary"
+      }
+    },
     "rarity": {
       "consumer": "Consumer Grade",
       "industrial": "Industrial Grade",
@@ -396,6 +429,8 @@
     "clickToOpenShort": "Open the grade",
     "clickToScratch": "Scratch to reveal the grade",
     "clickToScratchShort": "Scratch the grade",
+    "clickToSpin": "Pull the lever to reveal the grade",
+    "clickToSpinShort": "Pull the lever",
     "noGrades": "No grades available for now.",
     "noGradesPlaceholder": "No grades have been published yet.",
     "noGradesCached": "No grades were found in the cache, and Aurion is down. Try again later.",
@@ -512,7 +547,9 @@
       "off": "Disabled",
       "cs2": "CS2 case",
       "fdj": "Scratch ticket",
-      "pokemon": "Pokémon booster"
+      "pokemon": "Pokémon booster",
+      "slots": "Slot machine",
+      "overwatch": "Overwatch lootbox"
     },
     "palantirTheme": {
       "title": "Palantir theme",

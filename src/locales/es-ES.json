@@ -271,7 +271,15 @@
       "revealAll": "Rascar todo",
       "winner": "Ganador",
       "loser": "Sin premio",
+      "upTo": "Hasta",
       "smallPrint": "Juego sin premio. No se aceptarán reclamaciones en secretaría. :)"
+    },
+    "slotMachine": {
+      "machineName": "Mauria Jackpot",
+      "pullLever": "Tira de la palanca",
+      "lever": "Palanca de la tragaperras",
+      "total": "Total",
+      "jackpot": "¡Jackpot!"
     },
     "booster": {
       "openPack": "Abrir un sobre",
@@ -383,6 +391,31 @@
       "weaknessValue": "{{type}} ×2",
       "resistanceValue": "{{type}} −30"
     },
+    "lootbox": {
+      "openBox": "Abrir una lootbox",
+      "boxCount_one": "{{count}}x",
+      "boxCount_other": "{{count}}x",
+      "remaining_one": "{{count}} nota por desbloquear",
+      "remaining_other": "{{count}} notas por desbloquear",
+      "remainingShort_one": "{{count}} nota",
+      "remainingShort_other": "{{count}} notas",
+      "empty": "Ninguna lootbox por abrir",
+      "emptyHint": "Vuelve cuando caiga una nota",
+      "tapToOpen": "Abrir",
+      "boxName": "Lootbox Mauria",
+      "open": "Abrir",
+      "tapToReveal": "Toca una nota para revelarla",
+      "contents_one": "{{count}} nota dentro",
+      "contents_other": "{{count}} notas dentro",
+      "boxesLeft_one": "{{count}} lootbox más después de esta",
+      "boxesLeft_other": "{{count}} lootboxes más después de esta",
+      "rarity": {
+        "common": "Común",
+        "rare": "Raro",
+        "epic": "Épico",
+        "legendary": "Legendario"
+      }
+    },
     "rarity": {
       "consumer": "Calidad consumidor",
       "industrial": "Calidad industrial",
@@ -396,6 +429,8 @@
     "clickToOpenShort": "Abrir la nota",
     "clickToScratch": "Rasca para descubrir la nota",
     "clickToScratchShort": "Rascar la nota",
+    "clickToSpin": "Tira de la palanca para descubrir la nota",
+    "clickToSpinShort": "Tirar de la palanca",
     "noGrades": "Todavía no hay notas.",
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
     "noGradesCached": "No se encontraron notas en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
@@ -512,7 +547,9 @@
       "off": "Desactivado",
       "cs2": "Caja CS2",
       "fdj": "Boleto rascable",
-      "pokemon": "Sobre Pokémon"
+      "pokemon": "Sobre Pokémon",
+      "slots": "Tragaperras",
+      "overwatch": "Lootbox Overwatch"
     },
     "palantirTheme": {
       "title": "Tema Palantir",

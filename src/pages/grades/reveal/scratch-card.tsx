@@ -7,7 +7,7 @@ import {
     useState,
 } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowDown, ArrowUp, Coins } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Grade } from "@/types/aurion";
@@ -38,6 +38,30 @@ const mulberry32 = (seed: number) => () => {
 /** Four-pointed twinkle, as printed all over real scratch tickets */
 const STAR_CLIP =
     "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)";
+
+/** The "up to 20/20!" price flash, a 16-spike starburst */
+const STARBURST_CLIP = `polygon(${Array.from({ length: 32 }, (_, index) => {
+    const angle = (index / 32) * Math.PI * 2;
+    const radius = index % 2 === 0 ? 50 : 41;
+    return `${(50 + radius * Math.cos(angle)).toFixed(2)}% ${(50 + radius * Math.sin(angle)).toFixed(2)}%`;
+}).join(", ")})`;
+
+/** Chunky gold logo lettering, extruded downwards */
+const LOGO_SHADOW =
+    "0 1px 0 #d97706, 0 2px 0 #b45309, 0 3px 0 #92400e, 0 4px 0 #78350f, 0 7px 12px rgba(0,0,0,0.55)";
+
+/** Security print under the foil, the fine rings of a banknote */
+const GUILLOCHE =
+    "repeating-radial-gradient(circle at 18% 30%, rgba(5,150,105,0.08) 0 1px, transparent 1px 7px), repeating-radial-gradient(circle at 82% 72%, rgba(217,119,6,0.08) 0 1px, transparent 1px 7px)";
+
+/** Half-circle cut-outs on one edge, the two halves of the tear-off line */
+const perforationMask = (edge: "top" | "bottom") => {
+    const y = edge === "top" ? "0" : "100%";
+    return `radial-gradient(circle 11px at 0 ${y}, transparent 98%, #000 100%) left / 51% 100% no-repeat, radial-gradient(circle 11px at 100% ${y}, transparent 98%, #000 100%) right / 51% 100% no-repeat`;
+};
+
+const GOLD_COIN =
+    "radial-gradient(circle at 32% 28%, #fffbeb, #fde047 30%, #eab308 62%, #a16207)";
 
 /** Glints twinkling on the untouched foil, begging to be scratched */
 function FoilGlints({ cleared }: { cleared: boolean }) {
@@ -103,6 +127,7 @@ function ScratchFoil({
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const lastPoint = useRef<{ x: number; y: number } | null>(null);
+    const coinRef = useRef<HTMLSpanElement>(null);
     const strokes = useRef(0);
     const done = useRef(false);
     // Foil shavings falling off the coin while scratching
@@ -147,11 +172,43 @@ function ScratchFoil({
             ctx.fillRect(0, 0, width, height);
 
             const scale = width / 320;
-            ctx.fillStyle = "rgba(63, 70, 82, 0.75)";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.font = `700 ${Math.round(15 * scale)}px ui-monospace, monospace`;
-            ctx.fillText(label.toUpperCase(), width / 2, height / 2);
+
+            // Printed stars all over the foil, on a slant
+            ctx.save();
+            ctx.translate(width / 2, height / 2);
+            ctx.rotate(-0.35);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+            ctx.font = `700 ${Math.round(11 * scale)}px sans-serif`;
+            const stepX = 34 * scale;
+            const stepY = 22 * scale;
+            const reach = Math.max(width, height);
+            for (let row = -reach / stepY; row <= reach / stepY; row++) {
+                for (let col = -reach / stepX; col <= reach / stepX; col++) {
+                    const offset = (Math.round(row) % 2) * (stepX / 2);
+                    ctx.fillText("✦", col * stepX + offset, row * stepY);
+                }
+            }
+            ctx.restore();
+
+            // Central label on a dark printed pill
+            const text = label.toUpperCase();
+            ctx.font = `800 ${Math.round(15 * scale)}px ui-monospace, monospace`;
+            const pillWidth = ctx.measureText(text).width + 30 * scale;
+            const pillHeight = 34 * scale;
+            ctx.fillStyle = "rgba(55, 62, 74, 0.85)";
+            ctx.beginPath();
+            ctx.roundRect(
+                (width - pillWidth) / 2,
+                (height - pillHeight) / 2,
+                pillWidth,
+                pillHeight,
+                pillHeight / 2
+            );
+            ctx.fill();
+            ctx.fillStyle = "#f4f6f8";
+            ctx.fillText(text, width / 2, height / 2 + scale);
         },
         [label]
     );
@@ -242,11 +299,26 @@ function ScratchFoil({
         [finish, measure]
     );
 
+    // The coin doing the scratching follows the pointer, straight through the
+    // DOM: this runs on every pointer move
+    const moveCoin = (
+        event: React.PointerEvent<HTMLCanvasElement>,
+        visible: boolean
+    ) => {
+        const coin = coinRef.current;
+        if (!coin) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        // Above the finger on touch screens, or it would hide the coin
+        const lift = event.pointerType === "touch" ? 34 : 0;
+        coin.style.transform = `translate(${event.clientX - rect.left}px, ${event.clientY - rect.top - lift}px) rotate(-24deg)`;
+        coin.style.opacity = visible ? "1" : "0";
+    };
+
     return (
         <>
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 size-full cursor-grab rounded-lg transition-opacity duration-500 active:cursor-grabbing"
+                className="absolute inset-0 size-full cursor-none rounded-[9px] transition-opacity duration-500"
                 style={{
                     touchAction: "none",
                     opacity: cleared ? 0 : 1,
@@ -255,20 +327,38 @@ function ScratchFoil({
                 onPointerDown={(event) => {
                     event.currentTarget.setPointerCapture(event.pointerId);
                     lastPoint.current = null;
+                    moveCoin(event, true);
                     scratch(event);
                 }}
                 onPointerMove={(event) => {
+                    moveCoin(event, true);
                     if (event.buttons === 0) return;
                     scratch(event);
                 }}
-                onPointerUp={() => {
+                onPointerUp={(event) => {
                     lastPoint.current = null;
+                    if (event.pointerType === "touch") moveCoin(event, false);
                 }}
-                onPointerCancel={() => {
+                onPointerLeave={(event) => moveCoin(event, false)}
+                onPointerCancel={(event) => {
                     lastPoint.current = null;
+                    moveCoin(event, false);
                 }}
             />
             <FoilGlints cleared={cleared} />
+            {!cleared && (
+                <span
+                    ref={coinRef}
+                    className="pointer-events-none absolute left-0 top-0 z-10 -ml-[17px] -mt-[17px] flex size-[34px] items-center justify-center rounded-full opacity-0 transition-opacity duration-150"
+                    style={{
+                        background: GOLD_COIN,
+                        boxShadow:
+                            "inset 0 0 0 2px rgba(161,98,7,0.6), 0 4px 10px rgba(0,0,0,0.45)",
+                    }}
+                >
+                    <span className="size-5 rounded-full border border-amber-700/50" />
+                </span>
+            )}
             {flakes.map((flake) => (
                 <motion.span
                     key={flake.id}
@@ -443,12 +533,23 @@ export function ScratchCard({
             transition={{ duration: 0.45, ease: "easeInOut" }}
             onClick={revealed ? onClose : undefined}
         >
-            {/* Tobacconist-counter backdrop: felt green, vignette, rarity glow */}
+            {/* Tobacconist-counter backdrop: felt green, slow light rays, vignette */}
             <div
                 className="pointer-events-none absolute inset-0"
                 style={{
                     backgroundImage:
                         "repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 10px, transparent 10px 20px), radial-gradient(ellipse at 50% 40%, #10371f 0%, #04110c 72%)",
+                }}
+            />
+            <div
+                className="fdj-rays pointer-events-none absolute left-1/2 top-1/2 size-[170vmax] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-700"
+                style={{
+                    background: `repeating-conic-gradient(${revealed ? rarity.glow : "rgba(250,204,21,0.22)"} 0deg 6deg, transparent 6deg 18deg)`,
+                    maskImage:
+                        "radial-gradient(circle, black 0%, transparent 42%)",
+                    WebkitMaskImage:
+                        "radial-gradient(circle, black 0%, transparent 42%)",
+                    opacity: revealed ? 0.55 : 0.2,
                 }}
             />
             <div
@@ -464,152 +565,271 @@ export function ScratchCard({
             />
 
             <motion.div
-                className="relative w-full max-w-sm overflow-hidden rounded-xl p-4 shadow-2xl"
-                style={{
-                    backgroundColor: "#f7f2e6",
-                    backgroundImage:
-                        "repeating-linear-gradient(90deg, rgba(16,55,31,0.05) 0 2px, transparent 2px 6px), repeating-linear-gradient(0deg, rgba(16,55,31,0.04) 0 2px, transparent 2px 7px)",
-                }}
+                className="relative w-full max-w-sm"
                 onClick={(event) => event.stopPropagation()}
-                initial={{ scale: 0.92, y: 18 }}
+                initial={
+                    reducedMotion
+                        ? false
+                        : { y: 90, rotate: -7, scale: 0.9, opacity: 0 }
+                }
                 animate={
                     revealed && bigWin && !reducedMotion
-                        ? { scale: 1, y: 0, rotate: [0, -1.5, 1.5, -1, 1, 0] }
-                        : { scale: 1, y: 0 }
+                        ? {
+                              y: 0,
+                              scale: 1,
+                              opacity: 1,
+                              rotate: [0, -1.5, 1.5, -1, 1, 0],
+                          }
+                        : { y: 0, rotate: 0, scale: 1, opacity: 1 }
                 }
-                transition={{ duration: 0.45, ease: "easeOut" }}
+                transition={{
+                    type: "spring",
+                    stiffness: 170,
+                    damping: 18,
+                    rotate: { duration: 0.45, ease: "easeOut" },
+                }}
             >
-                <div className="flex items-start justify-between gap-2 border-b border-dashed border-emerald-900/30 pb-2">
-                    <div className="flex min-w-0 items-center gap-2">
-                        <Coins className="size-5 shrink-0 text-emerald-700" />
-                        <div className="min-w-0">
-                            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-800">
+                {/* Cast shadow on the counter */}
+                <div className="pointer-events-none absolute inset-x-6 bottom-0 top-10 translate-y-5 rounded-3xl bg-black/70 blur-2xl" />
+
+                {/* Printed body: emerald sunburst, gold logo, price flash */}
+                <div
+                    className="relative overflow-hidden rounded-t-2xl px-4 pb-5 pl-6 pt-3"
+                    style={{
+                        background:
+                            "repeating-conic-gradient(from 0deg at 50% 12%, rgba(255,255,255,0.07) 0deg 7deg, transparent 7deg 14deg), radial-gradient(ellipse at 50% 8%, #34d399 0%, #059669 32%, #065f46 68%, #053d2e 100%)",
+                        mask: perforationMask("bottom"),
+                        WebkitMask: perforationMask("bottom"),
+                    }}
+                >
+                    {/* Holographic security strip */}
+                    <span className="fdj-holo pointer-events-none absolute inset-y-0 left-0 w-2.5" />
+
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-emerald-100/70">
+                            {t("gradesPage.clickToScratchShort")}
+                        </span>
+                        <span className="shrink-0 rounded-full bg-emerald-950/40 px-2 py-0.5 font-mono text-[9px] font-bold tracking-widest text-emerald-50/85 ring-1 ring-white/15">
+                            {formatTicketSerial(seed)}
+                        </span>
+                    </div>
+
+                    <div className="mt-2 flex items-center gap-3">
+                        <div className="min-w-0 flex-1">
+                            <p
+                                className="text-[28px] font-black uppercase italic leading-[0.95] tracking-tight text-yellow-300"
+                                style={{ textShadow: LOGO_SHADOW }}
+                            >
                                 {t("gradesPage.scratchCard.ticketName")}
                             </p>
-                            <p className="truncate text-sm font-semibold text-zinc-900">
+                            <p className="mt-2.5 truncate text-sm font-semibold text-white">
                                 {grade.name}
                             </p>
+                            <p className="truncate font-mono text-[10px] uppercase tracking-wider text-emerald-100/75">
+                                {[subjectLabel, dateLabel]
+                                    .filter(Boolean)
+                                    .join(" — ")}
+                            </p>
                         </div>
-                    </div>
-                    <span className="shrink-0 rounded-sm bg-emerald-900/10 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-widest text-emerald-900">
-                        {formatTicketSerial(seed)}
-                    </span>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-zinc-700">
-                    <span className="truncate">
-                        {subjectLabel ?? t("gradesPage.scratchCard.ticketName")}
-                    </span>
-                    <span className="shrink-0">{dateLabel}</span>
-                </div>
-
-                <div className="relative mt-2 overflow-hidden rounded-lg border border-emerald-900/20 bg-white">
-                    <div className="flex min-h-44 flex-col items-center justify-center gap-2 px-4 py-5">
-                        <div className="flex items-baseline gap-1">
+                        <motion.div
+                            className="relative flex size-20 shrink-0 flex-col items-center justify-center text-center"
+                            style={{
+                                clipPath: STARBURST_CLIP,
+                                background:
+                                    "radial-gradient(circle at 40% 35%, #f87171, #dc2626 55%, #991b1b)",
+                            }}
+                            animate={
+                                reducedMotion
+                                    ? undefined
+                                    : {
+                                          rotate: [-8, 8, -8],
+                                          scale: [1, 1.07, 1],
+                                      }
+                            }
+                            transition={{
+                                duration: 2.4,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                            }}
+                        >
+                            <span className="text-[9px] font-bold uppercase leading-none text-yellow-100">
+                                {t("gradesPage.scratchCard.upTo")}
+                            </span>
                             <span
-                                className="font-mono text-6xl font-bold"
-                                style={{
-                                    color: rarity.color,
-                                    textShadow: `0 2px 18px ${rarity.glow}`,
-                                }}
+                                className="text-lg font-black leading-tight text-white"
+                                style={{ textShadow: "0 1px 0 #7f1d1d" }}
                             >
-                                {grade.grade}
+                                {`${GRADE_SCALE}/${GRADE_SCALE}`}
                             </span>
-                            <span className="font-mono text-xl text-zinc-400">
-                                {`/${GRADE_SCALE}`}
-                            </span>
-                        </div>
-                        {delta !== null && (
-                            <div
-                                className="flex items-center gap-2 rounded-sm px-3 py-1.5"
-                                style={{
-                                    backgroundColor: `${trendColor}1f`,
-                                    boxShadow: `inset 0 0 0 1px ${trendColor}66`,
-                                }}
-                            >
-                                {above ? (
-                                    <ArrowUp
-                                        className="size-4"
-                                        style={{ color: trendColor }}
-                                    />
-                                ) : (
-                                    <ArrowDown
-                                        className="size-4"
-                                        style={{ color: trendColor }}
-                                    />
-                                )}
-                                <span
-                                    className="font-mono text-[11px] font-bold uppercase tracking-wider"
-                                    style={{ color: trendColor }}
-                                >
-                                    {t(
-                                        above
-                                            ? "gradesPage.caseOpening.aboveAverage"
-                                            : "gradesPage.caseOpening.belowAverage"
-                                    )}
-                                </span>
-                                <span
-                                    className="font-mono text-[11px] font-bold"
-                                    style={{ color: trendColor }}
-                                >
-                                    {`${delta >= 0 ? "+" : "−"}${Math.abs(delta).toFixed(2)}`}
-                                </span>
-                            </div>
-                        )}
+                        </motion.div>
                     </div>
 
-                    <AnimatePresence>
-                        {revealed && (
-                            <motion.span
-                                key="stamp"
-                                className="pointer-events-none absolute right-2 top-2 -rotate-12 rounded-sm border-2 px-2 py-0.5 font-mono text-[11px] font-black uppercase tracking-[0.18em]"
-                                style={{
-                                    color: trendColor,
-                                    borderColor: trendColor,
-                                    opacity: 0.85,
-                                }}
-                                initial={{ scale: 2.2, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 0.85 }}
-                                transition={{ duration: 0.3, delay: 0.25 }}
-                            >
-                                {t(
-                                    above
-                                        ? "gradesPage.scratchCard.winner"
-                                        : "gradesPage.scratchCard.loser"
+                    {/* Scratch zone in an embossed gold frame */}
+                    <div
+                        className="relative mt-4 rounded-xl p-[3px]"
+                        style={{
+                            background:
+                                "linear-gradient(135deg, #fef3c7, #d97706 35%, #fde68a 60%, #b45309)",
+                            boxShadow: "0 4px 14px rgba(0,0,0,0.35)",
+                        }}
+                    >
+                        <div
+                            className="relative overflow-hidden rounded-[9px]"
+                            style={{
+                                backgroundColor: "#fffdf5",
+                                backgroundImage: GUILLOCHE,
+                            }}
+                        >
+                            <div className="flex min-h-44 flex-col items-center justify-center gap-2 px-4 py-5">
+                                <div className="flex items-baseline gap-1">
+                                    <span
+                                        className="font-mono text-6xl font-bold"
+                                        style={{
+                                            color: rarity.color,
+                                            textShadow: `0 2px 18px ${rarity.glow}`,
+                                        }}
+                                    >
+                                        {grade.grade}
+                                    </span>
+                                    <span className="font-mono text-xl text-zinc-400">
+                                        {`/${GRADE_SCALE}`}
+                                    </span>
+                                </div>
+                                {delta !== null && (
+                                    <div
+                                        className="flex items-center gap-2 rounded-sm px-3 py-1.5"
+                                        style={{
+                                            backgroundColor: `${trendColor}1f`,
+                                            boxShadow: `inset 0 0 0 1px ${trendColor}66`,
+                                        }}
+                                    >
+                                        {above ? (
+                                            <ArrowUp
+                                                className="size-4"
+                                                style={{ color: trendColor }}
+                                            />
+                                        ) : (
+                                            <ArrowDown
+                                                className="size-4"
+                                                style={{ color: trendColor }}
+                                            />
+                                        )}
+                                        <span
+                                            className="font-mono text-[11px] font-bold uppercase tracking-wider"
+                                            style={{ color: trendColor }}
+                                        >
+                                            {t(
+                                                above
+                                                    ? "gradesPage.caseOpening.aboveAverage"
+                                                    : "gradesPage.caseOpening.belowAverage"
+                                            )}
+                                        </span>
+                                        <span
+                                            className="font-mono text-[11px] font-bold"
+                                            style={{ color: trendColor }}
+                                        >
+                                            {`${delta >= 0 ? "+" : "−"}${Math.abs(delta).toFixed(2)}`}
+                                        </span>
+                                    </div>
                                 )}
-                            </motion.span>
-                        )}
-                    </AnimatePresence>
+                            </div>
 
-                    {value !== null && !reducedMotion && (
-                        <ScratchFoil
-                            label={t("gradesPage.scratchCard.scratchHere")}
-                            cleared={revealed}
-                            onCleared={() => setRevealed(true)}
+                            <AnimatePresence>
+                                {revealed && (
+                                    <motion.span
+                                        key="stamp"
+                                        className="pointer-events-none absolute right-2 top-2 -rotate-12 rounded-sm border-2 px-2 py-0.5 font-mono text-[11px] font-black uppercase tracking-[0.18em]"
+                                        style={{
+                                            color: trendColor,
+                                            borderColor: trendColor,
+                                            opacity: 0.85,
+                                        }}
+                                        initial={{ scale: 2.2, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 0.85 }}
+                                        transition={{
+                                            duration: 0.3,
+                                            delay: 0.25,
+                                        }}
+                                    >
+                                        {t(
+                                            above
+                                                ? "gradesPage.scratchCard.winner"
+                                                : "gradesPage.scratchCard.loser"
+                                        )}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+
+                            {value !== null && !reducedMotion && (
+                                <ScratchFoil
+                                    label={t(
+                                        "gradesPage.scratchCard.scratchHere"
+                                    )}
+                                    cleared={revealed}
+                                    onCleared={() => setRevealed(true)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Gleam across the printed body once it pays out */}
+                    {revealed && !reducedMotion && (
+                        <motion.span
+                            className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -skew-x-12"
+                            style={{
+                                background: bigWin
+                                    ? "linear-gradient(90deg, transparent, rgba(250,204,21,0.45), rgba(255,255,255,0.8), rgba(250,204,21,0.45), transparent)"
+                                    : "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
+                                mixBlendMode: "overlay",
+                            }}
+                            initial={{ x: "-120%" }}
+                            animate={{ x: "260%" }}
+                            transition={{
+                                duration: 0.9,
+                                delay: 0.2,
+                                ease: "easeInOut",
+                                repeat: bigWin ? 1 : 0,
+                                repeatDelay: 0.4,
+                            }}
                         />
                     )}
                 </div>
 
-                <div className="mt-3 flex h-8 items-end justify-center gap-[2px]">
-                    {bars.map((width, index) => (
-                        <span
-                            key={index}
-                            className="h-full bg-zinc-900"
-                            style={{
-                                width,
-                                opacity: index % 3 === 0 ? 0.9 : 0.6,
-                            }}
-                        />
-                    ))}
+                {/* Tear-off stub: barcode, serial and the small print */}
+                <div
+                    className="relative rounded-b-2xl px-5 pb-4 pt-3"
+                    style={{
+                        backgroundColor: "#f7f2e6",
+                        backgroundImage:
+                            "repeating-linear-gradient(90deg, rgba(16,55,31,0.04) 0 2px, transparent 2px 6px)",
+                        mask: perforationMask("top"),
+                        WebkitMask: perforationMask("top"),
+                    }}
+                >
+                    <span className="pointer-events-none absolute inset-x-4 top-0 border-t-2 border-dashed border-emerald-900/25" />
+                    <div className="flex h-8 items-end justify-center gap-[2px]">
+                        {bars.map((width, index) => (
+                            <span
+                                key={index}
+                                className="h-full bg-zinc-900"
+                                style={{
+                                    width,
+                                    opacity: index % 3 === 0 ? 0.9 : 0.6,
+                                }}
+                            />
+                        ))}
+                    </div>
+                    <p className="mt-1 text-center font-mono text-[9px] tracking-[0.3em] text-zinc-600">
+                        {formatTicketSerial(seed)}
+                    </p>
+                    <p className="mt-1.5 text-center font-mono text-[10px] leading-tight text-zinc-700">
+                        {t("gradesPage.scratchCard.smallPrint")}
+                    </p>
                 </div>
 
-                <p className="mt-2 text-center font-mono text-[10px] leading-tight text-zinc-700">
-                    {t("gradesPage.scratchCard.smallPrint")}
-                </p>
-
-                <div className="mt-3 flex justify-center">
+                <div className="relative mt-5 flex justify-center">
                     <Button
-                        className="rounded-sm bg-emerald-700 px-6 font-bold uppercase tracking-wider text-white hover:bg-emerald-600"
+                        className="rounded-full bg-amber-400 px-6 font-bold uppercase tracking-wider text-emerald-950 shadow-[0_0_20px_rgba(251,191,36,0.35)] hover:bg-amber-300"
                         onClick={revealed ? onClose : () => setRevealed(true)}
                     >
                         {t(
@@ -619,28 +839,6 @@ export function ScratchCard({
                         )}
                     </Button>
                 </div>
-
-                {/* Gleam across the whole ticket once it pays out */}
-                {revealed && !reducedMotion && (
-                    <motion.span
-                        className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -skew-x-12"
-                        style={{
-                            background: bigWin
-                                ? "linear-gradient(90deg, transparent, rgba(250,204,21,0.45), rgba(255,255,255,0.8), rgba(250,204,21,0.45), transparent)"
-                                : "linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)",
-                            mixBlendMode: "overlay",
-                        }}
-                        initial={{ x: "-120%" }}
-                        animate={{ x: "260%" }}
-                        transition={{
-                            duration: 0.9,
-                            delay: 0.2,
-                            ease: "easeInOut",
-                            repeat: bigWin ? 1 : 0,
-                            repeatDelay: 0.4,
-                        }}
-                    />
-                )}
             </motion.div>
 
             {revealed && !reducedMotion && coinCount > 0 && (
