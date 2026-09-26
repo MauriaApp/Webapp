@@ -613,5 +613,27 @@
       "events": "{{done}} / {{total}} plannings récupérés",
       "wait": "L'index se construit, réessayez dans une minute."
     }
+  },
+  "fetchDrawer": {
+    "open": "Voir les chargements en cours",
+    "title": "Chargements en cours",
+    "description": "Ce que Mauria récupère en ce moment",
+    "percent": "{{value}} %",
+    "queries": {
+      "planning": "Planning",
+      "grades": "Notes",
+      "absences": "Absences",
+      "documents": "Mes documents",
+      "colles": "Khôlles",
+      "menu": "Menu du RU",
+      "status": "Statut d'Aurion",
+      "messages": "Messages importants",
+      "updates": "Mises à jour",
+      "associations": "Associations",
+      "rooms": "Salles libres",
+      "palantir": "Palantir",
+      "print": "Impressions",
+      "other": "Autres données"
+    }
   }
 }

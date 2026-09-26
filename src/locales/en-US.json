@@ -613,5 +613,27 @@
       "events": "{{done}} / {{total}} schedules fetched",
       "wait": "The index is building, try again in a minute."
     }
+  },
+  "fetchDrawer": {
+    "open": "See ongoing loads",
+    "title": "Loading",
+    "description": "What Mauria is fetching right now",
+    "percent": "{{value}}%",
+    "queries": {
+      "planning": "Schedule",
+      "grades": "Grades",
+      "absences": "Absences",
+      "documents": "My documents",
+      "colles": "Khôlles",
+      "menu": "Cafeteria menu",
+      "status": "Aurion status",
+      "messages": "Important messages",
+      "updates": "Updates",
+      "associations": "Associations",
+      "rooms": "Free rooms",
+      "palantir": "Palantir",
+      "print": "Printing",
+      "other": "Other data"
+    }
   }
 }

@@ -613,5 +613,27 @@
       "events": "{{done}} / {{total}} horarios recuperados",
       "wait": "El índice se está construyendo, inténtalo en un minuto."
     }
+  },
+  "fetchDrawer": {
+    "open": "Ver las cargas en curso",
+    "title": "Cargando",
+    "description": "Lo que Mauria está obteniendo ahora mismo",
+    "percent": "{{value}} %",
+    "queries": {
+      "planning": "Horario",
+      "grades": "Notas",
+      "absences": "Ausencias",
+      "documents": "Mis documentos",
+      "colles": "Khôlles",
+      "menu": "Menú del comedor",
+      "status": "Estado de Aurion",
+      "messages": "Mensajes importantes",
+      "updates": "Actualizaciones",
+      "associations": "Asociaciones",
+      "rooms": "Aulas libres",
+      "palantir": "Palantir",
+      "print": "Impresiones",
+      "other": "Otros datos"
+    }
   }
 }
