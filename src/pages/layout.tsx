@@ -15,6 +15,7 @@ import { GridPattern } from "@/components/ui/shadcn-io/grid-pattern";
 import { Topography } from "@/components/ui/shadcn-io/topography";
 import { DotPattern } from "@/components/ui/shadcn-io/dot-pattern";
 import { useFetchProgress } from "@/lib/hooks/use-fetch-progress";
+import { FetchProgressDrawer } from "@/components/fetch-progress-drawer";
 import { BLINK_EVENT, useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { ServerCrash } from "lucide-react";
 
@@ -36,7 +37,9 @@ export default function RootLayout() {
         progress: fetchProgress,
         visible: fetchSpinnerVisible,
         done: fetchDone,
+        fetches,
     } = useFetchProgress();
+    const [fetchDrawerOpen, setFetchDrawerOpen] = useState(false);
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
     const showGlobalSpinner = activeFetches > 0 || fetchSpinnerVisible;
     const [renderSpinner, setRenderSpinner] = useState(showGlobalSpinner);
@@ -135,6 +138,11 @@ export default function RootLayout() {
         <div className="flex flex-col min-h-full bg-mauria-bg overflow-hidden relative">
             {backgroundElement}
             <NewUpdateDrawer />
+            <FetchProgressDrawer
+                fetches={fetches}
+                open={fetchDrawerOpen}
+                onOpenChange={setFetchDrawerOpen}
+            />
             {/* Header */}
             <header className="flex items-center justify-between px-4 pb-4 pt-safe-offset-4 bg-mauria-purple oled:bg-black z-10">
                 <h1
@@ -162,7 +170,13 @@ export default function RootLayout() {
                                 }}
                                 className="flex items-center text-white origin-center"
                             >
-                                <div className="relative">
+                                <button
+                                    type="button"
+                                    className="relative flex"
+                                    disabled={fetches.length === 0}
+                                    onClick={() => setFetchDrawerOpen(true)}
+                                    aria-label={t("fetchDrawer.open")}
+                                >
                                     <ProgressRing
                                         value={fetchProgress}
                                         size={28}
@@ -209,7 +223,7 @@ export default function RootLayout() {
                                             </motion.svg>
                                         )}
                                     </AnimatePresence>
-                                </div>
+                                </button>
                                 <span className="sr-only">
                                     {t("common.loading")}
                                 </span>
