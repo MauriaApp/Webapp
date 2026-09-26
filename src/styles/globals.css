@@ -1172,6 +1172,18 @@
     }
 }
 
+/* The glint starts and ends fully off the card, then rests out of sight,
+   so the loop never shows a jump */
+@keyframes ow-shine {
+    0% {
+        background-position: 130% 0;
+    }
+    60%,
+    100% {
+        background-position: -30% 0;
+    }
+}
+
 /* Slot machine marquee: every third bulb lit, the pattern chases along */
 @keyframes slot-bulb {
     0%,
@@ -1331,6 +1343,47 @@
 
     .fdj-rays {
         animation: fdj-rays 60s linear infinite;
+    }
+
+    /* Overwatch lootbox: menu-blue plate, orange glow, honeycomb */
+    .ow-case {
+        background-color: #0f1626;
+        background-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='42'%3E%3Cpath d='M12 0L24 7V21L12 28L0 21V7Z M12 28V42' fill='none' stroke='white' stroke-opacity='0.07'/%3E%3C/svg%3E"),
+            radial-gradient(
+                ellipse at 12% 50%,
+                rgba(249, 158, 26, 0.35),
+                transparent 60%
+            ),
+            linear-gradient(90deg, #1d3557, #0f1626);
+    }
+
+    .ow-case::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 30%;
+        pointer-events: none;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 200, 120, 0.18),
+            transparent
+        );
+        animation: cs2-sweep 3.6s ease-in-out infinite;
+    }
+
+    /* Legendary drops: a gold glint sweeping across the card back */
+    .ow-card-shine {
+        background: linear-gradient(
+            105deg,
+            transparent 35%,
+            rgba(255, 220, 150, 0.55) 50%,
+            transparent 65%
+        );
+        background-size: 250% 100%;
+        background-repeat: no-repeat;
+        animation: ow-shine 2.6s ease-in-out infinite;
     }
 
     .slot-bulb {
@@ -1610,6 +1663,8 @@
         .slot-bulb,
         .fdj-holo,
         .fdj-rays,
+        .ow-case::after,
+        .ow-card-shine,
         .poke-entry-foil::after,
         .poke-pack-sheen,
         .poke-pack-float,

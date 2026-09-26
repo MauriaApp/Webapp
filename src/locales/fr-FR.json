@@ -391,6 +391,31 @@
       "weaknessValue": "{{type}} ×2",
       "resistanceValue": "{{type}} −30"
     },
+    "lootbox": {
+      "openBox": "Ouvrir une lootbox",
+      "boxCount_one": "{{count}}x",
+      "boxCount_other": "{{count}}x",
+      "remaining_one": "{{count}} note à débloquer",
+      "remaining_other": "{{count}} notes à débloquer",
+      "remainingShort_one": "{{count}} note",
+      "remainingShort_other": "{{count}} notes",
+      "empty": "Aucune lootbox à ouvrir",
+      "emptyHint": "Reviens quand une note tombe",
+      "tapToOpen": "Ouvrir",
+      "boxName": "Lootbox Mauria",
+      "open": "Ouvrir",
+      "tapToReveal": "Touche une note pour la révéler",
+      "contents_one": "{{count}} note à l'intérieur",
+      "contents_other": "{{count}} notes à l'intérieur",
+      "boxesLeft_one": "Encore {{count}} lootbox après celle-ci",
+      "boxesLeft_other": "Encore {{count}} lootbox après celle-ci",
+      "rarity": {
+        "common": "Commun",
+        "rare": "Rare",
+        "epic": "Épique",
+        "legendary": "Légendaire"
+      }
+    },
     "rarity": {
       "consumer": "Qualité consommateur",
       "industrial": "Qualité industrielle",
@@ -523,7 +548,8 @@
       "cs2": "Caisse CS2",
       "fdj": "Ticket à gratter",
       "pokemon": "Booster Pokémon",
-      "slots": "Machine à sous"
+      "slots": "Machine à sous",
+      "overwatch": "Lootbox Overwatch"
     },
     "palantirTheme": {
       "title": "Thème Palantir",

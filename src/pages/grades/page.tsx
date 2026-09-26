@@ -6,6 +6,8 @@ import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { GradeRevealOverlay } from "./reveal/grade-reveal-overlay";
 import { BoosterEntryCard } from "./reveal/pokemon/booster-entry-card";
 import { BoosterOverlay } from "./reveal/pokemon/booster-overlay";
+import { LootboxEntryCard } from "./reveal/lootbox/lootbox-entry-card";
+import { LootboxOverlay } from "./reveal/lootbox/lootbox-overlay";
 import { GradeCard, GradeCardAnimate, UnopenedGradeCard } from "./grade-card";
 import {
     getGrades,
@@ -651,17 +653,18 @@ export function GradesPage() {
         [displayedGrades, revealMode, unopenedKeys]
     );
 
-    // The booster draws from every pending grade, not just the filtered view
+    // Boosters and lootboxes open several grades at once
+    const packMode = revealMode === "pokemon" || revealMode === "overwatch";
+    // The pack draws from every pending grade, not just the filtered view
     const pendingGrades = useMemo(
         () =>
-            revealMode === "pokemon"
+            packMode
                 ? grades.filter((g) => unopenedKeys.has(getGradeKey(g)))
                 : [],
-        [grades, revealMode, unopenedKeys]
+        [grades, packMode, unopenedKeys]
     );
-    // Booster mode hides the pending grades entirely: they only show up as cards
-    const listedGrades =
-        revealMode === "pokemon" ? openedDisplayedGrades : displayedGrades;
+    // Pack modes hide the pending grades entirely: they only show up as cards
+    const listedGrades = packMode ? openedDisplayedGrades : displayedGrades;
 
     const hasKnownClass = useMemo(
         () => detectStudentClass(filteredGrades) !== null,
@@ -809,6 +812,13 @@ export function GradesPage() {
                                             onOpen={() => setBoosterOpen(true)}
                                         />
                                     )}
+                                    {revealMode === "overwatch" && (
+                                        <LootboxEntryCard
+                                            key="lootbox"
+                                            count={pendingGrades.length}
+                                            onOpen={() => setBoosterOpen(true)}
+                                        />
+                                    )}
                                     {listedGrades.map((grade, index) =>
                                         isUnopened(grade) &&
                                         (revealMode === "cs2" ||
@@ -866,7 +876,15 @@ export function GradesPage() {
                 }}
             />
             <BoosterOverlay
-                open={boosterOpen}
+                open={boosterOpen && revealMode === "pokemon"}
+                unopened={pendingGrades}
+                onClose={(opened) => {
+                    openGrades(opened);
+                    setBoosterOpen(false);
+                }}
+            />
+            <LootboxOverlay
+                open={boosterOpen && revealMode === "overwatch"}
                 unopened={pendingGrades}
                 onClose={(opened) => {
                     openGrades(opened);

@@ -391,6 +391,31 @@
       "weaknessValue": "{{type}} ×2",
       "resistanceValue": "{{type}} −30"
     },
+    "lootbox": {
+      "openBox": "Open a lootbox",
+      "boxCount_one": "{{count}}x",
+      "boxCount_other": "{{count}}x",
+      "remaining_one": "{{count}} grade to unlock",
+      "remaining_other": "{{count}} grades to unlock",
+      "remainingShort_one": "{{count}} grade",
+      "remainingShort_other": "{{count}} grades",
+      "empty": "No lootbox to open",
+      "emptyHint": "Come back when a grade drops",
+      "tapToOpen": "Open",
+      "boxName": "Mauria Lootbox",
+      "open": "Open",
+      "tapToReveal": "Tap a grade to reveal it",
+      "contents_one": "{{count}} grade inside",
+      "contents_other": "{{count}} grades inside",
+      "boxesLeft_one": "{{count}} more lootbox after this one",
+      "boxesLeft_other": "{{count}} more lootboxes after this one",
+      "rarity": {
+        "common": "Common",
+        "rare": "Rare",
+        "epic": "Epic",
+        "legendary": "Legendary"
+      }
+    },
     "rarity": {
       "consumer": "Consumer Grade",
       "industrial": "Industrial Grade",
@@ -523,7 +548,8 @@
       "cs2": "CS2 case",
       "fdj": "Scratch ticket",
       "pokemon": "Pokémon booster",
-      "slots": "Slot machine"
+      "slots": "Slot machine",
+      "overwatch": "Overwatch lootbox"
     },
     "palantirTheme": {
       "title": "Palantir theme",

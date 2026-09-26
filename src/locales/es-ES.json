@@ -391,6 +391,31 @@
       "weaknessValue": "{{type}} ×2",
       "resistanceValue": "{{type}} −30"
     },
+    "lootbox": {
+      "openBox": "Abrir una lootbox",
+      "boxCount_one": "{{count}}x",
+      "boxCount_other": "{{count}}x",
+      "remaining_one": "{{count}} nota por desbloquear",
+      "remaining_other": "{{count}} notas por desbloquear",
+      "remainingShort_one": "{{count}} nota",
+      "remainingShort_other": "{{count}} notas",
+      "empty": "Ninguna lootbox por abrir",
+      "emptyHint": "Vuelve cuando caiga una nota",
+      "tapToOpen": "Abrir",
+      "boxName": "Lootbox Mauria",
+      "open": "Abrir",
+      "tapToReveal": "Toca una nota para revelarla",
+      "contents_one": "{{count}} nota dentro",
+      "contents_other": "{{count}} notas dentro",
+      "boxesLeft_one": "{{count}} lootbox más después de esta",
+      "boxesLeft_other": "{{count}} lootboxes más después de esta",
+      "rarity": {
+        "common": "Común",
+        "rare": "Raro",
+        "epic": "Épico",
+        "legendary": "Legendario"
+      }
+    },
     "rarity": {
       "consumer": "Calidad consumidor",
       "industrial": "Calidad industrial",
@@ -523,7 +548,8 @@
       "cs2": "Caja CS2",
       "fdj": "Boleto rascable",
       "pokemon": "Sobre Pokémon",
-      "slots": "Tragaperras"
+      "slots": "Tragaperras",
+      "overwatch": "Lootbox Overwatch"
     },
     "palantirTheme": {
       "title": "Tema Palantir",
