@@ -25,6 +25,7 @@ import { getDateLocale } from "@/lib/utils/translations";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
@@ -35,6 +36,7 @@ export function PlanningPage() {
         getUserEventsFromLocalStorage()
     );
     const [view, setView] = useState<"calendar" | "freeRooms">("calendar");
+    const { isWarming } = useAurionWarm();
 
     // Whether the student is CPG1/CPG2 is only known for sure from their
     // Aurion grade codes (detectStudentClass) — this same query backs the
@@ -47,6 +49,7 @@ export function PlanningPage() {
             if (!res?.success) throw new Error("Failed to fetch grades");
             return res.data ?? [];
         },
+        enabled: !isWarming,
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 60 * 24,
     });
@@ -92,13 +95,14 @@ export function PlanningPage() {
             }
             return res.data ?? [];
         },
+        enabled: !isWarming,
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
         placeholderData: (previousData) => previousData,
     });
 
-    const isBusy = isLoading || isFetching;
+    const isBusy = isWarming || isLoading || isFetching;
 
     const handleRefresh = () => {
         void refetch();

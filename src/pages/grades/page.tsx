@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronDown, GraduationCap, Info, Loader2 } from "lucide-react";
+import {
+    ChevronDown,
+    GraduationCap,
+    Info,
+    Loader2,
+    Package,
+} from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { GradeRevealOverlay } from "./reveal/grade-reveal-overlay";
@@ -32,6 +38,7 @@ import { memo, useMemo, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
@@ -43,11 +50,13 @@ import {
     ChartConfig,
 } from "@/components/ui/chart";
 import { useGradeRevealMode } from "@/lib/utils/experimental";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { unlockSounds } from "@/lib/utils/sfx";
 import {
     getGradeKey,
     openGrade,
     openGrades,
+    repackGrade,
     useUnopenedGrades,
 } from "@/lib/utils/unopened-grades";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
@@ -565,6 +574,7 @@ export function GradesPage() {
     const [semesterChoice, setSemesterChoice] = useState<
         string | null | undefined
     >(undefined);
+    const { isWarming } = useAurionWarm();
 
     const {
         data: grades = [],
@@ -583,6 +593,7 @@ export function GradesPage() {
             }
             return res.data ?? [];
         },
+        enabled: !isWarming,
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
@@ -594,7 +605,7 @@ export function GradesPage() {
     const isUnopened = (grade: Grade) =>
         revealMode !== "off" && unopenedKeys.has(getGradeKey(grade));
 
-    const isBusy = isLoading || isFetching;
+    const isBusy = isWarming || isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
 
     const handleRefresh = () => {
@@ -893,8 +904,24 @@ export function GradesPage() {
             />
             <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerContent aria-describedby={undefined}>
-                    <DrawerHeader>
+                    <DrawerHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
                         <DrawerTitle>{t("gradesPage.details")}</DrawerTitle>
+                        {revealMode !== "off" && selectedGrade && (
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="sm"
+                                title={t("gradesPage.repack")}
+                                onClick={() => {
+                                    repackGrade(selectedGrade);
+                                    setDrawerOpen(false);
+                                }}
+                                className="shrink-0"
+                            >
+                                {t("gradesPage.repackButton")}
+                                <Package className="h-4 w-4" />
+                            </Button>
+                        )}
                     </DrawerHeader>
                     {selectedGrade && (
                         <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto mb-6">

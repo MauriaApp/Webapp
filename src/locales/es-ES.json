@@ -435,6 +435,8 @@
     "noGradesPlaceholder": "Todavía no se ha publicado ninguna nota.",
     "noGradesCached": "No se encontraron notas en la caché y Aurion está caído. Inténtalo de nuevo más tarde.",
     "details": "Detalles de la nota",
+    "repack": "Volver a poner esta nota en las notas por abrir",
+    "repackButton": "Repack",
     "grade": "Nota",
     "average": "Media",
     "median": "Mediana",
@@ -620,6 +622,7 @@
     "description": "Lo que Mauria está obteniendo ahora mismo",
     "percent": "{{value}} %",
     "queries": {
+      "warm": "Conectando con Aurion",
       "planning": "Horario",
       "grades": "Notas",
       "absences": "Ausencias",

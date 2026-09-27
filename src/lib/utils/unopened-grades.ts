@@ -93,6 +93,17 @@ export const openGrades = (grades: Grade[]) => {
     saveUnopenedGrades(readUnopenedGrades().filter((key) => !keys.has(key)));
 };
 
+/** Puts an already-opened grade back into the unopened/unboxing list. */
+export const repackGrade = (grade: Grade) => {
+    if (typeof window === "undefined") return;
+
+    const key = getGradeKey(grade);
+    const unopened = readUnopenedGrades();
+    if (unopened.includes(key)) return;
+
+    saveUnopenedGrades([...unopened, key]);
+};
+
 export const useUnopenedGrades = (): Set<string> => {
     const [unopened, setUnopened] = useState<string[]>(readUnopenedGrades);
 

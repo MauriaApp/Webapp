@@ -4,6 +4,7 @@ import { memo, useMemo, useState } from "react";
 import { FileText, Download, Loader2 } from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchDocuments, downloadDocument } from "@/lib/api/aurion";
@@ -27,6 +28,7 @@ export function DocumentsPage() {
         null
     );
     const [downloadingId, setDownloadingId] = useState<string | null>(null);
+    const { isWarming } = useAurionWarm();
 
     const {
         data: result,
@@ -42,6 +44,7 @@ export function DocumentsPage() {
             }
             return res.data;
         },
+        enabled: !isWarming,
         staleTime: 1000 * 60 * 10,
         gcTime: 1000 * 60 * 60 * 24,
         refetchOnWindowFocus: true,
@@ -51,7 +54,7 @@ export function DocumentsPage() {
     const documents = result?.documents ?? [];
     const categories = result?.categories ?? [];
 
-    const isBusy = isLoading || isFetching;
+    const isBusy = isWarming || isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
     const handleRefresh = () => refetch();
 

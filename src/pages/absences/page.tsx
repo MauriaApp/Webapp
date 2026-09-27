@@ -4,6 +4,7 @@ import { memo, useMemo, useState } from "react";
 import { CalendarOff, Loader2 } from "lucide-react";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAbsencesDurations, getAbsences, getAbsenceSemesters, getCurrentSemesterKey, isAbsenceJustified } from "@/lib/utils/absences";
@@ -33,6 +34,7 @@ export function AbsencesPage() {
     const [semesterChoice, setSemesterChoice] = useState<
         string | null | undefined
     >(undefined);
+    const { isWarming } = useAurionWarm();
 
     const {
         data: absences = [],
@@ -51,13 +53,14 @@ export function AbsencesPage() {
             }
             return res.data ?? [];
         },
+        enabled: !isWarming,
         staleTime: 1000 * 60 * 5, // 5 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         refetchOnWindowFocus: true, // refresh background si focus fenêtre
         placeholderData: (previousData) => previousData,
     });
 
-    const isBusy = isLoading || isFetching;
+    const isBusy = isWarming || isLoading || isFetching;
     const aurionDown = useJuniaStatus()?.aurionDown ?? false;
 
     const handleRefresh = () => refetch();
