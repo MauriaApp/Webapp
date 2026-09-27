@@ -435,6 +435,8 @@
     "noGradesPlaceholder": "No grades have been published yet.",
     "noGradesCached": "No grades were found in the cache, and Aurion is down. Try again later.",
     "details": "Grade details",
+    "repack": "Put this grade back into the unopened grades",
+    "repackButton": "Repack",
     "grade": "Grade",
     "average": "Average",
     "median": "Median",
@@ -620,6 +622,7 @@
     "description": "What Mauria is fetching right now",
     "percent": "{{value}}%",
     "queries": {
+      "warm": "Connecting to Aurion",
       "planning": "Schedule",
       "grades": "Grades",
       "absences": "Absences",

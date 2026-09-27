@@ -435,6 +435,8 @@
     "noGradesPlaceholder": "Aucune note n'a été publiée pour le moment.",
     "noGradesCached": "Aucune note n'a été trouvée dans le cache, et Aurion est en panne. Réessaie plus tard.",
     "details": "Détails de la note",
+    "repack": "Remettre cette note dans les notes à ouvrir",
+    "repackButton": "Repack",
     "grade": "Note",
     "average": "Moyenne",
     "median": "Médiane",
@@ -620,6 +622,7 @@
     "description": "Ce que Mauria récupère en ce moment",
     "percent": "{{value}} %",
     "queries": {
+      "warm": "Connexion à Aurion",
       "planning": "Planning",
       "grades": "Notes",
       "absences": "Absences",

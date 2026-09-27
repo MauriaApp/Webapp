@@ -123,6 +123,27 @@ export function expectedFetchDuration(
     return times.login + times.home + step;
 }
 
+// Fallback login+home duration when BadJunia's timings are unknown.
+const FALLBACK_WARM_DURATION_MS = 6000;
+// Near-instant expectation when the session cache is already warm.
+const WARM_HIT_DURATION_MS = 300;
+
+/**
+ * Expected duration (ms) of the `/aurion/warm` request: mirrors
+ * `expectedFetchDuration`'s cold/warm split, but for the warm-up step
+ * itself (login + home page) instead of a feature page.
+ */
+export function expectedWarmDuration(status: JuniaStatus | null): number {
+    if (isAurionSessionWarm()) {
+        return WARM_HIT_DURATION_MS;
+    }
+    const times = status?.aurionTimes;
+    if (!times || times.login === null || times.home === null) {
+        return FALLBACK_WARM_DURATION_MS;
+    }
+    return times.login + times.home;
+}
+
 export async function fetchJuniaStatus(): Promise<JuniaStatus | null> {
     return apiRequest<JuniaStatus>("/badjunia/status", "GET");
 }

@@ -67,8 +67,18 @@ export const exportCalendar = async (events: Lesson[]): Promise<void> => {
 
   // Web Share API : fonctionne dans les WebViews iOS et Android
   if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title: "Mauria Planning" });
-    return;
+    try {
+      await navigator.share({ files: [file], title: "Mauria Planning" });
+      return;
+    } catch (error) {
+      // L'utilisateur a fermé la share sheet : ne rien faire.
+      if ((error as DOMException).name === "AbortError") {
+        return;
+      }
+      // Chrome/Opera/Android rejettent le partage de fichiers .ics par
+      // sécurité (NotAllowedError) même quand canShare() a répondu true :
+      // on retombe sur le téléchargement ci-dessous.
+    }
   }
 
   // Fallback navigateur web classique

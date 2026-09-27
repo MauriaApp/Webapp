@@ -17,6 +17,7 @@ import {
     Sparkles,
     User,
     UtensilsCrossed,
+    Zap,
     type LucideIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -35,6 +36,7 @@ const CLOSE_DELAY_MS = 600;
 
 /** Icon and label (`fetchDrawer.queries.*`) per query key. */
 const QUERIES: Record<string, { icon: LucideIcon; label: string }> = {
+    aurionWarm: { icon: Zap, label: "warm" },
     planning: { icon: Calendar, label: "planning" },
     grades: { icon: GraduationCap, label: "grades" },
     absences: { icon: User, label: "absences" },

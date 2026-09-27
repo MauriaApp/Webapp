@@ -1,22 +1,11 @@
 import { ReactNode } from "react";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import {
-    getFromStorage,
-    removeFromStorage,
-    saveToStorage,
-} from "@/lib/utils/storage";
+import { createDoubleBufferedPersister } from "@/lib/persist/double-buffered-persister";
 import { queryClient } from "@/lib/query-client";
 
 const PERSIST_MAX_AGE = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-const localStorageAsyncPersister = createAsyncStoragePersister({
-    storage: {
-        getItem: (key) => Promise.resolve(getFromStorage(key)),
-        setItem: (key, value) => Promise.resolve(saveToStorage(key, value)),
-        removeItem: (key) => Promise.resolve(removeFromStorage(key)),
-    },
-});
+const persister = createDoubleBufferedPersister();
 
 interface ReactQueryProviderProps {
     children: ReactNode;
@@ -27,7 +16,7 @@ export const ReactQueryProvider = ({ children }: ReactQueryProviderProps) => {
         <PersistQueryClientProvider
             client={queryClient}
             persistOptions={{
-                persister: localStorageAsyncPersister,
+                persister,
                 maxAge: PERSIST_MAX_AGE,
             }}
             onSuccess={() => {

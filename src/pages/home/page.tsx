@@ -6,6 +6,7 @@ import { staggerGroup } from "@/lib/motion";
 import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -28,6 +29,7 @@ export function HomePage() {
         null
     );
     const { t } = useTranslation();
+    const { isWarming } = useAurionWarm();
 
     const {
         data: lessons = [],
@@ -36,6 +38,7 @@ export function HomePage() {
         isFetching,
     } = useQuery<Lesson[], Error>({
         queryKey: ["planning"],
+        enabled: !isWarming,
         queryFn: async (): Promise<Lesson[]> => {
             const res = await fetchPlanning();
             // Throw (don't fall back) on failure so React Query keeps the
@@ -53,7 +56,7 @@ export function HomePage() {
         placeholderData: (previousData) => previousData,
     });
 
-    const isBusy = isLoading || isFetching;
+    const isBusy = isWarming || isLoading || isFetching;
 
     const handleRefresh = () => {
         void refetch();

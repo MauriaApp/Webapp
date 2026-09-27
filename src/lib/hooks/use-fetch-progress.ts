@@ -3,11 +3,15 @@ import type { QueryKey } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client";
 import {
     expectedFetchDuration,
+    expectedWarmDuration,
     type JuniaStatus,
     type SlowQueryKey,
 } from "@/lib/api/junia-status";
+import { AURION_WARM_QUERY_KEY } from "@/lib/hooks/use-aurion-warm";
 
 const DEFAULT_DURATION = 2000; // fallback for unknown/fast queries
+
+const WARM_QUERY_NAME = AURION_WARM_QUERY_KEY[0];
 
 const SLOW_QUERY_KEYS: SlowQueryKey[] = [
     "documents",
@@ -46,6 +50,12 @@ type InFlightFetch = {
     start: number;
     expected: number;
     progress: number;
+    /**
+     * True while this fetch is blocked behind the `aurionWarm` request and
+     * hasn't actually started yet (its query is `enabled: false`). Its row
+     * stays pinned at 0% until `sync` sees it actually fetching.
+     */
+    queued: boolean;
 };
 
 /**
@@ -88,32 +98,75 @@ function listFetches(): FetchEntry[] {
     }));
 }
 
+function getStatus(): JuniaStatus | null {
+    return queryClient.getQueryData<JuniaStatus | null>(["juniaStatus"]) ?? null;
+}
+
 function expectedDuration(queryKey: QueryKey): number {
     const key = queryKey[0];
+    if (key === WARM_QUERY_NAME) {
+        return expectedWarmDuration(getStatus());
+    }
     if (!SLOW_QUERY_KEYS.includes(key as SlowQueryKey)) {
         return DEFAULT_DURATION;
     }
-    const status =
-        queryClient.getQueryData<JuniaStatus | null>(["juniaStatus"]) ?? null;
-    return expectedFetchDuration(status, key as SlowQueryKey);
+    return expectedFetchDuration(getStatus(), key as SlowQueryKey);
 }
 
-/** Keep `inFlight` in sync with the fetching queries of the cache. */
+/** Keep `inFlight` in sync with the fetching (or warm-blocked) queries. */
 function sync() {
     const now = Date.now();
     const fetching = new Set<string>();
     let changed = false;
-    for (const query of queryClient.getQueryCache().getAll()) {
-        if (query.state.fetchStatus !== "fetching") continue;
-        fetching.add(query.queryHash);
-        if (!inFlight.has(query.queryHash)) {
-            inFlight.set(query.queryHash, {
-                name: String(query.queryKey[0]),
-                start: now,
-                expected: expectedDuration(query.queryKey),
-                progress: 0,
-            });
-            changed = true;
+
+    const cache = queryClient.getQueryCache();
+    const warmQuery = cache.find({ queryKey: AURION_WARM_QUERY_KEY });
+    const warming = warmQuery?.state.fetchStatus === "fetching";
+
+    for (const query of cache.getAll()) {
+        const name = String(query.queryKey[0]);
+        const isWarm = name === WARM_QUERY_NAME;
+        const isSlow = SLOW_QUERY_KEYS.includes(name as SlowQueryKey);
+        if (!isWarm && !isSlow) continue;
+
+        if (query.state.fetchStatus === "fetching") {
+            fetching.add(query.queryHash);
+            const existing = inFlight.get(query.queryHash);
+            if (!existing) {
+                inFlight.set(query.queryHash, {
+                    name,
+                    start: now,
+                    expected: expectedDuration(query.queryKey),
+                    progress: 0,
+                    queued: false,
+                });
+                changed = true;
+            } else if (existing.queued) {
+                // Was waiting on the warm-up, just actually started.
+                existing.queued = false;
+                existing.start = now;
+                existing.progress = 0;
+                changed = true;
+            }
+        } else if (
+            !isWarm &&
+            warming &&
+            query.state.fetchStatus === "idle" &&
+            query.state.status !== "success"
+        ) {
+            // Blocked behind the warm-up (its own query is `enabled:
+            // false` right now): shown queued at 0% instead of ignored.
+            fetching.add(query.queryHash);
+            if (!inFlight.has(query.queryHash)) {
+                inFlight.set(query.queryHash, {
+                    name,
+                    start: now,
+                    expected: expectedDuration(query.queryKey),
+                    progress: 0,
+                    queued: true,
+                });
+                changed = true;
+            }
         }
     }
     for (const hash of inFlight.keys()) {
@@ -140,32 +193,53 @@ function startCycle() {
 
 function tick() {
     const now = Date.now();
-    let lead: InFlightFetch | null = null;
+    const warm = [...inFlight.values()].find(
+        (fetch) => fetch.name === WARM_QUERY_NAME
+    );
+
+    let leadFinish = -Infinity;
+    let leadRingProgress = 0;
+
     for (const fetch of inFlight.values()) {
+        // A fetch still queued behind the warm-up hasn't started its own
+        // clock yet: its projected timeline is the warm-up's own timeline
+        // plus its own expected duration on top.
+        const queuedBehindWarm = fetch.queued && warm && fetch !== warm;
+        const effectiveStart = queuedBehindWarm ? warm!.start : fetch.start;
+        const effectiveExpected = queuedBehindWarm
+            ? warm!.expected + fetch.expected
+            : fetch.expected;
+
         // Asymptotic curve: approaches 1 but never reaches it while
         // fetching, so the ring slows down near the top.
-        const ratio = (now - fetch.start) / fetch.expected;
+        const ratio = (now - effectiveStart) / effectiveExpected;
         const base = MAX * (1 - Math.pow(1 - Math.min(1, ratio), 0.93));
         const burst = Math.random() < 0.22 ? Math.random() * 0.08 : 0;
         const wobble = (Math.random() - 0.5) * 0.03;
-        const target = Math.min(MAX, base + wobble + burst);
-        // Monotonic per fetch: never goes backwards.
-        fetch.progress = Math.min(
-            MAX,
-            Math.max(fetch.progress + 0.004, target)
-        );
-        // The ring follows the fetch with the longest time left.
-        if (
-            !lead ||
-            fetch.start + fetch.expected > lead.start + lead.expected
-        ) {
-            lead = fetch;
+        const ringValue = Math.min(MAX, base + wobble + burst);
+
+        // The row shown in the drawer only advances once the fetch has
+        // actually started — a queued row stays pinned at 0% until sync()
+        // flips it over. Monotonic per fetch: never goes backwards.
+        if (!fetch.queued) {
+            fetch.progress = Math.min(
+                MAX,
+                Math.max(fetch.progress + 0.004, ringValue)
+            );
+        }
+
+        // The ring follows whichever fetch — running or still queued — has
+        // the furthest projected finish time.
+        const finish = effectiveStart + effectiveExpected;
+        if (finish > leadFinish) {
+            leadFinish = finish;
+            leadRingProgress = fetch.queued ? ringValue : fetch.progress;
         }
     }
-    if (!lead) return;
+    if (leadFinish === -Infinity) return;
 
     // A longer fetch joining makes the ring glide back to its progress.
-    displayed += (lead.progress - displayed) * FOLLOW;
+    displayed += (leadRingProgress - displayed) * FOLLOW;
     emit({ progress: toPercent(displayed), fetches: listFetches() });
 }
 

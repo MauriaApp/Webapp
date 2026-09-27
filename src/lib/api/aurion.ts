@@ -106,6 +106,29 @@ export async function fetchUser({
     return data;
 }
 
+/**
+ * Ensures the API's session for this account is logged in and its home-page
+ * tokens are cached, without fetching any feature data. Fast no-op when the
+ * session is already warm. Meant to be called once as soon as the app opens
+ * (see `useAurionWarm`), before any of the actual feature fetches.
+ */
+export async function warmAurionSession(): Promise<boolean> {
+    const session = getSession();
+    if (!session) return false;
+
+    const data = await apiRequest<{ success: boolean; error?: string }>(
+        "/aurion/warm",
+        "POST",
+        session
+    );
+    if (data?.success) {
+        // The request only resolves once the home page has actually loaded,
+        // so the tokens are usable right now — no delay like after a login.
+        markAurionSession(0);
+    }
+    return !!data?.success;
+}
+
 export async function fetchPlanning(params?: {
     start?: string;
     end?: string;

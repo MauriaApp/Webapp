@@ -16,6 +16,7 @@ import RootLayout from "./pages/layout";
 import { GradesPage } from "./pages/grades/page";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./lib/api/aurion";
+import { useAurionWarm } from "./lib/hooks/use-aurion-warm";
 import { ThemeProvider } from "./components/theme-provider";
 import { BackgroundProvider } from "./components/background-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
@@ -51,6 +52,9 @@ if (import.meta.env.PROD) {
 const RequireAuth = ({ children }: { children?: React.ReactNode }) => {
     const location = useLocation();
     const connected = !!getSession();
+    // Warms the Aurion session as soon as an authenticated route mounts,
+    // whichever one it is — not gated on any particular page's first fetch.
+    useAurionWarm();
 
     if (!connected) {
         return <Navigate to="/login" state={{ from: location }} replace />;

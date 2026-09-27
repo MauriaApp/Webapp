@@ -17,6 +17,7 @@ import { fetchImportantMessage } from "@/lib/api/supa";
 import { fetchDailyMenu } from "@/lib/api/lacatho";
 import { saveToStorage } from "@/lib/utils/storage";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
+import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { expectedFetchDuration } from "@/lib/api/junia-status";
 import { useTranslation } from "react-i18next";
 import { Absence, Grade, Lesson } from "@/types/aurion";
@@ -66,6 +67,7 @@ const WELCOME_SECTIONS: WelcomeSection[] = [
 export function WelcomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const { isWarming } = useAurionWarm();
     // Warm every cache we can while the welcome screen is shown, so the app
     // is ready (planning, grades, absences, home content) once the user enters.
     const results = useQueries({
@@ -80,6 +82,7 @@ export function WelcomePage() {
                         throw new Error("Failed to fetch planning");
                     return res.data ?? [];
                 },
+                enabled: !isWarming,
                 ...PREFETCH_OPTS,
             },
             {
@@ -90,6 +93,7 @@ export function WelcomePage() {
                         throw new Error("Failed to fetch grades");
                     return res.data ?? [];
                 },
+                enabled: !isWarming,
                 ...PREFETCH_OPTS,
             },
             {
@@ -100,6 +104,7 @@ export function WelcomePage() {
                         throw new Error("Failed to fetch absences");
                     return res.data ?? [];
                 },
+                enabled: !isWarming,
                 ...PREFETCH_OPTS,
             },
             {
@@ -119,8 +124,10 @@ export function WelcomePage() {
 
     // Only block the button on the planning — grades and absences continue
     // to fetch in the background and will be cached when the user navigates
-    // to those pages.
-    const isBusy = results[0].isLoading;
+    // to those pages. While warming, planning hasn't even started yet
+    // (`enabled: false`), so its own `isLoading` would read false — factor
+    // the warm-up in explicitly so the button stays blocked through it.
+    const isBusy = isWarming || results[0].isLoading;
     const [progress, setProgress] = useState(0);
 
     const tips = t("welcome.tips", { returnObjects: true }) as string[];
