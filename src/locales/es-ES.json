@@ -286,7 +286,9 @@
       "contains": "Contiene las siguientes rarezas",
       "aboveAverage": "Por encima de la media",
       "belowAverage": "Por debajo de la media",
-      "continue": "Continuar"
+      "continue": "Continuar",
+      "unlock": "Abrir la caja",
+      "received": "Has obtenido"
     },
     "scratchCard": {
       "ticketName": "Mauria Rasca",
@@ -318,6 +320,7 @@
       "tapToFlip": "Toca la carta para darle la vuelta",
       "tapToNext": "Toca para la siguiente carta",
       "tearHere": "Rasgar aquí",
+      "swipeToTear": "Desliza por la línea de puntos para abrirlo",
       "packName": "Sobre Mauria",
       "setName": "Serie Junia",
       "counter": "Carta {{current}} de {{total}}",
@@ -357,58 +360,212 @@
       "subjects": {
         "maths": {
           "species": "Integral",
-          "attack1": "Derivada Segunda",
-          "attack2": "Teorema Fatal"
+          "light": [
+            "Derivada Segunda",
+            "Inducción",
+            "Cambio de Variable",
+            "Integración por Partes",
+            "Épsilon-Delta",
+            "Desarrollo de Taylor"
+          ],
+          "heavy": [
+            "Teorema Fatal",
+            "Reducción al Absurdo",
+            "Contraejemplo",
+            "Matriz Inversa",
+            "Serie Divergente",
+            "QED"
+          ]
         },
         "physics": {
           "species": "Partícula",
-          "attack1": "Caída Libre",
-          "attack2": "Descarga de Joule"
+          "light": [
+            "Caída Libre",
+            "Rozamiento Viscoso",
+            "Onda Estacionaria",
+            "Efecto Doppler",
+            "Empuje de Arquímedes",
+            "Ley de Ohm"
+          ],
+          "heavy": [
+            "Descarga de Joule",
+            "Cortocircuito",
+            "Colapso Gravitatorio",
+            "Efecto Túnel",
+            "Entropía Máxima",
+            "Resonancia"
+          ]
         },
         "computerScience": {
           "species": "Compilador",
-          "attack1": "Segfault",
-          "attack2": "Recursión Infinita"
+          "light": [
+            "Segfault",
+            "Off-by-One",
+            "Null Pointer",
+            "Merge Conflict",
+            "Ctrl+Z",
+            "Debug con Printf"
+          ],
+          "heavy": [
+            "Recursión Infinita",
+            "Fuga de Memoria",
+            "Fork Bomb",
+            "Push --force",
+            "Stack Overflow",
+            "Complejidad Exponencial"
+          ]
         },
         "english": {
           "species": "Bilingüe",
-          "attack1": "Present Perfect",
-          "attack2": "Phrasal Verb"
+          "light": [
+            "Present Perfect",
+            "Small Talk",
+            "Tea Time",
+            "Letra Muda",
+            "Question Tag",
+            "Acento Tónico"
+          ],
+          "heavy": [
+            "Phrasal Verb",
+            "Past Perfect Continuous",
+            "Listening Exprés",
+            "Essay Cronometrado",
+            "Idiom Oscuro",
+            "Pronunciación Fatal"
+          ]
         },
         "sii": {
           "species": "Mecánico",
-          "attack1": "Par Motor",
-          "attack2": "Servocontrol"
+          "light": [
+            "Par Motor",
+            "Engranaje",
+            "Diagrama de Bloques",
+            "Unión Pivote",
+            "Rozamiento Seco",
+            "Diagrama SysML"
+          ],
+          "heavy": [
+            "Servocontrol",
+            "Inestabilidad",
+            "Sobreimpulso",
+            "Bode Fatal",
+            "Hiperestatismo",
+            "Lazo Cerrado"
+          ]
         },
         "fhs": {
           "species": "Retórica",
-          "attack1": "Disertación",
-          "attack2": "Argumento de Autoridad"
+          "light": [
+            "Disertación",
+            "Cita",
+            "Problemática",
+            "Contraargumento",
+            "Ironía Socrática",
+            "Paráfrasis"
+          ],
+          "heavy": [
+            "Argumento de Autoridad",
+            "Falacia",
+            "Fuera de Tema",
+            "Plan en Tres Partes",
+            "Dialéctica",
+            "Hoja en Blanco"
+          ]
         },
         "eps": {
           "species": "Atleta",
-          "attack1": "Sprint Final",
-          "attack2": "Flato"
+          "light": [
+            "Sprint Final",
+            "Calentamiento",
+            "Asistencia",
+            "Salto de Longitud",
+            "Plancha",
+            "Tiro Libre"
+          ],
+          "heavy": [
+            "Flato",
+            "Agujetas",
+            "Course Navette",
+            "Smash",
+            "Maratón",
+            "Calambre"
+          ]
         },
         "lv2": {
           "species": "Políglota",
-          "attack1": "Falso Amigo",
-          "attack2": "Verbo Irregular"
+          "light": [
+            "Falso Amigo",
+            "Conjugación",
+            "Conector",
+            "Pronunciación",
+            "Subjuntivo",
+            "Lista de Vocabulario"
+          ],
+          "heavy": [
+            "Verbo Irregular",
+            "Declinación",
+            "Modismo",
+            "Oral Sorpresa",
+            "Concordancia del Participio",
+            "Excepción a la Regla"
+          ]
         },
         "tipe": {
           "species": "Proyecto",
-          "attack1": "Defensa Oral",
-          "attack2": "Fecha Límite"
+          "light": [
+            "Defensa Oral",
+            "Bibliografía",
+            "Toma de Medidas",
+            "Diapositivas",
+            "Hipótesis",
+            "Experimento Fallido"
+          ],
+          "heavy": [
+            "Fecha Límite",
+            "Pregunta del Jurado",
+            "Resultado Inesperado",
+            "Informe Final",
+            "Sesgo Experimental",
+            "Puesta en Común"
+          ]
         },
         "pix": {
           "species": "Certificación",
-          "attack1": "Pregunta Trampa",
-          "attack2": "Sesión Caducada"
+          "light": [
+            "Pregunta Trampa",
+            "Atajo de Teclado",
+            "Contraseña",
+            "Hoja de Cálculo",
+            "Búsqueda Web",
+            "Copiar y Pegar"
+          ],
+          "heavy": [
+            "Sesión Caducada",
+            "Tiempo Agotado",
+            "Captcha",
+            "Archivo Corrupto",
+            "Phishing",
+            "Nivel Experto"
+          ]
         },
         "unknown": {
           "species": "Misterio",
-          "attack1": "Coeficiente Desconocido",
-          "attack2": "Nota Sorpresa"
+          "light": [
+            "Coeficiente Desconocido",
+            "Código Misterioso",
+            "Nota Fantasma",
+            "Asignatura Secreta",
+            "Comentario Vacío",
+            "Boletín Perdido"
+          ],
+          "heavy": [
+            "Nota Sorpresa",
+            "Recuperación",
+            "Media Oculta",
+            "Coef Oculto",
+            "Punto Extra",
+            "Jurado Soberano"
+          ]
         }
       },
       "weaknessValue": "{{type}} ×2",
@@ -443,6 +600,15 @@
       "consumer": "Calidad consumidor",
       "industrial": "Calidad industrial",
       "milspec": "Calidad militar",
+      "restricted": "Restringido",
+      "classified": "Clasificado",
+      "covert": "Secreto",
+      "exceedinglyRare": "Extremadamente raro"
+    },
+    "rarityShort": {
+      "consumer": "Consumidor",
+      "industrial": "Industrial",
+      "milspec": "Militar",
       "restricted": "Restringido",
       "classified": "Clasificado",
       "covert": "Secreto",
