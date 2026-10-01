@@ -250,10 +250,33 @@
       "error": "Couldn't fetch room availability right now.",
       "statusFree": "Free",
       "statusBusy": "Occupied",
+      "statusClosed": "Closed",
+      "buildingClosed": "Closed",
       "loading": "Loading rooms…",
       "updatedAt": "Updated at {{time}}",
       "empty": "No building available right now.",
       "untilPrefix": "until"
+    },
+    "userEvents": {
+      "addTitle": "Add an event",
+      "editTitle": "Edit event",
+      "hint": "Tip: press and hold a slot on the schedule to create an event there.",
+      "title": "Title",
+      "titlePlaceholder": "E.g. Club meeting",
+      "location": "Location",
+      "optional": "Optional",
+      "date": "Date",
+      "start": "Start",
+      "end": "End",
+      "endBeforeStart": "The end time must be after the start time.",
+      "notes": "Notes",
+      "create": "Create event",
+      "save": "Save",
+      "added": "Event added",
+      "updated": "Event updated",
+      "deleted": "Event deleted",
+      "undo": "Undo",
+      "type": "Personal event"
     }
   },
   "gradesPage": {
@@ -487,21 +510,27 @@
   },
   "agendaPage": {
     "title": "My Agenda",
-    "notifications": "A notification will be sent 24 hours before and 1 hour before each task.",
     "noTasks": "No tasks.",
     "noTaskPlaceholder": "No tasks have been added yet.",
     "addTask": "Add a task",
-    "taskTitle": "Title",
-    "taskDescription": "Enter the title",
-    "date": "Date",
-    "hour": "Hour",
-    "createTaskBtn": "Create task",
-    "markTaskDone": "Mark as done",
-    "undoTaskCompletion": "Undo completion",
     "editTaskTitle": "Edit task",
-    "updateTaskBtn": "Update task",
+    "taskTitle": "Title",
+    "taskTitlePlaceholder": "E.g. Hand in the physics lab report",
+    "dueDate": "Due",
+    "dueTime": "Time",
+    "nextLesson": "Next {{course}} class",
+    "notes": "Notes",
+    "optional": "Optional",
+    "createTaskBtn": "Create task",
+    "save": "Save",
+    "delete": "Delete",
+    "markTaskDone": "Mark as done",
+    "overdue": "Overdue",
+    "taskAdded": "Task added",
     "taskUpdated": "Task updated",
-    "taskUpdatedDescription": "Your changes have been saved."
+    "taskDone": "Task done",
+    "taskDeleted": "Task deleted",
+    "undo": "Undo"
   },
   "associationsPage": {
     "search": "Find an association",
@@ -532,7 +561,10 @@
     "duration": "Duration",
     "technicalDetails": "Technical details",
     "formerTitle": "Full title",
-    "allDay": "All day"
+    "allDay": "All day",
+    "notes": "Notes",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "update": {
     "somethingNew": "There's something new on Mauria!",
@@ -638,5 +670,12 @@
       "print": "Printing",
       "other": "Other data"
     }
+  },
+  "dateTimeFields": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "otherDate": "Other date",
+    "hours": "Hour",
+    "minutes": "Minutes"
   }
 }

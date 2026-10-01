@@ -30,8 +30,6 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
     const min = parseNum(grade.min);
     const max = parseNum(grade.max);
 
-    if (isNaN(myGrade)) return null;
-
     const allValues = [myGrade, avg, median, min, max].filter((v) => !isNaN(v) && v > 0);
     const scale = allValues.every((v) => v <= 10) ? 10 : 20;
     const pct = (val: number) =>
@@ -95,6 +93,9 @@ export function GradePositionSlider({ grade }: { grade: Grade }) {
         const maxRow = placedMarkers.reduce((max, m) => Math.max(max, m.row), 0);
         return { numbersAbove, placedMarkers, maxRow };
     }, [classMarkers, trackW, scale]);
+
+    if (isNaN(myGrade)) return null;
+
     const labelsBottom = TRACK_TOP + TRACK_H + 4 + (4 + maxRow * ROW_H) + 10;
     const SD_TOP = labelsBottom + 6;
     const containerH = SD_TOP + 20;

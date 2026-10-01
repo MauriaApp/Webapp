@@ -7,6 +7,7 @@ import { getFirstName } from "@/lib/api/helper";
 import { fetchImportantMessage } from "@/lib/api/supa";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
+import { useColles, useResolvedPlanning } from "@/lib/hooks/use-colles";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { PullToRefresh } from "@/components/pull-to-refresh";
@@ -75,7 +76,12 @@ export function HomePage() {
 
     const juniaStatus = useJuniaStatus();
 
-    const { current, today, tomorrow } = getHomeUpcoming({ lessons });
+    const colles = useColles();
+    const resolvedLessons = useResolvedPlanning(lessons);
+
+    const { current, today, tomorrow } = getHomeUpcoming({
+        lessons: [...resolvedLessons, ...colles],
+    });
     const [firstName, setFirstName] = useState<string>(t("homePage.welcome"));
 
     useEffect(() => {

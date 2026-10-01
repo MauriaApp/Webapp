@@ -190,3 +190,24 @@
 .fc-timegrid-col-events {
     margin: 0 !important;
 }
+
+/* Long press preview on touch (see PlanningCalendar): invisible at rest,
+   fades in over the long press delay, vanishes instantly when released. */
+.planning-press-ghost {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    box-sizing: border-box;
+    padding: 0 2px 1px;
+    background-clip: content-box;
+    background-color: var(--planning-event-default-solid);
+    border-radius: 4px;
+    opacity: 0;
+    transition: none;
+}
+
+.planning-press-ghost.is-pressing {
+    opacity: 0.35;
+    transition-property: opacity;
+    transition-timing-function: linear;
+}

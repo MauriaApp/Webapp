@@ -1,22 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import FrLocale from "@fullcalendar/core/locales/fr";
 import EsLocale from "@fullcalendar/core/locales/es";
-import { ArrowLeft, Search } from "lucide-react";
-import { fetchGrades, fetchPlanning, getSession } from "@/lib/api/aurion";
+import { ArrowLeft, Plus, Search } from "lucide-react";
+import { toast } from "sonner";
+import { fetchPlanning } from "@/lib/api/aurion";
 import { useQuery } from "@tanstack/react-query";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import "./planning.css";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { PlanningCalendar } from "@/components/planning-calendar";
-import { Grade, Lesson } from "@/types/aurion";
+import { Lesson } from "@/types/aurion";
 import { parseFromTitle } from "@/lib/utils/home";
-import { detectStudentClass } from "@/lib/utils/grades";
-import { DrawerEventTask } from "@/components/drawer-event-task";
-import { getUserEventsFromLocalStorage } from "@/lib/utils/planning";
-import { getColleLessons } from "@/lib/utils/colles";
+import {
+    DrawerUserEvent,
+    UserEventSlot,
+} from "@/components/drawer-user-event";
+import {
+    getUserEventsFromLocalStorage,
+    removeUserEventFromLocalStorage,
+    saveUserEventToLocalStorage,
+} from "@/lib/utils/planning";
+import { UserEvent } from "@/types/data";
 import { PreparedLesson } from "@/types/home";
 import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { FreeRoomsView } from "./free-rooms-view";
@@ -26,44 +33,33 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
+import { useColles, useResolvedPlanning } from "@/lib/hooks/use-colles";
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
     const { t, i18n } = useTranslation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [eventInfo, setEventInfo] = useState<PreparedLesson | null>(null);
-    const [userEvents, setUserEvents] = useState<Lesson[]>(
-        getUserEventsFromLocalStorage()
+    const [userEvents, setUserEvents] = useState<UserEvent[]>(
+        getUserEventsFromLocalStorage
+    );
+    const [formOpen, setFormOpen] = useState(false);
+    const [editedEvent, setEditedEvent] = useState<UserEvent | null>(null);
+    const [formSlot, setFormSlot] = useState<UserEventSlot | null>(null);
+    const editTimeoutRef = useRef<number | null>(null);
+
+    useEffect(
+        () => () => {
+            if (editTimeoutRef.current !== null) {
+                window.clearTimeout(editTimeoutRef.current);
+            }
+        },
+        []
     );
     const [view, setView] = useState<"calendar" | "freeRooms">("calendar");
     const { isWarming } = useAurionWarm();
 
-    // Whether the student is CPG1/CPG2 is only known for sure from their
-    // Aurion grade codes (detectStudentClass) — this same query backs the
-    // grades page, so it's usually already cached. It gates how loosely the
-    // server is allowed to match khôlles by name (see getColleLessons).
-    const { data: grades = [] } = useQuery<Grade[]>({
-        queryKey: ["grades"],
-        queryFn: async () => {
-            const res = await fetchGrades();
-            if (!res?.success) throw new Error("Failed to fetch grades");
-            return res.data ?? [];
-        },
-        enabled: !isWarming,
-        staleTime: 1000 * 60 * 5,
-        gcTime: 1000 * 60 * 60 * 24,
-    });
-    const confirmedCpg = detectStudentClass(grades) !== null;
-
-    // Classes whose colles schedule is known (MP2I, MPSI, PSI and MPI) get
-    // theirs laid over the Aurion planning. The class/group lookup is a
-    // server call (API-v2 resolves it from the email, roster stays there).
-    const { data: colles = [] } = useQuery<Lesson[]>({
-        queryKey: ["colles", getSession()?.email, i18n.language, confirmedCpg],
-        queryFn: () => getColleLessons(getSession()?.email, confirmedCpg),
-        staleTime: 1000 * 60 * 60 * 24, // a student's class doesn't change daily
-        gcTime: 1000 * 60 * 60 * 24,
-    });
+    const colles = useColles();
 
     useEffect(() => {
         const handler = (lng: string) => {
@@ -102,10 +98,62 @@ export function PlanningPage() {
         placeholderData: (previousData) => previousData,
     });
 
+    const resolvedLessons = useResolvedPlanning(lessons);
+
     const isBusy = isWarming || isLoading || isFetching;
 
     const handleRefresh = () => {
         void refetch();
+    };
+
+    const refreshUserEvents = useCallback(() => {
+        setUserEvents(getUserEventsFromLocalStorage());
+    }, []);
+
+    const openEventForm = (slot: UserEventSlot | null) => {
+        setEditedEvent(null);
+        setFormSlot(slot);
+        setFormOpen(true);
+    };
+
+    // Read from the shown event rather than looked up, so the actions stay
+    // put while the drawer closes on an event that was just deleted.
+    const isUserEventShown = eventInfo?.details.className === "est-perso";
+    const selectedUserEvent = eventInfo
+        ? userEvents.find((ue) => ue.id === eventInfo.details.id)
+        : undefined;
+
+    const handleEditUserEvent = () => {
+        if (!selectedUserEvent) return;
+        setEditedEvent(selectedUserEvent);
+        setFormSlot(null);
+        setDrawerOpen(false);
+        // Editing swaps the detail drawer for the form: the form only opens
+        // once the detail drawer is done closing, two drawers can't overlap.
+        // Timed on vaul's own transition, its onAnimationEnd only fires for
+        // drags and outside clicks, never for a close driven by `open`.
+        editTimeoutRef.current = window.setTimeout(() => {
+            editTimeoutRef.current = null;
+            setFormOpen(true);
+        }, 500);
+    };
+
+    const handleDeleteUserEvent = () => {
+        if (!selectedUserEvent) return;
+        const deleted = selectedUserEvent;
+        removeUserEventFromLocalStorage({ userEventId: deleted.id });
+        refreshUserEvents();
+        setDrawerOpen(false);
+        toast.success(t("schedulePage.userEvents.deleted"), {
+            duration: 5000,
+            action: {
+                label: t("schedulePage.userEvents.undo"),
+                onClick: () => {
+                    saveUserEventToLocalStorage({ userEvent: deleted });
+                    refreshUserEvents();
+                },
+            },
+        });
     };
 
     const handleExport = () => {
@@ -132,14 +180,26 @@ export function PlanningPage() {
                         )}
                     </h2>
                     {view === "calendar" ? (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setView("freeRooms")}
-                        >
-                            <Search className="h-4 w-4" />
-                            {t("schedulePage.freeRooms.button")}
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setView("freeRooms")}
+                            >
+                                <Search className="h-4 w-4" />
+                                {t("schedulePage.freeRooms.button")}
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="w-9 px-0"
+                                onClick={() => openEventForm(null)}
+                                aria-label={t(
+                                    "schedulePage.userEvents.addTitle"
+                                )}
+                            >
+                                <Plus className="h-5 w-5" />
+                            </Button>
+                        </div>
                     ) : (
                         <Button
                             variant="outline"
@@ -159,8 +219,41 @@ export function PlanningPage() {
                     >
                         <PlanningCalendar
                             ref={calendarRef}
-                            eventSources={[lessons, userEvents, colles]}
+                            eventSources={[resolvedLessons, userEvents, colles]}
+                            onSelect={(info) => {
+                                info.view.calendar.unselect();
+                                // A long press picks a single 30 min slot:
+                                // an hour is the likelier intent.
+                                const end =
+                                    info.end.getTime() - info.start.getTime() <=
+                                    30 * 60 * 1000
+                                        ? new Date(
+                                              info.start.getTime() +
+                                                  60 * 60 * 1000
+                                          )
+                                        : info.end;
+                                openEventForm({ start: info.start, end });
+                            }}
                             onEventClick={(info) => {
+                                const userEvent = userEvents.find(
+                                    (ue) => ue.id === info.event.id
+                                );
+                                if (userEvent) {
+                                    setEventInfo({
+                                        courseTitle: userEvent.title,
+                                        location: userEvent.location ?? "",
+                                        type: t(
+                                            "schedulePage.userEvents.type"
+                                        ),
+                                        teacher: "",
+                                        notes: userEvent.notes,
+                                        time: "",
+                                        details: userEvent,
+                                    });
+                                    setDrawerOpen(true);
+                                    return;
+                                }
+
                                 const event = info.event.toJSON();
 
                                 const {
@@ -210,12 +303,15 @@ export function PlanningPage() {
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
                 eventInfo={eventInfo}
+                onEdit={isUserEventShown ? handleEditUserEvent : undefined}
+                onDelete={isUserEventShown ? handleDeleteUserEvent : undefined}
             />
-            <DrawerEventTask
-                type="event"
-                onClose={() => {
-                    setUserEvents(getUserEventsFromLocalStorage());
-                }}
+            <DrawerUserEvent
+                open={formOpen}
+                onOpenChange={setFormOpen}
+                userEvent={editedEvent}
+                slot={formSlot}
+                onSaved={refreshUserEvents}
             />
         </PullToRefresh>
     );

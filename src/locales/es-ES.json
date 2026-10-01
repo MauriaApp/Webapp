@@ -250,10 +250,33 @@
       "error": "No se pudo obtener la disponibilidad de las salas.",
       "statusFree": "Libre",
       "statusBusy": "Ocupada",
+      "statusClosed": "Cerrada",
+      "buildingClosed": "Cerrado",
       "loading": "Cargando salas…",
       "updatedAt": "Actualizado a las {{time}}",
       "empty": "Ningún edificio disponible por el momento.",
       "untilPrefix": "hasta las"
+    },
+    "userEvents": {
+      "addTitle": "Añadir un evento",
+      "editTitle": "Editar el evento",
+      "hint": "Consejo: mantén pulsada una franja del horario para crear un evento en ella.",
+      "title": "Título",
+      "titlePlaceholder": "Ej.: Reunión de la asociación",
+      "location": "Lugar",
+      "optional": "Opcional",
+      "date": "Fecha",
+      "start": "Inicio",
+      "end": "Fin",
+      "endBeforeStart": "La hora de fin debe ser posterior a la de inicio.",
+      "notes": "Notas",
+      "create": "Crear el evento",
+      "save": "Guardar",
+      "added": "Evento añadido",
+      "updated": "Evento modificado",
+      "deleted": "Evento eliminado",
+      "undo": "Deshacer",
+      "type": "Evento personal"
     }
   },
   "gradesPage": {
@@ -487,21 +510,27 @@
   },
   "agendaPage": {
     "title": "Mi agenda",
-    "notifications": "Se enviará una notificación 24h antes y 1h antes de cada tarea.",
     "noTasks": "No hay tareas.",
     "noTaskPlaceholder": "No se ha añadido ninguna tarea por el momento.",
     "addTask": "Añadir tarea",
-    "taskTitle": "Título",
-    "taskDescription": "Introduce el título",
-    "date": "Fecha",
-    "hour": "Hora",
-    "createTaskBtn": "Crear tarea",
-    "markTaskDone": "Marcar como completada",
-    "undoTaskCompletion": "Deshacer la finalización",
     "editTaskTitle": "Editar tarea",
-    "updateTaskBtn": "Actualizar tarea",
-    "taskUpdated": "Tarea actualizada",
-    "taskUpdatedDescription": "Los cambios se han guardado."
+    "taskTitle": "Título",
+    "taskTitlePlaceholder": "Ej.: Entregar la práctica de física",
+    "dueDate": "Fecha límite",
+    "dueTime": "Hora",
+    "nextLesson": "Próxima clase de {{course}}",
+    "notes": "Notas",
+    "optional": "Opcional",
+    "createTaskBtn": "Crear tarea",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "markTaskDone": "Marcar como completada",
+    "overdue": "Atrasadas",
+    "taskAdded": "Tarea añadida",
+    "taskUpdated": "Tarea modificada",
+    "taskDone": "Tarea hecha",
+    "taskDeleted": "Tarea eliminada",
+    "undo": "Deshacer"
   },
   "associationsPage": {
     "search": "Buscar una asociación",
@@ -532,7 +561,10 @@
     "duration": "Duración",
     "technicalDetails": "Detalles técnicos",
     "formerTitle": "Título completo",
-    "allDay": "Todo el día"
+    "allDay": "Todo el día",
+    "notes": "Notas",
+    "edit": "Editar",
+    "delete": "Eliminar"
   },
   "update": {
     "somethingNew": "¡Hay novedades en Mauria!",
@@ -638,5 +670,12 @@
       "print": "Impresiones",
       "other": "Otros datos"
     }
+  },
+  "dateTimeFields": {
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "otherDate": "Otra fecha",
+    "hours": "Hora",
+    "minutes": "Minutos"
   }
 }

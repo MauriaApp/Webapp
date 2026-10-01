@@ -3,47 +3,34 @@ import { getFromStorage, saveToStorage } from "./storage";
 
 type StoredTask = Omit<TaskData, "date"> & { date: string };
 
+const readTasks = () =>
+    JSON.parse(getFromStorage("tasks") ?? "[]") as StoredTask[];
+
+const writeTasks = (tasks: StoredTask[]) =>
+    saveToStorage("tasks", JSON.stringify(tasks));
+
+/** Add the task, or replace the stored one carrying the same id. */
 export function saveTaskToLocalStorage({ task }: { task: TaskData }) {
-    const existingTasks = JSON.parse(
-        getFromStorage("tasks") ?? "[]"
-    ) as StoredTask[];
-    existingTasks.push({
+    const stored: StoredTask = {
         ...task,
         date: new Date(task.date).toISOString(),
-    });
-    saveToStorage("tasks", JSON.stringify(existingTasks));
+    };
+    const existingTasks = readTasks();
+    const index = existingTasks.findIndex((t) => t.id === task.id);
+    if (index === -1) {
+        existingTasks.push(stored);
+    } else {
+        existingTasks[index] = stored;
+    }
+    writeTasks(existingTasks);
 }
 
 export function getTasksFromLocalStorage(): TaskData[] {
-    const tasks = JSON.parse(getFromStorage("tasks") ?? "[]") as StoredTask[];
-    return tasks.map((task) => ({
-        ...task,
-        date: new Date(task.date),
-    }));
+    return readTasks()
+        .map((task) => ({ ...task, date: new Date(task.date) }))
+        .sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 export function removeTaskFromLocalStorage({ taskId }: { taskId: string }) {
-    const existingTasks = JSON.parse(
-        getFromStorage("tasks") ?? "[]"
-    ) as StoredTask[];
-    const updatedTasks = existingTasks.filter((task) => task.id !== taskId);
-    saveToStorage("tasks", JSON.stringify(updatedTasks));
-}
-
-export function updateTaskInLocalStorage({ task }: { task: TaskData }) {
-    const existingTasks = JSON.parse(
-        getFromStorage("tasks") ?? "[]"
-    ) as StoredTask[];
-
-    const updatedTasks = existingTasks.map((storedTask) =>
-        storedTask.id === task.id
-            ? {
-                  ...storedTask,
-                  task: task.task,
-                  date: new Date(task.date).toISOString(),
-              }
-            : storedTask
-    );
-
-    saveToStorage("tasks", JSON.stringify(updatedTasks));
+    writeTasks(readTasks().filter((task) => task.id !== taskId));
 }
