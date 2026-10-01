@@ -9,6 +9,8 @@ export const GRADE_SCALE = 20;
 export type GradeRarity = {
     id: string;
     labelKey: string;
+    /** Same name without the "Quality" word, for narrow spots */
+    shortLabelKey: string;
     /** Inclusive lower bound on the /20 scale */
     min: number;
     color: string;
@@ -19,6 +21,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "consumer",
         labelKey: "gradesPage.rarity.consumer",
+        shortLabelKey: "gradesPage.rarityShort.consumer",
         min: 0,
         color: "#b0c3d9",
         glow: "rgba(176, 195, 217, 0.55)",
@@ -26,6 +29,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "industrial",
         labelKey: "gradesPage.rarity.industrial",
+        shortLabelKey: "gradesPage.rarityShort.industrial",
         min: 8,
         color: "#5e98d9",
         glow: "rgba(94, 152, 217, 0.55)",
@@ -33,6 +37,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "milspec",
         labelKey: "gradesPage.rarity.milspec",
+        shortLabelKey: "gradesPage.rarityShort.milspec",
         min: 10,
         color: "#4b69ff",
         glow: "rgba(75, 105, 255, 0.6)",
@@ -40,6 +45,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "restricted",
         labelKey: "gradesPage.rarity.restricted",
+        shortLabelKey: "gradesPage.rarityShort.restricted",
         min: 12,
         color: "#8847ff",
         glow: "rgba(136, 71, 255, 0.6)",
@@ -47,6 +53,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "classified",
         labelKey: "gradesPage.rarity.classified",
+        shortLabelKey: "gradesPage.rarityShort.classified",
         min: 14,
         color: "#d32ce6",
         glow: "rgba(211, 44, 230, 0.6)",
@@ -54,6 +61,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "covert",
         labelKey: "gradesPage.rarity.covert",
+        shortLabelKey: "gradesPage.rarityShort.covert",
         min: 16,
         color: "#eb4b4b",
         glow: "rgba(235, 75, 75, 0.65)",
@@ -61,6 +69,7 @@ export const GRADE_RARITIES: GradeRarity[] = [
     {
         id: "exceedingly-rare",
         labelKey: "gradesPage.rarity.exceedinglyRare",
+        shortLabelKey: "gradesPage.rarityShort.exceedinglyRare",
         min: 18,
         color: "#e4ae39",
         glow: "rgba(228, 174, 57, 0.75)",

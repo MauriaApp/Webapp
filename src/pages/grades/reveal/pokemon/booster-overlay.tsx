@@ -1,12 +1,27 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type CSSProperties,
+} from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+    animate,
+    AnimatePresence,
+    motion,
+    useMotionValue,
+    useReducedMotion,
+    useTransform,
+} from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import type { Grade } from "@/types/aurion";
 import { Button } from "@/components/ui/button";
 import {
     buildBoosterCard,
+    cardTitle,
     CARD_TREATMENTS,
     isFullArt,
     mulberry32,
@@ -30,7 +45,8 @@ const shuffle = <T,>(items: T[], random: () => number): T[] => {
 /** Tilt + glare, driven straight through the DOM to stay smooth on mobile.
     The card keeps tracking the pointer even outside its box, with the effect
     damping to near-zero a short distance away. On touch devices the gyroscope
-    drives the tilt instead of the pointer. */
+    drives the tilt instead of the pointer. Until the first real input, the
+    card sways on its own so the holo is lit from the moment it lands. */
 function useCardTilt(disabled: boolean) {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -43,14 +59,11 @@ function useCardTilt(disabled: boolean) {
                 Math.sqrt((px - 50) ** 2 + (py - 50) ** 2) / 50,
                 1
             );
-            const bgX = 37 + ((px / 100) * (63 - 37));
-            const bgY = 33 + ((py / 100) * (67 - 33));
+            const bgX = 37 + (px / 100) * (63 - 37);
+            const bgY = 33 + (py / 100) * (67 - 33);
             node.style.setProperty("--pointer-x", `${px}%`);
             node.style.setProperty("--pointer-y", `${py}%`);
-            node.style.setProperty(
-                "--pointer-from-center",
-                String(fromCenter)
-            );
+            node.style.setProperty("--pointer-from-center", String(fromCenter));
             node.style.setProperty("--pointer-from-top", String(py / 100));
             node.style.setProperty("--pointer-from-left", String(px / 100));
             node.style.setProperty("--background-x", `${bgX}%`);
@@ -73,7 +86,33 @@ function useCardTilt(disabled: boolean) {
             node.style.transform = "rotateY(0deg) rotateX(0deg)";
         };
 
+        // Idle sway: a slow figure-eight, stopped by the first real input
+        const IDLE_STRENGTH = 0.8;
+        let idling = false;
+        let idleFrame = 0;
+        const idleLoop = (now: number) => {
+            const time = now / 1000;
+            apply(
+                50 + 28 * Math.sin(time * 0.9),
+                50 + 22 * Math.sin(time * 1.4 + 1),
+                IDLE_STRENGTH
+            );
+            idleFrame = requestAnimationFrame(idleLoop);
+        };
+        const stopIdle = () => {
+            idling = false;
+            cancelAnimationFrame(idleFrame);
+        };
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            apply(35, 30, IDLE_STRENGTH);
+        } else {
+            idling = true;
+            idleFrame = requestAnimationFrame(idleLoop);
+        }
+
         const onMove = (event: PointerEvent) => {
+            if (idling) stopIdle();
             const rect = node.getBoundingClientRect();
             const relX = (event.clientX - rect.left) / rect.width;
             const relY = (event.clientY - rect.top) / rect.height;
@@ -116,6 +155,11 @@ function useCardTilt(disabled: boolean) {
                 -LIMIT_B,
                 Math.min(LIMIT_B, event.beta - baseBeta)
             );
+            // Sensor noise while the phone lies still must not end the sway
+            if (idling) {
+                if (Math.abs(g) < 2 && Math.abs(b) < 2) return;
+                stopIdle();
+            }
             const px = 50 + (g / LIMIT_G) * 50;
             const py = 50 + (b / LIMIT_B) * 50;
             apply(px, py, 1);
@@ -150,6 +194,7 @@ function useCardTilt(disabled: boolean) {
         return () => {
             cleanedUp = true;
             window.clearTimeout(fallbackTimer);
+            stopIdle();
             removePointer();
             removeGyro();
             reset();
@@ -173,215 +218,677 @@ function requestGyroPermission() {
     }
 }
 
+const vibrate = (pattern: number | number[]) => {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate(pattern);
+    }
+};
+
+/** Where the strip is torn off, in % of the pack height */
+const STRIP = 13;
+const TEAR_TEETH = 22;
+const TEAR_DEPTH = 0.9;
+
+/** Crimped top and bottom seals, plus the two V notches on the tear line */
+const PACK_OUTLINE = (() => {
+    const teeth = 28;
+    const depth = 1.1;
+    const top: string[] = [];
+    const bottom: string[] = [];
+    for (let k = 0; k <= teeth; k++) {
+        const x = (k / teeth) * 100;
+        const y = k % 2 === 1 ? depth : 0;
+        top.push(`${x}% ${y}%`);
+        bottom.unshift(`${x}% ${100 - y}%`);
+    }
+    return `polygon(${[
+        ...top,
+        `100% ${STRIP - 1.3}%`,
+        `96% ${STRIP}%`,
+        `100% ${STRIP + 1.3}%`,
+        ...bottom,
+        `0% ${STRIP + 1.3}%`,
+        `4% ${STRIP}%`,
+        `0% ${STRIP - 1.3}%`,
+    ].join(", ")})`;
+})();
+
+/**
+ * Clip paths for the pack torn `progress` (0-1) of the way, starting from the
+ * left edge (`direction` 1) or the right one (-1). The flap and the body share
+ * the same jagged points so the two edges mesh.
+ */
+const tearGeometry = (progress: number, direction: number) => {
+    const reach = progress * 100;
+    const x = (u: number) => (direction > 0 ? u : 100 - u);
+    const step = 100 / TEAR_TEETH;
+    const jagged: string[] = [];
+    for (let k = 0; k * step < reach; k++) {
+        const y = STRIP + (k % 2 === 0 ? -TEAR_DEPTH : TEAR_DEPTH);
+        jagged.push(`${x(k * step)}% ${y}%`);
+    }
+    jagged.push(`${x(reach)}% ${STRIP}%`);
+    const near = x(0);
+    const far = x(100);
+    const tip = x(reach);
+
+    return {
+        body: `polygon(${[
+            ...jagged,
+            `${far}% ${STRIP}%`,
+            `${far}% 100%`,
+            `${near}% 100%`,
+        ].join(", ")})`,
+        // Overlaps the body a hair so no seam shows along the intact part
+        attached: `polygon(${tip}% 0%, ${far}% 0%, ${far}% ${
+            STRIP + 0.4
+        }%, ${tip}% ${STRIP + 0.4}%)`,
+        flap: `polygon(${[
+            `${near}% 0%`,
+            `${tip}% 0%`,
+            ...[...jagged].reverse(),
+        ].join(", ")})`,
+        openingLeft: `${direction > 0 ? 0 : 100 - reach}%`,
+        openingWidth: `${reach}%`,
+    };
+};
+
+/** Four-point sparkle printed on the pack art */
+const STAR =
+    "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)";
+
+const PACK_STARS = [
+    { left: 14, top: 14, size: 1.1, delay: 0 },
+    { left: 78, top: 20, size: 0.8, delay: 0.7 },
+    { left: 82, top: 72, size: 1.2, delay: 1.3 },
+    { left: 18, top: 78, size: 0.7, delay: 1.9 },
+];
+
+/** Pokémon-style logo lettering: yellow fill, thick blue outline */
+const LOGO_SHADOW = [
+    "0.07em 0 0 #2a75bb",
+    "-0.07em 0 0 #2a75bb",
+    "0 0.07em 0 #2a75bb",
+    "0 -0.07em 0 #2a75bb",
+    "0.05em 0.05em 0 #2a75bb",
+    "-0.05em -0.05em 0 #2a75bb",
+    "0.05em -0.05em 0 #2a75bb",
+    "-0.05em 0.05em 0 #2a75bb",
+    "0 0.16em 0 #1d3f72",
+    "0 0.3em 0.4em rgba(0,0,0,0.55)",
+].join(", ");
+
+const CRIMP =
+    "repeating-linear-gradient(90deg, rgba(255,255,255,0.35) 0 0.12em, rgba(0,0,0,0.22) 0.12em 0.3em), linear-gradient(180deg, #f4f4f5, #a1a1aa 55%, #52525b)";
+
+/**
+ * The printed foil. Drawn three times (body, intact strip, torn flap), so the
+ * strip copies skip everything below the tear line.
+ */
+function PackFace({
+    accent,
+    dark,
+    count,
+    stripOnly,
+}: {
+    accent: string;
+    dark: string;
+    count: number;
+    stripOnly?: boolean;
+}) {
+    const { t } = useTranslation();
+    const reducedMotion = useReducedMotion();
+
+    return (
+        <div
+            className="absolute inset-0 overflow-hidden"
+            style={{
+                clipPath: PACK_OUTLINE,
+                WebkitClipPath: PACK_OUTLINE,
+                background: `radial-gradient(ellipse at 25% 15%, ${accent}, transparent 55%), linear-gradient(160deg, ${accent} 0%, ${dark} 55%, #0b0b14 100%)`,
+            }}
+        >
+            {/* Foil grain and a faint rainbow, plain alpha (no blend modes) */}
+            <span
+                className="absolute inset-0"
+                style={{
+                    backgroundImage:
+                        "repeating-linear-gradient(115deg, rgba(255,255,255,0.07) 0 0.35em, transparent 0.35em 0.7em), linear-gradient(125deg, transparent 20%, rgba(252,211,77,0.16) 35%, rgba(103,232,249,0.16) 50%, rgba(192,132,252,0.16) 65%, transparent 80%)",
+                }}
+            />
+            {/* Pillow shading: the pack bulges in the middle */}
+            <span
+                className="absolute inset-0"
+                style={{
+                    background:
+                        "linear-gradient(90deg, rgba(0,0,0,0.4), transparent 12%, rgba(255,255,255,0.08) 50%, transparent 88%, rgba(0,0,0,0.4))",
+                }}
+            />
+
+            {/* Top seal, then the tear line */}
+            <span
+                className="absolute inset-x-0 top-0 h-[7%]"
+                style={{
+                    background: CRIMP,
+                    boxShadow: "0 0.1em 0.3em rgba(0,0,0,0.45)",
+                }}
+            />
+            <span className="absolute inset-x-0 top-[8%] text-center font-mono text-[0.8em] font-bold uppercase tracking-[0.3em] text-white/75">
+                {t("gradesPage.booster.tearHere")}
+            </span>
+            <span
+                className="absolute inset-x-[6%] border-t-[0.12em] border-dashed border-white/60"
+                style={{ top: `${STRIP}%` }}
+            />
+
+            {!stripOnly && (
+                <>
+                    {/* Logo */}
+                    <div className="absolute inset-x-0 top-[16.5%] flex flex-col items-center gap-[0.2em]">
+                        <span
+                            className="whitespace-nowrap text-[1.7em] font-black italic leading-none text-[#ffcb05]"
+                            style={{
+                                textShadow: LOGO_SHADOW,
+                                transform: "rotate(-4deg)",
+                            }}
+                        >
+                            {t("gradesPage.booster.packName")}
+                        </span>
+                    </div>
+
+                    {/* Illustration window */}
+                    <div
+                        className="absolute inset-x-[8%] top-[29%] bottom-[27%] overflow-hidden rounded-[0.8em]"
+                        style={{
+                            background: `radial-gradient(circle at 50% 45%, #fff 0%, ${accent} 32%, ${dark} 78%)`,
+                            boxShadow:
+                                "inset 0 0 0 0.14em rgba(255,255,255,0.55), inset 0 0 1.4em rgba(0,0,0,0.55)",
+                        }}
+                    >
+                        <motion.span
+                            className="absolute left-1/2 top-1/2 aspect-square w-[220%]"
+                            style={{
+                                x: "-50%",
+                                y: "-50%",
+                                background:
+                                    "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.2) 0deg 5deg, transparent 5deg 15deg)",
+                            }}
+                            animate={
+                                reducedMotion ? undefined : { rotate: 360 }
+                            }
+                            transition={{
+                                duration: 40,
+                                repeat: Infinity,
+                                ease: "linear",
+                            }}
+                        />
+                        <span
+                            className="absolute left-1/2 top-1/2 aspect-square w-[52%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full"
+                            style={{
+                                background:
+                                    "linear-gradient(180deg, #ef4444 0 46%, #09090b 46% 54%, #f8fafc 54%)",
+                                boxShadow: `0 0 0 0.2em #09090b, 0 0 2.2em ${accent}, 0 0 4em #ffffff88, inset -0.5em -0.4em 0.8em rgba(0,0,0,0.35)`,
+                            }}
+                        >
+                            <span className="absolute left-1/2 top-1/2 size-[30%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_0_0.2em_#09090b]" />
+                        </span>
+                        {PACK_STARS.map((star, index) => (
+                            <motion.span
+                                key={index}
+                                className="absolute bg-white"
+                                style={{
+                                    left: `${star.left}%`,
+                                    top: `${star.top}%`,
+                                    width: `${star.size}em`,
+                                    height: `${star.size}em`,
+                                    clipPath: STAR,
+                                    WebkitClipPath: STAR,
+                                }}
+                                animate={
+                                    reducedMotion
+                                        ? undefined
+                                        : {
+                                              opacity: [0.2, 1, 0.2],
+                                              scale: [0.6, 1, 0.6],
+                                          }
+                                }
+                                transition={{
+                                    duration: 2.4,
+                                    delay: star.delay,
+                                    repeat: Infinity,
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Set ribbon and card count */}
+                    <div className="absolute inset-x-0 top-[74%] flex flex-col items-center gap-[0.5em]">
+                        <span className="w-full border-y border-white/20 bg-black/45 py-[0.25em] text-center font-mono text-[0.95em] font-bold uppercase tracking-[0.25em] text-white">
+                            {t("gradesPage.booster.setName")}
+                        </span>
+                        <span className="rounded-full bg-[#ffcb05] px-[0.8em] py-[0.1em] text-[1em] font-black uppercase tracking-wider text-zinc-950 shadow-[0_0.15em_0.4em_rgba(0,0,0,0.5)]">
+                            {t("gradesPage.booster.remainingShort", { count })}
+                        </span>
+                    </div>
+
+                    {/* Bottom seal */}
+                    <span
+                        className="absolute inset-x-0 bottom-0 h-[7%]"
+                        style={{
+                            background: CRIMP,
+                            boxShadow: "0 -0.1em 0.3em rgba(0,0,0,0.45)",
+                        }}
+                    />
+                </>
+            )}
+
+            <span className="poke-pack-sheen absolute inset-0" />
+            {/* Glare following the tilt, plain alpha (no blend modes) */}
+            <span
+                className="absolute inset-0"
+                style={{
+                    background:
+                        "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255,255,255,0.4), rgba(255,255,255,0.08) 35%, transparent 60%)",
+                    opacity: "var(--card-opacity, 0)",
+                }}
+            />
+        </div>
+    );
+}
+
+/**
+ * The sealed pack. Slide a finger along the dotted line, from either side, to
+ * rip the strip off bit by bit; the tear never heals between two swipes. A
+ * plain tap tears it in one go.
+ */
 function BoosterPack({
     accent,
     dark,
+    count,
     tearing,
     onOpen,
 }: {
     accent: string;
     dark: string;
+    count: number;
     tearing: boolean;
     onOpen: () => void;
 }) {
     const { t } = useTranslation();
     const reducedMotion = useReducedMotion();
-    const foil = `linear-gradient(155deg, ${accent} 0%, ${dark} 45%, #09090b 100%)`;
-    const glow = accent;
+    const width = Math.min(230, Math.round(window.innerWidth * 0.6));
 
-    // Sparkle burst from the tear point, reused across renders.
-    const sparkles = useMemo(
-        () =>
-            Array.from({ length: 7 }, (_, index) => ({
-                angle: (index / 7) * Math.PI * 2 + Math.random() * 0.4,
-                distance: 40 + Math.random() * 70,
-                delay: 0.2 + Math.random() * 0.15,
-                size: 3 + Math.random() * 4,
-            })),
-        []
+    const progress = useMotionValue(0);
+    const direction = useMotionValue(1);
+    const [started, setStarted] = useState(false);
+    // Flattened while tearing, so the pack holds still under the finger
+    const tilt = useCardTilt(started || tearing);
+    const directionLocked = useRef(false);
+    const panned = useRef(false);
+    const opened = useRef(false);
+    const lastTick = useRef(0);
+
+    const tear = useTransform([progress, direction], ([p, d]: number[]) =>
+        tearGeometry(p, d)
     );
+    const bodyClip = useTransform(tear, (geometry) => geometry.body);
+    const attachedClip = useTransform(tear, (geometry) => geometry.attached);
+    const flapClip = useTransform(tear, (geometry) => geometry.flap);
+    const openingLeft = useTransform(tear, (geometry) => geometry.openingLeft);
+    const openingWidth = useTransform(
+        tear,
+        (geometry) => geometry.openingWidth
+    );
+    const openingOpacity = useTransform(progress, [0, 0.05], [0, 1]);
+
+    // The flap hinges on the tip of the tear and curls up as it grows
+    const flapRotate = useTransform(
+        [progress, direction],
+        ([p, d]: number[]) => d * p * 22
+    );
+    const flapOriginX = useTransform(
+        [progress, direction],
+        ([p, d]: number[]) => (d > 0 ? p : 1 - p)
+    );
+    const flapY = useTransform(progress, (p) => p * -6);
+
+    const open = useCallback(() => {
+        if (opened.current) return;
+        opened.current = true;
+        onOpen();
+    }, [onOpen]);
+
+    const tearBy = (amount: number) => {
+        const current = progress.get();
+        const next = Math.min(1, current + amount);
+        if (next <= current) return;
+        progress.set(next);
+        // A short buzz every few millimetres, like foil giving way
+        const tick = Math.floor(next * 14);
+        if (tick !== lastTick.current) {
+            lastTick.current = tick;
+            vibrate(6);
+        }
+        if (next >= 1) open();
+    };
+
+    const tearAll = async () => {
+        if (opened.current) return;
+        directionLocked.current = true;
+        setStarted(true);
+        if (reducedMotion) {
+            progress.set(1);
+            open();
+            return;
+        }
+        await animate(progress, 1, {
+            duration: 0.15 + 0.35 * (1 - progress.get()),
+            ease: "easeIn",
+        });
+        open();
+    };
+
+    const flyDirection = direction.get();
 
     return (
         <motion.div
+            className="relative"
             initial={{ scale: 0.85, opacity: 0, rotate: -3 }}
             animate={
                 tearing
                     ? reducedMotion
                         ? { scale: 0.9, opacity: 0, rotate: 0 }
                         : {
-                              scale: [1, 1.03, 1.05, 1.02, 0.92, 0.86],
-                              opacity: [1, 1, 1, 1, 0.85, 0],
-                              rotate: [
-                                  0,
-                                  -1.5,
-                                  1.5,
-                                  -1,
-                                  0.5,
-                                  -2,
-                              ],
+                              scale: [1, 1.05, 1.08, 0.86],
+                              opacity: [1, 1, 1, 0],
+                              rotate: [0, -1.5, 1, -2],
                           }
                     : { scale: 1, opacity: 1, rotate: 0 }
             }
             transition={{
                 duration: tearing ? 0.85 : 0.45,
-                times: tearing && !reducedMotion
-                    ? [0, 0.25, 0.4, 0.6, 0.8, 1]
-                    : undefined,
+                times: tearing && !reducedMotion ? [0, 0.3, 0.6, 1] : undefined,
                 ease: "easeInOut",
             }}
         >
-            <button
-                type="button"
-                className={`relative flex w-[15rem] max-w-[62vw] flex-col items-center justify-between rounded-[1.2rem] px-4 py-6 text-center active:scale-[0.97] ${
-                    tearing ? "" : "poke-pack-float"
-                }`}
-                style={{
-                    aspectRatio: "63 / 100",
-                    background: foil,
-                    boxShadow:
-                        "0 1.5rem 3rem rgba(0,0,0,0.55), inset 0 0 0 2px rgba(255,255,255,0.18)",
-                    overflow: tearing ? "visible" : "hidden",
-                }}
-                onClick={tearing ? undefined : onOpen}
-            >
-                {/* Foil sweep */}
-                <span className="poke-pack-sheen pointer-events-none absolute inset-0 overflow-hidden rounded-[1.2rem]" />
+            {/* Halo behind the pack */}
+            <span
+                className="pointer-events-none absolute inset-[-12%] rounded-full opacity-40 blur-3xl"
+                style={{ background: accent }}
+            />
 
-                {/* Inner cavity revealed once the strip is torn off */}
-                <motion.span
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2.2rem]"
-                    style={{
-                        background:
-                            "linear-gradient(180deg, #000 0%, rgba(0,0,0,0.6) 70%, transparent)",
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={tearing ? { opacity: [0, 0, 1, 1] } : { opacity: 0 }}
-                    transition={{
-                        duration: 0.85,
-                        times: [0, 0.25, 0.4, 1],
-                        ease: "easeOut",
-                    }}
-                />
+            <div style={{ perspective: 1000 }}>
+                <div
+                    ref={tilt.ref}
+                    className="transition-transform duration-200 ease-out"
+                >
+                    <motion.button
+                        type="button"
+                        aria-label={t("gradesPage.booster.swipeToTear")}
+                        className={`relative block touch-none select-none outline-none ${
+                            started || tearing ? "" : "poke-pack-float"
+                        }`}
+                        style={{
+                            width,
+                            aspectRatio: "63 / 110",
+                            fontSize: width / 20,
+                        }}
+                        disabled={tearing}
+                        onPointerDown={() => {
+                            panned.current = false;
+                        }}
+                        onClick={() => {
+                            // A swipe must not also tear the whole pack on its click
+                            if (panned.current) return;
+                            requestGyroPermission();
+                            tearAll();
+                        }}
+                        onPanStart={() => {
+                            panned.current = true;
+                        }}
+                        onPan={(_, info) => {
+                            if (opened.current) return;
+                            if (!directionLocked.current) {
+                                if (Math.abs(info.offset.x) < 6) return;
+                                directionLocked.current = true;
+                                direction.set(Math.sign(info.offset.x));
+                                setStarted(true);
+                            }
+                            tearBy(
+                                (direction.get() * info.delta.x) /
+                                    (width * 0.85)
+                            );
+                        }}
+                        onPanEnd={() => {
+                            // Pointer up is a user gesture: iOS lets us ask for the
+                            // gyroscope here, before any card mounts
+                            requestGyroPermission();
+                            if (!opened.current && progress.get() >= 0.8)
+                                tearAll();
+                        }}
+                    >
+                        {/* Invisible margin on both sides: a swipe can start a
+                    little off the pack, fingers are not that precise */}
+                        <span className="absolute inset-y-0 -inset-x-10" />
 
-                {/* The strip that gets ripped off the top, peeling like foil */}
-                <motion.span
-                    className="pointer-events-none absolute inset-x-0 top-0 h-[2.2rem] rounded-t-[1.2rem] border-b-2 border-dashed border-white/35"
-                    style={{ background: foil, transformOrigin: "top center" }}
-                    animate={
-                        tearing
-                            ? {
-                                  y: [0, -12, -120, -260],
-                                  rotate: [0, -4, -12, -18],
-                                  skewX: [0, -6, -12, -18],
-                                  opacity: [1, 1, 0.7, 0],
-                              }
-                            : { y: 0, rotate: 0, skewX: 0, opacity: 1 }
-                    }
-                    transition={{
-                        duration: 0.85,
-                        times: [0, 0.2, 0.6, 1],
-                        ease: ["easeInOut", "easeIn", "easeIn"],
-                    }}
-                />
+                        {/* Ground shadow */}
+                        <span className="pointer-events-none absolute inset-x-[8%] -bottom-[4%] h-[6%] rounded-full bg-black/60 blur-md" />
 
-                {/* Cone of light escaping the torn pack */}
-                <motion.span
-                    className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2"
-                    style={{
-                        width: "120%",
-                        height: "14rem",
-                        background: `radial-gradient(ellipse 50% 70% at 50% 0%, ${glow}cc, ${glow}55 35%, transparent 70%)`,
-                        filter: "blur(2px)",
-                        transformOrigin: "bottom center",
-                        mixBlendMode: "screen",
-                    }}
-                    initial={{ scaleY: 0, opacity: 0 }}
-                    animate={
-                        tearing
-                            ? {
-                                  scaleY: [0, 1, 1.15, 0.9],
-                                  opacity: [0, 1, 0.7, 0],
-                              }
-                            : { scaleY: 0, opacity: 0 }
-                    }
-                    transition={{
-                        duration: 0.85,
-                        times: [0, 0.3, 0.55, 1],
-                        ease: "easeOut",
-                    }}
-                />
-
-                {/* Sparkle burst from the tear point */}
-                {tearing &&
-                    !reducedMotion &&
-                    sparkles.map((sparkle, index) => (
-                        <motion.span
-                            key={index}
-                            className="pointer-events-none absolute left-1/2 top-[0.4rem] rounded-full bg-white"
+                        <motion.div
+                            className="absolute inset-0"
                             style={{
-                                width: sparkle.size,
-                                height: sparkle.size,
-                                boxShadow: `0 0 6px 2px ${glow}`,
+                                clipPath: bodyClip,
+                                WebkitClipPath: bodyClip,
                             }}
-                            initial={{ x: 0, y: 0, opacity: 0, scale: 0.3 }}
-                            animate={{
-                                x: Math.cos(sparkle.angle) * sparkle.distance,
-                                y: -Math.abs(
-                                    Math.sin(sparkle.angle) * sparkle.distance
-                                ),
-                                opacity: [0, 1, 1, 0],
-                                scale: [0.3, 1, 0.8, 0],
+                        >
+                            <PackFace
+                                accent={accent}
+                                dark={dark}
+                                count={count}
+                            />
+                        </motion.div>
+
+                        {/* Light leaking out of the opening */}
+                        <motion.span
+                            className="pointer-events-none absolute h-[3em] -translate-y-full"
+                            style={{
+                                top: `${STRIP}%`,
+                                left: openingLeft,
+                                width: openingWidth,
+                                opacity: openingOpacity,
+                                background: `linear-gradient(0deg, ${accent}cc, ${accent}33 50%, transparent)`,
                             }}
+                        />
+
+                        <motion.div
+                            className="pointer-events-none absolute inset-0"
+                            style={{
+                                clipPath: attachedClip,
+                                WebkitClipPath: attachedClip,
+                            }}
+                        >
+                            <PackFace
+                                accent={accent}
+                                dark={dark}
+                                count={count}
+                                stripOnly
+                            />
+                        </motion.div>
+
+                        {/* The torn flap, flung away once the strip comes off */}
+                        <motion.div
+                            className="pointer-events-none absolute inset-0"
+                            animate={
+                                tearing && !reducedMotion
+                                    ? {
+                                          x: flyDirection * 90,
+                                          y: -240,
+                                          rotate: flyDirection * 40,
+                                          opacity: 0,
+                                      }
+                                    : undefined
+                            }
+                            transition={{ duration: 0.55, ease: "easeIn" }}
+                        >
+                            <motion.div
+                                className="absolute inset-0"
+                                style={{
+                                    clipPath: flapClip,
+                                    WebkitClipPath: flapClip,
+                                    rotate: flapRotate,
+                                    y: flapY,
+                                    originX: flapOriginX,
+                                    originY: STRIP / 100,
+                                }}
+                            >
+                                <PackFace
+                                    accent={accent}
+                                    dark={dark}
+                                    count={count}
+                                    stripOnly
+                                />
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Bright torn edge */}
+                        <motion.span
+                            className="pointer-events-none absolute h-[2px] -translate-y-1/2 rounded-full bg-white"
+                            style={{
+                                top: `${STRIP}%`,
+                                left: openingLeft,
+                                width: openingWidth,
+                                opacity: openingOpacity,
+                                boxShadow: `0 0 8px 2px ${accent}`,
+                            }}
+                        />
+
+                        {/* Hint: a spark running along the dotted line */}
+                        {!started && !tearing && !reducedMotion && (
+                            <motion.span
+                                className="pointer-events-none absolute h-[0.5em] w-[3em] -translate-y-1/2 rounded-full"
+                                style={{
+                                    top: `${STRIP}%`,
+                                    background:
+                                        "linear-gradient(90deg, transparent, rgba(255,255,255,0.9))",
+                                    boxShadow: `0 0 10px 2px ${accent}`,
+                                }}
+                                initial={{ left: "2%", opacity: 0 }}
+                                animate={{
+                                    left: ["2%", "82%"],
+                                    opacity: [0, 1, 1, 0],
+                                }}
+                                transition={{
+                                    duration: 1.3,
+                                    repeat: Infinity,
+                                    repeatDelay: 0.6,
+                                    ease: "easeInOut",
+                                }}
+                            />
+                        )}
+
+                        {/* Cone of light escaping the torn pack */}
+                        <motion.span
+                            className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-full"
+                            style={{
+                                top: `${STRIP}%`,
+                                width: "130%",
+                                height: "14rem",
+                                background: `radial-gradient(ellipse 50% 70% at 50% 100%, ${accent}cc, ${accent}55 35%, transparent 70%)`,
+                                transformOrigin: "bottom center",
+                            }}
+                            initial={{ scaleY: 0, opacity: 0 }}
+                            animate={
+                                tearing
+                                    ? {
+                                          scaleY: [0, 1, 1.15, 0.9],
+                                          opacity: [0, 1, 0.7, 0],
+                                      }
+                                    : { scaleY: 0, opacity: 0 }
+                            }
                             transition={{
-                                duration: 0.7,
-                                times: [0, 0.25, 0.6, 1],
-                                delay: sparkle.delay,
+                                duration: 0.85,
+                                times: [0, 0.3, 0.55, 1],
                                 ease: "easeOut",
                             }}
                         />
-                    ))}
+                    </motion.button>
+                </div>
+            </div>
 
-                {/* Light escaping the pack once the seal is broken */}
-                <motion.span
-                    className="pointer-events-none absolute inset-x-6 top-[2.2rem] h-1 rounded-full bg-white blur-[2px]"
-                    initial={{ opacity: 0, scaleX: 0.3 }}
-                    animate={
-                        tearing
-                            ? { opacity: [0, 1, 0.6], scaleX: [0.3, 1.2, 1] }
-                            : { opacity: 0, scaleX: 0.3 }
-                    }
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                />
-
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.35em] text-white/70">
-                    {t("gradesPage.booster.tearHere")}
-                </span>
-
-                <span className="flex flex-col items-center gap-2">
-                    <span
-                        className="flex size-16 items-center justify-center rounded-full"
-                        style={{
-                            background:
-                                "conic-gradient(from 210deg, #f8fafc 0deg 180deg, #ef4444 180deg 360deg)",
-                            boxShadow:
-                                "0 0 0 4px #09090b, 0 6px 18px rgba(0,0,0,0.6)",
-                        }}
-                    >
-                        <span className="size-5 rounded-full bg-white shadow-[0_0_0_3px_#09090b]" />
-                    </span>
-                    <span className="text-xl font-black uppercase italic tracking-wider text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
-                        {t("gradesPage.booster.packName")}
-                    </span>
-                    <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em] text-white/75">
-                        {t("gradesPage.booster.setName")}
-                    </span>
-                </span>
-
-                <span className="rounded-full bg-white/15 px-3 py-1 font-mono text-[0.6rem] uppercase tracking-widest text-white">
-                    {t("gradesPage.booster.tapToOpen")}
-                </span>
-            </button>
+            <motion.p
+                className="absolute left-1/2 top-full mt-6 w-[85vw] max-w-sm -translate-x-1/2 text-center font-mono text-[10px] uppercase tracking-widest text-white/60"
+                animate={{ opacity: started || tearing ? 0 : 1 }}
+            >
+                {t("gradesPage.booster.swipeToTear")}
+            </motion.p>
         </motion.div>
+    );
+}
+
+/** Holo frozen at a flattering angle, for cards that don't tilt */
+const STILL_HOLO = {
+    "--pointer-x": "35%",
+    "--pointer-y": "30%",
+    "--pointer-from-center": "0.4",
+    "--pointer-from-top": "0.3",
+    "--pointer-from-left": "0.35",
+    "--background-x": "46%",
+    "--background-y": "43%",
+    "--card-opacity": "0.8",
+} as CSSProperties;
+
+/** Width of the card being revealed, shared with the pile behind it */
+const stageWidth = () => Math.min(300, Math.round(window.innerWidth * 0.72));
+
+/** How many of the waiting cards are drawn behind the current one */
+const MAX_PILE = 4;
+
+/** Where a waiting card sits in the fan, `depth` cards behind the front */
+const pileOffset = (depth: number) => ({
+    x: depth * 9,
+    y: -depth * 7,
+    rotate: depth * 2.5,
+});
+
+/** How long the revealed card takes to leave, before the next one moves up */
+const CARD_EXIT = 0.25;
+
+/**
+ * The cards still waiting in the pack, face down and fanned out behind the
+ * current one. Keyed by deck position, so the pile slides forward as each
+ * card is revealed.
+ */
+function CardPile({ remaining, first }: { remaining: number; first: number }) {
+    const width = stageWidth();
+    const shown = Math.min(remaining, MAX_PILE);
+
+    return (
+        <AnimatePresence>
+            {Array.from({ length: shown }, (_, offset) => {
+                const depth = offset + 1;
+                return (
+                    <motion.div
+                        key={first + offset}
+                        className="pointer-events-none absolute left-0 top-0"
+                        style={{ zIndex: -depth }}
+                        initial={{ opacity: 0, ...pileOffset(depth + 1) }}
+                        animate={{
+                            opacity: 1 - depth * 0.12,
+                            ...pileOffset(depth),
+                        }}
+                        // Held until the front card is gone: the real card
+                        // then takes its place, so the swap doesn't show
+                        exit={{
+                            opacity: 0,
+                            transition: { duration: 0, delay: CARD_EXIT },
+                        }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                    >
+                        <CardBack width={width} />
+                    </motion.div>
+                );
+            })}
+        </AnimatePresence>
     );
 }
 
@@ -396,14 +903,10 @@ function CardStage({
 }) {
     const reducedMotion = useReducedMotion();
     const tilt = useCardTilt(!faceUp);
-    const width = Math.min(300, Math.round(window.innerWidth * 0.72));
+    const width = stageWidth();
 
     return (
-        <div
-            className="relative"
-            style={{ perspective: 1200 }}
-            onClick={onTap}
-        >
+        <div className="relative" style={{ perspective: 1200 }} onClick={onTap}>
             <div
                 ref={tilt.ref}
                 className="transition-transform duration-200 ease-out"
@@ -464,22 +967,30 @@ const WAITING_GLOW =
 
 function WaitingGlow() {
     return (
+        // Outer layer grows in with the card coming off the pile; the inner
+        // one keeps pulsing on its own
         <motion.span
-            className="pointer-events-none absolute inset-[-10%] rounded-full blur-2xl"
-            style={{ background: WAITING_GLOW }}
-            initial={{ opacity: 0 }}
-            animate={{
-                opacity: [0.3, 0.6, 0.3],
-                rotate: 360,
-                scale: [1, 1.06, 1],
-            }}
+            className="pointer-events-none absolute inset-[-10%]"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.2 } }}
-            transition={{
-                opacity: { duration: 2, repeat: Infinity },
-                scale: { duration: 2, repeat: Infinity },
-                rotate: { duration: 6, repeat: Infinity, ease: "linear" },
-            }}
-        />
+            transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+            <motion.span
+                className="absolute inset-0 rounded-full blur-2xl"
+                style={{ background: WAITING_GLOW }}
+                animate={{
+                    opacity: [0.3, 0.6, 0.3],
+                    rotate: 360,
+                    scale: [1, 1.06, 1],
+                }}
+                transition={{
+                    opacity: { duration: 2, repeat: Infinity },
+                    scale: { duration: 2, repeat: Infinity },
+                    rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+                }}
+            />
+        </motion.span>
     );
 }
 
@@ -660,10 +1171,7 @@ function Booster({
 
     const tearPack = () => {
         setPhase("tearing");
-        requestGyroPermission();
-        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-            navigator.vibrate([8, 30, 16]);
-        }
+        vibrate([8, 30, 16]);
         tearTimeout.current = window.setTimeout(
             () => setPhase("cards"),
             reducedMotion ? 0 : 850
@@ -672,9 +1180,7 @@ function Booster({
 
     // Rolled once per opening: tapping the entry card is a fresh pull, never
     // a replay of the same pack. Kept in state so re-renders don't re-roll.
-    const [packSeed] = useState(
-        () => (Math.random() * 0x100000000) >>> 0
-    );
+    const [packSeed] = useState(() => (Math.random() * 0x100000000) >>> 0);
 
     const deck = useMemo<BoosterCard[]>(() => {
         if (unopened.length === 0) return [];
@@ -748,6 +1254,7 @@ function Booster({
                 <BoosterPack
                     accent={newCards[0]?.subject.accent ?? "#6366f1"}
                     dark={newCards[0]?.subject.dark ?? "#312e81"}
+                    count={deck.length}
                     tearing={phase === "tearing"}
                     onOpen={tearPack}
                 />
@@ -812,14 +1319,16 @@ function Booster({
                         })}
                     </p>
 
-                    <div className="relative">
-                        {/* Depth: the cards still waiting in the pack */}
-                        {deck.length - index > 1 && (
-                            <>
-                                <span className="absolute inset-0 -z-10 translate-x-2 translate-y-2 rounded-[1rem] bg-white/10" />
-                                <span className="absolute inset-0 -z-20 translate-x-4 translate-y-4 rounded-[1rem] bg-white/5" />
-                            </>
-                        )}
+                    {/* Fixed size: the pile stays put while one card leaves
+                        and the next comes in */}
+                    <div
+                        className="relative isolate"
+                        style={{ width: stageWidth(), aspectRatio: "63 / 88" }}
+                    >
+                        <CardPile
+                            remaining={deck.length - index - 1}
+                            first={index + 1}
+                        />
 
                         {faceUp && tierOf(card) >= 3 && !reducedMotion && (
                             <RevealRays key={`rays-${index}`} card={card} />
@@ -828,13 +1337,14 @@ function Booster({
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                // Slides forward from the top of the pile
+                                initial={pileOffset(1)}
+                                animate={{ x: 0, y: 0, rotate: 0 }}
                                 exit={{
                                     opacity: 0,
                                     x: -120,
                                     rotate: -8,
-                                    transition: { duration: 0.25 },
+                                    transition: { duration: CARD_EXIT },
                                 }}
                                 transition={{ duration: 0.35, ease: "easeOut" }}
                                 className="relative"
@@ -919,11 +1429,11 @@ function Booster({
                     <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/70">
                         {t("gradesPage.booster.summaryTitle")}
                     </p>
-                    <div className="flex flex-wrap items-start justify-center gap-4">
+                    <div className="grid grid-cols-[repeat(2,8rem)] items-start justify-center gap-x-6 gap-y-4 sm:grid-cols-[repeat(3,8rem)]">
                         {newCards.map((entry, position) => (
                             <motion.div
                                 key={position}
-                                className="flex flex-col items-center gap-2"
+                                className="flex w-32 flex-col items-center gap-2 justify-self-center last:odd:col-span-2 sm:last:odd:col-span-1"
                                 initial={{ opacity: 0, y: 20, rotate: -4 }}
                                 animate={{ opacity: 1, y: 0, rotate: 0 }}
                                 transition={{
@@ -931,18 +1441,18 @@ function Booster({
                                     delay: position * 0.12,
                                 }}
                             >
-                                <PokemonCard card={entry} width={128} />
+                                <div style={STILL_HOLO}>
+                                    <PokemonCard card={entry} width={128} />
+                                </div>
                                 <span
-                                    className="font-mono text-[10px] uppercase tracking-widest"
+                                    className="w-full truncate text-center font-mono text-[10px] uppercase leading-tight tracking-widest"
                                     style={{
                                         color: isFullArt(entry.treatment)
                                             ? entry.subject.accent
                                             : "rgba(255,255,255,0.55)",
                                     }}
                                 >
-                                    {t(
-                                        `gradesPage.booster.treatments.${entry.treatment}`
-                                    )}
+                                    {cardTitle(entry, t)}
                                 </span>
                             </motion.div>
                         ))}

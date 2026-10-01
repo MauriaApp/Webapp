@@ -12,6 +12,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 
+import type { TFunction } from "i18next";
 import type { Grade } from "@/types/aurion";
 import { getGradeBadgeInfoFromCode } from "@/lib/utils/grades";
 import { parseGradeValue } from "@/lib/utils/grade-rarity";
@@ -31,6 +32,16 @@ export const CARD_TREATMENTS = [
 ] as const;
 
 export type CardTreatment = (typeof CARD_TREATMENTS)[number];
+
+/** Label key of a card whose grade matched no known subject */
+export const UNKNOWN_SUBJECT = "gradesPage.booster.unknownSubject";
+
+/** Name printed on the card: the subject, or the assessment itself when its
+    code matched no known subject */
+export const cardTitle = (card: BoosterCard, t: TFunction): string =>
+    card.subjectLabelKey === UNKNOWN_SUBJECT
+        ? card.grade.name
+        : t(card.subjectLabelKey);
 
 /** A full-art treatment spills the illustration over the whole card */
 export const isFullArt = (treatment: CardTreatment): boolean =>
@@ -186,6 +197,13 @@ export type BoosterCard = {
 };
 
 /** FNV-1a over the grade identity, so a card is always dealt the same way */
+/**
+ * Each subject has this many light (one energy) and heavy attacks in the
+ * locales; a card draws one of each from its seed, so a given grade always
+ * prints the same attacks.
+ */
+const ATTACK_POOL_SIZE = 6;
+
 export const gradeSeed = (grade: Grade): number => {
     const input = [grade.date, grade.code, grade.name].join("|");
     let hash = 2166136261;
@@ -238,8 +256,9 @@ export const getTreatmentForGrade = (
 export function buildBoosterCard(grade: Grade, isNew: boolean): BoosterCard {
     const seed = gradeSeed(grade);
     const value = parseGradeValue(grade.grade);
+    // An unmatched code comes back as an empty key, not null
     const labelKey = grade.code?.trim()
-        ? (getGradeBadgeInfoFromCode(grade.code)?.labelKey ?? null)
+        ? getGradeBadgeInfoFromCode(grade.code)?.labelKey || null
         : null;
     const subjectId = subjectIdFromLabelKey(labelKey);
     const subject = SUBJECT_CARDS[subjectId] ?? FALLBACK_SUBJECT;
@@ -247,23 +266,26 @@ export function buildBoosterCard(grade: Grade, isNew: boolean): BoosterCard {
         (grade.coefficient || "1").replace(",", ".")
     );
     const safeCoefficient = Number.isNaN(coefficient) ? 1 : coefficient;
+    // Own stream, so the attacks don't shift with the artwork's draws
+    const random = mulberry32(seed ^ 0x9e3779b9);
+    const pick = () => Math.floor(random() * ATTACK_POOL_SIZE);
 
     return {
         grade,
         isNew,
         treatment: getTreatmentForGrade(value, isNew),
         subject,
-        subjectLabelKey: labelKey ?? "gradesPage.booster.unknownSubject",
+        subjectLabelKey: labelKey ?? UNKNOWN_SUBJECT,
         value,
         hp: Math.max(30, Math.round(value ?? 3) * 10),
         attacks: [
             {
-                nameKey: `gradesPage.booster.subjects.${subject.id}.attack1`,
+                nameKey: `gradesPage.booster.subjects.${subject.id}.light.${pick()}`,
                 cost: 1,
                 damage: Math.max(10, Math.round(((value ?? 0) * 2) / 5) * 5),
             },
             {
-                nameKey: `gradesPage.booster.subjects.${subject.id}.attack2`,
+                nameKey: `gradesPage.booster.subjects.${subject.id}.heavy.${pick()}`,
                 cost: safeCoefficient >= 5 ? 3 : 2,
                 damage: Math.max(20, Math.round((value ?? 0) / 2) * 10),
             },

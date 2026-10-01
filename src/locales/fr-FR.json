@@ -286,7 +286,9 @@
       "contains": "Contient les raretés suivantes",
       "aboveAverage": "Au-dessus de la moyenne",
       "belowAverage": "En dessous de la moyenne",
-      "continue": "Continuer"
+      "continue": "Continuer",
+      "unlock": "Déverrouiller la caisse",
+      "received": "Tu as obtenu"
     },
     "scratchCard": {
       "ticketName": "Mauria Grattage",
@@ -318,6 +320,7 @@
       "tapToFlip": "Appuie sur la carte pour la retourner",
       "tapToNext": "Appuie pour la carte suivante",
       "tearHere": "Déchirer ici",
+      "swipeToTear": "Glisse le long des pointillés pour le déchirer",
       "packName": "Booster Mauria",
       "setName": "Série Junia",
       "counter": "Carte {{current}} sur {{total}}",
@@ -357,58 +360,212 @@
       "subjects": {
         "maths": {
           "species": "Intégrale",
-          "attack1": "Dérivée Seconde",
-          "attack2": "Théorème Fatal"
+          "light": [
+            "Dérivée Seconde",
+            "Récurrence",
+            "Changement de Variable",
+            "Intégration par Parties",
+            "Epsilon-Delta",
+            "Développement Limité"
+          ],
+          "heavy": [
+            "Théorème Fatal",
+            "Raisonnement par l'Absurde",
+            "Contre-Exemple",
+            "Matrice Inversée",
+            "Série Divergente",
+            "CQFD"
+          ]
         },
         "physics": {
           "species": "Particule",
-          "attack1": "Chute Libre",
-          "attack2": "Décharge de Joule"
+          "light": [
+            "Chute Libre",
+            "Frottement Fluide",
+            "Onde Stationnaire",
+            "Effet Doppler",
+            "Poussée d'Archimède",
+            "Loi d'Ohm"
+          ],
+          "heavy": [
+            "Décharge de Joule",
+            "Court-Circuit",
+            "Effondrement Gravitationnel",
+            "Effet Tunnel",
+            "Entropie Maximale",
+            "Résonance"
+          ]
         },
         "computerScience": {
           "species": "Compilateur",
-          "attack1": "Segfault",
-          "attack2": "Récursion Infinie"
+          "light": [
+            "Segfault",
+            "Off-by-One",
+            "Null Pointer",
+            "Merge Conflict",
+            "Ctrl+Z",
+            "Debug au Printf"
+          ],
+          "heavy": [
+            "Récursion Infinie",
+            "Fuite Mémoire",
+            "Fork Bomb",
+            "Push --force",
+            "Stack Overflow",
+            "Complexité Exponentielle"
+          ]
         },
         "english": {
           "species": "Bilingue",
-          "attack1": "Present Perfect",
-          "attack2": "Phrasal Verb"
+          "light": [
+            "Present Perfect",
+            "Small Talk",
+            "Tea Time",
+            "Lettre Muette",
+            "Question Tag",
+            "Accent Tonique"
+          ],
+          "heavy": [
+            "Phrasal Verb",
+            "Past Perfect Continuous",
+            "Listening Express",
+            "Essay Chronométré",
+            "Idiom Obscur",
+            "Prononciation Fatale"
+          ]
         },
         "sii": {
           "species": "Mécanique",
-          "attack1": "Couple Moteur",
-          "attack2": "Asservissement"
+          "light": [
+            "Couple Moteur",
+            "Engrenage",
+            "Schéma Bloc",
+            "Liaison Pivot",
+            "Frottement Sec",
+            "Diagramme SysML"
+          ],
+          "heavy": [
+            "Asservissement",
+            "Instabilité",
+            "Dépassement",
+            "Bode Fatal",
+            "Hyperstatisme",
+            "Boucle Fermée"
+          ]
         },
         "fhs": {
           "species": "Rhétorique",
-          "attack1": "Dissertation",
-          "attack2": "Argument d'Autorité"
+          "light": [
+            "Dissertation",
+            "Citation",
+            "Problématique",
+            "Contre-Argument",
+            "Ironie Socratique",
+            "Paraphrase"
+          ],
+          "heavy": [
+            "Argument d'Autorité",
+            "Sophisme",
+            "Hors-Sujet",
+            "Plan en Trois Parties",
+            "Dialectique",
+            "Copie Blanche"
+          ]
         },
         "eps": {
           "species": "Athlète",
-          "attack1": "Sprint Final",
-          "attack2": "Point de Côté"
+          "light": [
+            "Sprint Final",
+            "Échauffement",
+            "Passe Décisive",
+            "Saut en Longueur",
+            "Gainage",
+            "Coup Franc"
+          ],
+          "heavy": [
+            "Point de Côté",
+            "Courbatures",
+            "Luc Léger",
+            "Smash",
+            "Marathon",
+            "Crampe"
+          ]
         },
         "lv2": {
           "species": "Polyglotte",
-          "attack1": "Faux Ami",
-          "attack2": "Verbe Irrégulier"
+          "light": [
+            "Faux Ami",
+            "Conjugaison",
+            "Mot de Liaison",
+            "Prononciation",
+            "Subjonctif",
+            "Liste de Vocabulaire"
+          ],
+          "heavy": [
+            "Verbe Irrégulier",
+            "Déclinaison",
+            "Expression Idiomatique",
+            "Oral Surprise",
+            "Accord du Participe",
+            "Exception à la Règle"
+          ]
         },
         "tipe": {
           "species": "Projet",
-          "attack1": "Soutenance",
-          "attack2": "Deadline"
+          "light": [
+            "Soutenance",
+            "Bibliographie",
+            "Prise de Mesures",
+            "Diaporama",
+            "Hypothèse",
+            "Expérience Ratée"
+          ],
+          "heavy": [
+            "Deadline",
+            "Question du Jury",
+            "Résultat Inattendu",
+            "Rapport Final",
+            "Biais Expérimental",
+            "Mise en Cohérence"
+          ]
         },
         "pix": {
           "species": "Certification",
-          "attack1": "QCM Piégeux",
-          "attack2": "Session Expirée"
+          "light": [
+            "QCM Piégeux",
+            "Raccourci Clavier",
+            "Mot de Passe",
+            "Tableur",
+            "Recherche Web",
+            "Copier-Coller"
+          ],
+          "heavy": [
+            "Session Expirée",
+            "Chrono Écoulé",
+            "Captcha",
+            "Fichier Corrompu",
+            "Phishing",
+            "Niveau Expert"
+          ]
         },
         "unknown": {
           "species": "Mystère",
-          "attack1": "Coefficient Inconnu",
-          "attack2": "Note Surprise"
+          "light": [
+            "Coefficient Inconnu",
+            "Code Mystère",
+            "Note Fantôme",
+            "Matière Secrète",
+            "Appréciation Vide",
+            "Bulletin Égaré"
+          ],
+          "heavy": [
+            "Note Surprise",
+            "Rattrapage",
+            "Moyenne Cachée",
+            "Coef Caché",
+            "Point Bonus",
+            "Jury Souverain"
+          ]
         }
       },
       "weaknessValue": "{{type}} ×2",
@@ -443,6 +600,15 @@
       "consumer": "Qualité consommateur",
       "industrial": "Qualité industrielle",
       "milspec": "Qualité militaire",
+      "restricted": "Restreint",
+      "classified": "Classifié",
+      "covert": "Secret",
+      "exceedinglyRare": "Extrêmement rare"
+    },
+    "rarityShort": {
+      "consumer": "Consommateur",
+      "industrial": "Industrielle",
+      "milspec": "Militaire",
       "restricted": "Restreint",
       "classified": "Classifié",
       "covert": "Secret",

@@ -1472,6 +1472,8 @@
     }
 
     .poke-holo-host {
+        /* Own blending group, so WebKit blends the shine with the card only */
+        isolation: isolate;
         --sunpillar-1: hsl(2, 100%, 73%);
         --sunpillar-2: hsl(53, 100%, 69%);
         --sunpillar-3: hsl(93, 100%, 69%);

@@ -7,6 +7,7 @@ import {
     isFullArt,
     mulberry32,
     type BoosterCard,
+    cardTitle,
     type CardTreatment,
 } from "./card-data";
 
@@ -93,8 +94,7 @@ function CardArt({ card, full }: { card: BoosterCard; full?: boolean }) {
                 <span
                     className="flex items-baseline font-black leading-none text-white"
                     style={{
-                        textShadow:
-                            "0 0.04em 0.08em rgba(0,0,0,0.85)",
+                        textShadow: "0 0.04em 0.08em rgba(0,0,0,0.85)",
                         WebkitTextStroke: "0.03em rgba(0,0,0,0.4)",
                     }}
                 >
@@ -149,7 +149,7 @@ export function PokemonCard({
     const full = isFullArt(card.treatment);
     const gold = card.treatment === "sir";
     const isEx = card.treatment === "ex";
-    const name = t(card.subjectLabelKey);
+    const name = cardTitle(card, t);
 
     const frame = gold
         ? "linear-gradient(150deg, #fde68a, #d4a017 35%, #fff3c4 55%, #b8860b 80%)"
@@ -184,12 +184,12 @@ export function PokemonCard({
                           }
                 }
             >
-                {/* Name plate */}
+                {/* Name plate. Plain translucent plates on full arts, never
+                    backdrop-filter: on iOS WebKit it breaks the shine's blend
+                    modes and greys out the whole card. */}
                 <div
                     className={`flex items-center gap-[0.3em] px-[0.4em] py-[0.25em] ${
-                        full
-                            ? "rounded-[0.3em] bg-black/45 backdrop-blur-[1px]"
-                            : ""
+                        full ? "rounded-[0.3em] bg-black/50" : ""
                     }`}
                     style={full ? { margin: "0.3em" } : undefined}
                 >
@@ -206,9 +206,9 @@ export function PokemonCard({
                                 full ? "text-white" : "text-zinc-900"
                             }`}
                         >
-                            {name}
+                            <span className="min-w-0 truncate">{name}</span>
                             {isEx && (
-                                <span className="text-[0.85em] font-black italic text-amber-700">
+                                <span className="shrink-0 text-[0.85em] font-black italic text-amber-700">
                                     {t("gradesPage.booster.ex")}
                                 </span>
                             )}
@@ -254,7 +254,7 @@ export function PokemonCard({
                 <div
                     className={`mx-[0.3em] mt-[0.3em] flex flex-col gap-[0.3em] rounded-[0.2em] px-[0.35em] py-[0.3em] text-[0.72em] ${
                         full
-                            ? "bg-black/55 text-white backdrop-blur-[2px]"
+                            ? "bg-black/60 text-white"
                             : "flex-1 justify-center bg-[#f7f1e0] text-zinc-900"
                     }`}
                     style={full ? { margin: "auto 0.3em 0.3em" } : undefined}

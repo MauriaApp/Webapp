@@ -286,7 +286,9 @@
       "contains": "Contains the following rarities",
       "aboveAverage": "Above class average",
       "belowAverage": "Below class average",
-      "continue": "Continue"
+      "continue": "Continue",
+      "unlock": "Unlock container",
+      "received": "You received"
     },
     "scratchCard": {
       "ticketName": "Mauria Scratch",
@@ -318,6 +320,7 @@
       "tapToFlip": "Tap the card to flip it",
       "tapToNext": "Tap for the next card",
       "tearHere": "Tear here",
+      "swipeToTear": "Swipe along the dotted line to tear it open",
       "packName": "Mauria Booster",
       "setName": "Junia Series",
       "counter": "Card {{current}} of {{total}}",
@@ -357,58 +360,212 @@
       "subjects": {
         "maths": {
           "species": "Integral",
-          "attack1": "Second Derivative",
-          "attack2": "Fatal Theorem"
+          "light": [
+            "Second Derivative",
+            "Induction",
+            "Change of Variable",
+            "Integration by Parts",
+            "Epsilon-Delta",
+            "Taylor Expansion"
+          ],
+          "heavy": [
+            "Fatal Theorem",
+            "Proof by Contradiction",
+            "Counterexample",
+            "Inverted Matrix",
+            "Divergent Series",
+            "QED"
+          ]
         },
         "physics": {
           "species": "Particle",
-          "attack1": "Free Fall",
-          "attack2": "Joule Discharge"
+          "light": [
+            "Free Fall",
+            "Fluid Drag",
+            "Standing Wave",
+            "Doppler Effect",
+            "Buoyant Force",
+            "Ohm's Law"
+          ],
+          "heavy": [
+            "Joule Discharge",
+            "Short Circuit",
+            "Gravitational Collapse",
+            "Quantum Tunneling",
+            "Maximum Entropy",
+            "Resonance"
+          ]
         },
         "computerScience": {
           "species": "Compiler",
-          "attack1": "Segfault",
-          "attack2": "Infinite Recursion"
+          "light": [
+            "Segfault",
+            "Off-by-One",
+            "Null Pointer",
+            "Merge Conflict",
+            "Ctrl+Z",
+            "Printf Debugging"
+          ],
+          "heavy": [
+            "Infinite Recursion",
+            "Memory Leak",
+            "Fork Bomb",
+            "Push --force",
+            "Stack Overflow",
+            "Exponential Complexity"
+          ]
         },
         "english": {
           "species": "Bilingual",
-          "attack1": "Present Perfect",
-          "attack2": "Phrasal Verb"
+          "light": [
+            "Present Perfect",
+            "Small Talk",
+            "Tea Time",
+            "Silent Letter",
+            "Question Tag",
+            "Word Stress"
+          ],
+          "heavy": [
+            "Phrasal Verb",
+            "Past Perfect Continuous",
+            "Speed Listening",
+            "Timed Essay",
+            "Obscure Idiom",
+            "Fatal Pronunciation"
+          ]
         },
         "sii": {
           "species": "Mechanical",
-          "attack1": "Motor Torque",
-          "attack2": "Feedback Loop"
+          "light": [
+            "Motor Torque",
+            "Gear Train",
+            "Block Diagram",
+            "Pivot Joint",
+            "Dry Friction",
+            "SysML Diagram"
+          ],
+          "heavy": [
+            "Feedback Loop",
+            "Instability",
+            "Overshoot",
+            "Fatal Bode Plot",
+            "Hyperstatism",
+            "Closed Loop"
+          ]
         },
         "fhs": {
           "species": "Rhetoric",
-          "attack1": "Dissertation",
-          "attack2": "Appeal to Authority"
+          "light": [
+            "Dissertation",
+            "Quotation",
+            "Problem Statement",
+            "Counterargument",
+            "Socratic Irony",
+            "Paraphrase"
+          ],
+          "heavy": [
+            "Appeal to Authority",
+            "Fallacy",
+            "Off Topic",
+            "Three-Part Outline",
+            "Dialectic",
+            "Blank Paper"
+          ]
         },
         "eps": {
           "species": "Athlete",
-          "attack1": "Final Sprint",
-          "attack2": "Side Stitch"
+          "light": [
+            "Final Sprint",
+            "Warm-Up",
+            "Assist",
+            "Long Jump",
+            "Plank",
+            "Free Kick"
+          ],
+          "heavy": [
+            "Side Stitch",
+            "Sore Muscles",
+            "Beep Test",
+            "Smash",
+            "Marathon",
+            "Cramp"
+          ]
         },
         "lv2": {
           "species": "Polyglot",
-          "attack1": "False Friend",
-          "attack2": "Irregular Verb"
+          "light": [
+            "False Friend",
+            "Conjugation",
+            "Linking Word",
+            "Pronunciation",
+            "Subjunctive",
+            "Vocabulary List"
+          ],
+          "heavy": [
+            "Irregular Verb",
+            "Declension",
+            "Idiom",
+            "Surprise Oral",
+            "Past Participle Agreement",
+            "Exception to the Rule"
+          ]
         },
         "tipe": {
           "species": "Project",
-          "attack1": "Oral Defense",
-          "attack2": "Deadline"
+          "light": [
+            "Oral Defense",
+            "Bibliography",
+            "Measurements",
+            "Slideshow",
+            "Hypothesis",
+            "Failed Experiment"
+          ],
+          "heavy": [
+            "Deadline",
+            "Jury Question",
+            "Unexpected Result",
+            "Final Report",
+            "Experimental Bias",
+            "Consistency Check"
+          ]
         },
         "pix": {
           "species": "Certification",
-          "attack1": "Trick Question",
-          "attack2": "Session Expired"
+          "light": [
+            "Trick Question",
+            "Keyboard Shortcut",
+            "Password",
+            "Spreadsheet",
+            "Web Search",
+            "Copy-Paste"
+          ],
+          "heavy": [
+            "Session Expired",
+            "Time's Up",
+            "Captcha",
+            "Corrupted File",
+            "Phishing",
+            "Expert Level"
+          ]
         },
         "unknown": {
           "species": "Mystery",
-          "attack1": "Unknown Coefficient",
-          "attack2": "Surprise Grade"
+          "light": [
+            "Unknown Coefficient",
+            "Mystery Code",
+            "Ghost Grade",
+            "Secret Subject",
+            "Empty Feedback",
+            "Lost Report Card"
+          ],
+          "heavy": [
+            "Surprise Grade",
+            "Resit",
+            "Hidden Average",
+            "Hidden Coef",
+            "Bonus Point",
+            "Sovereign Jury"
+          ]
         }
       },
       "weaknessValue": "{{type}} ×2",
@@ -442,6 +599,15 @@
     "rarity": {
       "consumer": "Consumer Grade",
       "industrial": "Industrial Grade",
+      "milspec": "Mil-Spec",
+      "restricted": "Restricted",
+      "classified": "Classified",
+      "covert": "Covert",
+      "exceedinglyRare": "Exceedingly Rare"
+    },
+    "rarityShort": {
+      "consumer": "Consumer",
+      "industrial": "Industrial",
       "milspec": "Mil-Spec",
       "restricted": "Restricted",
       "classified": "Classified",
