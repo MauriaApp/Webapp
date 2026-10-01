@@ -1,6 +1,5 @@
 import { addDays, addMinutes, format, parseISO } from "date-fns";
 import i18n from "@/i18n";
-import { fetchColleGroup } from "@/lib/api/colles";
 import { COLLES_CLASSES } from "@/lib/data/colles";
 import { Lesson } from "@/types/aurion";
 import { CollesClass } from "@/types/colles";
@@ -57,28 +56,19 @@ function buildColleLessons(collesClass: CollesClass, group: string): Lesson[] {
 }
 
 /**
- * Build the calendar events for the colles of the student behind `email`.
- * The class/group lookup happens server-side (API-v2 routes/supa-data/colles.ts) —
- * the student roster never ships in this bundle. Returns an empty list when
- * the student isn't part of a known roster.
- *
- * `confirmedCpg` should come from `detectStudentClass` on the student's
- * Aurion grades: it tells the server it can use its looser (prefix) name
- * matching instead of requiring an exact full-name match. Without it, a
- * student from another filière whose name merely resembles a CPG student's
- * could get matched to someone else's khôlles.
+ * Build the calendar events for a student's khôlles class/group, as resolved
+ * server-side by API-v2 (routes/supa-data/colles.ts) — the student roster
+ * never ships in this bundle. Returns an empty list when the student isn't
+ * part of a known roster.
  */
-export async function getColleLessons(
-    email: string | null | undefined,
-    confirmedCpg: boolean
-): Promise<Lesson[]> {
-    if (!email) return [];
+export function buildCollesLessons(
+    className: string | null | undefined,
+    group: string | null | undefined
+): Lesson[] {
+    if (!className || !group) return [];
 
-    const match = await fetchColleGroup(email, confirmedCpg);
-    if (!match?.class || !match.group) return [];
-
-    const collesClass = COLLES_CLASSES.find((c) => c.label === match.class);
+    const collesClass = COLLES_CLASSES.find((c) => c.label === className);
     if (!collesClass) return [];
 
-    return buildColleLessons(collesClass, match.group);
+    return buildColleLessons(collesClass, group);
 }

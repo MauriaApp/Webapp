@@ -250,10 +250,33 @@
       "error": "Impossible de récupérer les disponibilités pour le moment.",
       "statusFree": "Libre",
       "statusBusy": "Occupée",
+      "statusClosed": "Fermée",
+      "buildingClosed": "Fermé",
       "loading": "Chargement des salles…",
       "updatedAt": "Mis à jour à {{time}}",
       "empty": "Aucun bâtiment disponible pour le moment.",
       "untilPrefix": "jusqu'à"
+    },
+    "userEvents": {
+      "addTitle": "Ajouter un événement",
+      "editTitle": "Modifier l'événement",
+      "hint": "Astuce : restez appuyé sur un créneau du planning pour y créer un événement.",
+      "title": "Titre",
+      "titlePlaceholder": "Ex. : Réunion d'asso",
+      "location": "Lieu",
+      "optional": "Facultatif",
+      "date": "Date",
+      "start": "Début",
+      "end": "Fin",
+      "endBeforeStart": "L'heure de fin doit être après l'heure de début.",
+      "notes": "Notes",
+      "create": "Créer l'événement",
+      "save": "Enregistrer",
+      "added": "Événement ajouté",
+      "updated": "Événement modifié",
+      "deleted": "Événement supprimé",
+      "undo": "Annuler",
+      "type": "Événement perso"
     }
   },
   "gradesPage": {
@@ -487,21 +510,27 @@
   },
   "agendaPage": {
     "title": "Mon agenda",
-    "notifications": "Une notification sera envoyée 24h avant et 1h avant chaque tâche.",
     "noTasks": "Aucune tâche.",
     "noTaskPlaceholder": "Aucune tâche n'a été ajoutée pour le moment.",
     "addTask": "Ajouter une tâche",
-    "taskTitle": "Titre",
-    "taskDescription": "Entrez le titre",
-    "date": "Date",
-    "hour": "Heure",
-    "createTaskBtn": "Créer la tâche",
-    "markTaskDone": "Marquer comme effectuée",
-    "undoTaskCompletion": "Annuler la complétion",
     "editTaskTitle": "Modifier la tâche",
-    "updateTaskBtn": "Mettre à jour la tâche",
-    "taskUpdated": "Tâche mise à jour",
-    "taskUpdatedDescription": "Les modifications ont été enregistrées."
+    "taskTitle": "Titre",
+    "taskTitlePlaceholder": "Ex. : Rendre le TP de physique",
+    "dueDate": "Échéance",
+    "dueTime": "Heure",
+    "nextLesson": "Prochain cours de {{course}}",
+    "notes": "Notes",
+    "optional": "Facultatif",
+    "createTaskBtn": "Créer la tâche",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "markTaskDone": "Marquer comme effectuée",
+    "overdue": "En retard",
+    "taskAdded": "Tâche ajoutée",
+    "taskUpdated": "Tâche modifiée",
+    "taskDone": "Tâche effectuée",
+    "taskDeleted": "Tâche supprimée",
+    "undo": "Annuler"
   },
   "associationsPage": {
     "search": "Rechercher une association",
@@ -532,7 +561,10 @@
     "duration": "Durée",
     "technicalDetails": "Détails techniques",
     "formerTitle": "Titre complet",
-    "allDay": "Toute la journée"
+    "allDay": "Toute la journée",
+    "notes": "Notes",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   },
   "update": {
     "somethingNew": "Y'a du nouveau sur Mauria !",
@@ -638,5 +670,12 @@
       "print": "Impressions",
       "other": "Autres données"
     }
+  },
+  "dateTimeFields": {
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "otherDate": "Autre date",
+    "hours": "Heure",
+    "minutes": "Minutes"
   }
 }

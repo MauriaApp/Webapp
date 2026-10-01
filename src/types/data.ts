@@ -1,3 +1,5 @@
+import { Lesson } from "./aurion";
+
 export type AssociationData = {
     name: string;
     description: string;
@@ -19,10 +21,21 @@ export type UpdatesEntry = {
     contentDev: string;
 };
 
+/**
+ * A personal event added from the planning page. Stored alongside Aurion
+ * lessons (same shape), with the fields a free-form event needs on top.
+ */
+export type UserEvent = Lesson & {
+    location?: string;
+    notes?: string;
+};
+
 export type TaskData = {
     id: string;
     task: string;
+    /** When it's due. */
     date: Date;
+    notes?: string;
 };
 
 export type MenuSection = {

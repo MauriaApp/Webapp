@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSession, warmAurionSession } from "@/lib/api/aurion";
+import {
+    AURION_WARM_QUERY_KEY,
+    getSession,
+    isAurionWarmExpired,
+    warmAurionSession,
+} from "@/lib/api/aurion";
 
-export const AURION_WARM_QUERY_KEY = ["aurionWarm"] as const;
+export { AURION_WARM_QUERY_KEY };
 
 /**
  * Warms the API's Aurion session as soon as the app opens (call this from
@@ -18,13 +23,20 @@ export function useAurionWarm() {
         queryKey: AURION_WARM_QUERY_KEY,
         queryFn: warmAurionSession,
         enabled: hasSession,
-        staleTime: 1000 * 60 * 10,
+        // Driven by the stored warm timestamp rather than the query's own
+        // age: the persisted cache would otherwise restore a "success" from
+        // a previous visit and let feature fetches skip the warm-up.
+        staleTime: () => (isAurionWarmExpired() ? 0 : Infinity),
         gcTime: 1000 * 60 * 60 * 24,
     });
 
-    // Only blocks dependents through the very first attempt: once warm has
-    // settled once (success or failure), feature fetches are free to run —
-    // each already knows how to log itself in if the session turns out
-    // stale, so warm is an optimization, never a hard dependency.
-    return { isWarming: hasSession && query.status === "pending" };
+    // Blocks dependents through the first attempt and through any re-warm
+    // of an expired session. Once warm has settled (success or failure),
+    // feature fetches are free to run — each already knows how to log
+    // itself in if the session turns out stale, so warm is an
+    // optimization, never a hard dependency.
+    const isRewarming = query.isFetching && isAurionWarmExpired();
+    return {
+        isWarming: hasSession && (query.status === "pending" || isRewarming),
+    };
 }

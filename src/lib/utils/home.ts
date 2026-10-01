@@ -14,7 +14,7 @@ import {
 const normalizeOffset = (iso: string) =>
     iso.replace(/([+-]\d{2})(\d{2})$/, "$1:$2");
 
-const toDate = (s: string) => new Date(normalizeOffset(s));
+export const toDate = (s: string) => new Date(normalizeOffset(s));
 
 // Promotion-wide plannings squeeze a time range between the type and the
 // teacher, where the personal planning goes straight to the teacher.
@@ -106,6 +106,48 @@ export const getHomeUpcoming = ({
         today: todaysUpcoming.map(toCourse),
         tomorrow: tomorrows.map(toCourse),
     };
+};
+
+/**
+ * The lesson happening now or, failing that, one that ended less than
+ * `graceMinutes` ago (a task is often noted right after class), and the next
+ * lesson of the same course. Null when there's no such lesson or no later
+ * one of that course.
+ */
+export const findNextLessonOfCurrentCourse = (
+    lessons: Lesson[],
+    now = new Date(),
+    graceMinutes = 10
+): { course: string; start: Date } | null => {
+    const timed = lessons.map((lesson) => ({
+        lesson,
+        start: toDate(lesson.start),
+        end: toDate(lesson.end),
+    }));
+    const graceStart = new Date(now.getTime() - graceMinutes * 60 * 1000);
+
+    const reference =
+        timed.find(({ start, end }) => start <= now && now < end) ??
+        timed
+            .filter(({ end }) => graceStart <= end && end <= now)
+            .sort((a, b) => b.end.getTime() - a.end.getTime())[0];
+    if (!reference) return null;
+
+    const courseOf = (lesson: Lesson) =>
+        formatLessonCourse(parseFromTitle(lesson).courseTitle);
+    const course = courseOf(reference.lesson);
+    if (!course) return null;
+    const key = course.toLowerCase();
+
+    const next = timed
+        .filter(
+            ({ lesson, start }) =>
+                start >= reference.end &&
+                courseOf(lesson).toLowerCase() === key
+        )
+        .sort((a, b) => a.start.getTime() - b.start.getTime())[0];
+
+    return next ? { course, start: next.start } : null;
 };
 
 // The type codes met across Junia's plannings — every filière, not just the

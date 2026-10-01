@@ -5,9 +5,11 @@ export type Building = {
     dispo: number;
     total: number;
     pourcentage: number;
+    /** Rooms still reported free past their closing time (set by API-v2). */
+    fermees?: number;
 };
 
-export type RoomStatus = "DISPONIBLE" | "OCCUPEE";
+export type RoomStatus = "DISPONIBLE" | "OCCUPEE" | "FERMEE";
 
 export type Room = {
     salle: string;

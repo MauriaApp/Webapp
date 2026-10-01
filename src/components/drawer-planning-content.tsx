@@ -13,7 +13,11 @@ import {
     Info,
     ChevronDownIcon,
     CalendarDays,
+    NotebookText,
+    Pencil,
+    Trash2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formatLessonTeacher, formatLessonType } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
 
@@ -21,10 +25,15 @@ export function DrawerPlanningContent({
     drawerOpen,
     setDrawerOpen,
     eventInfo,
+    onEdit,
+    onDelete,
 }: {
     drawerOpen: boolean;
     setDrawerOpen: (open: boolean) => void;
     eventInfo: PreparedLesson | null;
+    /** Only personal events can be edited or deleted. */
+    onEdit?: () => void;
+    onDelete?: () => void;
 }) {
     const { t, i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
@@ -80,11 +89,25 @@ export function DrawerPlanningContent({
                                     </div>
                                 </div>
                             )}
+                            {eventInfo.notes && (
+                                <div className="flex items-start gap-3 px-3 py-1">
+                                    <NotebookText className="w-5 h-5 shrink-0 mt-0.5 text-mauria-purple dark:text-gray-300 oled:text-gray-300" />
+                                    <div className="min-w-0">
+                                        <span className="font-semibold text-muted-foreground text-sm">
+                                            {t("drawerPlanningContent.notes")}
+                                        </span>
+                                        <p className="text-gray-900 dark:text-white whitespace-pre-line break-words">
+                                            {eventInfo.notes}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        {(eventInfo.location || eventInfo.type || eventInfo.teacher) && (
-                            <Separator className="my-6" />
-                        )}
+                        {(eventInfo.location ||
+                            eventInfo.type ||
+                            eventInfo.teacher ||
+                            eventInfo.notes) && <Separator className="my-6" />}
 
                         <div className="p-4 rounded-lg grid w-full grid-cols-2 gap-2 min-w-0">
                             <div className="flex items-center gap-2 min-w-0">
@@ -174,39 +197,70 @@ export function DrawerPlanningContent({
                             </div>
                         </div>
 
-                        <details className="mt-6">
-                            <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 oled:text-gray-200 flex items-center gap-2 hover:text-mauria-purple/80 oled:hover:text-gray-200 transition-colors">
-                                <Info className="w-4 h-4" />
-                                {t("drawerPlanningContent.technicalDetails")}
-                                <ChevronDownIcon className="w-4 h-4 ml-auto" />
-                            </summary>
-                            <div className="mt-3 space-y-2 p-3 rounded-lg">
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className="font-medium">{t("common.id")} :</span>
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                        {eventInfo.details.id}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className="font-medium">
-                                        {t("drawerPlanningContent.formerTitle")} :
-                                    </span>
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                        {eventInfo.details.title}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm">
-                                    <span className="font-medium">
-                                        {t("drawerPlanningContent.allDay")} :
-                                    </span>
-                                    <span className="text-gray-600 dark:text-gray-400">
-                                        {eventInfo.details.allDay
-                                            ? "Oui"
-                                            : "Non"}
-                                    </span>
-                                </div>
+                        {(onEdit || onDelete) && (
+                            <div className="mt-6 grid grid-cols-2 gap-3">
+                                {onEdit && (
+                                    <Button variant="outline" onClick={onEdit}>
+                                        <Pencil className="w-4 h-4" />
+                                        {t("drawerPlanningContent.edit")}
+                                    </Button>
+                                )}
+                                {onDelete && (
+                                    <Button
+                                        variant="destructive"
+                                        onClick={onDelete}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                        {t("drawerPlanningContent.delete")}
+                                    </Button>
+                                )}
                             </div>
-                        </details>
+                        )}
+
+                        {/* Personal events have no Aurion internals to show. */}
+                        {!onEdit && (
+                            <details className="mt-6">
+                                <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 oled:text-gray-200 flex items-center gap-2 hover:text-mauria-purple/80 oled:hover:text-gray-200 transition-colors">
+                                    <Info className="w-4 h-4" />
+                                    {t(
+                                        "drawerPlanningContent.technicalDetails"
+                                    )}
+                                    <ChevronDownIcon className="w-4 h-4 ml-auto" />
+                                </summary>
+                                <div className="mt-3 space-y-2 p-3 rounded-lg">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className="font-medium">
+                                            {t("common.id")} :
+                                        </span>
+                                        <span className="text-gray-600 dark:text-gray-400">
+                                            {eventInfo.details.id}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className="font-medium">
+                                            {t(
+                                                "drawerPlanningContent.formerTitle"
+                                            )}{" "}
+                                            :
+                                        </span>
+                                        <span className="text-gray-600 dark:text-gray-400">
+                                            {eventInfo.details.title}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className="font-medium">
+                                            {t("drawerPlanningContent.allDay")}{" "}
+                                            :
+                                        </span>
+                                        <span className="text-gray-600 dark:text-gray-400">
+                                            {eventInfo.details.allDay
+                                                ? "Oui"
+                                                : "Non"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </details>
+                        )}
                     </div>
                 )}
             </DrawerContent>

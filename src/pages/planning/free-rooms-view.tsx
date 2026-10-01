@@ -39,6 +39,13 @@ function getAvailabilityLevel(dispo: number, total: number) {
     return "critical";
 }
 
+// Free rooms first, closed ones (nothing to do with them today) last.
+const STATUS_ORDER: Record<Room["statut"], number> = {
+    DISPONIBLE: 0,
+    OCCUPEE: 1,
+    FERMEE: 2,
+};
+
 const LEVEL_STYLES: Record<string, string> = {
     good: "text-mauria-green",
     warning: "text-mauria-accent",
@@ -98,6 +105,9 @@ function RoomRow({
 }) {
     const { t } = useTranslation();
     const isFree = room.statut === "DISPONIBLE";
+    // Past its closing time: findmyroom still says "libre jusqu'à 20:00",
+    // which is only noise once that time has gone by.
+    const isClosed = room.statut === "FERMEE";
     const info = isEnglish
         ? room.libre_jusqua_en || room.libre_jusqua
         : room.libre_jusqua;
@@ -118,13 +128,19 @@ function RoomRow({
                 "flex items-center gap-3 rounded-lg border p-3",
                 isFree
                     ? "border-mauria-green/30 bg-mauria-green/5"
-                    : "border-destructive/30 bg-destructive/5"
+                    : isClosed
+                      ? "border-border bg-muted/40"
+                      : "border-destructive/30 bg-destructive/5"
             )}
         >
             <span
                 className={cn(
                     "h-2.5 w-2.5 shrink-0 rounded-full",
-                    isFree ? "bg-mauria-green" : "bg-destructive"
+                    isFree
+                        ? "bg-mauria-green"
+                        : isClosed
+                          ? "bg-muted-foreground/50"
+                          : "bg-destructive"
                 )}
                 aria-hidden
             />
@@ -150,14 +166,20 @@ function RoomRow({
                 <p
                     className={cn(
                         "text-xs font-semibold",
-                        isFree ? "text-mauria-green" : "text-destructive"
+                        isFree
+                            ? "text-mauria-green"
+                            : isClosed
+                              ? "text-muted-foreground"
+                              : "text-destructive"
                     )}
                 >
                     {isFree
                         ? t("schedulePage.freeRooms.statusFree")
-                        : t("schedulePage.freeRooms.statusBusy")}
+                        : isClosed
+                          ? t("schedulePage.freeRooms.statusClosed")
+                          : t("schedulePage.freeRooms.statusBusy")}
                 </p>
-                {info && (
+                {info && !isClosed && (
                     <p className="text-xs text-muted-foreground">
                         <HighlightedText
                             text={stripRedundantFreeLabel(info, isFree)}
@@ -166,6 +188,7 @@ function RoomRow({
                     </p>
                 )}
                 {showDuration &&
+                    !isClosed &&
                     (bookableUntil ? (
                         <p className="text-[11px] italic text-muted-foreground">
                             {t("schedulePage.freeRooms.untilPrefix")}{" "}
@@ -224,7 +247,7 @@ export function FreeRoomsView() {
         if (!roomsData?.salles) return [];
         return [...roomsData.salles].sort((a, b) => {
             if (a.statut !== b.statut) {
-                return a.statut === "DISPONIBLE" ? -1 : 1;
+                return STATUS_ORDER[a.statut] - STATUS_ORDER[b.statut];
             }
             return a.salle.localeCompare(b.salle);
         });
@@ -270,10 +293,17 @@ export function FreeRoomsView() {
 
                 {!buildingsLoading &&
                     buildings.map((building) => {
-                        const level = getAvailabilityLevel(
-                            building.dispo,
-                            building.total
-                        );
+                        // Every room past its closing time: the building is
+                        // closed, not full.
+                        const isClosed =
+                            building.total > 0 &&
+                            (building.fermees ?? 0) >= building.total;
+                        const level = isClosed
+                            ? "unknown"
+                            : getAvailabilityLevel(
+                                  building.dispo,
+                                  building.total
+                              );
                         return (
                             <Card
                                 key={building.code}
@@ -293,7 +323,11 @@ export function FreeRoomsView() {
                                             LEVEL_STYLES[level]
                                         )}
                                     >
-                                        {building.dispo}/{building.total}
+                                        {isClosed
+                                            ? t(
+                                                  "schedulePage.freeRooms.buildingClosed"
+                                              )
+                                            : `${building.dispo}/${building.total}`}
                                     </span>
                                 </div>
                                 <Progress

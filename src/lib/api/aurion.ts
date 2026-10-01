@@ -13,6 +13,36 @@ import {
 
 const JUNIA_STATUS_STALE_MS = 1000 * 60; // same as useJuniaStatus
 
+export const AURION_WARM_QUERY_KEY = ["aurionWarm"] as const;
+
+// Same TTL as the API's session cache: past it, the warm-up has expired.
+const WARM_TTL_MS = 1000 * 60 * 10;
+const LAST_WARM_KEY = "aurionLastWarmAt";
+
+/** Whether the last successful `/aurion/warm` is older than the API's TTL. */
+export function isAurionWarmExpired(): boolean {
+    const lastWarmAt = Number(getFromStorage(LAST_WARM_KEY));
+    return !lastWarmAt || Date.now() - lastWarmAt >= WARM_TTL_MS;
+}
+
+/**
+ * Re-run the warm-up before an Aurion fetch when the last one has expired.
+ * Goes through the shared warm query so concurrent fetches await a single
+ * request. Never throws: the fetch logs itself in anyway if warm fails.
+ */
+async function ensureAurionWarm(): Promise<void> {
+    if (!isAurionWarmExpired()) return;
+    try {
+        await queryClient.fetchQuery({
+            queryKey: AURION_WARM_QUERY_KEY,
+            queryFn: warmAurionSession,
+            staleTime: 0,
+        });
+    } catch {
+        // Warm is an optimization, never a hard dependency.
+    }
+}
+
 /**
  * Make sure BadJunia's timings are in the query cache before timing a fetch
  * against them. Awaits the shared juniaStatus query when it has no fresh
@@ -42,6 +72,7 @@ async function timedAurionFetch<T>(
     key: SlowQueryKey,
     fn: () => Promise<T>
 ): Promise<T> {
+    await ensureAurionWarm();
     // Load BadJunia's timings first (outside the measured window) so the
     // expected value is theirs, not the fallback constants.
     const status = await ensureJuniaStatus();
@@ -122,6 +153,7 @@ export async function warmAurionSession(): Promise<boolean> {
         session
     );
     if (data?.success) {
+        saveToStorage(LAST_WARM_KEY, String(Date.now()));
         // The request only resolves once the home page has actually loaded,
         // so the tokens are usable right now — no delay like after a login.
         markAurionSession(0);

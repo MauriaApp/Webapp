@@ -64,7 +64,7 @@ export function VersionsPage() {
                                     </p>
                                 </div>
                                 <Badge variant="secondary">
-                                    v{update.version}
+                                    {`v${update.version}`}
                                 </Badge>
                             </CardContent>
                         </Card>
