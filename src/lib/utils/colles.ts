@@ -72,3 +72,68 @@ export function buildCollesLessons(
 
     return buildColleLessons(collesClass, group);
 }
+
+/* ------------------------------------------------------- Palantir rooms -- */
+
+const normalizeRoom = (value: string) =>
+    value
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+
+/**
+ * Every khôlle of every group, bucketed by room, for Palantir's room
+ * plannings — the sheet is public (no roster), so no API call is needed.
+ * Built once per language, since the event titles are localized.
+ */
+let cachedRoomColles: {
+    language: string;
+    byRoom: Map<string, Lesson[]>;
+} | null = null;
+
+function allRoomColles(): Map<string, Lesson[]> {
+    if (cachedRoomColles?.language === i18n.language) {
+        return cachedRoomColles.byRoom;
+    }
+
+    const byRoom = new Map<string, Lesson[]>();
+    for (const collesClass of COLLES_CLASSES) {
+        for (const group of Object.keys(collesClass.groups)) {
+            for (const lesson of buildColleLessons(collesClass, group)) {
+                const room = normalizeRoom(lesson.title.split("\n")[0] ?? "");
+                const bucket = byRoom.get(room);
+                if (bucket) {
+                    bucket.push(lesson);
+                } else {
+                    byRoom.set(room, [lesson]);
+                }
+            }
+        }
+    }
+
+    cachedRoomColles = { language: i18n.language, byRoom };
+    return byRoom;
+}
+
+/**
+ * Every khôlle happening in `room` — Palantir room labels ("IC2 C403") match
+ * the colles sheet's rooms, and a suffix in the sheet ("IC2 C403 - Labo")
+ * still matches the shorter Palantir label.
+ */
+export function getRoomCollesLessons(room: string): Lesson[] {
+    const byRoom = allRoomColles();
+    const needle = normalizeRoom(room);
+    if (!needle) return [];
+
+    if (byRoom.has(needle)) return byRoom.get(needle) ?? [];
+
+    const lessons: Lesson[] = [];
+    for (const [key, bucket] of byRoom) {
+        if (key.startsWith(`${needle} -`) || key.startsWith(`${needle} `)) {
+            lessons.push(...bucket);
+        }
+    }
+    return lessons;
+}
