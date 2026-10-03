@@ -32,6 +32,7 @@ import {
 import { PalantirEntity, PalantirEntityKind } from "@/types/palantir";
 import { Lesson } from "@/types/aurion";
 import { usePalantirTheme } from "@/lib/utils/experimental";
+import { getRoomCollesLessons } from "@/lib/utils/colles";
 import { cn } from "@/lib/utils/cn";
 import { PalantirBackdrop } from "./palantir-backdrop";
 import "./palantir-theme.css";
@@ -120,6 +121,19 @@ export function PalantirPage() {
         staleTime: 1000 * 60 * 5,
     });
 
+    // Khôlles are not in Aurion, so they are not in the Palantir index
+    // either: the public colles sheet is folded in client-side, the same way
+    // the personal planning does it.
+    const roomColles = useMemo(
+        () =>
+            selected?.kind === "room" ? getRoomCollesLessons(selected.id) : [],
+        [selected]
+    );
+    const planningLessons = useMemo(
+        () => [...lessons, ...roomColles],
+        [lessons, roomColles]
+    );
+
     const kindItems = useMemo<CarouselItem[]>(
         () => [
             { value: null, label: t("palantirPage.kinds.all") },
@@ -177,7 +191,7 @@ export function PalantirPage() {
                                 : t("palantirPage.loading")}
                         </p>
                     </motion.div>
-                ) : lessons.length === 0 ? (
+                ) : planningLessons.length === 0 ? (
                     <motion.p
                         variants={fadeIn}
                         className="py-16 text-center text-sm text-muted-foreground"
@@ -191,7 +205,7 @@ export function PalantirPage() {
                     >
                         <PlanningCalendar
                             ref={calendarRef}
-                            eventSources={[lessons]}
+                            eventSources={[planningLessons]}
                             eventClassNames={
                                 classified ? eventClassNames : undefined
                             }
