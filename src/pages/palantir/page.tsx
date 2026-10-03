@@ -277,7 +277,7 @@ export function PalantirPage() {
                 </motion.div>
             )}
 
-            <div className="flex flex-1 flex-col justify-end">
+            <div className="flex flex-1 flex-col justify-start">
                 <AnimatePresence mode="popLayout">
                     {query.length === 0 ? (
                         <motion.p
