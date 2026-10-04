@@ -38,3 +38,24 @@ export interface PalantirSearchResult {
     results: PalantirEntity[];
     status: PalantirIndexStatus;
 }
+
+/** A teacher of the index. Admin-only results, invisible to everyone else. */
+export interface PalantirTeacher {
+    /** As Aurion writes it, e.g. "Monsieur BELLEUDY". */
+    name: string;
+    lessons: number;
+}
+
+/** A student of a promotion roster. Admin-only results. */
+export interface PalantirStudent {
+    firstName: string;
+    lastName: string;
+    className: string;
+    /** The class as a Palantir entity id, to open its planning on click. */
+    groupId: string;
+}
+
+export interface PalantirPeopleResult {
+    teachers: PalantirTeacher[];
+    students: PalantirStudent[];
+}

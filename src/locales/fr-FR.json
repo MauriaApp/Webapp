@@ -798,7 +798,7 @@
     "noLessons": "Aucun cours sur la période indexée.",
     "back": "Retour",
     "loading": "Chargement de l'emploi du temps…",
-    "loadingGroup": "Récupération en direct sur Aurion, ça prend une quinzaine de secondes…",
+    "student": "Étudiant",
     "promotion": "Classe",
     "lessonCount_one": "{{count}} cours",
     "lessonCount_other": "{{count}} cours",
