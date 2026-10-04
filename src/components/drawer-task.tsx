@@ -20,6 +20,11 @@ import { TaskData } from "@/types/data";
 // The usual deadlines: morning class, noon, end of the day, midnight.
 const QUICK_TIMES = ["08:00", "12:00", "18:00", "23:59"];
 
+// French elision: "Prochain cours d'Informatique" rather than
+// "de Informatique" when the course starts with a vowel.
+const startsWithVowel = (course: string) =>
+    /^[aeiouyàâéèêëîïôûùœ]/i.test(course.trim());
+
 export function DrawerTask({
     open,
     onOpenChange,
@@ -130,26 +135,36 @@ export function DrawerTask({
 
                     <div className="space-y-2">
                         <Label>{t("agendaPage.dueDate")}</Label>
-                        {nextLesson && (
-                            <ChipButton
-                                className="h-auto max-w-full py-1.5 text-left whitespace-normal"
-                                active={
-                                    isSameDay(day, nextLesson.start) &&
-                                    time === toTime(nextLesson.start)
-                                }
-                                onClick={() => {
-                                    setDay(startOfDay(nextLesson.start));
-                                    setTime(toTime(nextLesson.start));
-                                    setTimeOpen(false);
-                                }}
-                            >
-                                <BookOpen className="h-4 w-4 shrink-0" />
-                                {t("agendaPage.nextLesson", {
-                                    course: nextLesson.course,
-                                })}
-                            </ChipButton>
-                        )}
-                        <DayChips day={day} onChange={setDay} />
+                        <DayChips
+                            day={day}
+                            onChange={setDay}
+                            extra={
+                                nextLesson && (
+                                    <ChipButton
+                                        className="h-auto max-w-full py-1.5 text-left whitespace-normal"
+                                        active={
+                                            isSameDay(day, nextLesson.start) &&
+                                            time === toTime(nextLesson.start)
+                                        }
+                                        onClick={() => {
+                                            setDay(startOfDay(nextLesson.start));
+                                            setTime(toTime(nextLesson.start));
+                                            setTimeOpen(false);
+                                        }}
+                                    >
+                                        <BookOpen className="h-4 w-4 shrink-0" />
+                                        {t(
+                                            startsWithVowel(
+                                                nextLesson.course
+                                            )
+                                                ? "agendaPage.nextLessonElided"
+                                                : "agendaPage.nextLesson",
+                                            { course: nextLesson.course }
+                                        )}
+                                    </ChipButton>
+                                )
+                            }
+                        />
                     </div>
 
                     <div className="space-y-2">
@@ -168,7 +183,6 @@ export function DrawerTask({
                                 value={time}
                                 hour12={hour12}
                                 onChange={setTime}
-                                onDone={() => setTimeOpen(false)}
                             />
                         )}
                         <div className="flex flex-wrap gap-2 pt-1">

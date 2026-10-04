@@ -685,6 +685,7 @@
     "dueDate": "Fecha límite",
     "dueTime": "Hora",
     "nextLesson": "Próxima clase de {{course}}",
+    "nextLessonElided": "Próxima clase de {{course}}",
     "notes": "Notas",
     "optional": "Opcional",
     "createTaskBtn": "Crear tarea",
@@ -840,8 +841,6 @@
   "dateTimeFields": {
     "today": "Hoy",
     "tomorrow": "Mañana",
-    "otherDate": "Otra fecha",
-    "hours": "Hora",
-    "minutes": "Minutos"
+    "otherDate": "Otra fecha"
   }
 }

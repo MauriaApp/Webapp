@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { isWeekend } from "date-fns";
 import {
     Apple,
     Beef,
@@ -119,8 +120,9 @@ export function RestaurantsSection() {
     const [selected, setSelected] = useState<RestaurantMenu | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    // Désactivé depuis les réglages, ou API pas encore à jour / injoignable.
-    if (campus === "none" || !data) return null;
+    // Désactivé depuis les réglages, API pas encore à jour / injoignable,
+    // ou week-end : le RU ne sert pas de menu du jour le samedi ni le dimanche.
+    if (campus === "none" || isWeekend(new Date()) || !data) return null;
 
     // Lien vers la source du menu (PDF pour Lille, page Crous pour Châteauroux).
     const sourceLabel =

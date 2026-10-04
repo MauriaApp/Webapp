@@ -3,6 +3,9 @@ import type { Variants } from "framer-motion";
 // Smooth, "pro" ease-out curve shared by every entrance animation.
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+// Ease paired with every fade-out (fadeIn's exit).
+export const EASE_EXIT: [number, number, number, number] = [0.4, 0, 0.2, 1];
+
 /**
  * Standard entrance for a page element: a gentle fade, no movement.
  * Use as `variants={fadeIn}` — either standalone with
@@ -17,7 +20,7 @@ export const fadeIn: Variants = {
     },
     exit: {
         opacity: 0,
-        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        transition: { duration: 0.6, ease: EASE_EXIT },
     },
 };
 

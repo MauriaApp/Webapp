@@ -685,6 +685,7 @@
     "dueDate": "Due",
     "dueTime": "Time",
     "nextLesson": "Next {{course}} class",
+    "nextLessonElided": "Next {{course}} class",
     "notes": "Notes",
     "optional": "Optional",
     "createTaskBtn": "Create task",
@@ -840,8 +841,6 @@
   "dateTimeFields": {
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "otherDate": "Other date",
-    "hours": "Hour",
-    "minutes": "Minutes"
+    "otherDate": "Other date"
   }
 }

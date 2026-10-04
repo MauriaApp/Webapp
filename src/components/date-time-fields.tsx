@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, useEffect, useRef, useState, type ReactNode } from "react";
 import { addDays, format, isToday, isTomorrow, startOfDay } from "date-fns";
 import { CalendarDays } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,11 @@ import { getDateLocale } from "@/lib/utils/translations";
 import { formatTime, pad } from "@/lib/utils/date-time";
 
 // Shared by the personal event and task forms.
+
+// Row height of a wheel item; keep in sync with the h-10 classes below.
+const WHEEL_ITEM_HEIGHT = 40;
+// Visible rows per wheel: the centered one plus one faded on each side.
+const WHEEL_HEIGHT = WHEEL_ITEM_HEIGHT * 3;
 
 export const ChipButton = ({
     active,
@@ -31,9 +36,12 @@ export const ChipButton = ({
 export const DayChips = ({
     day,
     onChange,
+    extra,
 }: {
     day: Date;
     onChange: (day: Date) => void;
+    /** Rendered at the end of the row, e.g. the next-lesson shortcut. */
+    extra?: ReactNode;
 }) => {
     const { t, i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
@@ -41,7 +49,7 @@ export const DayChips = ({
     const isOtherDay = !isToday(day) && !isTomorrow(day);
 
     return (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
             <ChipButton
                 active={isToday(day)}
                 onClick={() => onChange(startOfDay(new Date()))}
@@ -80,6 +88,7 @@ export const DayChips = ({
                     />
                 </PopoverContent>
             </Popover>
+            {extra}
         </div>
     );
 };
@@ -119,88 +128,97 @@ export const TimeField = ({
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
 /**
- * Hours then minutes (5 min steps) laid out as tap targets, inline in the
- * form: no scrolling list, which the drawer would fight over. Picking the
- * minutes closes it, being the last thing set.
+ * One wheel of the time picker: a vertical snap-scroll list whose centered
+ * row is the value, iOS-style. Flick it, or tap a row to center it.
  */
-export const TimeGrid = ({
-    value,
-    hour12,
-    onChange,
-    onDone,
+const WheelColumn = ({
+    options,
+    selected,
+    onSelect,
+    className,
 }: {
-    value: string;
-    hour12: boolean;
-    onChange: (time: string) => void;
-    onDone: () => void;
+    options: string[];
+    selected: number;
+    onSelect: (index: number) => void;
+    className?: string;
 }) => {
-    const { t } = useTranslation();
-    const [hours = 0, minutes = 0] = value.split(":").map(Number);
-    const isPm = hours >= 12;
-    const hourOptions = hour12
-        ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-        : Array.from({ length: 24 }, (_, i) => i);
-    const shownHour = hour12 ? hours % 12 || 12 : hours;
+    const ref = useRef<HTMLDivElement>(null);
+    const [centered, setCentered] = useState(selected);
+    // A new selection only scrolls the wheel when it came from elsewhere
+    // (quick chips, durations): never to echo back the user's own scroll.
+    const fromWheel = useRef(false);
+    const selectedRef = useRef(selected);
+    selectedRef.current = selected;
+    const timer = useRef<number | null>(null);
+    // Open right on the selection: no scroll-up animation on mount, only
+    // later changes (quick chips, durations) move the wheel smoothly.
+    const mounted = useRef(false);
 
-    const setTime = (h: number, m: number) => onChange(`${pad(h)}:${pad(m)}`);
+    useEffect(() => {
+        return () => {
+            if (timer.current !== null) window.clearTimeout(timer.current);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (fromWheel.current) {
+            fromWheel.current = false;
+            return;
+        }
+        setCentered(selected);
+        ref.current?.scrollTo({
+            top: selected * WHEEL_ITEM_HEIGHT,
+            behavior: mounted.current ? "smooth" : "auto",
+        });
+        mounted.current = true;
+    }, [selected]);
+
+    const handleScroll = () => {
+        const row = ref.current;
+        if (!row) return;
+        const index = Math.min(
+            Math.round(row.scrollTop / WHEEL_ITEM_HEIGHT),
+            options.length - 1
+        );
+        setCentered(index);
+        // Commit once the wheel settles, not for every row it passes.
+        if (timer.current !== null) window.clearTimeout(timer.current);
+        timer.current = window.setTimeout(() => {
+            timer.current = null;
+            if (index !== selectedRef.current) {
+                fromWheel.current = true;
+                onSelect(index);
+            }
+        }, 120);
+    };
 
     return (
-        <div className="space-y-3 rounded-lg border p-3">
-            <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                    {t("dateTimeFields.hours")}
-                </p>
-                <div className="grid grid-cols-6 gap-1.5">
-                    {hourOptions.map((h) => (
-                        <TimeCell
-                            key={h}
-                            active={shownHour === h}
-                            onClick={() =>
-                                setTime(
-                                    hour12 ? (h % 12) + (isPm ? 12 : 0) : h,
-                                    minutes
-                                )
-                            }
+        <div className={cn("relative", className)}>
+            {/* The selection band and the fades sit above the wheel. */}
+            <div className="pointer-events-none absolute inset-x-0 top-[calc(50%-20px)] h-10 rounded-lg bg-mauria-purple/10 dark:bg-white/10" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[hsl(var(--mauria-card))] to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[hsl(var(--mauria-card))] to-transparent" />
+            <div
+                ref={ref}
+                onScroll={handleScroll}
+                className="snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                style={{ height: WHEEL_HEIGHT }}
+            >
+                <div className="py-10">
+                    {options.map((option, i) => (
+                        <button
+                            type="button"
+                            key={option}
+                            onClick={() => onSelect(i)}
+                            className={cn(
+                                "flex h-10 w-full cursor-pointer snap-center items-center justify-center text-base tabular-nums transition-colors",
+                                i === centered
+                                    ? "font-semibold text-mauria-purple dark:text-white"
+                                    : "text-muted-foreground"
+                            )}
                         >
-                            {hour12 ? h : pad(h)}
-                        </TimeCell>
-                    ))}
-                </div>
-                {hour12 && (
-                    <div className="grid grid-cols-2 gap-1.5">
-                        {[false, true].map((pm) => (
-                            <TimeCell
-                                key={String(pm)}
-                                active={isPm === pm}
-                                onClick={() =>
-                                    setTime(
-                                        (hours % 12) + (pm ? 12 : 0),
-                                        minutes
-                                    )
-                                }
-                            >
-                                {pm ? "PM" : "AM"}
-                            </TimeCell>
-                        ))}
-                    </div>
-                )}
-            </div>
-            <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                    {t("dateTimeFields.minutes")}
-                </p>
-                <div className="grid grid-cols-6 gap-1.5">
-                    {MINUTES.map((m) => (
-                        <TimeCell
-                            key={m}
-                            active={minutes === m}
-                            onClick={() => {
-                                setTime(hours, m);
-                                onDone();
-                            }}
-                        >
-                            {`:${pad(m)}`}
-                        </TimeCell>
+                            {option}
+                        </button>
                     ))}
                 </div>
             </div>
@@ -208,16 +226,65 @@ export const TimeGrid = ({
     );
 };
 
-const TimeCell = ({
-    active,
-    ...props
-}: ComponentProps<typeof Button> & { active: boolean }) => (
-    <Button
-        type="button"
-        size="sm"
-        variant={active ? "default" : "ghost"}
-        className="px-0 tabular-nums"
-        aria-pressed={active}
-        {...props}
-    />
-);
+/**
+ * The time picker itself: hours and minutes as side-by-side wheels (plus
+ * AM/PM in 12 h locales), centered on the current value. Closing happens
+ * through the field toggle, the wheels never dismiss on their own.
+ */
+export const TimeGrid = ({
+    value,
+    hour12,
+    onChange,
+}: {
+    value: string;
+    hour12: boolean;
+    onChange: (time: string) => void;
+}) => {
+    const [hours = 0, minutes = 0] = value.split(":").map(Number);
+    const isPm = hours >= 12;
+
+    const setTime = (h: number, m: number) => onChange(`${pad(h)}:${pad(m)}`);
+
+    const hourOptions = hour12
+        ? ["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+        : Array.from({ length: 24 }, (_, i) => pad(i));
+    const minuteOptions = MINUTES.map((m) => pad(m));
+    const shownHour = hour12 ? hours % 12 || 12 : hours;
+    // A value the wheel can't show exactly (23:59) centers on the closest
+    // row below rather than rewriting it.
+    const minuteIndex = Math.min(Math.floor(minutes / 5), MINUTES.length - 1);
+
+    return (
+        <div className="flex items-start justify-center gap-6 pt-2">
+            {hour12 && (
+                <WheelColumn
+                    className="w-14"
+                    options={["AM", "PM"]}
+                    selected={isPm ? 1 : 0}
+                    onSelect={(i) =>
+                        setTime((hours % 12) + (i ? 12 : 0), minutes)
+                    }
+                />
+            )}
+            <WheelColumn
+                className="w-16"
+                options={hourOptions}
+                selected={hour12 ? hourOptions.indexOf(String(shownHour)) : hours}
+                onSelect={(i) =>
+                    setTime(
+                        hour12
+                            ? (Number(hourOptions[i]) % 12) + (isPm ? 12 : 0)
+                            : i,
+                        minutes
+                    )
+                }
+            />
+            <WheelColumn
+                className="w-16"
+                options={minuteOptions}
+                selected={minuteIndex}
+                onSelect={(i) => setTime(hours, i * 5)}
+            />
+        </div>
+    );
+};

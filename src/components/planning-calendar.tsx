@@ -1,5 +1,6 @@
 import { forwardRef, memo, useEffect, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
+import { addDays, isSunday } from "date-fns";
 import {
     DateSelectArg,
     EventClickArg,
@@ -198,6 +199,11 @@ export const PlanningCalendar = forwardRef<
                 }
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                 initialView="timeGridWeek"
+                // Sunday is hidden from the grid and its week is already
+                // over: open on the week that's coming instead.
+                initialDate={
+                    isSunday(new Date()) ? addDays(new Date(), 1) : undefined
+                }
                 headerToolbar={{
                     left: "today",
                     center: "timeGridWeek,timeGridDay",
