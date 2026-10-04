@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowLeft,
     DoorOpen,
+    GraduationCap,
     Loader2,
     Search,
     Users,
@@ -21,16 +22,25 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 import { PlanningCalendar } from "@/components/planning-calendar";
+import { DrawerPlanningContent } from "@/components/drawer-planning-content";
 import { AurionDownState } from "@/components/aurion-down-state";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { fadeIn, staggerGroup } from "@/lib/motion";
+import { parseFromTitle } from "@/lib/utils/home";
 import {
     fetchPalantirPlanning,
     fetchPalantirStatus,
     searchPalantir,
+    searchPalantirPeople,
 } from "@/lib/api/palantir";
-import { PalantirEntity, PalantirEntityKind } from "@/types/palantir";
+import {
+    PalantirEntity,
+    PalantirEntityKind,
+    PalantirStudent,
+    PalantirTeacher,
+} from "@/types/palantir";
 import { Lesson } from "@/types/aurion";
+import { PreparedLesson } from "@/types/home";
 import { usePalantirTheme } from "@/lib/utils/experimental";
 import { getRoomCollesLessons } from "@/lib/utils/colles";
 import { cn } from "@/lib/utils/cn";
@@ -54,6 +64,10 @@ export function PalantirPage() {
     const [query, setQuery] = useState("");
     const [kind, setKind] = useState<PalantirEntityKind | null>(null);
     const [selected, setSelected] = useState<PalantirEntity | null>(null);
+    // Clicking an event opens the same read-only detail drawer as the
+    // personal planning — pure client-side parsing of the title, no request.
+    const [eventInfo, setEventInfo] = useState<PreparedLesson | null>(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const calendarRef = useRef<FullCalendar>(null);
 
     // The lesson happening now glows in the calendar; the clock is polled so
@@ -88,6 +102,17 @@ export function PalantirPage() {
         queryKey: ["palantir", "search", query, kind],
         queryFn: () => searchPalantir(query, kind ? [kind] : undefined),
         enabled: query.length > 0,
+        staleTime: 1000 * 60 * 5,
+    });
+
+    // Teachers and students ride along the normal search. The API answers
+    // 404 for anyone but admins, so this stays null for them — no extra
+    // UI, no hint the feature exists. Only fired on the unfiltered list:
+    // the room/group filters mean people by definition.
+    const { data: people } = useQuery({
+        queryKey: ["palantir", "people", query],
+        queryFn: () => searchPalantirPeople(query),
+        enabled: query.length > 0 && kind === null,
         staleTime: 1000 * 60 * 5,
     });
 
@@ -144,6 +169,9 @@ export function PalantirPage() {
     );
 
     const results = search?.results ?? [];
+    const teachers: PalantirTeacher[] = people?.teachers ?? [];
+    const students: PalantirStudent[] = people?.students ?? [];
+    const hasPeople = teachers.length + students.length > 0;
     const progress =
         status && status.total > 0
             ? Math.round((status.done / status.total) * 100)
@@ -186,9 +214,7 @@ export function PalantirPage() {
                     >
                         <Loader2 className="h-6 w-6 animate-spin" />
                         <p className="text-sm">
-                            {selected.kind === "group"
-                                ? t("palantirPage.loadingGroup")
-                                : t("palantirPage.loading")}
+                            {t("palantirPage.loading")}
                         </p>
                     </motion.div>
                 ) : planningLessons.length === 0 ? (
@@ -209,9 +235,32 @@ export function PalantirPage() {
                             eventClassNames={
                                 classified ? eventClassNames : undefined
                             }
+                            onEventClick={(info) => {
+                                const event = info.event.toJSON();
+                                const {
+                                    courseTitle,
+                                    location,
+                                    type,
+                                    teacher,
+                                } = parseFromTitle(event as Lesson);
+                                setEventInfo({
+                                    courseTitle,
+                                    location,
+                                    type,
+                                    teacher,
+                                    details: event,
+                                } as unknown as PreparedLesson);
+                                setDrawerOpen(true);
+                            }}
                         />
                     </motion.section>
                 )}
+
+                <DrawerPlanningContent
+                    drawerOpen={drawerOpen}
+                    setDrawerOpen={setDrawerOpen}
+                    eventInfo={eventInfo}
+                />
             </motion.div>
         );
     }
@@ -287,7 +336,7 @@ export function PalantirPage() {
                         >
                             {t("palantirPage.hint")}
                         </motion.p>
-                    ) : searching && results.length === 0 ? (
+                    ) : searching && results.length === 0 && !hasPeople ? (
                         <motion.div
                             key="searching"
                             variants={fadeIn}
@@ -295,7 +344,7 @@ export function PalantirPage() {
                         >
                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         </motion.div>
-                    ) : results.length === 0 ? (
+                    ) : results.length === 0 && !hasPeople ? (
                         <motion.div key="empty" variants={fadeIn}>
                             <div className="text-center py-12">
                                 <div className="bg-mauria-card rounded-xl shadow-md p-8 max-w-md mx-auto">
@@ -375,6 +424,70 @@ export function PalantirPage() {
                                     </motion.li>
                                 );
                             })}
+                            {students.map((student) => (
+                                <motion.li
+                                    key={`student-${student.groupId}-${student.lastName}`}
+                                    variants={fadeIn}
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setSelected({
+                                                kind: "group",
+                                                id: student.groupId,
+                                                label: student.className,
+                                                detail: "",
+                                                type: "Promotion",
+                                                count: 0,
+                                            })
+                                        }
+                                        className="w-full text-left"
+                                    >
+                                        <Card className="transition-colors hover:bg-mauria-purple/5 dark:hover:bg-white/5">
+                                            <CardContent className="flex items-center gap-3 py-3">
+                                                <Users className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-medium">
+                                                        {student.firstName}{" "}
+                                                        {student.lastName}
+                                                    </p>
+                                                    <p className="truncate text-xs text-muted-foreground">
+                                                        {student.className}
+                                                    </p>
+                                                </div>
+                                                <Badge variant="secondary">
+                                                    {t(
+                                                        "palantirPage.student"
+                                                    )}
+                                                </Badge>
+                                            </CardContent>
+                                        </Card>
+                                    </button>
+                                </motion.li>
+                            ))}
+                            {teachers.map((teacher) => (
+                                <motion.li
+                                    key={`teacher-${teacher.name}`}
+                                    variants={fadeIn}
+                                >
+                                    <Card className="cursor-default">
+                                        <CardContent className="flex items-center gap-3 py-3">
+                                            <GraduationCap className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate text-sm font-medium">
+                                                    {teacher.name}
+                                                </p>
+                                            </div>
+                                            <Badge variant="secondary">
+                                                {t(
+                                                    "palantirPage.lessonCount",
+                                                    { count: teacher.lessons }
+                                                )}
+                                            </Badge>
+                                        </CardContent>
+                                    </Card>
+                                </motion.li>
+                            ))}
                         </motion.ul>
                     )}
                 </AnimatePresence>

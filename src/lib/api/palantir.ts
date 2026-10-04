@@ -2,6 +2,7 @@ import { Lesson } from "@/types/aurion";
 import {
     PalantirEntityKind,
     PalantirIndexStatus,
+    PalantirPeopleResult,
     PalantirSearchResult,
 } from "@/types/palantir";
 import { APIResponse, apiRequest } from "./helper";
@@ -52,6 +53,26 @@ export async function fetchPalantirPlanning(
         "/palantir/planning",
         "POST",
         { ...session, kind, id }
+    );
+    return res?.success ? (res.data ?? null) : null;
+}
+
+/**
+ * Teachers and students of the index, on the same search as
+ * searchPalantir. The API answers 404 for anyone but admins, so this
+ * silently yields null for them — no admin UI ever shows, the results
+ * just blend into the normal list for those who may see them.
+ */
+export async function searchPalantirPeople(
+    q: string
+): Promise<PalantirPeopleResult | null> {
+    const session = getSession();
+    if (!session || !q.trim()) return null;
+
+    const res = await apiRequest<APIResponse<PalantirPeopleResult>>(
+        "/palantir/people",
+        "POST",
+        { ...session, q }
     );
     return res?.success ? (res.data ?? null) : null;
 }

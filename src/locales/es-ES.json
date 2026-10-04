@@ -798,7 +798,7 @@
     "noLessons": "Ninguna clase en el periodo indexado.",
     "back": "Volver",
     "loading": "Cargando el horario…",
-    "loadingGroup": "Consultando Aurion en directo, tarda unos quince segundos…",
+    "student": "Estudiante",
     "promotion": "Clase",
     "lessonCount_one": "{{count}} clase",
     "lessonCount_other": "{{count}} clases",
