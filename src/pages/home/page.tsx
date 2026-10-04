@@ -8,7 +8,7 @@ import { fetchImportantMessage } from "@/lib/api/supa";
 import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { useColles, useResolvedPlanning } from "@/lib/hooks/use-colles";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchPlanning } from "@/lib/api/aurion";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { Lesson } from "@/types/aurion";
@@ -31,6 +31,7 @@ export function HomePage() {
     );
     const { t } = useTranslation();
     const { isWarming } = useAurionWarm();
+    const queryClient = useQueryClient();
 
     const {
         data: lessons = [],
@@ -59,8 +60,16 @@ export function HomePage() {
 
     const isBusy = isWarming || isLoading || isFetching;
 
+    // Pull-to-refresh refreshes every query the page shows, not just the
+    // planning: the RU menu, the important messages and the Junia status
+    // have no pull wiring of their own. Unmounted keys (the other campus's
+    // RU menu) are a no-op.
     const handleRefresh = () => {
         void refetch();
+        void queryClient.refetchQueries({ queryKey: ["importantMessages"] });
+        void queryClient.refetchQueries({ queryKey: ["juniaStatus"] });
+        void queryClient.refetchQueries({ queryKey: ["dailyMenu"] });
+        void queryClient.refetchQueries({ queryKey: ["castelRuMenu"] });
     };
 
     const { data: importantMessages = [] } = useQuery({

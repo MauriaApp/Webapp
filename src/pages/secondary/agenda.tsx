@@ -15,6 +15,7 @@ import {
 } from "@/lib/utils/agenda";
 import { cn } from "@/lib/utils/cn";
 import { getDateLocale } from "@/lib/utils/translations";
+import { fadeIn, staggerGroup } from "@/lib/motion";
 import { TaskData } from "@/types/data";
 
 type TaskGroup = {
@@ -104,11 +105,19 @@ export function AgendaPage() {
     };
 
     return (
-        <div className="pb-6">
+        <motion.div
+            className="pb-6"
+            variants={staggerGroup}
+            initial="hidden"
+            animate="show"
+        >
             <div className="mt-4 mb-6 flex items-center justify-between gap-2">
-                <h2 className="text-3xl font-bold text-mauria-purple dark:text-white">
+                <motion.h2
+                    className="text-3xl font-bold text-mauria-purple dark:text-white"
+                    variants={fadeIn}
+                >
                     {t("agendaPage.title")}
-                </h2>
+                </motion.h2>
                 <Button
                     size="sm"
                     className="w-9 px-0"
@@ -120,7 +129,7 @@ export function AgendaPage() {
             </div>
 
             {tasks.length > 0 ? (
-                <div className="space-y-6">
+                <motion.div variants={fadeIn} className="space-y-6">
                     <AnimatePresence initial={false}>
                         {groups.map((group) => (
                             <motion.section
@@ -161,9 +170,9 @@ export function AgendaPage() {
                             </motion.section>
                         ))}
                     </AnimatePresence>
-                </div>
+                </motion.div>
             ) : (
-                <div className="py-12 text-center">
+                <motion.div variants={fadeIn} className="py-12 text-center">
                     <div className="mx-auto max-w-md rounded-xl bg-mauria-card p-8 shadow-md">
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted-foreground/10">
                             <ClipboardListIcon className="h-8 w-8 text-muted-foreground" />
@@ -179,7 +188,7 @@ export function AgendaPage() {
                             {t("agendaPage.addTask")}
                         </Button>
                     </div>
-                </div>
+                </motion.div>
             )}
 
             <DrawerTask
@@ -192,7 +201,7 @@ export function AgendaPage() {
                     removeTask(task, "agendaPage.taskDeleted");
                 }}
             />
-        </div>
+        </motion.div>
     );
 }
 

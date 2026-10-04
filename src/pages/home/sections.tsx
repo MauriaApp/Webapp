@@ -4,7 +4,7 @@ import { PreparedLesson } from "@/types/home";
 import { MessageEntry } from "@/types/data";
 import { JuniaStatus } from "@/lib/api/junia-status";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue } from "framer-motion";
 import {
     ChevronDown,
     Clock,
@@ -22,7 +22,7 @@ import {
     formatLessonType,
 } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
-import { EASE, fadeIn, staggerGroup } from "@/lib/motion";
+import { EASE, EASE_EXIT, fadeIn, staggerGroup } from "@/lib/motion";
 
 const MotionCard = motion(Card);
 const MotionAlert = motion(Alert);
@@ -48,39 +48,46 @@ export const LessonCard = ({
     lesson: PreparedLesson;
     keyPrefix: string;
     onClick: (lesson: PreparedLesson) => () => void;
-}) => (
-    <MotionCard
-        key={`${lesson.courseTitle}-${lesson.time}-${keyPrefix}`}
-        className="mb-4 cursor-pointer border-none bg-white p-4 shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card"
-        variants={itemVariants}
-        onClick={onClick(lesson)}
-    >
-        <div className="space-y-2">
-            <div className="flex items-start justify-between">
-                <h4 className="font-semibold text-balance leading-tight pr-2">
-                    {lesson.courseTitle}
-                </h4>
-                <Badge className="px-2 py-1 rounded-md text-xs font-medium bg-mauria-accent/20 text-black dark:text-white whitespace-nowrap">
-                    {formatLessonType(lesson.type)}
-                </Badge>
-            </div>
+}) => {
+    // Aurion rooms read "A812 - Salle … - Campus …"; only the room itself
+    // fits on the card. No room: no pin, the time row stays alone.
+    const location = formatLessonLocation(lesson.location);
+    return (
+        <MotionCard
+            key={`${lesson.courseTitle}-${lesson.time}-${keyPrefix}`}
+            className="mb-4 cursor-pointer border-none bg-white p-4 shadow-md transition-transform duration-150 hover:-translate-y-0.5 dark:bg-mauria-card"
+            variants={itemVariants}
+            onClick={onClick(lesson)}
+        >
+            <div className="space-y-2">
+                <div className="flex items-start justify-between">
+                    <h4 className="font-semibold text-balance leading-tight pr-2">
+                        {lesson.courseTitle}
+                    </h4>
+                    <Badge className="px-2 py-1 rounded-md text-xs font-medium bg-mauria-accent/20 text-black dark:text-white whitespace-nowrap">
+                        {formatLessonType(lesson.type)}
+                    </Badge>
+                </div>
 
-            <div className="grid grid-cols-[1fr_1fr_auto] text-sm text-muted-foreground ">
-                <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span className="font-medium">{lesson.time}</span>
-                </div>
-                <div className="flex items-center gap-1 ml-4">
-                    <MapPin className="h-4 w-4" />
-                    <span>{formatLessonLocation(lesson.location)}</span>
-                </div>
-                <div className="mb-0 flex items-center justify-end">
-                    <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
+                <div className="grid grid-cols-[1fr_1fr_auto] text-sm text-muted-foreground ">
+                    <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        <span className="font-medium">{lesson.time}</span>
+                    </div>
+                    {location && (
+                        <div className="flex items-center gap-1 ml-4">
+                            <MapPin className="h-4 w-4" />
+                            <span>{location}</span>
+                        </div>
+                    )}
+                    <div className="mb-0 col-start-3 flex items-center justify-end">
+                        <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
+                    </div>
                 </div>
             </div>
-        </div>
-    </MotionCard>
-);
+        </MotionCard>
+    );
+};
 
 // Lessons Section Component
 export const LessonsSection = ({
@@ -143,6 +150,73 @@ export const WelcomeHeader = ({ firstName }: { firstName: string }) => {
 // Important Message Component
 // How long a message stays on screen before the carousel moves to the next.
 const MESSAGE_DURATION = 8; // seconds
+
+// One carousel progress segment. The width only ever animates while the
+// segment is the current one; leaving it freezes the bar where the fill
+// had got to. The freeze reads the motion value's live value rather than
+// dropping scaleX from `animate` — framer animates removed keys back to a
+// base target with the prop's own transition, which snapped the bar to 0%
+// in one frame and swallowed the fade out.
+const Segment = ({
+    active,
+    autoplay,
+    fillActive,
+}: {
+    active: boolean;
+    autoplay: boolean;
+    fillActive: boolean;
+}) => {
+    const scaleX = useMotionValue(0);
+    // Wherever the fill had got to when the segment was left.
+    const frozen = scaleX.get();
+    const filling = active && autoplay && fillActive;
+
+    return (
+        <span className="block h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/20">
+            <motion.span
+                className="block h-full origin-left rounded-full bg-mauria-purple dark:bg-white"
+                style={{ scaleX }}
+                initial={false}
+                animate={{
+                    scaleX: active
+                        ? autoplay
+                            ? filling
+                                ? 1
+                                : 0
+                            : 1
+                        : frozen,
+                    opacity: active ? 1 : 0,
+                }}
+                transition={
+                    active && autoplay
+                        ? {
+                              // Auto start: one frame at 0% and full
+                              // opacity so the restart doesn't jump, then
+                              // the fill runs linearly for the whole
+                              // message.
+                              scaleX: filling
+                                  ? {
+                                        duration: MESSAGE_DURATION,
+                                        ease: "linear",
+                                    }
+                                  : { duration: 0 },
+                              opacity: { duration: 0 },
+                          }
+                        : {
+                              // Manual select: the width snaps to full,
+                              // the opacity fades in. Deselect: frozen
+                              // width, fade out. Both fades last as long
+                              // as every other fade of the app (fadeIn).
+                              scaleX: { duration: 0 },
+                              opacity: active
+                                  ? { duration: 1.0, ease: EASE }
+                                  : { duration: 0.6, ease: EASE_EXIT },
+                          }
+                }
+            />
+        </span>
+    );
+};
 
 export const ImportantMessage = ({
     messages = [],
@@ -230,10 +304,10 @@ export const ImportantMessage = ({
                         <AnimatePresence mode="wait" initial={false}>
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, ease: EASE }}
+                                variants={fadeIn}
+                                initial="hidden"
+                                animate="show"
+                                exit="exit"
                             >
                                 <AlertTitle className="font-bold text-black dark:text-white">
                                     {current?.title ||
@@ -251,12 +325,7 @@ export const ImportantMessage = ({
                 {count > 1 && (
                     <div className="-mx-2 -mb-2 mt-3 flex items-center gap-1.5">
                         {messages.map((entry, i) => {
-                            const animating = i === index && autoplay;
-                            // Only the current segment is ever lit — past
-                            // segments are not kept filled, so switching
-                            // (auto or by click) always clears the old one.
-                            const filled =
-                                i === index && (fillActive || !autoplay);
+                            const active = i === index;
 
                             return (
                                 <button
@@ -265,28 +334,15 @@ export const ImportantMessage = ({
                                     aria-label={t("homePage.goToMessage", {
                                         index: i + 1,
                                     })}
-                                    aria-current={i === index}
+                                    aria-current={active}
                                     onClick={() => goTo(i)}
                                     className="group flex h-3 flex-1 cursor-pointer items-center"
                                 >
-                                    <span className="block h-1 w-full overflow-hidden rounded-full bg-black/15 dark:bg-white/20">
-                                        <motion.span
-                                            className="block h-full origin-left rounded-full bg-mauria-purple dark:bg-white"
-                                            initial={false}
-                                            animate={{
-                                                scaleX: filled ? 1 : 0,
-                                            }}
-                                            transition={
-                                                animating
-                                                    ? {
-                                                          duration:
-                                                              MESSAGE_DURATION,
-                                                          ease: "linear",
-                                                      }
-                                                    : { duration: 0 }
-                                            }
-                                        />
-                                    </span>
+                                    <Segment
+                                        active={active}
+                                        autoplay={autoplay}
+                                        fillActive={fillActive}
+                                    />
                                 </button>
                             );
                         })}

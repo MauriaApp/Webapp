@@ -248,7 +248,6 @@ export function DrawerUserEvent({
                                         ? handleStartChange
                                         : setEndTime
                                 }
-                                onDone={() => setOpenTime(null)}
                             />
                         )}
                         <div className="flex flex-wrap gap-2 pt-1">
