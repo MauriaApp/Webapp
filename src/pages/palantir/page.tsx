@@ -42,7 +42,12 @@ import {
 import { Lesson } from "@/types/aurion";
 import { PreparedLesson } from "@/types/home";
 import { usePalantirTheme } from "@/lib/utils/experimental";
-import { getRoomCollesLessons } from "@/lib/utils/colles";
+import {
+    getClassCollesLessons,
+    getRoomCollesLessons,
+    getStudentCollesLessons,
+    getTeacherCollesLessons,
+} from "@/lib/utils/colles";
 import { cn } from "@/lib/utils/cn";
 import { PalantirBackdrop } from "./palantir-backdrop";
 import "./palantir-theme.css";
@@ -52,6 +57,7 @@ const DEBOUNCE_MS = 300;
 const kindIcons = {
     room: DoorOpen,
     group: Users,
+    teacher: GraduationCap,
 } as const;
 
 export function PalantirPage() {
@@ -147,16 +153,30 @@ export function PalantirPage() {
     });
 
     // Khôlles are not in Aurion, so they are not in the Palantir index
-    // either: the public colles sheet is folded in client-side, the same way
-    // the personal planning does it.
-    const roomColles = useMemo(
-        () =>
-            selected?.kind === "room" ? getRoomCollesLessons(selected.id) : [],
-        [selected]
-    );
+    // either: the public colles sheet is folded in client-side, the same
+    // way the personal planning does it. A room gets every khôlle it
+    // hosts, a class every khôlle of its groups, a student their own
+    // (resolved server-side off the private roster), a teacher every
+    // khôlle they give.
+    const colles = useMemo(() => {
+        if (!selected) return [];
+        switch (selected.kind) {
+            case "room":
+                return getRoomCollesLessons(selected.id);
+            case "teacher":
+                return getTeacherCollesLessons(selected.id);
+            case "group":
+                return selected.collesGroup
+                    ? getStudentCollesLessons(
+                          selected.label,
+                          selected.collesGroup
+                      )
+                    : getClassCollesLessons(selected.label);
+        }
+    }, [selected]);
     const planningLessons = useMemo(
-        () => [...lessons, ...roomColles],
-        [lessons, roomColles]
+        () => [...lessons, ...colles],
+        [lessons, colles]
     );
 
     const kindItems = useMemo<CarouselItem[]>(
@@ -373,10 +393,9 @@ export function PalantirPage() {
                             className="space-y-2"
                         >
                             {results.map((entity) => {
-                                // Unknown kinds can still sit in the persisted
-                                // React Query cache (e.g. "teacher" entries
-                                // from before they were dropped): fall back
-                                // to the search glyph rather than crash.
+                                // Unknown kinds can still sit in the
+                                // persisted React Query cache: fall back to
+                                // the search glyph rather than crash.
                                 const Icon = kindIcons[entity.kind] ?? Search;
                                 return (
                                     <motion.li
@@ -439,6 +458,7 @@ export function PalantirPage() {
                                                 detail: "",
                                                 type: "Promotion",
                                                 count: 0,
+                                                collesGroup: student.collesGroup,
                                             })
                                         }
                                         className="w-full text-left"
@@ -470,22 +490,37 @@ export function PalantirPage() {
                                     key={`teacher-${teacher.name}`}
                                     variants={fadeIn}
                                 >
-                                    <Card className="cursor-default">
-                                        <CardContent className="flex items-center gap-3 py-3">
-                                            <GraduationCap className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
-                                            <div className="min-w-0 flex-1">
-                                                <p className="truncate text-sm font-medium">
-                                                    {teacher.name}
-                                                </p>
-                                            </div>
-                                            <Badge variant="secondary">
-                                                {t(
-                                                    "palantirPage.lessonCount",
-                                                    { count: teacher.lessons }
-                                                )}
-                                            </Badge>
-                                        </CardContent>
-                                    </Card>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setSelected({
+                                                kind: "teacher",
+                                                id: teacher.name,
+                                                label: teacher.name,
+                                                detail: "",
+                                                type: "",
+                                                count: teacher.lessons,
+                                            })
+                                        }
+                                        className="w-full text-left"
+                                    >
+                                        <Card className="transition-colors hover:bg-mauria-purple/5 dark:hover:bg-white/5">
+                                            <CardContent className="flex items-center gap-3 py-3">
+                                                <GraduationCap className="h-5 w-5 shrink-0 text-mauria-purple dark:text-white" />
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate text-sm font-medium">
+                                                        {teacher.name}
+                                                    </p>
+                                                </div>
+                                                <Badge variant="secondary">
+                                                    {t(
+                                                        "palantirPage.lessonCount",
+                                                        { count: teacher.lessons }
+                                                    )}
+                                                </Badge>
+                                            </CardContent>
+                                        </Card>
+                                    </button>
                                 </motion.li>
                             ))}
                         </motion.ul>

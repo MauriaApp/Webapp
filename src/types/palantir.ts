@@ -1,4 +1,4 @@
-export type PalantirEntityKind = "room" | "group";
+export type PalantirEntityKind = "room" | "group" | "teacher";
 
 export interface PalantirEntity {
     kind: PalantirEntityKind;
@@ -11,6 +11,12 @@ export interface PalantirEntity {
     type: string;
     /** Indexed lessons behind the entity. Always 0 for a group. */
     count: number;
+    /**
+     * The entity's khôlles group, for a student's class entity — resolved
+     * server-side off the private roster by /palantir/people. Absent for
+     * everything else, including a class opened from the normal search.
+     */
+    collesGroup?: string | null;
 }
 
 export interface PalantirIndexStatus {
@@ -53,6 +59,8 @@ export interface PalantirStudent {
     className: string;
     /** The class as a Palantir entity id, to open its planning on click. */
     groupId: string;
+    /** The student's khôlles group, resolved server-side. Null if unknown. */
+    collesGroup: string | null;
 }
 
 export interface PalantirPeopleResult {
