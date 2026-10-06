@@ -52,6 +52,21 @@
       }
     }
   },
+  "campusPage": {
+    "title": "¿En qué campus estás?",
+    "subtitle": "Tus menús e información se adaptan a tu campus."
+  },
+  "preparationPage": {
+    "title": "Estamos preparando información para ti…",
+    "queries": {
+      "warm": "Sesión de Aurion",
+      "planning": "Horario",
+      "grades": "Notas",
+      "absences": "Ausencias",
+      "importantMessages": "Mensajes",
+      "dailyMenu": "Menú del comedor"
+    }
+  },
   "common": {
     "id": "ID",
     "loading": "Cargando…",
@@ -108,11 +123,16 @@
       "en-US": "Inglés",
       "es-ES": "Español"
     },
+    "campusParameter": {
+      "title": "Campus",
+      "lille": "Lille",
+      "chateauroux": "Châteauroux",
+      "bordeaux": "Burdeos"
+    },
     "restaurantParameter": {
       "title": "Menú del comedor",
-      "none": "Ninguno",
-      "lille": "Lille",
-      "chateauroux": "Châteauroux"
+      "enabled": "Activado",
+      "disabled": "Desactivado"
     },
     "actions": {
       "associations": "Asociaciones",
@@ -784,6 +804,7 @@
       "bw": "Blanco y negro",
       "duplex": "Doble cara",
       "send": "Subir",
+      "cancel": "Cancelar",
       "sending": "Enviando…",
       "error": "Error al enviar",
       "tooLarge": "Archivo demasiado grande (máx. 100 MB)"

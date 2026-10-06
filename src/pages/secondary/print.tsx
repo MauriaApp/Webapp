@@ -1,7 +1,15 @@
 import { useRef, useState } from "react";
-import { Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
+import {
+    EASE,
+    EASE_EXIT,
+    fadeIn,
+    fadeInIndexed,
+    staggerGroup,
+} from "@/lib/motion";
 import { PullToRefresh } from "@/components/pull-to-refresh";
 import { format, isValid, parse } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -55,6 +63,23 @@ const formatJobDate = (raw: string, language: string) => {
 
 const formatEuro = (value: number) => `€ ${value.toFixed(3)}`;
 
+const MotionCard = motion(Card);
+
+// Same cascade as fadeInIndexed, but the optimistic "pending" jobs settle on
+// the dimmed 0.6 opacity instead of 1 (framer's inline style wins over the
+// old opacity-60 class, so the dimming lives in the variant itself).
+const pendingJobCard: Variants = {
+    hidden: { opacity: 0 },
+    show: (i = 0) => ({
+        opacity: 0.6,
+        transition: { duration: 0.4, ease: EASE, delay: 0.04 + i * 0.1 },
+    }),
+    exit: {
+        opacity: 0,
+        transition: { duration: 0.2, ease: EASE_EXIT },
+    },
+};
+
 function BalanceSection() {
     const { t } = useTranslation();
     const { data, isLoading } = useQuery({
@@ -80,16 +105,10 @@ function BalanceSection() {
                     {isLoading ? (
                         <Skeleton className="mt-1 h-7 w-40" />
                     ) : (
-                        <p className="flex flex-wrap items-baseline gap-x-2 text-xl font-semibold">
-                            {data ? formatEuro(data.personal) : "—"}
-                            {data && (
-                                <span
-                                    className="text-base text-green-800 dark:text-green-600"
-                                    title={t("printPage.balance.bonus")}
-                                >
-                                    + {formatEuro(data.bonus)}
-                                </span>
-                            )}
+                        <p className="text-xl font-semibold">
+                            {data
+                                ? formatEuro(data.personal + data.bonus)
+                                : "—"}
                         </p>
                     )}
                 </CardContent>
@@ -167,16 +186,22 @@ function JobsSection({ optimistic }: { optimistic: OptimisticJob[] }) {
                 </p>
             ) : allJobs.length > 0 ? (
                 <div className="space-y-2">
-                    {allJobs.map((job) => (
-                        <Card
-                            key={job.id}
-                            className={
-                                job.id.startsWith("pending-")
-                                    ? "opacity-60"
-                                    : undefined
-                            }
-                        >
-                            <CardContent className="flex items-center justify-between gap-3 p-3">
+                    <AnimatePresence initial={false}>
+                        {allJobs.map((job, index) => (
+                            <MotionCard
+                                layout
+                                key={job.id}
+                                variants={
+                                    job.id.startsWith("pending-")
+                                        ? pendingJobCard
+                                        : fadeInIndexed
+                                }
+                                custom={index}
+                                initial="hidden"
+                                animate="show"
+                                exit="exit"
+                            >
+                                <CardContent className="flex items-center justify-between gap-3 p-3">
                                 <div className="min-w-0">
                                     <p className="truncate font-medium">
                                         {job.name}
@@ -210,8 +235,9 @@ function JobsSection({ optimistic }: { optimistic: OptimisticJob[] }) {
                                     </Button>
                                 )}
                             </CardContent>
-                        </Card>
-                    ))}
+                            </MotionCard>
+                        ))}
+                    </AnimatePresence>
                 </div>
             ) : (
                 <p className="py-6 text-center text-muted-foreground">
@@ -259,7 +285,21 @@ function UploadRow({
     return (
         <Card>
             <CardContent className="space-y-3 p-3">
-                <p className="truncate font-medium">{pending.file.name}</p>
+                <div className="flex items-center justify-between gap-2">
+                    <p className="truncate font-medium">
+                        {pending.file.name}
+                    </p>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 shrink-0"
+                        aria-label={t("printPage.upload.cancel")}
+                        disabled={mutation.isPending}
+                        onClick={onDone}
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     {(["bw", "duplex"] as const).map((opt) => (
                         <label
@@ -277,16 +317,16 @@ function UploadRow({
                     ))}
                     <Button
                         size="sm"
-                        className="ml-auto"
-                        disabled={mutation.isPending || tooLarge}
-                        onClick={() => mutation.mutate()}
-                    >
-                        <Upload className="mr-2 h-4 w-4" />
-                        {t(
+                        className="ml-auto w-9 px-0"
+                        aria-label={t(
                             mutation.isPending
                                 ? "printPage.upload.sending"
                                 : "printPage.upload.send"
                         )}
+                        disabled={mutation.isPending || tooLarge}
+                        onClick={() => mutation.mutate()}
+                    >
+                        <Upload className="h-4 w-4" />
                     </Button>
                 </div>
                 {(tooLarge || mutation.isError) && (
@@ -319,7 +359,7 @@ function UploadSection({
             ...Array.from(files).map((file) => ({
                 key: crypto.randomUUID(),
                 file,
-                bw: false,
+                bw: true,
                 duplex: false,
             })),
         ]);
@@ -344,25 +384,38 @@ function UploadSection({
                 {t("printPage.upload.add")}
             </Button>
             <div className="space-y-2">
-                {pending.map((p) => (
-                    <UploadRow
-                        key={p.key}
-                        pending={p}
-                        onChange={(patch) =>
-                            setPending((prev) =>
-                                prev.map((x) =>
-                                    x.key === p.key ? { ...x, ...patch } : x
-                                )
-                            )
-                        }
-                        onUploaded={onUploaded}
-                        onDone={() =>
-                            setPending((prev) =>
-                                prev.filter((x) => x.key !== p.key)
-                            )
-                        }
-                    />
-                ))}
+                <AnimatePresence initial={false}>
+                    {pending.map((p, index) => (
+                        <motion.div
+                            layout
+                            key={p.key}
+                            variants={fadeInIndexed}
+                            custom={index}
+                            initial="hidden"
+                            animate="show"
+                            exit="exit"
+                        >
+                            <UploadRow
+                                pending={p}
+                                onChange={(patch) =>
+                                    setPending((prev) =>
+                                        prev.map((x) =>
+                                            x.key === p.key
+                                                ? { ...x, ...patch }
+                                                : x
+                                        )
+                                    )
+                                }
+                                onUploaded={onUploaded}
+                                onDone={() =>
+                                    setPending((prev) =>
+                                        prev.filter((x) => x.key !== p.key)
+                                    )
+                                }
+                            />
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
         </section>
     );
@@ -423,11 +476,22 @@ export function PrintPage() {
             pullingText={t("common.pullToRefresh")}
             refreshingText={t("common.refreshing")}
         >
-            <div className="space-y-8">
-                <BalanceSection />
-                <JobsSection optimistic={optimistic} />
-                <UploadSection onUploaded={trackUpload} />
-            </div>
+            <motion.div
+                className="space-y-8"
+                variants={staggerGroup}
+                initial="hidden"
+                animate="show"
+            >
+                <motion.div variants={fadeIn}>
+                    <BalanceSection />
+                </motion.div>
+                <motion.div variants={fadeIn}>
+                    <UploadSection onUploaded={trackUpload} />
+                </motion.div>
+                <motion.div variants={fadeIn}>
+                    <JobsSection optimistic={optimistic} />
+                </motion.div>
+            </motion.div>
         </PullToRefresh>
     );
 }

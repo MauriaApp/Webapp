@@ -52,6 +52,21 @@
       }
     }
   },
+  "campusPage": {
+    "title": "Which campus are you on?",
+    "subtitle": "Your menus and info adapt to your campus."
+  },
+  "preparationPage": {
+    "title": "We're preparing some information for you…",
+    "queries": {
+      "warm": "Aurion session",
+      "planning": "Schedule",
+      "grades": "Grades",
+      "absences": "Absences",
+      "importantMessages": "Messages",
+      "dailyMenu": "Canteen menu"
+    }
+  },
   "common": {
     "id": "ID",
     "loading": "Loading…",
@@ -108,11 +123,16 @@
       "en-US": "English",
       "es-ES": "Spanish"
     },
+    "campusParameter": {
+      "title": "Campus",
+      "lille": "Lille",
+      "chateauroux": "Châteauroux",
+      "bordeaux": "Bordeaux"
+    },
     "restaurantParameter": {
       "title": "Canteen menu",
-      "none": "None",
-      "lille": "Lille",
-      "chateauroux": "Châteauroux"
+      "enabled": "Enabled",
+      "disabled": "Disabled"
     },
     "actions": {
       "associations": "Associations",
@@ -784,6 +804,7 @@
       "bw": "Black and white",
       "duplex": "Double-sided",
       "send": "Upload",
+      "cancel": "Cancel",
       "sending": "Uploading…",
       "error": "Upload failed",
       "tooLarge": "File too large (100 MB max)"

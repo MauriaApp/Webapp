@@ -38,5 +38,9 @@ export function useAurionWarm() {
     const isRewarming = query.isFetching && isAurionWarmExpired();
     return {
         isWarming: hasSession && (query.status === "pending" || isRewarming),
+        // Raw query state, for pages that show the warm-up's own progress
+        // (e.g. the preparation page).
+        status: query.status,
+        fetchStatus: query.fetchStatus,
     };
 }

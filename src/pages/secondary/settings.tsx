@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
     Rainbow,
     Cherry,
@@ -11,6 +12,7 @@ import {
     Languages,
     Wallpaper,
     UtensilsCrossed,
+    School,
     TriangleAlert,
     Dices,
     Radar,
@@ -49,11 +51,16 @@ import {
 } from "@/lib/utils/experimental";
 import { resetGradeTracking } from "@/lib/utils/unopened-grades";
 import {
-    readRestaurantCampus,
-    setRestaurantCampus,
-    RESTAURANT_CAMPUS_OPTIONS,
-    type RestaurantCampus,
+    setRestaurantMenuEnabled,
+    useRestaurantMenuEnabled,
 } from "@/lib/utils/restaurant-menu";
+import { fadeIn, staggerGroup } from "@/lib/motion";
+import {
+    CAMPUS_OPTIONS,
+    readCampus,
+    setCampus,
+    type Campus,
+} from "@/lib/utils/campus";
 
 export function SettingsPage() {
     const { t } = useTranslation();
@@ -99,14 +106,18 @@ export function SettingsPage() {
 
     const [size, setSize] = useState<SizeOption>(readInitialSize);
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
-    const [restaurantCampus, setRestaurantCampusState] =
-        useState<RestaurantCampus>(readRestaurantCampus);
+    const [campus, setCampusState] = useState<Campus>(readCampus);
+    const restaurantMenuEnabled = useRestaurantMenuEnabled();
 
-    const handleRestaurantCampusChange = (value: string) => {
+    const handleCampusChange = (value: string) => {
         if (!value) return;
-        const campus = value as RestaurantCampus;
-        setRestaurantCampusState(campus);
-        setRestaurantCampus(campus);
+        const newCampus = value as Campus;
+        setCampusState(newCampus);
+        setCampus(newCampus);
+    };
+
+    const handleRestaurantMenuToggle = (enabled: boolean) => {
+        setRestaurantMenuEnabled(enabled);
     };
 
     useEffect(() => {
@@ -218,23 +229,29 @@ export function SettingsPage() {
             ],
         },
         {
-            icon: UtensilsCrossed,
-            title: t("sidebar.restaurantParameter.title"),
-            value: t(`sidebar.restaurantParameter.${restaurantCampus}`),
-            selectValue: restaurantCampus,
-            onValueChange: handleRestaurantCampusChange,
-            options: RESTAURANT_CAMPUS_OPTIONS.map((option) => ({
+            icon: School,
+            title: t("sidebar.campusParameter.title"),
+            value: t(`sidebar.campusParameter.${campus}`),
+            selectValue: campus,
+            onValueChange: handleCampusChange,
+            options: CAMPUS_OPTIONS.map((option) => ({
                 value: option,
-                label: t(`sidebar.restaurantParameter.${option}`),
+                label: t(`sidebar.campusParameter.${option}`),
             })),
         },
     ];
 
     return (
-        <div className="space-y-4 pt-4 pb-4">
+        <motion.div
+            className="space-y-4 pt-4 pb-4"
+            variants={staggerGroup}
+            initial="hidden"
+            animate="show"
+        >
             {selectors.map((setting, index) => (
-                <div
+                <motion.div
                     key={index}
+                    variants={fadeIn}
                     className="flex items-center justify-between gap-4"
                 >
                     <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
@@ -274,24 +291,64 @@ export function SettingsPage() {
                             </SelectContent>
                         </Select>
                     </div>
-                </div>
+                </motion.div>
             ))}
 
-            <Separator />
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-between gap-4"
+            >
+                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                    <UtensilsCrossed className="h-5 w-5 shrink-0" />
+                    <div className="flex min-w-0 flex-col items-start">
+                        <Label
+                            htmlFor="restaurant-menu"
+                            className="cursor-pointer text-left"
+                        >
+                            {t("sidebar.restaurantParameter.title")}
+                        </Label>
+                        <span className="text-xs text-muted-foreground text-left">
+                            {restaurantMenuEnabled
+                                ? t("sidebar.restaurantParameter.enabled")
+                                : t("sidebar.restaurantParameter.disabled")}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex shrink-0 justify-end">
+                    <Switch
+                        id="restaurant-menu"
+                        checked={restaurantMenuEnabled}
+                        onCheckedChange={handleRestaurantMenuToggle}
+                        aria-label={t("sidebar.restaurantParameter.title")}
+                    />
+                </div>
+            </motion.div>
 
-            <div className="flex items-center justify-center gap-3 text-amber-500">
+            <motion.div variants={fadeIn}>
+                <Separator />
+            </motion.div>
+
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-center gap-3 text-amber-500"
+            >
                 <TriangleAlert className="size-5 animate-pulse" />
                 <h2 className="text-sm font-semibold uppercase tracking-wide">
                     {t("settingsPage.experimental")}
                 </h2>
                 <TriangleAlert className="size-5 animate-pulse" />
-            </div>
+            </motion.div>
 
-            <p className="-mt-2 rounded-md border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-center text-xs font-medium text-amber-700 dark:text-amber-200">
-                {t("settingsPage.experimentalWarning")}
-            </p>
+            <motion.div variants={fadeIn}>
+                <p className="-mt-2 rounded-md border border-amber-500/40 bg-amber-500/15 px-3 py-2 text-center text-xs font-medium text-amber-700 dark:text-amber-200">
+                    {t("settingsPage.experimentalWarning")}
+                </p>
+            </motion.div>
 
-            <div className="flex items-center justify-between gap-4">
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-between gap-4"
+            >
                 <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
                     <Dices className="h-5 w-5 shrink-0" />
                     <div className="flex min-w-0 flex-col items-start">
@@ -330,9 +387,12 @@ export function SettingsPage() {
                         </SelectContent>
                     </Select>
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="flex items-center justify-between gap-4">
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-between gap-4"
+            >
                 <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
                     <Radar className="h-5 w-5 shrink-0" />
                     <div className="flex min-w-0 flex-col items-start">
@@ -355,7 +415,7 @@ export function SettingsPage() {
                         aria-label={t("settingsPage.palantirTheme.title")}
                     />
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
