@@ -137,3 +137,123 @@ export function getRoomCollesLessons(room: string): Lesson[] {
     }
     return lessons;
 }
+
+/* -------------------------------------------- Palantir classes, people -- */
+
+const labelTokens = (value: string) =>
+    value
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter(Boolean);
+
+/**
+ * The colles class behind a Palantir class label. Aurion writes the long
+ * promotion label ("2ème année CPGE filière MPI du lycée OZANAM - … -
+ * 2026/2027"), the sheet the filière alone ("MPI"): the filière is the
+ * only shared token, and an exact one — "MPI" never appears inside
+ * "MP2I" or "MPSI".
+ */
+function matchCollesClass(classLabel: string): CollesClass | undefined {
+    const tokens = new Set(labelTokens(classLabel));
+    return COLLES_CLASSES.find((c) => tokens.has(c.label.toLowerCase()));
+}
+
+/**
+ * Every khôlle of the class — all of its groups at once, for Palantir
+ * class plannings (a class entity, or a student whose group couldn't be
+ * resolved server-side).
+ */
+export function getClassCollesLessons(classLabel: string): Lesson[] {
+    const collesClass = matchCollesClass(classLabel);
+    if (!collesClass) return [];
+
+    return Object.keys(collesClass.groups).flatMap((group) =>
+        buildColleLessons(collesClass, group)
+    );
+}
+
+/** One group's khôlles — a Palantir student's own, resolved server-side. */
+export function getStudentCollesLessons(
+    classLabel: string,
+    group: string
+): Lesson[] {
+    const collesClass = matchCollesClass(classLabel);
+    return collesClass ? buildColleLessons(collesClass, group) : [];
+}
+
+/** Title words that carry no identity: "M. Humeau" is just "Humeau". */
+const TEACHER_TITLE_WORDS = new Set([
+    "m",
+    "mm",
+    "mme",
+    "mr",
+    "monsieur",
+    "madame",
+    "dr",
+    "pr",
+]);
+
+const surnameTokens = (value: string) =>
+    labelTokens(value).filter((token) => !TEACHER_TITLE_WORDS.has(token));
+
+let cachedTeacherColles: {
+    language: string;
+    bySurname: Map<string, Lesson[]>;
+} | null = null;
+
+function allTeacherColles(): Map<string, Lesson[]> {
+    if (cachedTeacherColles?.language === i18n.language) {
+        return cachedTeacherColles.bySurname;
+    }
+
+    const bySurname = new Map<string, Lesson[]>();
+    for (const collesClass of COLLES_CLASSES) {
+        // The same slot can serve two groups the same week; a teacher's
+        // planning wants the physical slot once, not once per group.
+        const seen = new Set<string>();
+        for (const group of Object.keys(collesClass.groups)) {
+            for (const lesson of buildColleLessons(collesClass, group)) {
+                const dedup = `${lesson.start}|${lesson.title}`;
+                if (seen.has(dedup)) continue;
+                seen.add(dedup);
+
+                const teacher = lesson.title.split("\n")[3] ?? "";
+                for (const token of surnameTokens(teacher)) {
+                    const bucket = bySurname.get(token);
+                    if (bucket) {
+                        bucket.push(lesson);
+                    } else {
+                        bySurname.set(token, [lesson]);
+                    }
+                }
+            }
+        }
+    }
+
+    cachedTeacherColles = { language: i18n.language, bySurname };
+    return bySurname;
+}
+
+/**
+ * Every khôlle a teacher gives — Palantir teacher plannings. The sheet
+ * writes "M. Humeau", Aurion "Monsieur HUMEAU": surnames are the only
+ * reliable bridge, so the match is on any shared name token.
+ */
+export function getTeacherCollesLessons(teacher: string): Lesson[] {
+    const bySurname = allTeacherColles();
+    const tokens = surnameTokens(teacher);
+    if (!tokens.length) return [];
+
+    const lessons: Lesson[] = [];
+    const seen = new Set<string>();
+    for (const token of tokens) {
+        for (const lesson of bySurname.get(token) ?? []) {
+            if (seen.has(lesson.id)) continue;
+            seen.add(lesson.id);
+            lessons.push(lesson);
+        }
+    }
+    return lessons.sort((a, b) => a.start.localeCompare(b.start));
+}
