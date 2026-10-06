@@ -34,6 +34,7 @@ import { useTranslation } from "react-i18next";
 import { exportCalendar } from "@/lib/utils/exportCalendar";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { useColles, useResolvedPlanning } from "@/lib/hooks/use-colles";
+import { FREE_ROOMS_CAMPUSES, useCampus } from "@/lib/utils/campus";
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
@@ -58,6 +59,8 @@ export function PlanningPage() {
     );
     const [view, setView] = useState<"calendar" | "freeRooms">("calendar");
     const { isWarming } = useAurionWarm();
+    // Châteauroux has no findmyroom buildings: hide the free-rooms button.
+    const showFreeRooms = FREE_ROOMS_CAMPUSES.includes(useCampus());
 
     const colles = useColles();
 
@@ -181,14 +184,16 @@ export function PlanningPage() {
                     </h2>
                     {view === "calendar" ? (
                         <div className="flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setView("freeRooms")}
-                            >
-                                <Search className="h-4 w-4" />
-                                {t("schedulePage.freeRooms.button")}
-                            </Button>
+                            {showFreeRooms && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setView("freeRooms")}
+                                >
+                                    <Search className="h-4 w-4" />
+                                    {t("schedulePage.freeRooms.button")}
+                                </Button>
+                            )}
                             <Button
                                 size="sm"
                                 className="w-9 px-0"

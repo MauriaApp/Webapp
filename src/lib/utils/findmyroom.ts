@@ -3,6 +3,8 @@
 // INFORMATIQUE"). We don't know what every short token means (H, VP, TV,
 // 2TAB...), so we only reformat what we're sure about — real French words —
 // and leave codes untouched rather than guess and get it wrong.
+import { Campus } from "./campus";
+
 const WORD_TOKEN = /^[A-Za-zÀ-ÖØ-öø-ÿ]+$/;
 const MIN_WORD_LENGTH = 4;
 
@@ -47,6 +49,22 @@ const BUILDING_NAMES: Record<string, string> = {
 /** "BORDEAUX_2AML" -> "Bordeaux", falls back to generic formatting. */
 export function formatBuildingName(code: string): string {
     return BUILDING_NAMES[code] ?? formatTokens(code.split("_"));
+}
+
+// findmyroom mixes every campus behind one building list, with no campus
+// field — this maps its known codes to a campus. A code that isn't listed
+// defaults to Lille, the campus findmyroom is mostly about.
+const BUILDING_CAMPUS: Record<string, Campus> = {
+    ALG_2RNS: "lille",
+    BORDEAUX_2AML: "bordeaux",
+    IC1: "lille",
+    IC2: "lille",
+    PR_39BV: "lille",
+};
+
+/** Whether findmyroom serves this building on the given campus. */
+export function isBuildingOnCampus(code: string, campus: Campus): boolean {
+    return (BUILDING_CAMPUS[code] ?? "lille") === campus;
 }
 
 /**
