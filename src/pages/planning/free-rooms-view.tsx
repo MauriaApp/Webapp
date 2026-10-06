@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/drawer";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import { cn } from "@/lib/utils/cn";
+import { useCampus } from "@/lib/utils/campus";
 import { fetchBuildings, fetchRoomsForBuilding } from "@/lib/api/findmyroom";
 import {
     computeBookableUntil,
@@ -23,6 +24,7 @@ import {
     formatRoomName,
     formatTimeOfDay,
     getCommonPrefixTokenCount,
+    isBuildingOnCampus,
     isRedundantAllDayDuration,
     splitHighlight,
     stripRedundantFreeLabel,
@@ -216,6 +218,7 @@ export function FreeRoomsView() {
         null
     );
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const campus = useCampus();
 
     const {
         data: buildings = [],
@@ -229,6 +232,16 @@ export function FreeRoomsView() {
         refetchInterval: 30 * 1000,
         placeholderData: (previousData) => previousData,
     });
+
+    // findmyroom mixes every campus behind one building list: only keep the
+    // buildings of the campus selected in the settings.
+    const campusBuildings = useMemo(
+        () =>
+            buildings.filter((building) =>
+                isBuildingOnCampus(building.code, campus)
+            ),
+        [buildings, campus]
+    );
 
     const {
         data: roomsData,
@@ -292,7 +305,7 @@ export function FreeRoomsView() {
                     ))}
 
                 {!buildingsLoading &&
-                    buildings.map((building) => {
+                    campusBuildings.map((building) => {
                         // Every room past its closing time: the building is
                         // closed, not full.
                         const isClosed =
@@ -342,14 +355,16 @@ export function FreeRoomsView() {
                     })}
             </motion.div>
 
-            {!buildingsLoading && buildings.length === 0 && !buildingsError && (
-                <motion.p
-                    variants={fadeIn}
-                    className="text-center text-sm text-muted-foreground"
-                >
-                    {t("schedulePage.freeRooms.empty")}
-                </motion.p>
-            )}
+            {!buildingsLoading &&
+                campusBuildings.length === 0 &&
+                !buildingsError && (
+                    <motion.p
+                        variants={fadeIn}
+                        className="text-center text-sm text-muted-foreground"
+                    >
+                        {t("schedulePage.freeRooms.empty")}
+                    </motion.p>
+                )}
 
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent className="bg-card border-border pb-safe">

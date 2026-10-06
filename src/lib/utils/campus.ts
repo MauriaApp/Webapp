@@ -17,6 +17,9 @@ export const RESTAURANT_CAMPUSES: Campus[] = ["lille", "chateauroux"];
 // Les problèmes Wi-Fi de BadJunia ne concernent que le campus de Lille.
 export const WIFI_CAMPUS: Campus = "lille";
 
+// findmyroom ne couvre que Lille et Bordeaux : rien à Châteauroux.
+export const FREE_ROOMS_CAMPUSES: Campus[] = ["lille", "bordeaux"];
+
 // Rétro-compat : le campus vivait dans la clé du menu du RU avant d'en avoir
 // la sienne ("none" | "lille" | "chateauroux").
 const LEGACY_RESTAURANT_MENU_KEY = "mauria-restaurant-menu";
