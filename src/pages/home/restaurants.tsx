@@ -35,7 +35,8 @@ import {
 } from "@/components/ui/drawer";
 import { fetchCastelRuMenu, fetchDailyMenu } from "@/lib/api/lacatho";
 import { RestaurantMenu } from "@/types/data";
-import { useRestaurantCampus } from "@/lib/utils/restaurant-menu";
+import { RESTAURANT_CAMPUSES, useCampus } from "@/lib/utils/campus";
+import { useRestaurantMenuEnabled } from "@/lib/utils/restaurant-menu";
 import { SectionHeader } from "./sections";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 
@@ -105,13 +106,15 @@ function getSectionIcon(title: string): LucideIcon {
 
 export function RestaurantsSection() {
     const { t } = useTranslation();
-    const campus = useRestaurantCampus();
+    const campus = useCampus();
+    const menuEnabled = useRestaurantMenuEnabled();
+    const hasRestaurant = RESTAURANT_CAMPUSES.includes(campus);
     const { data } = useQuery({
         queryKey:
             campus === "chateauroux" ? ["castelRuMenu"] : ["dailyMenu"],
         queryFn:
             campus === "chateauroux" ? fetchCastelRuMenu : fetchDailyMenu,
-        enabled: campus !== "none",
+        enabled: menuEnabled && hasRestaurant,
         staleTime: 1000 * 60 * 30, // 30 min frais
         gcTime: 1000 * 60 * 60 * 24, // 24h cache
         placeholderData: (previousData) => previousData,
@@ -120,10 +123,12 @@ export function RestaurantsSection() {
     const [selected, setSelected] = useState<RestaurantMenu | null>(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    // Désactivé depuis les réglages, API pas encore à jour / injoignable,
-    // ou week-end : le RU ne sert pas de menu du jour le samedi ni le dimanche.
-    if (campus === "none" || isWeekend(new Date()) || !data) return null;
-
+    // Désactivé depuis les réglages, campus sans RU couvert par l'app
+    // (Bordeaux), API pas encore à jour / injoignable, ou week-end : le RU ne
+    // sert pas de menu du jour le samedi ni le dimanche.
+    if (!menuEnabled || !hasRestaurant || isWeekend(new Date()) || !data) {
+        return null;
+    }
     // Lien vers la source du menu (PDF pour Lille, page Crous pour Châteauroux).
     const sourceLabel =
         campus === "chateauroux"

@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { PageTransition } from "@/components/page-transition";
 import {
     CircleAlert,
     MessageCircleQuestion,
@@ -9,18 +10,11 @@ import {
     ShieldCheck,
     type LucideIcon,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useQueries } from "@tanstack/react-query";
-import { fadeIn } from "@/lib/motion";
-import { fetchAbsences, fetchGrades, fetchPlanning } from "@/lib/api/aurion";
-import { fetchImportantMessage } from "@/lib/api/supa";
-import { fetchDailyMenu } from "@/lib/api/lacatho";
+import { motion } from "framer-motion";
+import { fadeIn, staggerGroup } from "@/lib/motion";
 import { saveToStorage } from "@/lib/utils/storage";
-import { useJuniaStatus } from "@/lib/hooks/use-junia-status";
-import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
-import { expectedFetchDuration } from "@/lib/api/junia-status";
+import { useWelcomePrefetch } from "@/lib/hooks/use-welcome-prefetch";
 import { useTranslation } from "react-i18next";
-import { Absence, Grade, Lesson } from "@/types/aurion";
 
 type WelcomeSection = {
     key: string;
@@ -29,33 +23,6 @@ type WelcomeSection = {
 };
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
-
-const PREFETCH_OPTS = {
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 60 * 24,
-    refetchOnWindowFocus: false,
-    retry: 1,
-} as const;
-
-async function timedFetch<T>(label: string, fn: () => Promise<T>): Promise<T> {
-    const start = performance.now();
-    console.log(`[prefetch] ${label} — start`);
-    try {
-        return await fn();
-    } finally {
-        console.log(
-            `[prefetch] ${label} — done in ${Math.round(
-                performance.now() - start
-            )}ms`
-        );
-    }
-}
-
-// Slow, deliberate cascade for the welcome screen: ~1s between each item.
-const welcomeStagger = {
-    hidden: {},
-    show: { transition: { delayChildren: 0.15, staggerChildren: 1 } },
-};
 
 const WELCOME_SECTIONS: WelcomeSection[] = [
     { key: "notAurion", icon: CircleAlert, variant: "destructive" },
@@ -67,160 +34,11 @@ const WELCOME_SECTIONS: WelcomeSection[] = [
 export function WelcomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { isWarming } = useAurionWarm();
-    // Warm every cache we can while the welcome screen is shown, so the app
-    // is ready (planning, grades, absences, home content) once the user enters.
-    const results = useQueries({
-        queries: [
-            {
-                // The fetch itself logs [fetch] start/done (elapsed vs
-                // BadJunia's expected duration) from the API layer.
-                queryKey: ["planning"],
-                queryFn: async (): Promise<Lesson[]> => {
-                    const res = await fetchPlanning();
-                    if (!res?.success)
-                        throw new Error("Failed to fetch planning");
-                    return res.data ?? [];
-                },
-                enabled: !isWarming,
-                ...PREFETCH_OPTS,
-            },
-            {
-                queryKey: ["grades"],
-                queryFn: async (): Promise<Grade[]> => {
-                    const res = await fetchGrades();
-                    if (!res?.success)
-                        throw new Error("Failed to fetch grades");
-                    return res.data ?? [];
-                },
-                enabled: !isWarming,
-                ...PREFETCH_OPTS,
-            },
-            {
-                queryKey: ["absences"],
-                queryFn: async (): Promise<Absence[]> => {
-                    const res = await fetchAbsences();
-                    if (!res?.success)
-                        throw new Error("Failed to fetch absences");
-                    return res.data ?? [];
-                },
-                enabled: !isWarming,
-                ...PREFETCH_OPTS,
-            },
-            {
-                queryKey: ["importantMessages"],
-                queryFn: () =>
-                    timedFetch("importantMessage", fetchImportantMessage),
-                ...PREFETCH_OPTS,
-            },
-            {
-                queryKey: ["dailyMenu"],
-                queryFn: () => timedFetch("dailyMenu", fetchDailyMenu),
-                ...PREFETCH_OPTS,
-                staleTime: 1000 * 60 * 30,
-            },
-        ],
-    });
-
-    // Only block the button on the planning — grades and absences continue
-    // to fetch in the background and will be cached when the user navigates
-    // to those pages. While warming, planning hasn't even started yet
-    // (`enabled: false`), so its own `isLoading` would read false — factor
-    // the warm-up in explicitly so the button stays blocked through it.
-    const isBusy = isWarming || results[0].isLoading;
-    const [progress, setProgress] = useState(0);
-
-    const tips = t("welcome.tips", { returnObjects: true }) as string[];
-    // A shuffled walk through the tips, picked once, so they show in a
-    // random order without repeating back-to-back.
-    const [tipOrder] = useState(() => {
-        const idx = tips.map((_, i) => i);
-        for (let i = idx.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [idx[i], idx[j]] = [idx[j], idx[i]];
-        }
-        return idx;
-    });
-    const [tipStep, setTipStep] = useState(0);
-    const tipIndex = tipOrder[tipStep % tipOrder.length] ?? 0;
-
-    // Cycle through the loading tips while the data is being fetched.
-    useEffect(() => {
-        if (!isBusy) return;
-        setTipStep(0);
-        const id = window.setInterval(() => setTipStep((s) => s + 1), 2800);
-        return () => window.clearInterval(id);
-    }, [isBusy]);
-
-    // Fake progress effect, with irregularities. Targets the expected
-    // planning duration from BadJunia's per-page timings (fallback ~10s).
-    // When the planning finishes early, the bar smoothly ramps to 100% over
-    // ~800ms instead of teleporting.
-    const status = useJuniaStatus();
-    // Latest BadJunia timings, read once per busy cycle so a status refresh
-    // never restarts the bar mid-fetch.
-    const statusRef = useRef(status);
-    statusRef.current = status;
-
-    const progressRef = useRef(0);
-    useEffect(() => {
-        if (!isBusy) {
-            // Smooth ramp from current progress to 100%.
-            const rampFrom = progressRef.current;
-            if (rampFrom >= 100) {
-                setProgress(100);
-                const resetTimeout = window.setTimeout(
-                    () => setProgress(0),
-                    300
-                );
-                return () => window.clearTimeout(resetTimeout);
-            }
-            const rampStart = Date.now();
-            const rampDuration = 800;
-            const rampId = window.setInterval(() => {
-                const elapsed = Date.now() - rampStart;
-                const t = Math.min(1, elapsed / rampDuration);
-                // easeOut cubic
-                const eased = 1 - Math.pow(1 - t, 3);
-                setProgress(
-                    Math.round(rampFrom + (100 - rampFrom) * eased)
-                );
-                if (t >= 1) window.clearInterval(rampId);
-            }, 16);
-            const resetTimeout = window.setTimeout(() => setProgress(0), 300);
-            return () => {
-                window.clearInterval(rampId);
-                window.clearTimeout(resetTimeout);
-            };
-        }
-
-        setProgress(0);
-        progressRef.current = 0;
-        // The button only blocks on the planning, so the bar targets its
-        // expected duration.
-        const expectedMs = expectedFetchDuration(
-            statusRef.current,
-            "planning"
-        );
-        const start = Date.now();
-        let current = 0;
-        const interval = window.setInterval(() => {
-            const elapsed = Date.now() - start;
-            const base = Math.min(0.97, elapsed / expectedMs);
-            const burst = Math.random() < 0.22 ? Math.random() * 0.1 : 0;
-            const wobble = (Math.random() - 0.5) * 0.04;
-            const target = Math.min(0.97, base + wobble + burst);
-            const next = Math.min(
-                0.97,
-                Math.max(current + 0.006, target, base)
-            );
-            current = next;
-            progressRef.current = Math.round(current * 100);
-            setProgress(progressRef.current);
-        }, 140);
-
-        return () => window.clearInterval(interval);
-    }, [isBusy]);
+    // Warm every cache we can while the welcome screen is shown — the
+    // prefetch continues in the background; the preparation page takes
+    // over (with the loading tips) if it isn't done by the time the campus
+    // is chosen.
+    useWelcomePrefetch();
 
     useEffect(() => {
         try {
@@ -234,10 +52,10 @@ export function WelcomePage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-mauria-bg flex flex-col">
+        <PageTransition className="min-h-screen bg-mauria-bg flex flex-col">
             <motion.div
-                className="flex-1 flex flex-col gap-4 px-6 pt-16 pb-8"
-                variants={welcomeStagger}
+                className="flex-1 flex flex-col gap-4 px-6 pt-16 pb-10"
+                variants={staggerGroup}
                 initial="hidden"
                 animate="show"
             >
@@ -285,52 +103,18 @@ export function WelcomePage() {
                         </Alert>
                     </motion.div>
                 ))}
+                {/* Start button right after the info boxes, closing the
+                    entrance cascade. */}
+                <motion.div variants={fadeIn} className="pt-2">
+                    <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={() => navigate("/campus")}
+                    >
+                        {t("welcome.start")}
+                    </Button>
+                </motion.div>
             </motion.div>
-            <motion.div
-                variants={fadeIn}
-                initial="hidden"
-                animate="show"
-                className="px-6 pb-10 flex flex-col items-center gap-3"
-            >
-                <p
-                    aria-live="polite"
-                    className="min-h-[2.5rem] max-w-sm text-center text-sm text-muted-foreground leading-snug flex items-center justify-center"
-                >
-                    <AnimatePresence mode="wait" initial={false}>
-                        <motion.span
-                            key={isBusy ? tipStep : "idle"}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.25, ease: "easeOut" }}
-                        >
-                            {isBusy ? tips[tipIndex] : ""}
-                        </motion.span>
-                    </AnimatePresence>
-                </p>
-                <Button
-                    size="lg"
-                    aria-disabled={isBusy}
-                    className={`relative w-full overflow-hidden ${
-                        isBusy ? "bg-primary/15 hover:bg-primary/15" : ""
-                    }`}
-                    onClick={() => {
-                        if (isBusy) return;
-                        navigate("/");
-                    }}
-                >
-                    {isBusy ? (
-                        <span
-                            aria-hidden
-                            className="pointer-events-none absolute inset-y-0 left-0 bg-primary/50 transition-[width] duration-200 ease-linear"
-                            style={{ width: `${progress}%` }}
-                        />
-                    ) : null}
-                    <span className="relative z-10">
-                        {isBusy ? t("common.loading") : t("welcome.start")}
-                    </span>
-                </Button>
-            </motion.div>
-        </div>
+        </PageTransition>
     );
 }

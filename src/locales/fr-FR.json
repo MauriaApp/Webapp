@@ -52,6 +52,21 @@
       }
     }
   },
+  "campusPage": {
+    "title": "Dans quel campus es-⁠tu ?",
+    "subtitle": "Tes menus et tes infos s'adaptent à ton campus."
+  },
+  "preparationPage": {
+    "title": "On prépare quelques informations pour vous…",
+    "queries": {
+      "warm": "Session Aurion",
+      "planning": "Planning",
+      "grades": "Notes",
+      "absences": "Absences",
+      "importantMessages": "Messages",
+      "dailyMenu": "Menu du RU"
+    }
+  },
   "common": {
     "id": "ID",
     "loading": "Chargement…",
@@ -108,11 +123,16 @@
       "en-US": "Anglais",
       "es-ES": "Espagnol"
     },
+    "campusParameter": {
+      "title": "Campus",
+      "lille": "Lille",
+      "chateauroux": "Châteauroux",
+      "bordeaux": "Bordeaux"
+    },
     "restaurantParameter": {
       "title": "Menu du RU",
-      "none": "Aucun",
-      "lille": "Lille",
-      "chateauroux": "Châteauroux"
+      "enabled": "Activé",
+      "disabled": "Désactivé"
     },
     "actions": {
       "associations": "Associations",
@@ -784,6 +804,7 @@
       "bw": "Noir et blanc",
       "duplex": "Recto-verso",
       "send": "Uploader",
+      "cancel": "Annuler",
       "sending": "Envoi…",
       "error": "Échec de l'envoi",
       "tooLarge": "Fichier trop volumineux (100 Mo max)"

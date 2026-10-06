@@ -24,6 +24,8 @@ import { PlanningPage } from "./pages/planning/page";
 import { LoginPage } from "./pages/secondary/login";
 import { AgendaPage } from "./pages/secondary/agenda";
 import { WelcomePage } from "./pages/secondary/welcome";
+import { CampusPage } from "./pages/secondary/campus";
+import { PreparingPage } from "./pages/secondary/preparing";
 import { DocumentsPage } from "./pages/secondary/documents";
 import { VersionsPage } from "./pages/secondary/versions";
 import { PrintPage } from "./pages/secondary/print";
@@ -80,6 +82,22 @@ function AppRoutes() {
                     element={
                         <RequireAuth>
                             <WelcomePage />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/campus"
+                    element={
+                        <RequireAuth>
+                            <CampusPage />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/preparing"
+                    element={
+                        <RequireAuth>
+                            <PreparingPage />
                         </RequireAuth>
                     }
                 />

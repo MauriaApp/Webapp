@@ -6,47 +6,35 @@ export const RESTAURANT_MENU_STORAGE_KEY = "mauria-restaurant-menu";
 
 const RESTAURANT_MENU_EVENT = "mauria-restaurant-menu-change";
 
-export type RestaurantCampus = "none" | "lille" | "chateauroux";
-
-export const RESTAURANT_CAMPUS_OPTIONS: RestaurantCampus[] = [
-    "none",
-    "lille",
-    "chateauroux",
-];
-
-const normalize = (raw: string | null): RestaurantCampus => {
-    // Rétro-compat avec l'ancien toggle booléen ("true"/"false").
-    if (raw === "false" || raw === "none") {
-        return "none";
-    }
-    if (raw === "chateauroux") {
-        return "chateauroux";
-    }
-    return "lille";
+// Rétro-compat avec l'ancien sélecteur de campus ("none" | "lille" |
+// "chateauroux") et l'encore plus ancien toggle booléen ("true" | "false") :
+// seuls "none" et "false" désactivaient le menu.
+const normalize = (raw: string | null): boolean => {
+    return raw !== "false" && raw !== "none";
 };
 
-export const readRestaurantCampus = (): RestaurantCampus => {
+export const readRestaurantMenuEnabled = (): boolean => {
     if (typeof window === "undefined") {
-        return "lille";
+        return true;
     }
 
     return normalize(getFromStorage(RESTAURANT_MENU_STORAGE_KEY));
 };
 
-export const setRestaurantCampus = (campus: RestaurantCampus) => {
+export const setRestaurantMenuEnabled = (enabled: boolean) => {
     if (typeof window === "undefined") {
         return;
     }
 
-    saveToStorage(RESTAURANT_MENU_STORAGE_KEY, campus);
+    saveToStorage(RESTAURANT_MENU_STORAGE_KEY, String(enabled));
     window.dispatchEvent(new Event(RESTAURANT_MENU_EVENT));
 };
 
-export const useRestaurantCampus = (): RestaurantCampus => {
-    const [campus, setCampus] = useState<RestaurantCampus>(readRestaurantCampus);
+export const useRestaurantMenuEnabled = (): boolean => {
+    const [enabled, setEnabled] = useState<boolean>(readRestaurantMenuEnabled);
 
     useEffect(() => {
-        const handler = () => setCampus(readRestaurantCampus());
+        const handler = () => setEnabled(readRestaurantMenuEnabled());
 
         window.addEventListener(RESTAURANT_MENU_EVENT, handler);
         window.addEventListener("storage", handler);
@@ -57,5 +45,5 @@ export const useRestaurantCampus = (): RestaurantCampus => {
         };
     }, []);
 
-    return campus;
+    return enabled;
 };

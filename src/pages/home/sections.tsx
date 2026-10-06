@@ -22,6 +22,7 @@ import {
     formatLessonType,
 } from "@/lib/utils/home";
 import { useTranslation } from "react-i18next";
+import { useCampus, WIFI_CAMPUS } from "@/lib/utils/campus";
 import { EASE, EASE_EXIT, fadeIn, staggerGroup } from "@/lib/motion";
 
 const MotionCard = motion(Card);
@@ -423,7 +424,10 @@ export const JuniaStatusWarning = ({
     status?: JuniaStatus | null;
 }) => {
     const { t } = useTranslation();
+    const campus = useCampus();
 
+    // Les problèmes Aurion sont globaux aux trois campus ; ceux du Wi-Fi ne
+    // concernent que Lille.
     const warnings = [
         status?.aurionDown && {
             key: "aurion",
@@ -432,13 +436,14 @@ export const JuniaStatusWarning = ({
             body: t("homePage.aurionDownBody"),
             since: status.aurionSince,
         },
-        status?.wifiDown && {
-            key: "wifi",
-            Icon: WifiOff,
-            title: t("homePage.wifiDownTitle"),
-            body: t("homePage.wifiDownBody"),
-            since: status.wifiSince,
-        },
+        status?.wifiDown &&
+            campus === WIFI_CAMPUS && {
+                key: "wifi",
+                Icon: WifiOff,
+                title: t("homePage.wifiDownTitle"),
+                body: t("homePage.wifiDownBody"),
+                since: status.wifiSince,
+            },
     ].filter((warning) => !!warning);
 
     if (warnings.length === 0) return null;

@@ -24,6 +24,9 @@ import {
     type LocaleOption,
 } from "@/lib/utils/translations";
 import { useNavigate } from "react-router";
+import { motion } from "framer-motion";
+import { fadeIn, staggerGroup } from "@/lib/motion";
+import { PageTransition } from "@/components/page-transition";
 
 const FIRST_LAUNCH_KEY = "firstLaunch";
 
@@ -80,15 +83,28 @@ export function LoginPage() {
     };
 
     return (
-        <>
-            <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+        <PageTransition>
+            {/* z-0 rather than -z-10: since the "Black bars fix" gave html
+                its own background, the body's background stopped propagating
+                to the canvas and a negative z-index layer now paints *under*
+                it — the meteors were hidden behind the page background. */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
                 <Meteors number={50} />
             </div>
-            <div className="relative min-h-screen flex items-center justify-center px-3 py-safe">
-                <h1 className="absolute top-safe-offset-16 md:top-safe-offset-20 w-full text-center text-mauria-purple font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none">
+            <motion.div
+                className="relative min-h-screen flex items-center justify-center px-3 py-safe"
+                variants={staggerGroup}
+                initial="hidden"
+                animate="show"
+            >
+                <motion.h1
+                    variants={fadeIn}
+                    className="absolute top-safe-offset-16 md:top-safe-offset-20 w-full text-center text-mauria-purple font-extrabold text-6xl md:text-7xl leading-none tracking-tight drop-shadow-lg pointer-events-none"
+                >
                     {t("login.mauria")}
-                </h1>
-                <Card className="w-full max-w-md">
+                </motion.h1>
+                <motion.div variants={fadeIn} className="w-full max-w-md">
+                    <Card className="w-full max-w-md">
                     <CardHeader>
                         <CardTitle>{t("login.login")}</CardTitle>
                         <CardDescription>
@@ -159,7 +175,11 @@ export function LoginPage() {
                         </CardFooter>
                     </form>
                 </Card>
-                <div className="absolute bottom-safe-offset-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+                </motion.div>
+                <motion.div
+                    variants={fadeIn}
+                    className="absolute bottom-safe-offset-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+                >
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Languages className="h-4 w-4" />
                         <span>{t("sidebar.languageParameter.title")}</span>
@@ -191,8 +211,8 @@ export function LoginPage() {
                             {t("sidebar.languageParameter.es-ES")}
                         </ToggleGroupItem>
                     </ToggleGroup>
-                </div>
-            </div>
-        </>
+                </motion.div>
+            </motion.div>
+        </PageTransition>
     );
 }

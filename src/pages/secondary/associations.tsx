@@ -16,8 +16,16 @@ import { fetchAssos } from "@/lib/api/supa";
 import { AssociationData } from "@/types/data";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+    fadeIn,
+    fadeInIndexed,
+    staggerGroup,
+} from "@/lib/motion";
 
 const formLink = "https://forms.office.com/e/Kpx2fP8Gh1";
+
+const MotionCard = motion(Card);
 
 function AssociationImage({
     src,
@@ -84,8 +92,13 @@ export function AssociationsPage() {
     }, [associations, searchTerm]);
 
     return (
-        <div className="mt-4 space-y-6 sm:px-6 lg:px-0">
-            <div className="w-full space-y-6">
+        <motion.div
+            className="mt-4 space-y-6 sm:px-6 lg:px-0"
+            variants={staggerGroup}
+            initial="hidden"
+            animate="show"
+        >
+            <motion.div variants={fadeIn} className="w-full space-y-6">
                 <div className="relative w-full">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
@@ -109,13 +122,18 @@ export function AssociationsPage() {
                         {t("associationsPage.formLink")}
                     </Button>
                 </div>
-            </div>
+            </motion.div>
             {/* Associations Grid */}
             <div className="w-full">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                     {filteredAssociations.map((association, index) => (
-                        <Card
+                        <MotionCard
                             key={index}
+                            variants={fadeInIndexed}
+                            custom={index}
+                            initial="hidden"
+                            animate="show"
+                            exit="exit"
                             className="group relative flex h-full min-h-[88px] w-full items-center overflow-hidden rounded-lg border border-border bg-card transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[88px] cursor-pointer"
                             onClick={() => handleAssociationClick(association)}
                         >
@@ -139,7 +157,7 @@ export function AssociationsPage() {
                                     {association.description}
                                 </p>
                             </CardContent>
-                        </Card>
+                        </MotionCard>
                     ))}
                 </div>
             </div>
@@ -210,6 +228,6 @@ export function AssociationsPage() {
                     </Button>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 }
