@@ -1,5 +1,6 @@
 "use client";
 
+import { pushWidgetTheme } from "@/lib/native/widget";
 import { getFromStorage, saveToStorage } from "@/lib/utils/storage";
 import type React from "react";
 
@@ -37,6 +38,8 @@ export function ThemeProvider({ children }: Readonly<ThemeProviderProps>) {
         );
         root.classList.add(theme);
         saveToStorage("theme", theme);
+        // Les widgets natifs suivent le theme de l'app : no-op hors Android.
+        void pushWidgetTheme(theme);
     }, [theme]);
 
     return (
