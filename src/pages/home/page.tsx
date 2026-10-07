@@ -94,11 +94,16 @@ export function HomePage() {
         lessons: [...resolvedLessons, ...colles],
     });
 
-    // Pousse le planning au widget Android a chaque fois que les cours changent.
+    // Pousse le planning au widget Android a chaque fois que les cours ou les
+    // khôlles changent. Le planning résolu remplace le DS générique des
+    // MPI/PSI par le vrai, et les khôlles suivent le même format de titre
+    // qu'Aurion (cf. buildCollesLessons), donc parseFromTitle les lit.
     useEffect(() => {
-        if (lessons.length === 0 || !hasWidgetPlugin()) return;
-        void pushWidgetPlanning(buildWidgetLessons(lessons));
-    }, [lessons]);
+        if (resolvedLessons.length === 0 || !hasWidgetPlugin()) return;
+        void pushWidgetPlanning(
+            buildWidgetLessons([...resolvedLessons, ...colles])
+        );
+    }, [resolvedLessons, colles]);
 
     // Idem pour le widget de notes, depuis le cache : sinon il ne se
     // rafraichit qu'en ouvrant la page notes.
