@@ -186,7 +186,10 @@ export const buildWidgetLessons = (lessons: Lesson[]): WidgetLesson[] => {
         .map(({ lesson, start, end }) => {
             const { courseTitle, location, type } = parseFromTitle(lesson);
             return {
-                title: courseTitle,
+                // Meme habillage que les cartes du planning : suffixe de
+                // semestre retire, matieres abregees ("FHS", "Maths") —
+                // sinon la cellule native tronque en "Formation...".
+                title: abbreviateSubjects(formatLessonCourse(courseTitle)),
                 type,
                 location,
                 time: `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`,
