@@ -133,6 +133,12 @@ const CLASS_PATTERNS: Array<{ pattern: string; cls: StudentClass }> = [
     { pattern: "CPG1_MPSI", cls: "CPG1_MPSI" },
     { pattern: "CPG2_MPI", cls: "CPG2_MPI" },
     { pattern: "CPG2_PSI", cls: "CPG2_PSI" },
+    // The CIR cycle was renamed from the 2627 cohort on: the class token
+    // in the grade codes went from CIR1/CIR2 to A1/A2 (2627_ISEN_A2_S3_
+    // MATH5_EI1 is the same UE 1.3 as 2526_ISEN_CIR2_S3_MATH5_P1). The
+    // legacy CIR patterns stay so earlier cohorts keep their history.
+    { pattern: "_ISEN_A1_", cls: "CIR1" },
+    { pattern: "_ISEN_A2_", cls: "CIR2" },
     { pattern: "CIR1", cls: "CIR1" },
     { pattern: "CIR2", cls: "CIR2" },
 ];
