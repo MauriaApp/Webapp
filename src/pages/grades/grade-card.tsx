@@ -86,12 +86,22 @@ export function GradeCardAnimate({
                                   )
                                 : t("gradesPage.dateNotSpecified")}
                         </p>
-                        <div className="mb-0 flex items-end justify-end">
-                            <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
-                        </div>
+                        {!grade.comment && (
+                            <div className="mb-0 flex items-end justify-end">
+                                <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+            {grade.comment && (
+                <div className="flex items-end justify-between gap-2 pt-1">
+                    <p className="min-w-0 truncate text-sm text-gray-500 dark:text-gray-400">
+                        {grade.comment}
+                    </p>
+                    <SquareArrowOutDownRightIcon className="h-3 w-3 shrink-0 text-muted-foreground/50" />
+                </div>
+            )}
         </MotionCard>
     );
 }
@@ -158,12 +168,22 @@ export function GradeCard({
                                   )
                                 : t("gradesPage.dateNotSpecified")}
                         </p>
-                        <div className="mb-0 flex items-end justify-end">
-                            <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
-                        </div>
+                        {!grade.comment && (
+                            <div className="mb-0 flex items-end justify-end">
+                                <SquareArrowOutDownRightIcon className="text-muted-foreground/50 h-3 w-3" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+            {grade.comment && (
+                <div className="flex items-end justify-between gap-2 pt-1">
+                    <p className="min-w-0 truncate text-sm text-gray-500 dark:text-gray-400">
+                        {grade.comment}
+                    </p>
+                    <SquareArrowOutDownRightIcon className="h-3 w-3 shrink-0 text-muted-foreground/50" />
+                </div>
+            )}
         </Card>
     );
 }

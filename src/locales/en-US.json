@@ -668,6 +668,7 @@
     "averageEvolutionGeneral": "General average evolution",
     "averageEvolutionIn": "Average evolution in {{subject}}",
     "averageDisclaimer": "The average shown is indicative. Some subject coefficients may not be taken into account.",
+    "cirBeta": "Beta for CIR",
     "averagesNotSupported": "Averages are not supported for your class yet.",
     "lv2NotCounted": "not counted",
     "subjects": {
@@ -680,7 +681,9 @@
       "eps": "EPS",
       "lv2": "LV2",
       "tipe": "TIPE",
-      "pix": "PIX"
+      "pix": "PIX",
+      "stage": "Internship",
+      "projet": "Project"
     }
   },
   "absencesPage": {

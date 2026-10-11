@@ -19,6 +19,7 @@ import {
     getGrades,
     getGradeBadgeInfoFromCode,
     detectStudentClass,
+    isCirClass,
     getGradeSemesters,
     getCurrentSemesterKey,
 } from "@/lib/utils/grades";
@@ -43,6 +44,7 @@ import { Separator } from "@/components/ui/separator";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/utils/translations";
 import { useTranslation } from "react-i18next";
@@ -300,6 +302,10 @@ function AveragesComparison({
 }) {
     const [expanded, setExpanded] = useState(false);
     const averages = useMemo(() => computeAverages(grades), [grades]);
+    const isCir = useMemo(
+        () => isCirClass(detectStudentClass(grades)),
+        [grades]
+    );
 
     if (averages.overall.student === null && averages.overall.class === null)
         return null;
@@ -422,6 +428,14 @@ function AveragesComparison({
                         {t("gradesPage.averageDisclaimer")}
                     </p>
                 </div>
+                {isCir && (
+                    <Badge
+                        variant="secondary"
+                        className="px-1.5 py-0 text-[10px] font-semibold"
+                    >
+                        {t("gradesPage.cirBeta")}
+                    </Badge>
+                )}
             </CardContent>
         </Card>
     );
