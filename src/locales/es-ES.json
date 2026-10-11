@@ -668,6 +668,7 @@
     "averageEvolutionGeneral": "Evolución de la media general",
     "averageEvolutionIn": "Evolución de la media en {{subject}}",
     "averageDisclaimer": "La media mostrada es indicativa. Es posible que algunos coeficientes de asignaturas no se tengan en cuenta.",
+    "cirBeta": "Beta para CIR",
     "averagesNotSupported": "Las medias aún no son compatibles con tu clase.",
     "lv2NotCounted": "no contada",
     "subjects": {
@@ -680,7 +681,9 @@
       "eps": "EPS",
       "lv2": "LV2",
       "tipe": "TIPE",
-      "pix": "PIX"
+      "pix": "PIX",
+      "stage": "Prácticas",
+      "projet": "Proyecto"
     }
   },
   "absencesPage": {

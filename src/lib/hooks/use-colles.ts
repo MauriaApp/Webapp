@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { fetchGrades, getSession } from "@/lib/api/aurion";
 import { fetchColleGroup } from "@/lib/api/colles";
-import { detectStudentClass } from "@/lib/utils/grades";
+import { detectStudentClass, isCpgClass } from "@/lib/utils/grades";
 import { buildCollesLessons } from "@/lib/utils/colles";
 import { resolveDsLessons } from "@/lib/utils/ds";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
@@ -32,7 +32,9 @@ function useColleGroup() {
         staleTime: 1000 * 60 * 5,
         gcTime: 1000 * 60 * 60 * 24,
     });
-    const confirmedCpg = detectStudentClass(grades) !== null;
+    // CIR classes are also detected from grade codes: only actual CPG
+    // classes may loosen the server-side khôlle matching.
+    const confirmedCpg = isCpgClass(detectStudentClass(grades));
 
     const email = getSession()?.email;
     const { data } = useQuery({

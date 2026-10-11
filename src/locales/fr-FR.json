@@ -668,6 +668,7 @@
     "averageEvolutionGeneral": "Évolution de la moyenne générale",
     "averageEvolutionIn": "Évolution de la moyenne en {{subject}}",
     "averageDisclaimer": "La moyenne affichée est indicative. Certains coefficients de matières peuvent ne pas être pris en compte.",
+    "cirBeta": "Beta pour les CIR",
     "averagesNotSupported": "Les moyennes ne sont pas encore supportées pour ta classe.",
     "lv2NotCounted": "non comptée",
     "subjects": {
@@ -680,7 +681,9 @@
       "eps": "EPS",
       "lv2": "LV2",
       "tipe": "TIPE",
-      "pix": "PIX"
+      "pix": "PIX",
+      "stage": "Stage",
+      "projet": "Projet"
     }
   },
   "absencesPage": {
