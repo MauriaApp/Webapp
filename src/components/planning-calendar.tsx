@@ -24,6 +24,7 @@ import {
     formatLessonType,
     parseFromTitle,
 } from "@/lib/utils/home";
+import { formatExtraTimeLabel } from "@/lib/utils/extra-time";
 
 const Calendar = memo(FullCalendar);
 
@@ -235,6 +236,68 @@ export const PlanningCalendar = forwardRef<
                             className: arg.event.classNames[0] ?? "",
                         } as Lesson);
 
+                    // An exam stretched by "tiers temps" carries its
+                    // nominal bounds (extendedProps.origStart / origEnd,
+                    // set by applyExtraTime). Everything outside them is
+                    // time the student was granted on top — Aurion's own
+                    // "Horaire TT" shifts the start earlier too — hatched
+                    // diagonally, the added time labeled in the larger
+                    // zone.
+                    const { origStart, origEnd } = arg.event.extendedProps as {
+                        origStart?: string;
+                        origEnd?: string;
+                    };
+                    type ExtraZone = {
+                        before: boolean;
+                        top: string;
+                        height: string | null;
+                        label: string | null;
+                    };
+                    const extraZones: ExtraZone[] = (() => {
+                        if (!arg.event.start || !arg.event.end) return [];
+
+                        const startMs = arg.event.start.getTime();
+                        const endMs = arg.event.end.getTime();
+                        const total = endMs - startMs;
+                        if (total <= 0) return [];
+
+                        const clamp = (ms: number) =>
+                            Math.min(Math.max(ms, 0), total);
+                        const lead = clamp(
+                            origStart
+                                ? new Date(origStart).getTime() - startMs
+                                : 0
+                        );
+                        const trail = clamp(
+                            origEnd
+                                ? endMs - new Date(origEnd).getTime()
+                                : 0
+                        );
+                        if ((lead <= 0 && trail <= 0) || total <= lead + trail)
+                            return [];
+
+                        const label = formatExtraTimeLabel(lead + trail);
+                        const labelBefore = lead > trail;
+                        const pct = (ms: number) => `${(ms / total) * 100}%`;
+
+                        const zones: ExtraZone[] = [];
+                        if (lead > 0)
+                            zones.push({
+                                before: true,
+                                top: "0%",
+                                height: pct(lead),
+                                label: labelBefore ? label : null,
+                            });
+                        if (trail > 0)
+                            zones.push({
+                                before: false,
+                                top: pct(total - trail),
+                                height: null,
+                                label: labelBefore ? null : label,
+                            });
+                        return zones;
+                    })();
+
                     // Aurion rooms read "A812 - Salle … - Campus …";
                     // only the room itself fits in a cell, the drawer
                     // still shows the full label.
@@ -268,7 +331,31 @@ export const PlanningCalendar = forwardRef<
                     const detail = colleSubject ? lessonType : "";
 
                     return (
-                        <div className="fc-event-main-frame">
+                        <div className="fc-event-main-frame relative">
+                            {extraZones.map((zone) => (
+                                <div
+                                    key={zone.top}
+                                    className={`planning-extra-time-zone ${
+                                        zone.before
+                                            ? "planning-extra-time-before"
+                                            : "planning-extra-time-after"
+                                    }`}
+                                    style={
+                                        zone.height
+                                            ? {
+                                                  top: zone.top,
+                                                  height: zone.height,
+                                              }
+                                            : { top: zone.top }
+                                    }
+                                >
+                                    {zone.label && (
+                                        <span className="planning-extra-time-label">
+                                            {zone.label}
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
                             <div className="fc-event-title-container">
                                 <div className="fc-event-title fc-sticky">
                                     {arg.event.classNames.includes(

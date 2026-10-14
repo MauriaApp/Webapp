@@ -134,6 +134,11 @@
       "enabled": "Activado",
       "disabled": "Desactivado"
     },
+    "extraTimeParameter": {
+      "title": "Tiempo extra",
+      "enabled": "Activado",
+      "disabled": "Desactivado"
+    },
     "actions": {
       "associations": "Asociaciones",
       "documents": "Mis documentos",
@@ -764,6 +769,11 @@
     "discardButton": "De acuerdo"
   },
   "settingsPage": {
+    "sections": {
+      "appearance": "Apariencia",
+      "general": "General",
+      "studentLife": "Escolaridad"
+    },
     "experimental": "Experimental / Troll",
     "experimentalWarning": "Estas opciones son solo para divertirse y no forman parte de las funciones oficiales: pueden fallar, verse raro o cambiar sin aviso. Tus notas reales nunca se modifican, siguen siendo las de Aurion.",
     "gradeRevealMode": {

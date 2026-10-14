@@ -52,10 +52,17 @@ export const parseFromTitle = (lesson: Lesson) => {
     }
 
     const course = lines[typeIndex - 1] ?? "";
-    const note = lines.slice(1, typeIndex - 1).filter(Boolean);
     const teacher = lines
         .slice(typeIndex + 1)
         .find((line) => line && !timeRange.test(line));
+
+    // The room normally sits on the first line, but Aurion sometimes pads
+    // the title with a leading newline and the room slides into the note
+    // block (ISEN exams: "\nSalle C854, IC2, 41 Bvd Vauban\nTT : …\n…").
+    // Everything before the course is then the room followed by its notes.
+    const leading = lines.slice(0, typeIndex - 1).filter(Boolean);
+    const location = leading[0] ?? "";
+    const note = leading.slice(1);
 
     return {
         // No course and no note happens (a workshop, a meeting); the caller
@@ -67,7 +74,7 @@ export const parseFromTitle = (lesson: Lesson) => {
                 ? formatLessonType(course)
                 : course
             : note.join(" "),
-        location: lines[0] ?? "",
+        location,
         type: lines[typeIndex] || lesson.className || "",
         teacher: teacher ?? "",
     };
@@ -191,7 +198,7 @@ export const buildWidgetLessons = (lessons: Lesson[]): WidgetLesson[] => {
                 // sinon la cellule native tronque en "Formation...".
                 title: abbreviateSubjects(formatLessonCourse(courseTitle)),
                 type,
-                location,
+                location: formatLessonLocation(location),
                 time: `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`,
                 startMs: start.getTime(),
                 endMs: end.getTime(),
@@ -246,7 +253,32 @@ export const formatLessonTeacher = (teacher: string) =>
     teacher.replace(/\bMonsieur\b/gi, "M.").replace(/\bMadame\b/gi, "Mme");
 
 export const formatLessonLocation = (location: string) => {
-    return location.split(" - ")[0].trim();
+    // Aurion rooms read "A812 - Salle … - Campus …", ISEN exam rooms "Salle
+    // C854, IC2, 41 Bld Vauban": only the room itself fits in a cell, the
+    // drawer still shows the full label.
+    const parts = location.split(",").map((part) => part.trim());
+    let compact: string;
+    if (parts.length >= 2 && /^salle\s+/i.test(parts[0])) {
+        // ISEN's full form rebuilds in the compact style of every other
+        // room ("IC2 C854"), unless the room already carries its campus
+        // ("Salle ALG 201-202, ALG, …" → "ALG 201-202").
+        const room = parts[0].replace(/^salle\s+/i, "");
+        const campus = parts[1];
+        compact =
+            campus && !room.toUpperCase().startsWith(campus.toUpperCase())
+                ? `${campus} ${room}`
+                : room;
+    } else {
+        compact = location.split(" - ")[0].split(",")[0].trim();
+    }
+    // Aurion glues equipment counts to the room ("IC2 A815_2TAB- VP" =
+    // room A815 with 2 whiteboards): only the room stays in the cell.
+    // A digits-only suffix ("IC1_222", "Palais Rameau_104") is the room
+    // number itself, kept and spaced below.
+    compact = compact.replace(/_\d+[A-Za-z]+.*$/, "");
+    // Aurion glues the campus and the room with an underscore ("IC1_222",
+    // "Palais Rameau_104"): a space reads better in a cell.
+    return compact.replace(/_/g, " ");
 };
 
 // Aurion spells course names out in full ("MATHEMATIQUES", "PHYSIQUE-CHIMIE"),

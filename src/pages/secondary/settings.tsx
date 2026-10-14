@@ -16,6 +16,8 @@ import {
     TriangleAlert,
     Dices,
     Radar,
+    Hourglass,
+    type LucideIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
@@ -54,6 +56,10 @@ import {
     setRestaurantMenuEnabled,
     useRestaurantMenuEnabled,
 } from "@/lib/utils/restaurant-menu";
+import {
+    setExtraTimeEnabled,
+    useExtraTimeEnabled,
+} from "@/lib/utils/extra-time";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import {
     CAMPUS_OPTIONS,
@@ -61,6 +67,29 @@ import {
     setCampus,
     type Campus,
 } from "@/lib/utils/campus";
+
+type SelectorSetting = {
+    icon: LucideIcon;
+    title: string;
+    value: string;
+    selectValue: string;
+    onValueChange: (value: string) => void;
+    options: { value: string; label: string }[];
+};
+
+// A discrete section heading: the settings page reads as a flat list
+// without them, the groups below have nothing to hang on to. Centered like
+// the experimental header it mirrors.
+const SectionTitle = ({ title }: { title: string }) => (
+    <motion.div
+        variants={fadeIn}
+        className="flex items-center justify-center"
+    >
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {title}
+        </h2>
+    </motion.div>
+);
 
 export function SettingsPage() {
     const { t } = useTranslation();
@@ -108,6 +137,7 @@ export function SettingsPage() {
     const [locale, setLocale] = useState<LocaleOption>(readInitialLocale);
     const [campus, setCampusState] = useState<Campus>(readCampus);
     const restaurantMenuEnabled = useRestaurantMenuEnabled();
+    const extraTimeEnabled = useExtraTimeEnabled();
 
     const handleCampusChange = (value: string) => {
         if (!value) return;
@@ -120,6 +150,10 @@ export function SettingsPage() {
         setRestaurantMenuEnabled(enabled);
     };
 
+    const handleExtraTimeToggle = (enabled: boolean) => {
+        setExtraTimeEnabled(enabled);
+    };
+
     useEffect(() => {
         applyScale(size);
     }, [size]);
@@ -128,7 +162,7 @@ export function SettingsPage() {
         applyLocale(locale);
     }, [locale]);
 
-    const selectors = [
+    const appearanceSelectors: SelectorSetting[] = [
         {
             icon: ThemeIcon,
             title: t("sidebar.themeParameter.title"),
@@ -204,6 +238,9 @@ export function SettingsPage() {
                 },
             ],
         },
+    ];
+
+    const generalSelectors: SelectorSetting[] = [
         {
             icon: Languages,
             title: t("sidebar.languageParameter.title"),
@@ -241,6 +278,52 @@ export function SettingsPage() {
         },
     ];
 
+    const renderSelector = (setting: SelectorSetting, index: number) => (
+        <motion.div
+            key={index}
+            variants={fadeIn}
+            className="flex items-center justify-between gap-4"
+        >
+            <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                <setting.icon className="h-5 w-5 shrink-0" />
+                <div className="flex min-w-0 flex-col items-start">
+                    <Label className="cursor-default text-left">
+                        {setting.title}
+                    </Label>
+                    <span className="text-xs text-muted-foreground text-left">
+                        {setting.value}
+                    </span>
+                </div>
+            </div>
+            <div className="flex shrink-0 justify-end">
+                <Select
+                    value={setting.selectValue}
+                    onValueChange={setting.onValueChange}
+                >
+                    <SelectTrigger
+                        className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs focus:ring-0 focus:ring-offset-0"
+                        aria-label={setting.title}
+                    >
+                        <SelectValue
+                            placeholder={setting.title}
+                            className="!items-end flex"
+                        />
+                    </SelectTrigger>
+                    <SelectContent className="text-xs">
+                        {setting.options.map((option) => (
+                            <SelectItem
+                                key={option.value}
+                                value={option.value}
+                            >
+                                {option.label}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+        </motion.div>
+    );
+
     return (
         <motion.div
             className="space-y-4 pt-4 pb-4"
@@ -248,51 +331,14 @@ export function SettingsPage() {
             initial="hidden"
             animate="show"
         >
-            {selectors.map((setting, index) => (
-                <motion.div
-                    key={index}
-                    variants={fadeIn}
-                    className="flex items-center justify-between gap-4"
-                >
-                    <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
-                        <setting.icon className="h-5 w-5 shrink-0" />
-                        <div className="flex min-w-0 flex-col items-start">
-                            <Label className="cursor-default text-left">
-                                {setting.title}
-                            </Label>
-                            <span className="text-xs text-muted-foreground text-left">
-                                {setting.value}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="flex shrink-0 justify-end">
-                        <Select
-                            value={setting.selectValue}
-                            onValueChange={setting.onValueChange}
-                        >
-                            <SelectTrigger
-                                className="h-8 w-[150px] justify-between rounded-md border border-border/50 px-2 text-xs focus:ring-0 focus:ring-offset-0"
-                                aria-label={setting.title}
-                            >
-                                <SelectValue
-                                    placeholder={setting.title}
-                                    className="!items-end flex"
-                                />
-                            </SelectTrigger>
-                            <SelectContent className="text-xs">
-                                {setting.options.map((option) => (
-                                    <SelectItem
-                                        key={option.value}
-                                        value={option.value}
-                                    >
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </motion.div>
-            ))}
+            <SectionTitle title={t("settingsPage.sections.general")} />
+            {generalSelectors.map(renderSelector)}
+
+            <motion.div variants={fadeIn}>
+                <Separator />
+            </motion.div>
+
+            <SectionTitle title={t("settingsPage.sections.studentLife")} />
 
             <motion.div
                 variants={fadeIn}
@@ -323,6 +369,43 @@ export function SettingsPage() {
                     />
                 </div>
             </motion.div>
+
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-between gap-4"
+            >
+                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                    <Hourglass className="h-5 w-5 shrink-0" />
+                    <div className="flex min-w-0 flex-col items-start">
+                        <Label
+                            htmlFor="extra-time"
+                            className="cursor-pointer text-left"
+                        >
+                            {t("sidebar.extraTimeParameter.title")}
+                        </Label>
+                        <span className="text-xs text-muted-foreground text-left">
+                            {extraTimeEnabled
+                                ? t("sidebar.extraTimeParameter.enabled")
+                                : t("sidebar.extraTimeParameter.disabled")}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex shrink-0 justify-end">
+                    <Switch
+                        id="extra-time"
+                        checked={extraTimeEnabled}
+                        onCheckedChange={handleExtraTimeToggle}
+                        aria-label={t("sidebar.extraTimeParameter.title")}
+                    />
+                </div>
+            </motion.div>
+
+            <motion.div variants={fadeIn}>
+                <Separator />
+            </motion.div>
+
+            <SectionTitle title={t("settingsPage.sections.appearance")} />
+            {appearanceSelectors.map(renderSelector)}
 
             <motion.div variants={fadeIn}>
                 <Separator />
