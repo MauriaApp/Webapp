@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 
 import { buildWidgetLessons, getHomeUpcoming } from "@/lib/utils/home";
+import { applyExtraTime, useExtraTimeEnabled } from "@/lib/utils/extra-time";
 import { hasWidgetPlugin, pushWidgetPlanning } from "@/lib/native/widget";
 import { useWidgetGradesSync } from "@/lib/native/use-widget-grades-sync";
 import { staggerGroup } from "@/lib/motion";
@@ -90,8 +91,17 @@ export function HomePage() {
     const colles = useColles();
     const resolvedLessons = useResolvedPlanning(lessons);
 
+    // Tiers temps: the home cards and the native widgets read the same
+    // stretched DS the planning shows, so every surface agrees on the end
+    // time and the "current course" badge covers the granted extra time.
+    const extraTimeEnabled = useExtraTimeEnabled();
+    const shownLessons = useMemo(
+        () => applyExtraTime(resolvedLessons, extraTimeEnabled),
+        [resolvedLessons, extraTimeEnabled]
+    );
+
     const { current, today, tomorrow } = getHomeUpcoming({
-        lessons: [...resolvedLessons, ...colles],
+        lessons: [...shownLessons, ...colles],
     });
 
     // Pousse le planning au widget Android a chaque fois que les cours ou les
@@ -99,11 +109,11 @@ export function HomePage() {
     // MPI/PSI par le vrai, et les khôlles suivent le même format de titre
     // qu'Aurion (cf. buildCollesLessons), donc parseFromTitle les lit.
     useEffect(() => {
-        if (resolvedLessons.length === 0 || !hasWidgetPlugin()) return;
+        if (shownLessons.length === 0 || !hasWidgetPlugin()) return;
         void pushWidgetPlanning(
-            buildWidgetLessons([...resolvedLessons, ...colles])
+            buildWidgetLessons([...shownLessons, ...colles])
         );
-    }, [resolvedLessons, colles]);
+    }, [shownLessons, colles]);
 
     // Idem pour le widget de notes, depuis le cache : sinon il ne se
     // rafraichit qu'en ouvrant la page notes.

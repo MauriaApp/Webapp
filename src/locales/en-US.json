@@ -134,6 +134,11 @@
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
+    "extraTimeParameter": {
+      "title": "Extra time",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
     "actions": {
       "associations": "Associations",
       "documents": "My documents",
@@ -764,6 +769,11 @@
     "discardButton": "Okay"
   },
   "settingsPage": {
+    "sections": {
+      "appearance": "Appearance",
+      "general": "General",
+      "studentLife": "Student life"
+    },
     "experimental": "Experimental / Troll",
     "experimentalWarning": "These options are just for fun and aren't official features: they may glitch, render oddly or change without notice. Your real grades are never altered — they stay the ones from Aurion.",
     "gradeRevealMode": {

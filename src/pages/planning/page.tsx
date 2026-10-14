@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import FullCalendar from "@fullcalendar/react";
 import FrLocale from "@fullcalendar/core/locales/fr";
@@ -35,6 +35,7 @@ import { exportCalendar } from "@/lib/utils/exportCalendar";
 import { useAurionWarm } from "@/lib/hooks/use-aurion-warm";
 import { useColles, useResolvedPlanning } from "@/lib/hooks/use-colles";
 import { FREE_ROOMS_CAMPUSES, useCampus } from "@/lib/utils/campus";
+import { applyExtraTime, useExtraTimeEnabled } from "@/lib/utils/extra-time";
 
 export function PlanningPage() {
     const calendarRef = useRef<FullCalendar>(null);
@@ -102,6 +103,14 @@ export function PlanningPage() {
     });
 
     const resolvedLessons = useResolvedPlanning(lessons);
+    const extraTimeEnabled = useExtraTimeEnabled();
+
+    // "Tiers temps": only the calendar shows the stretched DS, the raw
+    // planning stays what Aurion (and the export) says.
+    const shownLessons = useMemo(
+        () => applyExtraTime(resolvedLessons, extraTimeEnabled),
+        [resolvedLessons, extraTimeEnabled]
+    );
 
     const isBusy = isWarming || isLoading || isFetching;
 
@@ -224,7 +233,7 @@ export function PlanningPage() {
                     >
                         <PlanningCalendar
                             ref={calendarRef}
-                            eventSources={[resolvedLessons, userEvents, colles]}
+                            eventSources={[shownLessons, userEvents, colles]}
                             onSelect={(info) => {
                                 info.view.calendar.unselect();
                                 // A long press picks a single 30 min slot:

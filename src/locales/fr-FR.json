@@ -134,6 +134,11 @@
       "enabled": "Activé",
       "disabled": "Désactivé"
     },
+    "extraTimeParameter": {
+      "title": "Tiers temps",
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
     "actions": {
       "associations": "Associations",
       "documents": "Mes documents",
@@ -764,6 +769,11 @@
     "discardButton": "D'accord !"
   },
   "settingsPage": {
+    "sections": {
+      "appearance": "Apparence",
+      "general": "Général",
+      "studentLife": "Scolarité"
+    },
     "experimental": "Expérimental / Troll",
     "experimentalWarning": "Ces options sont là pour s'amuser et ne font pas partie des fonctionnalités officielles : elles peuvent bugger, s'afficher bizarrement ou évoluer sans prévenir. Tes vraies notes ne sont jamais modifiées, elles restent celles d'Aurion.",
     "gradeRevealMode": {

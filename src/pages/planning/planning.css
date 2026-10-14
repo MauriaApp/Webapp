@@ -211,3 +211,47 @@
     transition-property: opacity;
     transition-timing-function: linear;
 }
+
+/* Tiers temps (settings toggle): the time added to an exam is hatched
+   diagonally, its boundary with the nominal schedule marked by a dashed
+   line. Absolute inside fc-event-main-frame (height:100%), so `top` /
+   `height` set inline by PlanningCalendar land exactly on the nominal
+   bounds. */
+.planning-extra-time-zone {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        -45deg,
+        rgb(255 255 255 / 0.22) 0 2px,
+        transparent 2px 7px
+    );
+}
+
+/* Time added before the nominal start (Aurion's "Horaire TT" shifts the
+   start earlier): the nominal start is its bottom edge. */
+.planning-extra-time-before {
+    border-bottom: 1px dashed rgb(255 255 255 / 0.7);
+}
+
+/* Time added after the nominal end: stretches to the event's end, the
+   nominal end is its top edge. */
+.planning-extra-time-after {
+    bottom: 0;
+    border-top: 1px dashed rgb(255 255 255 / 0.7);
+}
+
+/* The added-time label ("+30m", "+1h30") centered in the hatched zone. No
+   color: it inherits the event's text color, which each theme already picks
+   against its own épreuve background (white, peach on oled…). */
+.planning-extra-time-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+}
