@@ -17,6 +17,7 @@ import { GradesPage } from "./pages/grades/page";
 import { ReactQueryProvider } from "./contexts/reactQueryContext";
 import { getSession } from "./lib/api/aurion";
 import { useAurionWarm } from "./lib/hooks/use-aurion-warm";
+import { useWidgetLanguageSync } from "./lib/native/use-widget-language-sync";
 import { ThemeProvider } from "./components/theme-provider";
 import { BackgroundProvider } from "./components/background-provider";
 import { AssociationsPage } from "./pages/secondary/associations";
@@ -135,6 +136,9 @@ function App() {
     const baseUrl = import.meta.env.BASE_URL ?? "/";
     const routerBaseName =
         baseUrl === "/" ? undefined : baseUrl.replace(/\/$/, "");
+
+    // Les widgets natifs suivent la langue de l'app : no-op hors Android.
+    useWidgetLanguageSync();
 
     return (
         <ThemeProvider>

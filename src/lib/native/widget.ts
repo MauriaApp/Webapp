@@ -40,6 +40,7 @@ type MauriaWidgetPlugin = {
     update: (data: { lessons: WidgetLesson[] }) => Promise<void>;
     updateGrades: (data: WidgetGradesPayload) => Promise<void>;
     updateTheme: (data: { theme: string }) => Promise<void>;
+    updateLanguage: (data: { language: string }) => Promise<void>;
 };
 
 type CapacitorBridge = {
@@ -92,5 +93,17 @@ export async function pushWidgetTheme(theme: string): Promise<void> {
         await plugin.updateTheme({ theme });
     } catch (e) {
         console.warn("widget theme update failed", e);
+    }
+}
+
+// Langue de l'app (code i18n "fr" / "en" / "es") : les widgets natifs
+// l'utilisent pour choisir leurs libelles et formats de date.
+export async function pushWidgetLanguage(language: string): Promise<void> {
+    const plugin = getPlugin();
+    if (!plugin?.updateLanguage) return;
+    try {
+        await plugin.updateLanguage({ language });
+    } catch (e) {
+        console.warn("widget language update failed", e);
     }
 }
