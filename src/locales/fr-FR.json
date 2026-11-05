@@ -147,7 +147,8 @@
       "print": "Imprimer",
       "versions": "Mises à jour",
       "settings": "Paramètres",
-      "palantir": "Palantir"
+      "palantir": "Palantir",
+      "internships": "Stages"
     },
     "help": "Une question, une idée ?",
     "logOut": "Se déconnecter",
@@ -735,6 +736,114 @@
     "reinitialize": "Réinitialiser",
     "formLink": "Ton association manque ou a changé ?",
     "noResultsFor": "Aucune association trouvée pour \"{{term}}\""
+  },
+  "internshipsPage": {
+    "tabs": {
+      "offers": "Offres",
+      "sites": "Sites"
+    },
+    "search": "Rechercher une offre, un lieu, une entreprise",
+    "contract": {
+      "all": "Tout",
+      "internship": "Stage",
+      "apprenticeship": "Alternance",
+      "seasonal": "Saisonnier",
+      "job": "Emploi"
+    },
+    "count_one": "{{count}} offre",
+    "count_other": "{{count}} offres",
+    "error": "Impossible de charger les offres pour le moment.",
+    "empty": "Aucune offre ne correspond à ta recherche.",
+    "viewOffer": "Voir l'offre sur le site",
+    "inMauria": "Offres dans Mauria",
+    "sitesIntro": "Les sites conseillés par le pôle stage de Junia. Ceux marqués « Offres dans Mauria » sont aussi dans l'onglet Offres.",
+    "sites": {
+      "jobteaser": "Le Career Center de Junia : stages, alternances et premiers emplois. Connexion avec ton compte Junia.",
+      "resortwork": "Jobs saisonniers en stations, hôtels et resorts.",
+      "seasonaljobs": "Jobs saisonniers en Nouvelle-Zélande : cueillette, hôtellerie, restauration.",
+      "thinkspain": "Offres d'emploi en Espagne, dont des jobs d'été.",
+      "justjobs": "Offres au Royaume-Uni, dont hôtellerie et saisonnier (ex hotel-jobs.co.uk).",
+      "spainmadesimple": "Guide des jobs d'été en Espagne, avec des annonces dans les articles.",
+      "pickingjobs": "Guides et annuaire des jobs agricoles et de cueillette par pays.",
+      "chandleranddunn": "Recrutement saisonnier d'un producteur de fruits du Kent (Royaume-Uni).",
+      "workaway": "Échange de coups de main contre logement et repas chez des hôtes dans le monde. Adhésion payante pour les contacter.",
+      "wwoof": "Volontariat dans des fermes bio contre logement et repas. Réservé aux membres.",
+      "anyworkanywhere": "Jobs saisonniers et guides pour travailler à l'étranger.",
+      "summerjobs": "Moteur de recherche de jobs d'été dans le monde.",
+      "e4s": "Jobs étudiants, jobs d'été et stages au Royaume-Uni.",
+      "teli": "Association d'expatriés : offres à l'étranger réservées aux adhérents.",
+      "pvtistes": "Communauté et guide du Programme Vacances-Travail (PVT).",
+      "intrax": "Organisme de programmes J-1 aux États-Unis : stages, jobs d'été, camps.",
+      "alzea": "Agence de stages en hôtellerie-restauration en France et à l'étranger.",
+      "fruitfuljobs": "Agence de placement horticole au Royaume-Uni, candidature par secteur.",
+      "campzeke": "Camp de vacances aux États-Unis qui recrute son équipe d'été."
+    },
+    "filters": {
+      "button": "Filtres",
+      "title": "Filtrer les offres",
+      "reset": "Réinitialiser",
+      "clearAll": "Tout effacer",
+      "show_one": "Voir {{count}} offre",
+      "show_other": "Voir {{count}} offres",
+      "sections": {
+        "field": "Domaine",
+        "country": "Pays",
+        "city": "Ville",
+        "conditions": "Conditions",
+        "duration": "Durée",
+        "posted": "Publiée",
+        "lang": "Langue de l'annonce"
+      },
+      "housing": "Logement fourni",
+      "remote": "Télétravail",
+      "paid": "Salaire indiqué"
+    },
+    "field": {
+      "it": "Informatique",
+      "engineering": "Ingénierie",
+      "agri": "Agriculture",
+      "hospitality": "Hôtellerie-restauration",
+      "trades": "Manuel & logistique",
+      "business": "Commerce & gestion",
+      "education": "Enseignement",
+      "health": "Santé & social",
+      "other": "Autre"
+    },
+    "duration": {
+      "short": "3 mois max",
+      "medium": "4 à 6 mois",
+      "long": "7 mois et +",
+      "months_one": "{{count}} mois",
+      "months_other": "{{count}} mois"
+    },
+    "posted": {
+      "7": "7 derniers jours",
+      "30": "30 derniers jours"
+    },
+    "lang": {
+      "fr": "Français",
+      "en": "Anglais",
+      "es": "Espagnol",
+      "it": "Italien",
+      "de": "Allemand"
+    },
+    "sort": {
+      "recent": "Plus récentes",
+      "relevance": "Pertinence"
+    },
+    "salary": {
+      "period": {
+        "hour": "/h",
+        "week": "/sem.",
+        "month": "/mois",
+        "year": "/an"
+      }
+    },
+    "variants_one": "{{count}} lieu",
+    "variants_other": "{{count}} lieux",
+    "otherLocations": "Même poste ailleurs",
+    "housing": "Logement",
+    "remote": "Télétravail"
   },
   "documentsPage": {
     "allCategories": "Tout",

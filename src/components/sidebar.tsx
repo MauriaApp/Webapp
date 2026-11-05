@@ -11,6 +11,7 @@ import {
     Printer,
     FileText,
     Radar,
+    Briefcase,
     MailQuestionMark,
     ArrowDownRightFromSquare,
     Settings,
@@ -166,6 +167,24 @@ export default function Sidebar() {
                             <Radar className="h-5 w-5" />
                             <span className="inline-flex items-center gap-1.5">
                                 {t("sidebar.actions.palantir")}
+                                <Badge
+                                    variant="secondary"
+                                    className="px-1.5 py-0 text-[10px] font-semibold"
+                                >
+                                    Beta
+                                </Badge>
+                            </span>
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
+                            onClick={() => handleNavigate("/internships")}
+                        >
+                            <Briefcase className="h-5 w-5" />
+                            <span className="inline-flex items-center gap-1.5">
+                                {t("sidebar.actions.internships")}
                                 <Badge
                                     variant="secondary"
                                     className="px-1.5 py-0 text-[10px] font-semibold"

@@ -147,7 +147,8 @@
       "print": "Imprimir",
       "versions": "Actualizaciones",
       "settings": "Ajustes",
-      "palantir": "Palantir"
+      "palantir": "Palantir",
+      "internships": "Prácticas"
     },
     "help": "¿Una pregunta, una idea?",
     "logOut": "Cerrar sesión",
@@ -735,6 +736,114 @@
     "reinitialize": "Reiniciar",
     "formLink": "¿Tu asociación falta o ha cambiado?",
     "noResultsFor": "No se encontró ninguna asociación para \"{{term}}\""
+  },
+  "internshipsPage": {
+    "tabs": {
+      "offers": "Ofertas",
+      "sites": "Sitios"
+    },
+    "search": "Buscar una oferta, un lugar, una empresa",
+    "contract": {
+      "all": "Todo",
+      "internship": "Prácticas",
+      "apprenticeship": "Alternancia",
+      "seasonal": "Temporal",
+      "job": "Empleo"
+    },
+    "count_one": "{{count}} oferta",
+    "count_other": "{{count}} ofertas",
+    "error": "No se pueden cargar las ofertas ahora mismo.",
+    "empty": "Ninguna oferta coincide con tu búsqueda.",
+    "viewOffer": "Ver la oferta en el sitio",
+    "inMauria": "Ofertas en Mauria",
+    "sitesIntro": "Los sitios recomendados por la oficina de prácticas de Junia. Los marcados «Ofertas en Mauria» también están en la pestaña Ofertas.",
+    "sites": {
+      "jobteaser": "El Career Center de Junia: prácticas, alternancia y primeros empleos. Inicia sesión con tu cuenta de Junia.",
+      "resortwork": "Empleos de temporada en estaciones, hoteles y resorts.",
+      "seasonaljobs": "Empleos de temporada en Nueva Zelanda: recolección, hostelería, restauración.",
+      "thinkspain": "Ofertas de empleo en España, incluidos empleos de verano.",
+      "justjobs": "Ofertas en el Reino Unido, incluida hostelería y temporada (antes hotel-jobs.co.uk).",
+      "spainmadesimple": "Guía de empleos de verano en España, con anuncios dentro de los artículos.",
+      "pickingjobs": "Guías y directorio de empleos agrícolas y de recolección por país.",
+      "chandleranddunn": "Contratación de temporada de un productor de fruta de Kent (Reino Unido).",
+      "workaway": "Ayuda a cambio de alojamiento y comida con anfitriones de todo el mundo. Membresía de pago para contactarlos.",
+      "wwoof": "Voluntariado en granjas ecológicas a cambio de alojamiento y comida. Solo para miembros.",
+      "anyworkanywhere": "Empleos de temporada y guías para trabajar en el extranjero.",
+      "summerjobs": "Buscador de empleos de verano en todo el mundo.",
+      "e4s": "Empleos para estudiantes, de verano y prácticas en el Reino Unido.",
+      "teli": "Asociación de expatriados: ofertas en el extranjero reservadas a los miembros.",
+      "pvtistes": "Comunidad y guía del Programa Working Holiday (PVT).",
+      "intrax": "Programas J-1 en Estados Unidos: prácticas, empleos de verano, campamentos.",
+      "alzea": "Agencia de prácticas en hostelería en Francia y en el extranjero.",
+      "fruitfuljobs": "Agencia de colocación hortícola en el Reino Unido, candidatura por sector.",
+      "campzeke": "Campamento de verano en Estados Unidos que contrata a su equipo."
+    },
+    "filters": {
+      "button": "Filtros",
+      "title": "Filtrar ofertas",
+      "reset": "Restablecer",
+      "clearAll": "Borrar todo",
+      "show_one": "Ver {{count}} oferta",
+      "show_other": "Ver {{count}} ofertas",
+      "sections": {
+        "field": "Sector",
+        "country": "País",
+        "city": "Ciudad",
+        "conditions": "Condiciones",
+        "duration": "Duración",
+        "posted": "Publicada",
+        "lang": "Idioma del anuncio"
+      },
+      "housing": "Alojamiento incluido",
+      "remote": "Teletrabajo",
+      "paid": "Salario indicado"
+    },
+    "field": {
+      "it": "Informática",
+      "engineering": "Ingeniería",
+      "agri": "Agricultura",
+      "hospitality": "Hostelería",
+      "trades": "Oficios y logística",
+      "business": "Comercio y gestión",
+      "education": "Enseñanza",
+      "health": "Salud y social",
+      "other": "Otro"
+    },
+    "duration": {
+      "short": "Hasta 3 meses",
+      "medium": "4 a 6 meses",
+      "long": "7 meses +",
+      "months_one": "{{count}} mes",
+      "months_other": "{{count}} meses"
+    },
+    "posted": {
+      "7": "Últimos 7 días",
+      "30": "Últimos 30 días"
+    },
+    "lang": {
+      "fr": "Francés",
+      "en": "Inglés",
+      "es": "Español",
+      "it": "Italiano",
+      "de": "Alemán"
+    },
+    "sort": {
+      "recent": "Más recientes",
+      "relevance": "Relevancia"
+    },
+    "salary": {
+      "period": {
+        "hour": "/h",
+        "week": "/sem.",
+        "month": "/mes",
+        "year": "/año"
+      }
+    },
+    "variants_one": "{{count}} lugar",
+    "variants_other": "{{count}} lugares",
+    "otherLocations": "Mismo puesto en otros lugares",
+    "housing": "Alojamiento",
+    "remote": "Teletrabajo"
   },
   "documentsPage": {
     "allCategories": "Todo",

@@ -17,7 +17,7 @@ import type { EventContentArg } from "@fullcalendar/core";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/search-input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
@@ -302,13 +302,11 @@ export function PalantirPage() {
                 </p>
             </motion.div>
 
-            <motion.div variants={fadeIn} className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
+            <motion.div variants={fadeIn}>
+                <SearchInput
                     value={rawQuery}
                     onChange={(e) => setRawQuery(e.target.value)}
                     placeholder={t("palantirPage.placeholder")}
-                    className="pl-9"
                     autoComplete="off"
                     autoCorrect="off"
                     spellCheck={false}

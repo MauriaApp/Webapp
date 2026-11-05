@@ -147,7 +147,8 @@
       "print": "Print",
       "versions": "Updates",
       "settings": "Settings",
-      "palantir": "Palantir"
+      "palantir": "Palantir",
+      "internships": "Internships"
     },
     "help": "A question, an idea?",
     "logOut": "Log Out",
@@ -735,6 +736,114 @@
     "reinitialize": "Reinitialize",
     "formLink": "Your association missing or changed?",
     "noResultsFor": "No association found for \"{{term}}\""
+  },
+  "internshipsPage": {
+    "tabs": {
+      "offers": "Offers",
+      "sites": "Sites"
+    },
+    "search": "Search an offer, a place, a company",
+    "contract": {
+      "all": "All",
+      "internship": "Internship",
+      "apprenticeship": "Apprenticeship",
+      "seasonal": "Seasonal",
+      "job": "Job"
+    },
+    "count_one": "{{count}} offer",
+    "count_other": "{{count}} offers",
+    "error": "Couldn't load offers right now.",
+    "empty": "No offer matches your search.",
+    "viewOffer": "View the offer on the site",
+    "inMauria": "Offers in Mauria",
+    "sitesIntro": "The sites recommended by Junia's internship office. The ones marked \"Offers in Mauria\" are also in the Offers tab.",
+    "sites": {
+      "jobteaser": "Junia's Career Center: internships, apprenticeships and first jobs. Sign in with your Junia account.",
+      "resortwork": "Seasonal jobs in ski resorts, hotels and resorts.",
+      "seasonaljobs": "Seasonal jobs in New Zealand: fruit picking, hospitality, catering.",
+      "thinkspain": "Job offers in Spain, including summer jobs.",
+      "justjobs": "UK job offers, including hospitality and seasonal work (formerly hotel-jobs.co.uk).",
+      "spainmadesimple": "Guide to summer jobs in Spain, with listings inside the articles.",
+      "pickingjobs": "Guides and directory of farm and fruit-picking jobs by country.",
+      "chandleranddunn": "Seasonal hiring by a fruit grower in Kent (UK).",
+      "workaway": "Help in exchange for board and lodging with hosts worldwide. Paid membership required to contact them.",
+      "wwoof": "Volunteering on organic farms in exchange for board and lodging. Members only.",
+      "anyworkanywhere": "Seasonal jobs and guides for working abroad.",
+      "summerjobs": "Search engine for summer jobs worldwide.",
+      "e4s": "Student jobs, summer jobs and internships in the UK.",
+      "teli": "Expat association: offers abroad reserved for members.",
+      "pvtistes": "Community and guide to the Working Holiday programme (PVT).",
+      "intrax": "J-1 programmes in the USA: internships, summer jobs, camps.",
+      "alzea": "Agency for hospitality internships in France and abroad.",
+      "fruitfuljobs": "Horticultural recruitment agency in the UK, apply by sector.",
+      "campzeke": "US summer camp hiring its summer staff."
+    },
+    "filters": {
+      "button": "Filters",
+      "title": "Filter offers",
+      "reset": "Reset",
+      "clearAll": "Clear all",
+      "show_one": "Show {{count}} offer",
+      "show_other": "Show {{count}} offers",
+      "sections": {
+        "field": "Field",
+        "country": "Country",
+        "city": "City",
+        "conditions": "Conditions",
+        "duration": "Duration",
+        "posted": "Posted",
+        "lang": "Language of the ad"
+      },
+      "housing": "Housing provided",
+      "remote": "Remote work",
+      "paid": "Salary shown"
+    },
+    "field": {
+      "it": "IT",
+      "engineering": "Engineering",
+      "agri": "Agriculture",
+      "hospitality": "Hospitality",
+      "trades": "Trades & logistics",
+      "business": "Business & management",
+      "education": "Education",
+      "health": "Health & social care",
+      "other": "Other"
+    },
+    "duration": {
+      "short": "Up to 3 months",
+      "medium": "4 to 6 months",
+      "long": "7 months +",
+      "months_one": "{{count}} month",
+      "months_other": "{{count}} months"
+    },
+    "posted": {
+      "7": "Last 7 days",
+      "30": "Last 30 days"
+    },
+    "lang": {
+      "fr": "French",
+      "en": "English",
+      "es": "Spanish",
+      "it": "Italian",
+      "de": "German"
+    },
+    "sort": {
+      "recent": "Most recent",
+      "relevance": "Relevance"
+    },
+    "salary": {
+      "period": {
+        "hour": "/h",
+        "week": "/wk",
+        "month": "/mo",
+        "year": "/yr"
+      }
+    },
+    "variants_one": "{{count}} location",
+    "variants_other": "{{count}} locations",
+    "otherLocations": "Same job elsewhere",
+    "housing": "Housing",
+    "remote": "Remote"
   },
   "documentsPage": {
     "allCategories": "All",
