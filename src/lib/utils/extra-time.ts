@@ -61,6 +61,39 @@ const isExam = (lesson: Lesson) =>
 const TT_SCHEDULE =
     /(?:horaire\s+)?\btt\b\s*:\s*(\d{1,2})\s*h\s*(\d{2})?\s*-\s*(\d{1,2})\s*h\s*(\d{2})?/i;
 
+// The same note carries the room the TT student sits the exam in, when it
+// differs from the nominal one ("Salle TT : A903, IC2, 41 Bvd Vauban"). The
+// capture stops at the next field so a flattened title still parses.
+const TT_ROOM = /\bsalle\s+tt\s*:\s*(.+?)(?=\s+horaire\s+tt\b|\n|$)/i;
+
+// Swap the nominal room for the TT one in the title: every reader
+// (parseFromTitle, the calendar, the drawer) then shows the right room. The
+// "Salle " prefix puts it back in the shape formatLessonLocation expects
+// ("Salle A903, IC2, …" → "IC2 A903").
+const withTtRoom = (lesson: Lesson): string => {
+    const room = TT_ROOM.exec(lesson.title)?.[1]?.trim();
+    if (!room) return lesson.title;
+
+    // Like the schedule, this must not depend on the title having real line
+    // breaks: flattened, the nominal room is everything before "Salle TT".
+    if (!lesson.title.includes("\n")) {
+        return lesson.title.replace(
+            /^[\s\S]*?(?=\s*\bsalle\s+tt\s*:)/i,
+            `Salle ${room}`
+        );
+    }
+
+    const nominal = parseFromTitle(lesson).location;
+    if (!nominal) return lesson.title;
+
+    const lines = lesson.title.split("\n");
+    const index = lines.findIndex((line) => line.trim() === nominal);
+    if (index === -1) return lesson.title;
+
+    lines[index] = `Salle ${room}`;
+    return lines.join("\n");
+};
+
 const atTime = (day: Date, hours: string, minutes?: string) => {
     const d = new Date(day);
     d.setHours(Number(hours), minutes ? Number(minutes) : 0, 0, 0);
@@ -76,7 +109,7 @@ const DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
  * left untouched — the home cards, the widget and the calendar export always
  * use the raw planning. When Aurion's title carries its own TT schedule
  * ("Horaire TT: …"), that exact, possibly shifted, schedule wins over the
- * arithmetic. A stretched exam keeps its nominal bounds in `origStart` /
+ * arithmetic, and its "Salle TT" replaces the nominal room. A stretched exam keeps its nominal bounds in `origStart` /
  * `origEnd` (FullCalendar files them under extendedProps) so the calendar
  * can hatch the added zones.
  */
@@ -113,6 +146,7 @@ export function applyExtraTime(
 
         return {
             ...lesson,
+            title: withTtRoom(lesson),
             start: format(stretchedStart, DATETIME_FORMAT),
             end: format(stretchedEnd, DATETIME_FORMAT),
             origStart: format(start, DATETIME_FORMAT),

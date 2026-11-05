@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, ExternalLink } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { ExternalLink } from "lucide-react";
+import { SearchInput } from "@/components/search-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -99,15 +99,11 @@ export function AssociationsPage() {
             animate="show"
         >
             <motion.div variants={fadeIn} className="w-full space-y-6">
-                <div className="relative w-full">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                        placeholder={t("associationsPage.search")}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="h-12 pl-10 bg-card border-border text-foreground placeholder:text-muted-foreground"
-                    />
-                </div>
+                <SearchInput
+                    placeholder={t("associationsPage.search")}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 <div className="text-center text-sm text-muted-foreground">
                     {t("associationsPage.associationsCount", {
                         count: filteredAssociations.length,
@@ -134,7 +130,7 @@ export function AssociationsPage() {
                             initial="hidden"
                             animate="show"
                             exit="exit"
-                            className="group relative flex h-full min-h-[88px] w-full items-center overflow-hidden rounded-lg border border-border bg-card transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[88px] cursor-pointer"
+                            className="group relative flex h-full min-h-[88px] w-full items-center overflow-hidden rounded-lg border border-border bg-card transition-[transform,translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-lg sm:min-h-[88px] cursor-pointer"
                             onClick={() => handleAssociationClick(association)}
                         >
                             <CardContent className="flex h-full w-full flex-col p-2 sm:p-3">
