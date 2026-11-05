@@ -740,7 +740,8 @@
   "internshipsPage": {
     "tabs": {
       "offers": "Offers",
-      "sites": "Sites"
+      "sites": "Sites",
+      "junia": "Junia"
     },
     "search": "Search an offer, a place, a company",
     "contract": {
@@ -748,7 +749,8 @@
       "internship": "Internship",
       "apprenticeship": "Apprenticeship",
       "seasonal": "Seasonal",
-      "job": "Job"
+      "job": "Job",
+      "exchange": "Exchange"
     },
     "count_one": "{{count}} offer",
     "count_other": "{{count}} offers",
@@ -820,6 +822,11 @@
       "7": "Last 7 days",
       "30": "Last 30 days"
     },
+    "postedDay": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "days": "{{count}} days ago"
+    },
     "lang": {
       "fr": "French",
       "en": "English",
@@ -843,7 +850,37 @@
     "variants_other": "{{count}} locations",
     "otherLocations": "Same job elsewhere",
     "housing": "Housing",
-    "remote": "Remote"
+    "housingOptional": "Housing possible",
+    "remote": "Remote",
+    "junia": {
+      "search": "Search a company, a city, a subject…",
+      "count_one": "{{count}} internship",
+      "count_other": "{{count}} internships",
+      "empty": "No internship matches your search.",
+      "all": "All",
+      "months_one": "{{count}} month",
+      "months_other": "{{count}} months",
+      "more": "Show more",
+      "studyYear": {
+        "1": "1st year",
+        "2": "2nd year",
+        "3": "3rd year",
+        "4": "4th year"
+      },
+      "kind": {
+        "execution": "Execution",
+        "ibSoon": "IB (coming soon)",
+        "extra": "Extra"
+      },
+      "filters": {
+        "title": "Filter internships",
+        "promotion": "Class of",
+        "studyYear": "Study year",
+        "program": "Program"
+      },
+      "show_one": "Show {{count}} internship",
+      "show_other": "Show {{count}} internships"
+    }
   },
   "documentsPage": {
     "allCategories": "All",

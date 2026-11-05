@@ -10,6 +10,7 @@ export const KINDS: InternshipContractType[] = [
     "apprenticeship",
     "seasonal",
     "job",
+    "exchange",
 ];
 
 export const FIELDS: InternshipField[] = [
@@ -46,7 +47,9 @@ const list = <T extends string>(raw: string | null, allowed?: readonly T[]) =>
     (raw ?? "")
         .split(",")
         .map((v) => v.trim())
-        .filter((v): v is T => v !== "" && (!allowed || allowed.includes(v as T)));
+        .filter(
+            (v): v is T => v !== "" && (!allowed || allowed.includes(v as T))
+        );
 
 /**
  * One serialization for both the page URL and the API query string, so a
@@ -55,11 +58,11 @@ const list = <T extends string>(raw: string | null, allowed?: readonly T[]) =>
 export function filtersToParams(filters: InternshipFilters): URLSearchParams {
     const params = new URLSearchParams();
     if (filters.q) params.set("q", filters.q);
-    (
-        ["kind", "field", "country", "city", "lang", "duration"] as const
-    ).forEach((key) => {
-        if (filters[key].length) params.set(key, filters[key].join(","));
-    });
+    (["kind", "field", "country", "city", "lang", "duration"] as const).forEach(
+        (key) => {
+            if (filters[key].length) params.set(key, filters[key].join(","));
+        }
+    );
     (["housing", "remote", "paid"] as const).forEach((key) => {
         if (filters[key]) params.set(key, "1");
     });
@@ -76,7 +79,9 @@ export function paramsToFilters(params: URLSearchParams): InternshipFilters {
         q: params.get("q") ?? "",
         kind: list(params.get("kind"), KINDS),
         field: list(params.get("field"), FIELDS),
-        country: list<string>(params.get("country")).map((c) => c.toUpperCase()),
+        country: list<string>(params.get("country")).map((c) =>
+            c.toUpperCase()
+        ),
         city: list<string>(params.get("city")),
         lang: list(params.get("lang"), LANGS),
         housing: params.get("housing") === "1",

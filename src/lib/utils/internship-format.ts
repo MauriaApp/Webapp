@@ -1,5 +1,32 @@
 import { TFunction } from "i18next";
+import { formatDistanceToNow, parseISO, Locale } from "date-fns";
 import { InternshipSalary } from "@/types/internships";
+
+/**
+ * Day-only dates (SeasonalJobs, ThinkSpain) are stored at midnight UTC:
+ * "about 14 hours ago" would be misleading for them.
+ */
+const DAY_ONLY = /^\d{4}-\d{2}-\d{2}T00:00:00(\.000)?Z$/;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** "Aujourd'hui" / "Hier" / "Il y a 3 jours" for day-only dates, date-fns
+ * distance ("il y a environ 14 heures") otherwise. */
+export function formatPostedAt(
+    iso: string,
+    locale: Locale,
+    t: TFunction
+): string {
+    if (DAY_ONLY.test(iso)) {
+        const days = Math.floor((Date.now() - Date.parse(iso)) / DAY_MS);
+        if (days <= 0) return t("internshipsPage.postedDay.today");
+        if (days === 1) return t("internshipsPage.postedDay.yesterday");
+        return t("internshipsPage.postedDay.days", { count: days });
+    }
+    return formatDistanceToNow(parseISO(iso), {
+        addSuffix: true,
+        locale,
+    });
+}
 
 /** "FR" → "France" / "Frankreich" / "France", in the app language. */
 export function regionName(code: string, language: string): string {

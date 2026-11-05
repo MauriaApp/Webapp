@@ -8,7 +8,12 @@ import {
     useState,
 } from "react";
 
-export type CarouselItem = { value: string | null; label: string };
+export type CarouselItem = {
+    value: string | null;
+    label: string;
+    /** Shown but not selectable (e.g. a category that is coming soon). */
+    disabled?: boolean;
+};
 
 /**
  * Horizontal chip picker. Native CSS scroll-snap does the snapping (momentum,
@@ -88,7 +93,7 @@ export function FilterCarousel({
             let bestDist = Infinity;
             for (let i = 0; i < items.length; i++) {
                 const el = itemRefs.current[i];
-                if (!el) continue;
+                if (!el || items[i]?.disabled) continue;
                 const dist = Math.abs(
                     el.offsetLeft + el.offsetWidth / 2 - center
                 );
@@ -162,6 +167,7 @@ export function FilterCarousel({
                             size="sm"
                             variant={isSelected ? "default" : "outline"}
                             aria-pressed={isSelected}
+                            disabled={item.disabled}
                             onClick={() => {
                                 if (isSelected) {
                                     // Selection won't change → re-centre here;

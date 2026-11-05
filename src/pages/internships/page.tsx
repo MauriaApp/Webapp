@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 import { motion } from "framer-motion";
-import { formatDistanceToNow, parseISO } from "date-fns";
 import {
     Banknote,
     Clock,
@@ -45,12 +44,17 @@ import {
     paramsToFilters,
     toggle,
 } from "@/lib/utils/internship-filters";
-import { formatSalary, regionName } from "@/lib/utils/internship-format";
+import {
+    formatSalary,
+    formatPostedAt,
+    regionName,
+} from "@/lib/utils/internship-format";
 import { INTERNSHIP_SITES, siteName } from "@/lib/utils/internship-sites";
 import { getDateLocale } from "@/lib/utils/translations";
 import { cn } from "@/lib/utils/cn";
 import { InternshipFilters, InternshipOffer } from "@/types/internships";
 import { FiltersDrawer } from "./filters-drawer";
+import { JuniaStages } from "./junia-stages";
 
 const PAGE_SIZE = 30;
 const DEBOUNCE_MS = 300;
@@ -58,7 +62,7 @@ const STALE_MS = 1000 * 60 * 5;
 
 const MotionCard = motion(Card);
 
-type Tab = "offers" | "sites";
+type Tab = "offers" | "sites" | "junia";
 
 /** Small facts about an offer: housing, salary, duration, remote. */
 function OfferFacts({
@@ -75,10 +79,14 @@ function OfferFacts({
             Icon: Banknote,
             label: formatSalary(offer.salary, i18n.language, t),
         },
-        offer.housing && {
+        (offer.housing || offer.housingOptional) && {
             key: "housing",
             Icon: House,
-            label: t("internshipsPage.housing"),
+            label: t(
+                offer.housing
+                    ? "internshipsPage.housing"
+                    : "internshipsPage.housingOptional"
+            ),
         },
         offer.durationMonths && {
             key: "duration",
@@ -142,23 +150,29 @@ export function InternshipsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, filters.q]);
 
-    const { data, isPending, isError, hasNextPage, fetchNextPage, isFetchingNextPage } =
-        useInfiniteQuery({
-            queryKey: ["internships", filtersKey],
-            initialPageParam: 0,
-            queryFn: async ({ pageParam }) => {
-                const res = await searchInternships(filters, PAGE_SIZE, pageParam);
-                // Null = request failed: surface it instead of caching "empty".
-                if (!res) throw new Error("internships request failed");
-                return res;
-            },
-            getNextPageParam: (last, pages) => {
-                const loaded = pages.reduce((n, p) => n + p.offers.length, 0);
-                return loaded < last.total ? loaded : undefined;
-            },
-            staleTime: STALE_MS,
-            placeholderData: (previous) => previous,
-        });
+    const {
+        data,
+        isPending,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
+        queryKey: ["internships", filtersKey],
+        initialPageParam: 0,
+        queryFn: async ({ pageParam }) => {
+            const res = await searchInternships(filters, PAGE_SIZE, pageParam);
+            // Null = request failed: surface it instead of caching "empty".
+            if (!res) throw new Error("internships request failed");
+            return res;
+        },
+        getNextPageParam: (last, pages) => {
+            const loaded = pages.reduce((n, p) => n + p.offers.length, 0);
+            return loaded < last.total ? loaded : undefined;
+        },
+        staleTime: STALE_MS,
+        placeholderData: (previous) => previous,
+    });
 
     // Counts per filter value, given the other active filters.
     const { data: facets } = useQuery({
@@ -216,7 +230,10 @@ export function InternshipsPage() {
         return [
             {
                 value: null,
-                label: withCount(t("internshipsPage.contract.all"), facets?.kindAll),
+                label: withCount(
+                    t("internshipsPage.contract.all"),
+                    facets?.kindAll
+                ),
             },
             ...KINDS.map((value) => ({
                 value,
@@ -258,7 +275,8 @@ export function InternshipsPage() {
             ...filters.duration.map((d) => ({
                 key: `duration-${d}`,
                 label: t(`internshipsPage.duration.${d}`),
-                onRemove: () => remove({ duration: toggle(filters.duration, d) }),
+                onRemove: () =>
+                    remove({ duration: toggle(filters.duration, d) }),
             })),
             ...filters.lang.map((l) => ({
                 key: `lang-${l}`,
@@ -286,13 +304,8 @@ export function InternshipsPage() {
     }, [filters, t, i18n.language]);
 
     const locale = getDateLocale(i18n.language);
-    const postedLabel = (offer: InternshipOffer) => {
-        const iso = offer.postedAt ?? offer.firstSeenAt;
-        return formatDistanceToNow(parseISO(iso), {
-            addSuffix: true,
-            locale,
-        });
-    };
+    const postedLabel = (offer: InternshipOffer) =>
+        formatPostedAt(offer.postedAt ?? offer.firstSeenAt, locale, t);
     const placeOf = (offer: InternshipOffer) =>
         offer.location ||
         (offer.countryCode ? regionName(offer.countryCode, i18n.language) : "");
@@ -305,7 +318,7 @@ export function InternshipsPage() {
             animate="show"
         >
             <motion.div variants={fadeIn} className="flex gap-2">
-                {(["offers", "sites"] as const).map((value) => (
+                {(["offers", "sites", "junia"] as const).map((value) => (
                     <Button
                         key={value}
                         variant={tab === value ? "default" : "outline"}
@@ -345,11 +358,17 @@ export function InternshipsPage() {
                         </div>
                         <FilterCarousel
                             items={kindItems}
-                            selected={filters.kind.length === 1 ? filters.kind[0]! : null}
+                            selected={
+                                filters.kind.length === 1
+                                    ? filters.kind[0]!
+                                    : null
+                            }
                             onSelect={(value) =>
                                 apply({
                                     ...filters,
-                                    kind: value ? [value as (typeof KINDS)[number]] : [],
+                                    kind: value
+                                        ? [value as (typeof KINDS)[number]]
+                                        : [],
                                 })
                             }
                         />
@@ -385,24 +404,37 @@ export function InternshipsPage() {
                         )}
                         {!isPending && !isError && (
                             <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
-                                <span>{t("internshipsPage.count", { count: total })}</span>
+                                <span>
+                                    {t("internshipsPage.count", {
+                                        count: total,
+                                    })}
+                                </span>
                                 {filters.q && (
                                     <span className="flex items-center gap-1">
-                                        {(["recent", "relevance"] as const).map((sort) => (
-                                            <button
-                                                key={sort}
-                                                type="button"
-                                                onClick={() => apply({ ...filters, sort })}
-                                                className={cn(
-                                                    "rounded-full px-2 py-0.5 text-xs",
-                                                    filters.sort === sort
-                                                        ? "bg-secondary text-secondary-foreground"
-                                                        : "hover:text-foreground"
-                                                )}
-                                            >
-                                                {t(`internshipsPage.sort.${sort}`)}
-                                            </button>
-                                        ))}
+                                        {(["recent", "relevance"] as const).map(
+                                            (sort) => (
+                                                <button
+                                                    key={sort}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        apply({
+                                                            ...filters,
+                                                            sort,
+                                                        })
+                                                    }
+                                                    className={cn(
+                                                        "rounded-full px-2 py-0.5 text-xs",
+                                                        filters.sort === sort
+                                                            ? "bg-secondary text-secondary-foreground"
+                                                            : "hover:text-foreground"
+                                                    )}
+                                                >
+                                                    {t(
+                                                        `internshipsPage.sort.${sort}`
+                                                    )}
+                                                </button>
+                                            )
+                                        )}
                                     </span>
                                 )}
                             </div>
@@ -462,9 +494,12 @@ export function InternshipsPage() {
                                                     <MapPin className="h-3 w-3 shrink-0" />
                                                     <span className="truncate">
                                                         {offer.variants > 1
-                                                            ? t("internshipsPage.variants", {
-                                                                  count: offer.variants,
-                                                              })
+                                                            ? t(
+                                                                  "internshipsPage.variants",
+                                                                  {
+                                                                      count: offer.variants,
+                                                                  }
+                                                              )
                                                             : placeOf(offer)}
                                                     </span>
                                                 </p>
@@ -486,13 +521,16 @@ export function InternshipsPage() {
                     </div>
 
                     {/* Sits below the last row (full or not): reaching it loads the next page. */}
-                    <div ref={sentinelRef} className="flex h-10 justify-center pb-4">
+                    <div
+                        ref={sentinelRef}
+                        className="flex h-10 justify-center pb-4"
+                    >
                         {isFetchingNextPage && (
                             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         )}
                     </div>
                 </>
-            ) : (
+            ) : tab === "sites" ? (
                 <>
                     <motion.p
                         variants={fadeIn}
@@ -510,7 +548,11 @@ export function InternshipsPage() {
                                 animate="show"
                                 className="cursor-pointer rounded-lg border border-border bg-card transition-[transform,translate,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-lg"
                                 onClick={() =>
-                                    window.open(site.url, "_blank", "noopener,noreferrer")
+                                    window.open(
+                                        site.url,
+                                        "_blank",
+                                        "noopener,noreferrer"
+                                    )
                                 }
                             >
                                 <CardContent className="flex h-full flex-col gap-2 p-3">
@@ -525,7 +567,9 @@ export function InternshipsPage() {
                                         <div className="flex shrink-0 items-center gap-1.5">
                                             {site.kind === "offers" && (
                                                 <Badge className="text-[10px]">
-                                                    {t("internshipsPage.inMauria")}
+                                                    {t(
+                                                        "internshipsPage.inMauria"
+                                                    )}
                                                 </Badge>
                                             )}
                                             <ExternalLink className="h-4 w-4 text-muted-foreground" />
@@ -539,8 +583,13 @@ export function InternshipsPage() {
                         ))}
                     </div>
                 </>
-            )}
+            ) : null}
 
+            {tab === "junia" && (
+                <motion.div variants={fadeIn}>
+                    <JuniaStages />
+                </motion.div>
+            )}
 
             <FiltersDrawer
                 open={filtersOpen}
@@ -583,7 +632,9 @@ export function InternshipsPage() {
                                         )}
                                     </Badge>
                                     <Badge variant="outline">
-                                        {t(`internshipsPage.field.${selected.field}`)}
+                                        {t(
+                                            `internshipsPage.field.${selected.field}`
+                                        )}
                                     </Badge>
                                     <span>
                                         {siteName(selected.source)}
@@ -591,12 +642,19 @@ export function InternshipsPage() {
                                         {postedLabel(selected)}
                                     </span>
                                 </div>
-                                <OfferFacts offer={selected} className="text-xs" />
+                                <OfferFacts
+                                    offer={selected}
+                                    className="text-xs"
+                                />
                                 <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
                                     {fullOffer?.description ??
                                         selected.description}
                                 </p>
-                                <Button variant="outline" asChild className="w-full">
+                                <Button
+                                    variant="outline"
+                                    asChild
+                                    className="w-full"
+                                >
                                     <a
                                         href={selected.url}
                                         target="_blank"
@@ -610,27 +668,35 @@ export function InternshipsPage() {
                                     fullOffer.otherVariants.length > 0 && (
                                         <div className="space-y-2">
                                             <h4 className="text-sm font-semibold text-foreground">
-                                                {t("internshipsPage.otherLocations")}
+                                                {t(
+                                                    "internshipsPage.otherLocations"
+                                                )}
                                             </h4>
                                             <ul className="divide-y divide-border rounded-lg border border-border">
-                                                {fullOffer.otherVariants.map((variant) => (
-                                                    <li key={variant.id}>
-                                                        <a
-                                                            href={variant.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex items-center justify-between gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent"
-                                                        >
-                                                            <span className="flex min-w-0 items-center gap-1.5">
-                                                                <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                                                <span className="truncate">
-                                                                    {variant.location}
+                                                {fullOffer.otherVariants.map(
+                                                    (variant) => (
+                                                        <li key={variant.id}>
+                                                            <a
+                                                                href={
+                                                                    variant.url
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center justify-between gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent"
+                                                            >
+                                                                <span className="flex min-w-0 items-center gap-1.5">
+                                                                    <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                                                    <span className="truncate">
+                                                                        {
+                                                                            variant.location
+                                                                        }
+                                                                    </span>
                                                                 </span>
-                                                            </span>
-                                                            <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                                                        </a>
-                                                    </li>
-                                                ))}
+                                                                <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                                                            </a>
+                                                        </li>
+                                                    )
+                                                )}
                                             </ul>
                                         </div>
                                     )}

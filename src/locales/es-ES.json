@@ -740,7 +740,8 @@
   "internshipsPage": {
     "tabs": {
       "offers": "Ofertas",
-      "sites": "Sitios"
+      "sites": "Sitios",
+      "junia": "Junia"
     },
     "search": "Buscar una oferta, un lugar, una empresa",
     "contract": {
@@ -748,7 +749,8 @@
       "internship": "Prácticas",
       "apprenticeship": "Alternancia",
       "seasonal": "Temporal",
-      "job": "Empleo"
+      "job": "Empleo",
+      "exchange": "Intercambio"
     },
     "count_one": "{{count}} oferta",
     "count_other": "{{count}} ofertas",
@@ -820,6 +822,11 @@
       "7": "Últimos 7 días",
       "30": "Últimos 30 días"
     },
+    "postedDay": {
+      "today": "Hoy",
+      "yesterday": "Ayer",
+      "days": "Hace {{count}} días"
+    },
     "lang": {
       "fr": "Francés",
       "en": "Inglés",
@@ -843,7 +850,37 @@
     "variants_other": "{{count}} lugares",
     "otherLocations": "Mismo puesto en otros lugares",
     "housing": "Alojamiento",
-    "remote": "Teletrabajo"
+    "housingOptional": "Alojamiento posible",
+    "remote": "Teletrabajo",
+    "junia": {
+      "search": "Buscar una empresa, una ciudad, un tema…",
+      "count_one": "{{count}} prácticas",
+      "count_other": "{{count}} prácticas",
+      "empty": "Ningunas prácticas corresponden a tu búsqueda.",
+      "all": "Todo",
+      "months_one": "{{count}} mes",
+      "months_other": "{{count}} meses",
+      "more": "Mostrar más",
+      "studyYear": {
+        "1": "1er año",
+        "2": "2º año",
+        "3": "3er año",
+        "4": "4º año"
+      },
+      "kind": {
+        "execution": "Ejecución",
+        "ibSoon": "IB (próximamente)",
+        "extra": "Extra"
+      },
+      "filters": {
+        "title": "Filtrar las prácticas",
+        "promotion": "Promoción",
+        "studyYear": "Año de estudio",
+        "program": "Carrera"
+      },
+      "show_one": "Ver {{count}} prácticas",
+      "show_other": "Ver {{count}} prácticas"
+    }
   },
   "documentsPage": {
     "allCategories": "Todo",

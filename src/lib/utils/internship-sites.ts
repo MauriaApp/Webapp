@@ -24,7 +24,7 @@ export const INTERNSHIP_SITES: InternshipSite[] = [
     {
         id: "jobteaser",
         name: "JobTeaser Junia",
-        url: "https://junia.jobteaser.com/",
+        url: "https://junia.jobteaser.com/fr/jobs",
         kind: "link",
     },
     {

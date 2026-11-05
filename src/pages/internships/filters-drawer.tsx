@@ -170,7 +170,9 @@ export function FiltersDrawer({
                         {fields.length > 0 && (
                             <Section
                                 Icon={Briefcase}
-                                title={t("internshipsPage.filters.sections.field")}
+                                title={t(
+                                    "internshipsPage.filters.sections.field"
+                                )}
                             >
                                 {fields.map((f) => (
                                     <Option
@@ -179,7 +181,10 @@ export function FiltersDrawer({
                                         count={facets?.field[f]}
                                         base={base?.field[f]}
                                         onClick={() =>
-                                            set("field", toggle(filters.field, f))
+                                            set(
+                                                "field",
+                                                toggle(filters.field, f)
+                                            )
                                         }
                                     >
                                         {t(`internshipsPage.field.${f}`)}
@@ -191,7 +196,9 @@ export function FiltersDrawer({
                         {countries.length > 0 && (
                             <Section
                                 Icon={Globe}
-                                title={t("internshipsPage.filters.sections.country")}
+                                title={t(
+                                    "internshipsPage.filters.sections.country"
+                                )}
                             >
                                 {countries.map((c) => (
                                     <Option
@@ -200,7 +207,10 @@ export function FiltersDrawer({
                                         count={facets?.country[c]}
                                         base={base?.country[c]}
                                         onClick={() =>
-                                            set("country", toggle(filters.country, c))
+                                            set(
+                                                "country",
+                                                toggle(filters.country, c)
+                                            )
                                         }
                                     >
                                         {regionName(c, i18n.language)}
@@ -212,7 +222,9 @@ export function FiltersDrawer({
                         {cities.length > 0 && (
                             <Section
                                 Icon={MapPin}
-                                title={t("internshipsPage.filters.sections.city")}
+                                title={t(
+                                    "internshipsPage.filters.sections.city"
+                                )}
                             >
                                 {cities.map((c) => (
                                     <Option
@@ -232,33 +244,42 @@ export function FiltersDrawer({
 
                         <Section
                             Icon={ListChecks}
-                            title={t("internshipsPage.filters.sections.conditions")}
+                            title={t(
+                                "internshipsPage.filters.sections.conditions"
+                            )}
                         >
-                            {(["housing", "remote", "paid"] as const).map((key) => (
-                                <Option
-                                    key={key}
-                                    active={filters[key]}
-                                    count={facets?.[key]}
+                            {(["housing", "remote", "paid"] as const).map(
+                                (key) => (
+                                    <Option
+                                        key={key}
+                                        active={filters[key]}
+                                        count={facets?.[key]}
                                         base={base?.[key]}
-                                    onClick={() => set(key, !filters[key])}
-                                >
-                                    {t(`internshipsPage.filters.${key}`)}
-                                </Option>
-                            ))}
+                                        onClick={() => set(key, !filters[key])}
+                                    >
+                                        {t(`internshipsPage.filters.${key}`)}
+                                    </Option>
+                                )
+                            )}
                         </Section>
 
                         <Section
                             Icon={Hourglass}
-                            title={t("internshipsPage.filters.sections.duration")}
+                            title={t(
+                                "internshipsPage.filters.sections.duration"
+                            )}
                         >
                             {DURATIONS.map((d) => (
                                 <Option
                                     key={d}
                                     active={filters.duration.includes(d)}
                                     count={facets?.duration[d]}
-                                        base={base?.duration[d]}
+                                    base={base?.duration[d]}
                                     onClick={() =>
-                                        set("duration", toggle(filters.duration, d))
+                                        set(
+                                            "duration",
+                                            toggle(filters.duration, d)
+                                        )
                                     }
                                 >
                                     {t(`internshipsPage.duration.${d}`)}
@@ -274,10 +295,21 @@ export function FiltersDrawer({
                                 <Option
                                     key={days}
                                     active={filters.posted === days}
-                                    count={facets?.posted[String(days) as "7" | "30"]}
-                                        base={base?.posted[String(days) as "7" | "30"]}
+                                    count={
+                                        facets?.posted[
+                                            String(days) as "7" | "30"
+                                        ]
+                                    }
+                                    base={
+                                        base?.posted[String(days) as "7" | "30"]
+                                    }
                                     onClick={() =>
-                                        set("posted", filters.posted === days ? null : days)
+                                        set(
+                                            "posted",
+                                            filters.posted === days
+                                                ? null
+                                                : days
+                                        )
                                     }
                                 >
                                     {t(`internshipsPage.posted.${days}`)}
@@ -288,7 +320,9 @@ export function FiltersDrawer({
                         {langs.length > 0 && (
                             <Section
                                 Icon={Languages}
-                                title={t("internshipsPage.filters.sections.lang")}
+                                title={t(
+                                    "internshipsPage.filters.sections.lang"
+                                )}
                             >
                                 {langs.map((l) => (
                                     <Option
@@ -321,8 +355,13 @@ export function FiltersDrawer({
                         >
                             {t("internshipsPage.filters.reset")}
                         </Button>
-                        <Button className="flex-1" onClick={() => onOpenChange(false)}>
-                            {t("internshipsPage.filters.show", { count: total })}
+                        <Button
+                            className="flex-1"
+                            onClick={() => onOpenChange(false)}
+                        >
+                            {t("internshipsPage.filters.show", {
+                                count: total,
+                            })}
                         </Button>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ import {
     InternshipFilters,
     InternshipOffer,
     InternshipSearchResult,
+    JuniaFacetsResult,
+    JuniaSearchResult,
 } from "@/types/internships";
 import { APIResponse } from "./helper";
 import { filtersToParams } from "@/lib/utils/internship-filters";
@@ -17,7 +19,10 @@ const INTERNSHIPS_URL =
     import.meta.env.VITE_INTERNSHIPS_URL ??
     "https://darklouis.dev/api/internships";
 
-async function get<T>(path: string, params?: URLSearchParams): Promise<T | null> {
+async function get<T>(
+    path: string,
+    params?: URLSearchParams
+): Promise<T | null> {
     try {
         const query = params?.toString();
         const response = await fetch(
@@ -52,6 +57,27 @@ export function getInternshipFacets(
 }
 
 /** One offer with its full description and its other locations. */
-export function getInternshipOffer(id: number): Promise<InternshipOffer | null> {
+export function getInternshipOffer(
+    id: number
+): Promise<InternshipOffer | null> {
     return get<InternshipOffer>(`/offer/${id}`);
+}
+
+/** A page of Junia internships; `params` come from `juniaParams`. */
+export function searchJuniaStages(
+    params: URLSearchParams,
+    limit: number,
+    offset: number
+): Promise<JuniaSearchResult | null> {
+    const next = new URLSearchParams(params);
+    next.set("limit", String(limit));
+    if (offset) next.set("offset", String(offset));
+    return get<JuniaSearchResult>("/junia/search", next);
+}
+
+/** Counts per section, each with the other filters applied. */
+export function getJuniaFacets(
+    params: URLSearchParams
+): Promise<JuniaFacetsResult | null> {
+    return get<JuniaFacetsResult>("/junia/facets", params);
 }

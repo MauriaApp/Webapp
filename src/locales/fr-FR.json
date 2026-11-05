@@ -740,7 +740,8 @@
   "internshipsPage": {
     "tabs": {
       "offers": "Offres",
-      "sites": "Sites"
+      "sites": "Sites",
+      "junia": "Junia"
     },
     "search": "Rechercher une offre, un lieu, une entreprise",
     "contract": {
@@ -748,7 +749,8 @@
       "internship": "Stage",
       "apprenticeship": "Alternance",
       "seasonal": "Saisonnier",
-      "job": "Emploi"
+      "job": "Emploi",
+      "exchange": "Échange"
     },
     "count_one": "{{count}} offre",
     "count_other": "{{count}} offres",
@@ -820,6 +822,11 @@
       "7": "7 derniers jours",
       "30": "30 derniers jours"
     },
+    "postedDay": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "days": "Il y a {{count}} jours"
+    },
     "lang": {
       "fr": "Français",
       "en": "Anglais",
@@ -843,7 +850,37 @@
     "variants_other": "{{count}} lieux",
     "otherLocations": "Même poste ailleurs",
     "housing": "Logement",
-    "remote": "Télétravail"
+    "housingOptional": "Logement possible",
+    "remote": "Télétravail",
+    "junia": {
+      "search": "Rechercher une entreprise, une ville, un sujet…",
+      "count_one": "{{count}} stage",
+      "count_other": "{{count}} stages",
+      "empty": "Aucun stage ne correspond à ta recherche.",
+      "all": "Tout",
+      "months_one": "{{count}} mois",
+      "months_other": "{{count}} mois",
+      "more": "Afficher plus",
+      "studyYear": {
+        "1": "1re année",
+        "2": "2e année",
+        "3": "3e année",
+        "4": "4e année"
+      },
+      "kind": {
+        "execution": "Exécution",
+        "ibSoon": "IB (à venir)",
+        "extra": "Supplémentaire"
+      },
+      "filters": {
+        "title": "Filtrer les stages",
+        "promotion": "Promotion",
+        "studyYear": "Année d'études",
+        "program": "Filière"
+      },
+      "show_one": "Voir {{count}} stage",
+      "show_other": "Voir {{count}} stages"
+    }
   },
   "documentsPage": {
     "allCategories": "Tout",

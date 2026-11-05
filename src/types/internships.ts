@@ -1,8 +1,5 @@
 export type InternshipContractType =
-    | "internship"
-    | "seasonal"
-    | "apprenticeship"
-    | "job";
+    "internship" | "seasonal" | "apprenticeship" | "job" | "exchange";
 
 export type InternshipField =
     | "it"
@@ -48,6 +45,8 @@ export interface InternshipOffer {
     field: InternshipField;
     remote: boolean;
     housing: boolean;
+    /** Housing only offered under conditions ("possible"). */
+    housingOptional: boolean;
     salary: InternshipSalary | null;
     durationMonths: number | null;
     /** Language the posting is written in, "" when unknown. */
@@ -104,4 +103,48 @@ export interface InternshipFacets {
     duration: Record<InternshipDuration, number>;
     posted: Record<"7" | "30", number>;
     total: number;
+}
+
+/** An anonymized Junia execution internship (served by the Pi, not bundled). */
+export interface JuniaStage {
+    /** Row position in the dataset: a stable key, rows can be identical. */
+    id: number;
+    /** Promotion, e.g. "2526". */
+    year: string;
+    /** HEI, ISEN, ADIMAKER, CPI, ISA, LASALLE… */
+    program: string;
+    /** LILLE or BORDEAUX, "" when unknown. */
+    campus: string;
+    /** Class within the program, e.g. "CPG1 MP2I". */
+    level: string;
+    /** "execution" or "extra". */
+    kind: string;
+    company: string;
+    city: string;
+    /** ISO 3166-1 alpha-2, uppercase; raw text when unknown. */
+    country: string;
+    subject: string;
+    start: string;
+    end: string;
+}
+
+export interface JuniaSearchResult {
+    total: number;
+    stages: JuniaStage[];
+}
+
+/** Per-section option counts: value -> number of stages. */
+export interface JuniaFacets {
+    years: Record<string, number>;
+    studyYears: Record<string, number>;
+    programs: Record<string, number>;
+}
+
+export interface JuniaFacetsResult extends JuniaFacets {
+    /** Counts per type, every filter applied except the type itself. */
+    kinds: Record<string, number>;
+    kindAll: number;
+    total: number;
+    /** ISO codes present in the dataset: the client resolves localized names. */
+    countries: string[];
 }
