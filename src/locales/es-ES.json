@@ -813,7 +813,9 @@
       "other": "Otro"
     },
     "duration": {
-      "short": "Hasta 3 meses",
+      "one": "1 mes",
+      "two": "2 meses",
+      "three": "3 meses",
       "medium": "4 a 6 meses",
       "long": "7 meses +",
       "months_one": "{{count}} mes",

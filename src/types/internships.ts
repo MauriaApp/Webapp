@@ -12,7 +12,7 @@ export type InternshipField =
     | "health"
     | "other";
 
-export type InternshipDuration = "short" | "medium" | "long";
+export type InternshipDuration = "one" | "two" | "three" | "medium" | "long";
 
 export type InternshipSort = "recent" | "relevance";
 

@@ -25,7 +25,13 @@ export const FIELDS: InternshipField[] = [
     "other",
 ];
 
-export const DURATIONS: InternshipDuration[] = ["short", "medium", "long"];
+export const DURATIONS: InternshipDuration[] = [
+    "one",
+    "two",
+    "three",
+    "medium",
+    "long",
+];
 export const LANGS = ["fr", "en", "es", "it", "de"] as const;
 
 export const EMPTY_FILTERS: InternshipFilters = {
