@@ -90,6 +90,9 @@ export interface InternshipFilters {
 
 /** Counts per value, each computed with every OTHER filter applied. */
 export interface InternshipFacets {
+    /** Total of the "All" type: computed without the kind filter.
+     *  Optional: responses cached before the key existed lack it. */
+    kindAll?: number;
     kind: Partial<Record<InternshipContractType, number>>;
     field: Partial<Record<InternshipField, number>>;
     country: Record<string, number>;

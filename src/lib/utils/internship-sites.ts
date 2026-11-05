@@ -61,7 +61,7 @@ export const INTERNSHIP_SITES: InternshipSite[] = [
         id: "pickingjobs",
         name: "PickingJobs",
         url: "https://www.pickingjobs.com/",
-        kind: "link",
+        kind: "offers",
     },
     {
         id: "chandleranddunn",
@@ -73,7 +73,7 @@ export const INTERNSHIP_SITES: InternshipSite[] = [
         id: "workaway",
         name: "Workaway",
         url: "https://www.workaway.info/",
-        kind: "link",
+        kind: "offers",
     },
     {
         id: "wwoof",
@@ -85,13 +85,13 @@ export const INTERNSHIP_SITES: InternshipSite[] = [
         id: "anyworkanywhere",
         name: "Anywork Anywhere",
         url: "https://anyworkanywhere.com/",
-        kind: "link",
+        kind: "offers",
     },
     {
         id: "summerjobs",
         name: "SummerJobs",
         url: "https://www.summerjobs.com/",
-        kind: "link",
+        kind: "offers",
     },
     {
         id: "e4s",

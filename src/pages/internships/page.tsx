@@ -210,21 +210,23 @@ export function InternshipsPage() {
     );
     const total = data?.pages[0]?.totalOffers ?? 0;
 
-    const kindItems: CarouselItem[] = useMemo(
-        () => [
-            { value: null, label: t("internshipsPage.contract.all") },
-            ...KINDS.map((value) => {
-                const count = facets?.kind[value];
-                return {
-                    value,
-                    label: `${t(`internshipsPage.contract.${value}`)}${
-                        count === undefined ? "" : ` (${count})`
-                    }`,
-                };
-            }),
-        ],
-        [t, facets]
-    );
+    const kindItems: CarouselItem[] = useMemo(() => {
+        const withCount = (label: string, count?: number) =>
+            `${label}${count === undefined ? "" : ` (${count})`}`;
+        return [
+            {
+                value: null,
+                label: withCount(t("internshipsPage.contract.all"), facets?.kindAll),
+            },
+            ...KINDS.map((value) => ({
+                value,
+                label: withCount(
+                    t(`internshipsPage.contract.${value}`),
+                    facets?.kind[value]
+                ),
+            })),
+        ];
+    }, [t, facets]);
 
     // One removable chip per active filter (a single kind lives in the carousel).
     const chips = useMemo(() => {
