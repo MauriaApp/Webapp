@@ -759,6 +759,7 @@
     "viewOffer": "Voir l'offre sur le site",
     "inMauria": "Offres dans Mauria",
     "sitesIntro": "Les sites conseillés par le pôle stage de Junia. Ceux marqués « Offres dans Mauria » sont aussi dans l'onglet Offres.",
+    "offersIntro": "Les offres de stage, d'alternance et de jobs saisonniers à l'étranger.",
     "sites": {
       "jobteaser": "Le Career Center de Junia : stages, alternances et premiers emplois. Connexion avec ton compte Junia.",
       "resortwork": "Jobs saisonniers en stations, hôtels et resorts.",
@@ -853,7 +854,8 @@
     "housingOptional": "Logement possible",
     "remote": "Télétravail",
     "junia": {
-      "search": "Rechercher une entreprise, une ville, un sujet…",
+"intro": "Les stages d'exécution des promos précédentes de Junia.",
+            "search": "Rechercher une entreprise, une ville, un sujet…",
       "count_one": "{{count}} stage",
       "count_other": "{{count}} stages",
       "empty": "Aucun stage ne correspond à ta recherche.",

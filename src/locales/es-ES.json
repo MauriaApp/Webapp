@@ -759,6 +759,7 @@
     "viewOffer": "Ver la oferta en el sitio",
     "inMauria": "Ofertas en Mauria",
     "sitesIntro": "Los sitios recomendados por la oficina de prácticas de Junia. Los marcados «Ofertas en Mauria» también están en la pestaña Ofertas.",
+    "offersIntro": "Prácticas, alternancias y trabajos de temporada en el extranjero.",
     "sites": {
       "jobteaser": "El Career Center de Junia: prácticas, alternancia y primeros empleos. Inicia sesión con tu cuenta de Junia.",
       "resortwork": "Empleos de temporada en estaciones, hoteles y resorts.",
@@ -853,7 +854,8 @@
     "housingOptional": "Alojamiento posible",
     "remote": "Teletrabajo",
     "junia": {
-      "search": "Buscar una empresa, una ciudad, un tema…",
+"intro": "Prácticas de ejecución de promociones anteriores de Junia.",
+            "search": "Buscar una empresa, una ciudad, un tema…",
       "count_one": "{{count}} prácticas",
       "count_other": "{{count}} prácticas",
       "empty": "Ningunas prácticas corresponden a tu búsqueda.",

@@ -759,6 +759,7 @@
     "viewOffer": "View the offer on the site",
     "inMauria": "Offers in Mauria",
     "sitesIntro": "The sites recommended by Junia's internship office. The ones marked \"Offers in Mauria\" are also in the Offers tab.",
+    "offersIntro": "Internships, apprenticeships and seasonal jobs abroad.",
     "sites": {
       "jobteaser": "Junia's Career Center: internships, apprenticeships and first jobs. Sign in with your Junia account.",
       "resortwork": "Seasonal jobs in ski resorts, hotels and resorts.",
@@ -853,7 +854,8 @@
     "housingOptional": "Housing possible",
     "remote": "Remote",
     "junia": {
-      "search": "Search a company, a city, a subject…",
+"intro": "Execution internships from previous Junia classes.",
+            "search": "Search a company, a city, a subject…",
       "count_one": "{{count}} internship",
       "count_other": "{{count}} internships",
       "empty": "No internship matches your search.",

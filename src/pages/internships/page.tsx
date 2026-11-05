@@ -334,6 +334,9 @@ export function InternshipsPage() {
             {tab === "offers" ? (
                 <>
                     <motion.div variants={fadeIn} className="space-y-4">
+                        <p className="text-center text-sm text-muted-foreground">
+                            {t("internshipsPage.offersIntro")}
+                        </p>
                         <div className="flex gap-2">
                             <SearchInput
                                 className="min-w-0 flex-1"
