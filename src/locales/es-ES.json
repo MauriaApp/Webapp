@@ -741,7 +741,8 @@
     "tabs": {
       "offers": "Ofertas",
       "sites": "Sitios",
-      "junia": "Junia"
+      "junia": "Junia",
+      "docs": "Documentos"
     },
     "search": "Buscar una oferta, un lugar, una empresa",
     "contract": {
@@ -752,13 +753,17 @@
       "job": "Empleo",
       "exchange": "Intercambio"
     },
+    "origin": {
+      "junia": "Junia",
+      "ijhdf": "IJ Hauts-de-France"
+    },
     "count_one": "{{count}} oferta",
     "count_other": "{{count}} ofertas",
     "error": "No se pueden cargar las ofertas ahora mismo.",
     "empty": "Ninguna oferta coincide con tu búsqueda.",
     "viewOffer": "Ver la oferta en el sitio",
     "inMauria": "Ofertas en Mauria",
-    "sitesIntro": "Los sitios recomendados por la oficina de prácticas de Junia. Los marcados «Ofertas en Mauria» también están en la pestaña Ofertas.",
+    "sitesIntro": "Los sitios recomendados por la oficina de prácticas de Junia (logo Junia) y los encontrados en la guía Destination Europe de Información Juvenil Hauts-de-France (logo IJ HdF), también disponible en la pestaña Documentos. Los marcados «Ofertas en Mauria» también están en la pestaña Ofertas.",
     "offersIntro": "Prácticas, alternancias y trabajos de temporada en el extranjero.",
     "sites": {
       "jobteaser": "El Career Center de Junia: prácticas, alternancia y primeros empleos. Inicia sesión con tu cuenta de Junia.",
@@ -779,7 +784,12 @@
       "intrax": "Programas J-1 en Estados Unidos: prácticas, empleos de verano, campamentos.",
       "alzea": "Agencia de prácticas en hostelería en Francia y en el extranjero.",
       "fruitfuljobs": "Agencia de colocación hortícola en el Reino Unido, candidatura por sector.",
-      "campzeke": "Campamento de verano en Estados Unidos que contrata a su equipo."
+      "campzeke": "Campamento de verano en Estados Unidos que contrata a su equipo.",
+      "lhotellerie": "Ofertas en hostelería y restauración en Francia: temporal, extra, prácticas y alternancia.",
+      "eurojobs": "Ofertas en toda Europa, todos los sectores, muchas en Alemania.",
+      "workwide": "Ofertas de empleo y prácticas en el extranjero para francófonos, por país y sector.",
+      "hotelcareer": "Ofertas en hostelería en Alemania, Austria y Suiza, mayormente en alemán.",
+      "helpstay": "Voluntariado con anfitriones por el mundo, unas horas de trabajo al día a cambio de alojamiento y comidas."
     },
     "filters": {
       "button": "Filtros",
@@ -789,6 +799,7 @@
       "show_one": "Ver {{count}} oferta",
       "show_other": "Ver {{count}} ofertas",
       "sections": {
+        "origin": "Procedencia",
         "field": "Sector",
         "country": "País",
         "city": "Ciudad",
@@ -884,6 +895,13 @@
       },
       "show_one": "Ver {{count}} prácticas",
       "show_other": "Ver {{count}} prácticas"
+    },
+    "docsIntro": "Guías y documentos útiles para preparar tus prácticas.",
+    "download": "Descargar el PDF",
+    "documents": {
+      "europeMobility": {
+        "title": "Destination Europe et un peu plus loin"
+      }
     }
   },
   "documentsPage": {
