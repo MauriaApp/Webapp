@@ -1,3 +1,5 @@
+import { InternshipOrigin } from "@/lib/utils/internship-origins";
+
 export type InternshipContractType =
     "internship" | "seasonal" | "apprenticeship" | "job" | "exchange";
 
@@ -85,6 +87,8 @@ export interface InternshipFilters {
     /** Published within the last N days. */
     posted: 7 | 30 | null;
     sort: InternshipSort;
+    /** Which network the sources belong to, null = both. */
+    origin: InternshipOrigin | null;
 }
 
 /** Counts per value, each computed with every OTHER filter applied. */
@@ -102,6 +106,9 @@ export interface InternshipFacets {
     paid: number;
     duration: Record<InternshipDuration, number>;
     posted: Record<"7" | "30", number>;
+    /** Per network counts, matching the origin filter.
+     *  Optional: responses cached before the filter existed lack it. */
+    origin?: Partial<Record<InternshipOrigin, number>>;
     total: number;
 }
 

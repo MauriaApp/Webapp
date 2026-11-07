@@ -741,7 +741,8 @@
     "tabs": {
       "offers": "Offres",
       "sites": "Sites",
-      "junia": "Junia"
+      "junia": "Junia",
+      "docs": "Documents"
     },
     "search": "Rechercher une offre, un lieu, une entreprise",
     "contract": {
@@ -752,13 +753,17 @@
       "job": "Emploi",
       "exchange": "Échange"
     },
+    "origin": {
+      "junia": "Junia",
+      "ijhdf": "IJ Hauts-de-France"
+    },
     "count_one": "{{count}} offre",
     "count_other": "{{count}} offres",
     "error": "Impossible de charger les offres pour le moment.",
     "empty": "Aucune offre ne correspond à ta recherche.",
     "viewOffer": "Voir l'offre sur le site",
     "inMauria": "Offres dans Mauria",
-    "sitesIntro": "Les sites conseillés par le pôle stage de Junia. Ceux marqués « Offres dans Mauria » sont aussi dans l'onglet Offres.",
+    "sitesIntro": "Les sites conseillés par le pôle stage de Junia (logo Junia) et ceux repérés dans le guide Destination Europe d'Information Jeunesse Hauts-de-France (logo IJ HdF), aussi disponible dans l'onglet Documents. Ceux marqués « Offres dans Mauria » sont aussi dans l'onglet Offres.",
     "offersIntro": "Les offres de stage, d'alternance et de jobs saisonniers à l'étranger.",
     "sites": {
       "jobteaser": "Le Career Center de Junia : stages, alternances et premiers emplois. Connexion avec ton compte Junia.",
@@ -779,7 +784,12 @@
       "intrax": "Organisme de programmes J-1 aux États-Unis : stages, jobs d'été, camps.",
       "alzea": "Agence de stages en hôtellerie-restauration en France et à l'étranger.",
       "fruitfuljobs": "Agence de placement horticole au Royaume-Uni, candidature par secteur.",
-      "campzeke": "Camp de vacances aux États-Unis qui recrute son équipe d'été."
+      "campzeke": "Camp de vacances aux États-Unis qui recrute son équipe d'été.",
+      "lhotellerie": "Offres d'emploi en hôtellerie-restauration en France : saisonnier, extra, stages et alternance.",
+      "eurojobs": "Offres d'emploi partout en Europe, tous secteurs, nombreuses annonces en Allemagne.",
+      "workwide": "Offres d'emploi et de stages à l'étranger pour francophones, par pays et par secteur.",
+      "hotelcareer": "Offres en hôtellerie en Allemagne, Autriche et Suisse, majoritairement en allemand.",
+      "helpstay": "Volontariat chez des hôtes dans le monde, quelques heures de travail par jour contre logement et repas."
     },
     "filters": {
       "button": "Filtres",
@@ -789,6 +799,7 @@
       "show_one": "Voir {{count}} offre",
       "show_other": "Voir {{count}} offres",
       "sections": {
+        "origin": "Provenance",
         "field": "Domaine",
         "country": "Pays",
         "city": "Ville",
@@ -884,6 +895,13 @@
       },
       "show_one": "Voir {{count}} stage",
       "show_other": "Voir {{count}} stages"
+    },
+    "docsIntro": "Des guides et documents utiles pour préparer ton départ en stage.",
+    "download": "Télécharger le PDF",
+    "documents": {
+      "europeMobility": {
+        "title": "Destination Europe et un peu plus loin"
+      }
     }
   },
   "documentsPage": {

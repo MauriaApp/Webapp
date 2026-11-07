@@ -4,6 +4,7 @@ import {
     InternshipField,
     InternshipFilters,
 } from "@/types/internships";
+import { ORIGINS } from "@/lib/utils/internship-origins";
 
 export const KINDS: InternshipContractType[] = [
     "internship",
@@ -47,6 +48,7 @@ export const EMPTY_FILTERS: InternshipFilters = {
     duration: [],
     posted: null,
     sort: "recent",
+    origin: null,
 };
 
 const list = <T extends string>(raw: string | null, allowed?: readonly T[]) =>
@@ -73,6 +75,7 @@ export function filtersToParams(filters: InternshipFilters): URLSearchParams {
         if (filters[key]) params.set(key, "1");
     });
     if (filters.posted) params.set("posted", String(filters.posted));
+    if (filters.origin) params.set("origin", filters.origin);
     if (filters.q && filters.sort === "relevance") {
         params.set("sort", "relevance");
     }
@@ -81,6 +84,7 @@ export function filtersToParams(filters: InternshipFilters): URLSearchParams {
 
 export function paramsToFilters(params: URLSearchParams): InternshipFilters {
     const posted = Number(params.get("posted"));
+    const origin = params.get("origin");
     return {
         q: params.get("q") ?? "",
         kind: list(params.get("kind"), KINDS),
@@ -96,6 +100,11 @@ export function paramsToFilters(params: URLSearchParams): InternshipFilters {
         duration: list(params.get("duration"), DURATIONS),
         posted: posted === 7 || posted === 30 ? posted : null,
         sort: params.get("sort") === "relevance" ? "relevance" : "recent",
+        origin:
+            origin !== null &&
+            ORIGINS.includes(origin as (typeof ORIGINS)[number])
+                ? (origin as (typeof ORIGINS)[number])
+                : null,
     };
 }
 
@@ -111,7 +120,8 @@ export function activeFilterCount(filters: InternshipFilters): number {
         Number(filters.housing) +
         Number(filters.remote) +
         Number(filters.paid) +
-        Number(filters.posted !== null)
+        Number(filters.posted !== null) +
+        Number(filters.origin !== null)
     );
 }
 

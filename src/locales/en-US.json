@@ -741,7 +741,8 @@
     "tabs": {
       "offers": "Offers",
       "sites": "Sites",
-      "junia": "Junia"
+      "junia": "Junia",
+      "docs": "Docs"
     },
     "search": "Search an offer, a place, a company",
     "contract": {
@@ -752,13 +753,17 @@
       "job": "Job",
       "exchange": "Exchange"
     },
+    "origin": {
+      "junia": "Junia",
+      "ijhdf": "IJ Hauts-de-France"
+    },
     "count_one": "{{count}} offer",
     "count_other": "{{count}} offers",
     "error": "Couldn't load offers right now.",
     "empty": "No offer matches your search.",
     "viewOffer": "View the offer on the site",
     "inMauria": "Offers in Mauria",
-    "sitesIntro": "The sites recommended by Junia's internship office. The ones marked \"Offers in Mauria\" are also in the Offers tab.",
+    "sitesIntro": "The sites recommended by Junia's internship office (Junia logo) and the ones found in the Destination Europe guide by Youth Information Hauts-de-France (IJ logo), also available in the Documents tab. The ones marked \"Offers in Mauria\" are also in the Offers tab.",
     "offersIntro": "Internships, apprenticeships and seasonal jobs abroad.",
     "sites": {
       "jobteaser": "Junia's Career Center: internships, apprenticeships and first jobs. Sign in with your Junia account.",
@@ -779,7 +784,12 @@
       "intrax": "J-1 programmes in the USA: internships, summer jobs, camps.",
       "alzea": "Agency for hospitality internships in France and abroad.",
       "fruitfuljobs": "Horticultural recruitment agency in the UK, apply by sector.",
-      "campzeke": "US summer camp hiring its summer staff."
+      "campzeke": "US summer camp hiring its summer staff.",
+      "lhotellerie": "Hospitality jobs in France: seasonal, extra, internships and apprenticeships.",
+      "eurojobs": "Jobs across Europe, all sectors, many listings in Germany.",
+      "workwide": "Jobs and internships abroad for French speakers, by country and sector.",
+      "hotelcareer": "Hospitality jobs in Germany, Austria and Switzerland, mostly in German.",
+      "helpstay": "Volunteering stays with hosts worldwide, a few hours of work per day in exchange for room and board."
     },
     "filters": {
       "button": "Filters",
@@ -789,6 +799,7 @@
       "show_one": "Show {{count}} offer",
       "show_other": "Show {{count}} offers",
       "sections": {
+        "origin": "Source",
         "field": "Field",
         "country": "Country",
         "city": "City",
@@ -884,6 +895,13 @@
       },
       "show_one": "Show {{count}} internship",
       "show_other": "Show {{count}} internships"
+    },
+    "docsIntro": "Helpful guides and documents to prepare your internship departure.",
+    "download": "Download the PDF",
+    "documents": {
+      "europeMobility": {
+        "title": "Destination Europe et un peu plus loin"
+      }
     }
   },
   "documentsPage": {

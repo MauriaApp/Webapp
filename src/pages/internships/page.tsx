@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router";
 import { motion } from "framer-motion";
 import {
     Banknote,
+    BookOpen,
     Clock,
     ExternalLink,
     House,
@@ -44,17 +45,23 @@ import {
     paramsToFilters,
     toggle,
 } from "@/lib/utils/internship-filters";
+import { ORIGIN_LOGOS } from "@/lib/utils/internship-origins";
 import {
     formatSalary,
     formatPostedAt,
     regionName,
 } from "@/lib/utils/internship-format";
-import { INTERNSHIP_SITES, siteName } from "@/lib/utils/internship-sites";
+import {
+    INTERNSHIP_SITES,
+    siteName,
+    siteOrigin,
+} from "@/lib/utils/internship-sites";
 import { getDateLocale } from "@/lib/utils/translations";
 import { cn } from "@/lib/utils/cn";
 import { InternshipFilters, InternshipOffer } from "@/types/internships";
 import { FiltersDrawer } from "./filters-drawer";
 import { JuniaStages } from "./junia-stages";
+import { InternshipDocs } from "./docs";
 
 const PAGE_SIZE = 30;
 const DEBOUNCE_MS = 300;
@@ -62,7 +69,7 @@ const STALE_MS = 1000 * 60 * 5;
 
 const MotionCard = motion(Card);
 
-type Tab = "offers" | "sites" | "junia";
+type Tab = "offers" | "sites" | "junia" | "docs";
 
 /** Small facts about an offer: housing, salary, duration, remote. */
 function OfferFacts({
@@ -299,6 +306,17 @@ export function InternshipsPage() {
                       },
                   ]
                 : []),
+            ...(filters.origin
+                ? [
+                      {
+                          key: "origin",
+                          label: t(
+                              `internshipsPage.origin.${filters.origin}`
+                          ),
+                          onRemove: () => remove({ origin: null }),
+                      },
+                  ]
+                : []),
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filters, t, i18n.language]);
@@ -318,7 +336,7 @@ export function InternshipsPage() {
             animate="show"
         >
             <motion.div variants={fadeIn} className="flex gap-2">
-                {(["offers", "sites", "junia"] as const).map((value) => (
+                {(["offers", "junia", "sites"] as const).map((value) => (
                     <Button
                         key={value}
                         variant={tab === value ? "default" : "outline"}
@@ -329,6 +347,17 @@ export function InternshipsPage() {
                         {t(`internshipsPage.tabs.${value}`)}
                     </Button>
                 ))}
+                {/* Square icon-only shortcut for the helpful documents. */}
+                <Button
+                    variant={tab === "docs" ? "default" : "outline"}
+                    size="icon"
+                    /* Same height as the size="sm" tab buttons next to it. */
+                    className="h-9 w-9 shrink-0"
+                    aria-label={t("internshipsPage.tabs.docs")}
+                    onClick={() => setTab("docs")}
+                >
+                    <BookOpen />
+                </Button>
             </motion.div>
 
             {tab === "offers" ? (
@@ -478,14 +507,31 @@ export function InternshipsPage() {
                                         <h3 className="break-words text-sm font-semibold leading-tight text-foreground">
                                             {offer.title}
                                         </h3>
-                                        <Badge
-                                            variant="secondary"
-                                            className="shrink-0 text-[10px]"
-                                        >
-                                            {t(
-                                                `internshipsPage.contract.${offer.contractType}`
-                                            )}
-                                        </Badge>
+                                        <div className="flex shrink-0 items-center gap-1.5">
+                                            <Badge
+                                                variant="secondary"
+                                                className="text-[10px]"
+                                            >
+                                                {t(
+                                                    `internshipsPage.contract.${offer.contractType}`
+                                                )}
+                                            </Badge>
+                                            {/* Source network, see
+                                             * /lib/utils/internship-origins. */}
+                                            <img
+                                                src={
+                                                    ORIGIN_LOGOS[
+                                                        siteOrigin(
+                                                            offer.source
+                                                        )
+                                                    ]
+                                                }
+                                                alt={t(
+                                                    `internshipsPage.origin.${siteOrigin(offer.source)}`
+                                                )}
+                                                className="h-5 w-auto rounded-sm"
+                                            />
+                                        </div>
                                     </div>
                                     {(offer.company || placeOf(offer)) && (
                                         <div className="flex items-center justify-between gap-2">
@@ -575,6 +621,17 @@ export function InternshipsPage() {
                                                     )}
                                                 </Badge>
                                             )}
+                                            {/* Which network recommends the
+                                             * site: Junia or IJ Hauts-de-France. */}
+                                            <img
+                                                src={
+                                                    ORIGIN_LOGOS[site.origin]
+                                                }
+                                                alt={t(
+                                                    `internshipsPage.origin.${site.origin}`
+                                                )}
+                                                className="h-5 w-auto rounded-sm"
+                                            />
                                             <ExternalLink className="h-4 w-4 text-muted-foreground" />
                                         </div>
                                     </div>
@@ -591,6 +648,12 @@ export function InternshipsPage() {
             {tab === "junia" && (
                 <motion.div variants={fadeIn}>
                     <JuniaStages />
+                </motion.div>
+            )}
+
+            {tab === "docs" && (
+                <motion.div variants={fadeIn}>
+                    <InternshipDocs />
                 </motion.div>
             )}
 

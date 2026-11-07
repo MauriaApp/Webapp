@@ -8,6 +8,7 @@ import {
     ListChecks,
     LucideIcon,
     MapPin,
+    Network,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +28,7 @@ import {
     LANGS,
     toggle,
 } from "@/lib/utils/internship-filters";
+import { ORIGINS, ORIGIN_LOGOS } from "@/lib/utils/internship-origins";
 import { regionName } from "@/lib/utils/internship-format";
 import { cn } from "@/lib/utils/cn";
 import { InternshipFacets, InternshipFilters } from "@/types/internships";
@@ -167,6 +169,37 @@ export function FiltersDrawer({
                     </DrawerHeader>
 
                     <div className="space-y-5 overflow-y-auto pb-4 pt-2">
+                        <Section
+                            Icon={Network}
+                            title={t(
+                                "internshipsPage.filters.sections.origin"
+                            )}
+                        >
+                            {ORIGINS.map((o) => (
+                                <Option
+                                    key={o}
+                                    active={filters.origin === o}
+                                    count={facets?.origin?.[o]}
+                                    base={base?.origin?.[o]}
+                                    onClick={() =>
+                                        set(
+                                            "origin",
+                                            filters.origin === o ? null : o
+                                        )
+                                    }
+                                >
+                                    {/* Network logos, see
+                                     * /lib/utils/internship-origins. */}
+                                    <img
+                                        src={ORIGIN_LOGOS[o]}
+                                        alt=""
+                                        className="h-4 w-4 rounded-sm"
+                                    />
+                                    {t(`internshipsPage.origin.${o}`)}
+                                </Option>
+                            ))}
+                        </Section>
+
                         {fields.length > 0 && (
                             <Section
                                 Icon={Briefcase}
