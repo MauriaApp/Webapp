@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { hashKey, useQuery } from "@tanstack/react-query";
 import { ChevronDownIcon, GraduationCap, Users, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +8,11 @@ import { eventDetailsKey, fetchEventDetails } from "@/lib/api/aurion";
 import type { EventRef } from "@/lib/api/aurion";
 import { useFetchProgress } from "@/lib/hooks/use-fetch-progress";
 import type { EventPerson } from "@/types/aurion";
+
+// Same closing as the top bar's ring: ramp to 100% (ease-out cubic), then a
+// short pause on the full bar before the content takes its place.
+const RAMP_MS = 800;
+const HOLD_MS = 300;
 
 const formatPerson = ({ firstName, lastName }: EventPerson) =>
     `${firstName} ${lastName}`.trim();
@@ -64,7 +70,44 @@ export function EventExtraInfo({ lesson }: { lesson: EventRef }) {
     });
     const { fetches } = useFetchProgress();
 
-    if (data) {
+    // The fetch's entry leaves the progress tracking a moment before the data
+    // lands here: without a memory the bar would fall back to its start value
+    // for one render. It only ever moves forward.
+    const reached = useRef({ key: "", value: 5 });
+    const hash = hashKey(queryKey);
+    if (reached.current.key !== hash) {
+        reached.current = { key: hash, value: 5 };
+    }
+    const progress = Math.max(
+        fetches.find((fetch) => fetch.id === hash)?.progress ?? 5,
+        reached.current.value
+    );
+    reached.current.value = progress;
+
+    // Content shows up once the bar has slid to 100%. Data already in the
+    // cache at mount (nothing was loading) is shown right away.
+    const [revealed, setRevealed] = useState(data !== undefined);
+    const [ramp, setRamp] = useState<number | null>(null);
+    useEffect(() => {
+        if (!data || revealed) return;
+        const from = reached.current.value;
+        const start = Date.now();
+        let holdId = 0;
+        const rampId = window.setInterval(() => {
+            const t = Math.min(1, (Date.now() - start) / RAMP_MS);
+            setRamp(from + (100 - from) * (1 - Math.pow(1 - t, 3)));
+            if (t >= 1) {
+                window.clearInterval(rampId);
+                holdId = window.setTimeout(() => setRevealed(true), HOLD_MS);
+            }
+        }, 16);
+        return () => {
+            window.clearInterval(rampId);
+            window.clearTimeout(holdId);
+        };
+    }, [data, revealed]);
+
+    if (data && revealed) {
         return (
             <div className="mt-6 space-y-4">
                 <DetailsDropdown
@@ -99,14 +142,18 @@ export function EventExtraInfo({ lesson }: { lesson: EventRef }) {
         );
     }
 
-    const progress =
-        fetches.find((fetch) => fetch.id === hashKey(queryKey))?.progress ?? 5;
     return (
         <div className="mt-6 h-10 flex flex-col justify-center gap-1.5">
             <p className="text-sm leading-none text-muted-foreground">
                 {t("drawerPlanningContent.loadMore")}…
             </p>
-            <Progress value={progress} className="h-2" />
+            <Progress
+                value={ramp ?? progress}
+                // Same easing as the top bar's ring: the default ease-in-out
+                // restarts slowly on every tick (one per 140ms), which reads
+                // as stop-and-go.
+                className="h-2 [&>div]:duration-200 [&>div]:ease-out"
+            />
         </div>
     );
 }

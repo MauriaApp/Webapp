@@ -139,6 +139,11 @@
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
+    "technicalDetailsParameter": {
+      "title": "Technical details",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
     "actions": {
       "associations": "Associations",
       "documents": "My documents",

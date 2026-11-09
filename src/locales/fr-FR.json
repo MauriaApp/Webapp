@@ -139,6 +139,11 @@
       "enabled": "Activé",
       "disabled": "Désactivé"
     },
+    "technicalDetailsParameter": {
+      "title": "Détails techniques",
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
     "actions": {
       "associations": "Associations",
       "documents": "Mes documents",

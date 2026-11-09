@@ -17,6 +17,7 @@ import {
     Dices,
     Radar,
     Hourglass,
+    Info,
     type LucideIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -60,6 +61,10 @@ import {
     setExtraTimeEnabled,
     useExtraTimeEnabled,
 } from "@/lib/utils/extra-time";
+import {
+    setTechnicalDetailsEnabled,
+    useTechnicalDetailsEnabled,
+} from "@/lib/utils/technical-details";
 import { fadeIn, staggerGroup } from "@/lib/motion";
 import {
     CAMPUS_OPTIONS,
@@ -138,6 +143,7 @@ export function SettingsPage() {
     const [campus, setCampusState] = useState<Campus>(readCampus);
     const restaurantMenuEnabled = useRestaurantMenuEnabled();
     const extraTimeEnabled = useExtraTimeEnabled();
+    const technicalDetailsEnabled = useTechnicalDetailsEnabled();
 
     const handleCampusChange = (value: string) => {
         if (!value) return;
@@ -152,6 +158,10 @@ export function SettingsPage() {
 
     const handleExtraTimeToggle = (enabled: boolean) => {
         setExtraTimeEnabled(enabled);
+    };
+
+    const handleTechnicalDetailsToggle = (enabled: boolean) => {
+        setTechnicalDetailsEnabled(enabled);
     };
 
     useEffect(() => {
@@ -396,6 +406,40 @@ export function SettingsPage() {
                         checked={extraTimeEnabled}
                         onCheckedChange={handleExtraTimeToggle}
                         aria-label={t("sidebar.extraTimeParameter.title")}
+                    />
+                </div>
+            </motion.div>
+
+            <motion.div
+                variants={fadeIn}
+                className="flex items-center justify-between gap-4"
+            >
+                <div className="flex min-w-0 flex-1 items-center gap-3 [&_svg]:size-7!">
+                    <Info className="h-5 w-5 shrink-0" />
+                    <div className="flex min-w-0 flex-col items-start">
+                        <Label
+                            htmlFor="technical-details"
+                            className="cursor-pointer text-left"
+                        >
+                            {t("sidebar.technicalDetailsParameter.title")}
+                        </Label>
+                        <span className="text-xs text-muted-foreground text-left">
+                            {technicalDetailsEnabled
+                                ? t("sidebar.technicalDetailsParameter.enabled")
+                                : t(
+                                      "sidebar.technicalDetailsParameter.disabled"
+                                  )}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex shrink-0 justify-end">
+                    <Switch
+                        id="technical-details"
+                        checked={technicalDetailsEnabled}
+                        onCheckedChange={handleTechnicalDetailsToggle}
+                        aria-label={t(
+                            "sidebar.technicalDetailsParameter.title"
+                        )}
                     />
                 </div>
             </motion.div>

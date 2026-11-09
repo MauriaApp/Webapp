@@ -23,6 +23,8 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { EventExtraInfo } from "@/components/event-extra-info";
 import { hasEventDetails } from "@/lib/api/aurion";
+import { isAurionEvent } from "@/lib/utils/planning";
+import { useTechnicalDetailsEnabled } from "@/lib/utils/technical-details";
 
 export function DrawerPlanningContent({
     drawerOpen,
@@ -41,6 +43,7 @@ export function DrawerPlanningContent({
     const { t, i18n } = useTranslation();
     const locale = getDateLocale(i18n.language);
     const [requested, setRequested] = useState(false);
+    const technicalDetailsEnabled = useTechnicalDetailsEnabled();
 
     // Each event opens collapsed: the request is only made on demand.
     const eventId = eventInfo?.details.id;
@@ -230,6 +233,7 @@ export function DrawerPlanningContent({
 
                         {/* Personal events have no Aurion internals to show. */}
                         {!onEdit &&
+                            isAurionEvent(eventInfo.details) &&
                             (showExtra ? (
                                 <EventExtraInfo lesson={eventInfo.details} />
                             ) : (
@@ -243,7 +247,7 @@ export function DrawerPlanningContent({
                                 </Button>
                             ))}
 
-                        {!onEdit && (
+                        {!onEdit && technicalDetailsEnabled && (
                             <details className="mt-6">
                                 <summary className="font-semibold cursor-pointer text-mauria-purple dark:text-gray-300 oled:text-gray-200 flex items-center gap-2 hover:text-mauria-purple/80 oled:hover:text-gray-200 transition-colors">
                                     <Info className="w-4 h-4" />
