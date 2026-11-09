@@ -139,6 +139,11 @@
       "enabled": "Enabled",
       "disabled": "Disabled"
     },
+    "technicalDetailsParameter": {
+      "title": "Technical details",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
     "actions": {
       "associations": "Associations",
       "documents": "My documents",
@@ -927,7 +932,12 @@
     "allDay": "All day",
     "notes": "Notes",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "loadMore": "Load more information",
+    "loadError": "Could not load the information",
+    "teachers": "Teachers",
+    "students": "Learners",
+    "groups": "Groups"
   },
   "update": {
     "somethingNew": "There's something new on Mauria!",
@@ -1025,6 +1035,7 @@
     "queries": {
       "warm": "Connecting to Aurion",
       "planning": "Schedule",
+      "eventDetails": "Event details",
       "grades": "Grades",
       "absences": "Absences",
       "documents": "My documents",

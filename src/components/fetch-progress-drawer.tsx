@@ -38,6 +38,7 @@ const CLOSE_DELAY_MS = 600;
 const QUERIES: Record<string, { icon: LucideIcon; label: string }> = {
     aurionWarm: { icon: Zap, label: "warm" },
     planning: { icon: Calendar, label: "planning" },
+    eventDetails: { icon: Calendar, label: "eventDetails" },
     grades: { icon: GraduationCap, label: "grades" },
     absences: { icon: User, label: "absences" },
     documents: { icon: FileText, label: "documents" },

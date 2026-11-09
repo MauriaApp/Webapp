@@ -18,6 +18,7 @@ const SLOW_QUERY_KEYS: SlowQueryKey[] = [
     "grades",
     "planning",
     "absences",
+    "eventDetails",
 ];
 
 // Work in a 0–1 ratio internally, displayed in a 5%..95% range.

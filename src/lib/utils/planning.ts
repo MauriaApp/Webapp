@@ -1,3 +1,4 @@
+import { Lesson } from "@/types/aurion";
 import { UserEvent } from "@/types/data";
 import { getFromStorage, saveToStorage } from "./storage";
 
@@ -40,3 +41,14 @@ export function removeUserEventFromLocalStorage({
 }) {
     writeUserEvents(readUserEvents().filter((ue) => ue.id !== userEventId));
 }
+
+/**
+ * Whether the event really exists in Aurion's planning. Personal events, the
+ * khôlles and the DS swapped in for CPG classes are built by the app itself
+ * (ids prefixed "colle-"/"ds-", the DS keep Aurion's own class name), so
+ * Aurion has nothing to say about them.
+ */
+export const isAurionEvent = (lesson: Pick<Lesson, "id" | "className">) =>
+    lesson.className !== "est-perso" &&
+    lesson.className !== "est-colle" &&
+    !/^(colle|ds)-/.test(lesson.id);

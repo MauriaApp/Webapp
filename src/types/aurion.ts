@@ -55,3 +55,20 @@ export type DocumentsResult = {
     categories: DocumentCategory[];
     documents: AurionDocument[];
 };
+
+export type EventPerson = {
+    lastName: string;
+    firstName: string;
+};
+
+export type EventGroup = {
+    code: string;
+    label: string;
+};
+
+/** Teachers, learners and groups of one planning event. */
+export type EventDetails = {
+    teachers: EventPerson[];
+    students: EventPerson[];
+    groups: EventGroup[];
+};

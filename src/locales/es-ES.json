@@ -139,6 +139,11 @@
       "enabled": "Activado",
       "disabled": "Desactivado"
     },
+    "technicalDetailsParameter": {
+      "title": "Detalles técnicos",
+      "enabled": "Activado",
+      "disabled": "Desactivado"
+    },
     "actions": {
       "associations": "Asociaciones",
       "documents": "Mis documentos",
@@ -927,7 +932,12 @@
     "allDay": "Todo el día",
     "notes": "Notas",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "loadMore": "Cargar más información",
+    "loadError": "No se pudo cargar la información",
+    "teachers": "Profesores",
+    "students": "Estudiantes",
+    "groups": "Grupos"
   },
   "update": {
     "somethingNew": "¡Hay novedades en Mauria!",
@@ -1025,6 +1035,7 @@
     "queries": {
       "warm": "Conectando con Aurion",
       "planning": "Horario",
+      "eventDetails": "Detalle del evento",
       "grades": "Notas",
       "absences": "Ausencias",
       "documents": "Mis documentos",
