@@ -137,15 +137,7 @@ export default function Sidebar() {
                             onClick={() => handleNavigate("/documents")}
                         >
                             <FileText className="h-5 w-5" />
-                            <span className="inline-flex items-center gap-1.5">
-                                {t("sidebar.actions.documents")}
-                                <Badge
-                                    variant="secondary"
-                                    className="px-1.5 py-0 text-[10px] font-semibold"
-                                >
-                                    Beta
-                                </Badge>
-                            </span>
+                            {t("sidebar.actions.documents")}
                         </Button>
 
                         <Button
