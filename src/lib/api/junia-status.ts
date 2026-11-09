@@ -20,7 +20,15 @@ export interface JuniaStatus {
 
 // Slow Aurion-scraping queries that have an expected duration. Fast queries
 // (colles, menu, rooms) are under 1s and don't need one.
-export type SlowQueryKey = "documents" | "grades" | "planning" | "absences";
+export type SlowQueryKey =
+    "documents" | "grades" | "planning" | "absences" | "eventDetails";
+
+// Aurion has no timing of its own for an event's detail dialog: it goes
+// through the planning page (reload the week, then click the event), so it
+// is measured with the planning timings.
+type TimedKey = "grades" | "planning" | "absences";
+const timedKey = (key: Exclude<SlowQueryKey, "documents">): TimedKey =>
+    key === "eventDetails" ? "planning" : key;
 
 // Fallback expected durations (ms) when BadJunia's timings are not available
 // (status not loaded yet, upstream down, persisted cache from before the
@@ -30,6 +38,7 @@ const FALLBACK_DURATION: Record<SlowQueryKey, number> = {
     grades: 17000,
     planning: 10000,
     absences: 8000,
+    eventDetails: 10000,
 };
 
 // The documents flow walks every leaf of the "Mes Documents" submenu, far
@@ -37,7 +46,7 @@ const FALLBACK_DURATION: Record<SlowQueryKey, number> = {
 const DOCUMENTS_EXPECTED_MS = 15000;
 
 // Same, warm: only the feature page remains.
-const FALLBACK_STEP: Record<Exclude<SlowQueryKey, "documents">, number> = {
+const FALLBACK_STEP: Record<TimedKey, number> = {
     grades: 1700,
     planning: 3600,
     absences: 1200,
@@ -113,11 +122,16 @@ export function expectedFetchDuration(
         return DOCUMENTS_EXPECTED_MS;
     }
     const times = status?.aurionTimes;
-    const step = times?.[key] ?? null;
+    const step = times?.[timedKey(key)] ?? null;
     if (isAurionSessionWarm()) {
-        return step ?? FALLBACK_STEP[key];
+        return step ?? FALLBACK_STEP[timedKey(key)];
     }
-    if (!times || times.login === null || times.home === null || step === null) {
+    if (
+        !times ||
+        times.login === null ||
+        times.home === null ||
+        step === null
+    ) {
         return FALLBACK_DURATION[key];
     }
     return times.login + times.home + step;

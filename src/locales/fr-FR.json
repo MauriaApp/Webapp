@@ -927,7 +927,12 @@
     "allDay": "Toute la journée",
     "notes": "Notes",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "loadMore": "Charger plus d'informations",
+    "loadError": "Impossible de charger les informations",
+    "teachers": "Intervenants",
+    "students": "Apprenants",
+    "groups": "Groupes"
   },
   "update": {
     "somethingNew": "Y'a du nouveau sur Mauria !",
@@ -1025,6 +1030,7 @@
     "queries": {
       "warm": "Connexion à Aurion",
       "planning": "Planning",
+      "eventDetails": "Détail des événements",
       "grades": "Notes",
       "absences": "Absences",
       "documents": "Mes documents",

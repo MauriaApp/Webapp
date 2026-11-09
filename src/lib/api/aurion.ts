@@ -1,4 +1,11 @@
-import { Lesson, Grade, Absence, AurionDocument, DocumentsResult } from "@/types/aurion";
+import {
+    Lesson,
+    Grade,
+    Absence,
+    AurionDocument,
+    DocumentsResult,
+    EventDetails,
+} from "@/types/aurion";
 import { apiRequest, APIResponse, API_URL } from "./helper";
 import { getFromStorage, saveToStorage } from "../utils/storage";
 import { queryClient } from "@/lib/query-client";
@@ -177,6 +184,38 @@ export async function fetchPlanning(params?: {
     );
 }
 
+export type EventRef = Pick<Lesson, "title" | "start" | "end">;
+
+export const eventDetailsKey = (lesson: EventRef) =>
+    ["eventDetails", lesson.title, lesson.start, lesson.end] as const;
+
+/** Whether this event's details are already in the query cache. */
+export const hasEventDetails = (lesson: EventRef) =>
+    queryClient.getQueryData(eventDetailsKey(lesson)) !== undefined;
+
+/**
+ * Teachers, learners and groups of one event. Aurion ids are regenerated on
+ * every schedule load, so the API finds the event again by title and times.
+ */
+export async function fetchEventDetails(
+    lesson: EventRef
+): Promise<APIResponse<EventDetails> | null> {
+    const session = getSession();
+    if (!session) return null;
+    return timedAurionFetch("eventDetails", () =>
+        apiRequest<APIResponse<EventDetails>>(
+            "/aurion/planning/event",
+            "POST",
+            {
+                ...session,
+                title: lesson.title,
+                start: lesson.start,
+                end: lesson.end,
+            }
+        )
+    );
+}
+
 export async function fetchGrades(): Promise<GradeEntry | null> {
     const session = getSession();
     if (!session) return null;
@@ -264,8 +303,7 @@ async function saveDocumentBlob(
 
         const blob = await response.blob();
         const cd = response.headers.get("Content-Disposition");
-        const filename =
-            cd?.match(/filename="([^"]+)"/)?.[1] ?? "document.pdf";
+        const filename = cd?.match(/filename="([^"]+)"/)?.[1] ?? "document.pdf";
 
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
