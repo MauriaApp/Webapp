@@ -53,9 +53,12 @@ export function DrawerPlanningContent({
         !!eventInfo && (requested || hasEventDetails(eventInfo.details));
     return (
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-            <DrawerContent aria-describedby={undefined}>
+            <DrawerContent
+                aria-describedby={undefined}
+                className="max-h-[92dvh]"
+            >
                 {eventInfo && (
-                    <div className="p-6">
+                    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 touch-pan-y [-webkit-overflow-scrolling:touch]">
                         <DrawerTitle className="text-2xl font-bold mb-6 text-mauria-purple dark:text-white oled:text-gray-100 flex items-center gap-2">
                             <BookOpen className="w-6 h-6" />
                             {eventInfo.courseTitle}
