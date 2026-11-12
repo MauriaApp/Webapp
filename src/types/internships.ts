@@ -124,13 +124,15 @@ export interface JuniaStage {
     campus: string;
     /** Class within the program, e.g. "CPG1 MP2I". */
     level: string;
-    /** "execution" or "extra". */
+    /** "execution", "international" (International Break) or "extra". */
     kind: string;
     company: string;
     city: string;
     /** ISO 3166-1 alpha-2, uppercase; raw text when unknown. */
     country: string;
     subject: string;
+    /** Free-text description of the stay (International Break only). */
+    description?: string;
     start: string;
     end: string;
 }
