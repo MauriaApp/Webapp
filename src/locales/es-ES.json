@@ -872,7 +872,7 @@
     "housingOptional": "Alojamiento posible",
     "remote": "Teletrabajo",
     "junia": {
-"intro": "Prácticas de ejecución de promociones anteriores de Junia.",
+"intro": "Prácticas de ejecución e International Breaks de promociones anteriores de Junia.",
             "search": "Buscar una empresa, una ciudad, un tema…",
       "count_one": "{{count}} prácticas",
       "count_other": "{{count}} prácticas",
@@ -889,7 +889,7 @@
       },
       "kind": {
         "execution": "Ejecución",
-        "ibSoon": "IB (próximamente)",
+        "international": "International Break",
         "extra": "Extra"
       },
       "filters": {

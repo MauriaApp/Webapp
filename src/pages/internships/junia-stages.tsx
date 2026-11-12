@@ -14,6 +14,7 @@ import { CarouselItem, FilterCarousel } from "@/components/filter-carousel";
 import { SearchInput } from "@/components/search-input";
 import { getJuniaFacets, searchJuniaStages } from "@/lib/api/internships";
 import { fadeIn, staggerGroup } from "@/lib/motion";
+import { cn } from "@/lib/utils/cn";
 import { regionName } from "@/lib/utils/internship-format";
 import { getDateLocale } from "@/lib/utils/translations";
 import {
@@ -30,7 +31,7 @@ import { JuniaFiltersDrawer } from "./junia-filters-drawer";
 const PAGE_SIZE = 60;
 const DEBOUNCE_MS = 300;
 const STALE_MS = 1000 * 60 * 5;
-const KINDS = ["execution", "extra"] as const;
+const KINDS = ["execution", "international", "extra"] as const;
 
 const MotionCard = motion(Card);
 
@@ -78,6 +79,15 @@ export function JuniaStages() {
     const [kind, setKind] = useState<string | null>(null);
     const [filtersOpen, setFiltersOpen] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
+    const [expanded, setExpanded] = useState<Set<number>>(new Set());
+    const toggle = (id: number) =>
+        setExpanded((prev) => {
+            const next = new Set(prev);
+            if (!next.delete(id)) {
+                next.add(id);
+            }
+            return next;
+        });
     const locale = getDateLocale(i18n.language);
 
     // The search box types freely; the request follows 300 ms later.
@@ -165,26 +175,13 @@ export function JuniaStages() {
                     counts?.kindAll
                 ),
             },
-            ...KINDS.flatMap((value): CarouselItem[] => {
-                const item: CarouselItem = {
-                    value,
-                    label: withCount(
-                        t(`internshipsPage.junia.kind.${value}`),
-                        counts?.kinds[value]
-                    ),
-                };
-                // International Break: no data yet, announced between the two.
-                return value === "execution"
-                    ? [
-                          item,
-                          {
-                              value: "ib",
-                              label: t("internshipsPage.junia.kind.ibSoon"),
-                              disabled: true,
-                          },
-                      ]
-                    : [item];
-            }),
+            ...KINDS.map((value) => ({
+                value,
+                label: withCount(
+                    t(`internshipsPage.junia.kind.${value}`),
+                    counts?.kinds[value]
+                ),
+            })),
         ];
     }, [t, counts]);
 
@@ -286,9 +283,23 @@ export function JuniaStages() {
                                             </Badge>
                                         </div>
                                     </div>
-                                    <p className="line-clamp-2 text-xs text-muted-foreground">
-                                        {stage.subject}
-                                    </p>
+                                    {stage.subject && (
+                                        <p className="line-clamp-2 text-xs text-muted-foreground">
+                                            {stage.subject}
+                                        </p>
+                                    )}
+                                    {stage.description && (
+                                        <p
+                                            className={cn(
+                                                "cursor-pointer text-xs text-muted-foreground/80",
+                                                !expanded.has(stage.id) &&
+                                                    "line-clamp-3"
+                                            )}
+                                            onClick={() => toggle(stage.id)}
+                                        >
+                                            {stage.description}
+                                        </p>
+                                    )}
                                     <div className="mt-1 flex items-center justify-between gap-2 text-xs text-muted-foreground">
                                         <span className="flex min-w-0 items-center gap-1.5">
                                             <MapPin className="h-3.5 w-3.5 shrink-0" />

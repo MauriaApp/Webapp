@@ -872,7 +872,7 @@
     "housingOptional": "Housing possible",
     "remote": "Remote",
     "junia": {
-"intro": "Execution internships from previous Junia classes.",
+"intro": "Execution internships and International Breaks from previous Junia classes.",
             "search": "Search a company, a city, a subject…",
       "count_one": "{{count}} internship",
       "count_other": "{{count}} internships",
@@ -889,7 +889,7 @@
       },
       "kind": {
         "execution": "Execution",
-        "ibSoon": "IB (coming soon)",
+        "international": "International Break",
         "extra": "Extra"
       },
       "filters": {

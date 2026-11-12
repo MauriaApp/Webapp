@@ -872,7 +872,7 @@
     "housingOptional": "Logement possible",
     "remote": "Télétravail",
     "junia": {
-"intro": "Les stages d'exécution des promos précédentes de Junia.",
+"intro": "Les stages d'exécution et les International Breaks des promos précédentes de Junia.",
             "search": "Rechercher une entreprise, une ville, un sujet…",
       "count_one": "{{count}} stage",
       "count_other": "{{count}} stages",
@@ -889,7 +889,7 @@
       },
       "kind": {
         "execution": "Exécution",
-        "ibSoon": "IB (à venir)",
+        "international": "International Break",
         "extra": "Supplémentaire"
       },
       "filters": {
