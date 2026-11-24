@@ -226,7 +226,15 @@ export function FreeRoomsView() {
         isError: buildingsError,
     } = useQuery<Building[]>({
         queryKey: ["findmyroom", "buildings"],
-        queryFn: async () => (await fetchBuildings()) ?? [],
+        queryFn: async () => {
+            // Null = request failed: surface it instead of caching "empty".
+            const buildings = await fetchBuildings();
+            if (!buildings) throw new Error("findmyroom request failed");
+            return buildings;
+        },
+        // Each failed attempt costs ~10s upstream: show the error on the
+        // first one, the 30s refetch below keeps retrying in the background.
+        retry: false,
         staleTime: 20 * 1000,
         gcTime: 1000 * 60 * 10,
         refetchInterval: 30 * 1000,
@@ -249,8 +257,13 @@ export function FreeRoomsView() {
         isError: roomsError,
     } = useQuery({
         queryKey: ["findmyroom", "rooms", selectedBuilding?.code],
-        queryFn: () => fetchRoomsForBuilding(selectedBuilding!.code),
+        queryFn: async () => {
+            const rooms = await fetchRoomsForBuilding(selectedBuilding!.code);
+            if (!rooms) throw new Error("findmyroom request failed");
+            return rooms;
+        },
         enabled: !!selectedBuilding,
+        retry: false,
         staleTime: 20 * 1000,
         gcTime: 1000 * 60 * 10,
         refetchInterval: isDrawerOpen ? 30 * 1000 : false,
