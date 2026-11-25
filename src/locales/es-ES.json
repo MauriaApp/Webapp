@@ -153,7 +153,8 @@
       "versions": "Actualizaciones",
       "settings": "Ajustes",
       "palantir": "Palantir",
-      "internships": "Prácticas"
+      "internships": "Prácticas",
+      "roadmap": "Hoja de ruta"
     },
     "help": "¿Una pregunta, una idea?",
     "logOut": "Cerrar sesión",
@@ -972,13 +973,66 @@
     "version": "Versión",
     "noVersions": "No hay actualizaciones para mostrar."
   },
+  "roadmapPage": {
+    "title": "Hoja de ruta",
+    "subtitle": "Las funciones en curso y las pendientes.",
+    "propose": "Proponer una función",
+    "status": {
+      "inProgress": "En curso",
+      "pending": "Pendientes"
+    },
+    "platforms": {
+      "web": "Ordenador",
+      "ios": "iOS",
+      "android": "Android"
+    },
+    "features": {
+      "iosDevSetup": {
+        "title": "Entorno de desarrollo de iOS",
+        "description": "Volver a montar la PWA de iOS para retomar las actualizaciones nativas."
+      },
+      "flashbang": {
+        "title": "Pantalla en blanco en iOS",
+        "description": "La app se queda bloqueada en una pantalla en blanco sin interacción."
+      },
+      "calendarSync": {
+        "title": "Sincronización de calendario",
+        "description": "Suscribirte al horario desde Apple Calendar, Google Calendar o Notion, sin exportación manual."
+      },
+      "offline": {
+        "title": "Modo sin conexión",
+        "description": "Consulta tu horario y tus notas sin conexión."
+      },
+      "gradeNotifications": {
+        "title": "Notificaciones de notas",
+        "description": "Un aviso cuando se publica una nueva nota."
+      },
+      "agendaNotifications": {
+        "title": "Notificaciones de agenda",
+        "description": "Un aviso cuando vence un evento de la agenda."
+      },
+      "iosWidget": {
+        "title": "Widget de iOS",
+        "description": "Tus próximas clases y tus últimas notas en la pantalla de inicio del iPhone."
+      },
+      "haptics": {
+        "title": "Respuesta háptica",
+        "description": "Una vibración ligera en cada acción."
+      },
+      "generalOptimizations": {
+        "title": "Optimizaciones generales",
+        "description": "Una app más fluida, sobre todo en el móvil."
+      }
+    }
+  },
   "printPage": {
     "title": "Impresión",
     "balance": {
       "title": "Crédito de impresión",
       "personal": "Saldo personal",
       "bonus": "Bono anual",
-      "error": "No se pudo cargar tu saldo"
+      "error": "No se pudo cargar tu saldo",
+      "topUp": "Recargar en print.junia.com"
     },
     "jobs": {
       "title": "Trabajos de impresión",
