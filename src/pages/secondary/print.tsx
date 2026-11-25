@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Loader2, Plus, Trash2, Upload, X } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, X, ExternalLink } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
@@ -29,6 +29,10 @@ import { getDateLocale } from "@/lib/utils/translations";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const REFETCH_INTERVAL = 15_000;
+// Top-up is not exposed by the print API: credits are bought on the official
+// Junia print site, so the balance card links out to it.
+const PRINT_TOP_UP_URL =
+    "https://print.junia.com/end-user/ui/payment/recharge-credit/electronic-payment";
 // SafeQ lists a new job a few seconds after the upload returns: check at each
 // delay, and give up on the last one
 const VERIFY_DELAYS = [3_000, 6_000, 9_000];
@@ -111,6 +115,15 @@ function BalanceSection() {
                                 : "—"}
                         </p>
                     )}
+                    <a
+                        href={PRINT_TOP_UP_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-4"
+                    >
+                        <ExternalLink className="size-3" />
+                        {t("printPage.balance.topUp")}
+                    </a>
                 </CardContent>
             </Card>
             {!isLoading && !data && (

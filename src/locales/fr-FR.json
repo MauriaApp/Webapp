@@ -153,7 +153,8 @@
       "versions": "Mises à jour",
       "settings": "Paramètres",
       "palantir": "Palantir",
-      "internships": "Stages"
+      "internships": "Stages",
+      "roadmap": "Roadmap"
     },
     "help": "Une question, une idée ?",
     "logOut": "Se déconnecter",
@@ -972,13 +973,66 @@
     "version": "Version",
     "noVersions": "Aucune mise à jour à afficher."
   },
+  "roadmapPage": {
+    "title": "Roadmap",
+    "subtitle": "Les fonctionnalités en cours de développement et celles en attente.",
+    "propose": "Proposer une feature",
+    "status": {
+      "inProgress": "En cours",
+      "pending": "En attente"
+    },
+    "platforms": {
+      "web": "Ordinateur",
+      "ios": "iOS",
+      "android": "Android"
+    },
+    "features": {
+      "iosDevSetup": {
+        "title": "Environnement de dev iOS",
+        "description": "Remettre en place la PWA iOS pour reprendre les mises à jour natives."
+      },
+      "flashbang": {
+        "title": "Écran blanc sur iOS",
+        "description": "L'app se fige sur un écran blanc sans interaction."
+      },
+      "calendarSync": {
+        "title": "Synchronisation calendrier",
+        "description": "S'abonner au planning depuis Apple Calendar, Google Calendar ou Notion, sans export manuel."
+      },
+      "offline": {
+        "title": "Mode hors ligne",
+        "description": "Consulter ton planning et tes notes sans connexion."
+      },
+      "gradeNotifications": {
+        "title": "Notifications de notes",
+        "description": "Une alerte quand une nouvelle note est publiée."
+      },
+      "agendaNotifications": {
+        "title": "Notifications d'agenda",
+        "description": "Une alerte quand un événement de l'agenda arrive."
+      },
+      "iosWidget": {
+        "title": "Widget iOS",
+        "description": "Tes prochains cours et tes dernières notes sur l'écran d'accueil de l'iPhone."
+      },
+      "haptics": {
+        "title": "Retours haptiques",
+        "description": "Une vibration légère à chaque action."
+      },
+      "generalOptimizations": {
+        "title": "Optimisations générales",
+        "description": "Une app plus fluide, surtout sur téléphone."
+      }
+    }
+  },
   "printPage": {
     "title": "Impression",
     "balance": {
       "title": "Crédit d'impression",
       "personal": "Solde personnel",
       "bonus": "Bonus annuel",
-      "error": "Impossible de charger votre solde"
+      "error": "Impossible de charger votre solde",
+      "topUp": "Recharger sur print.junia.com"
     },
     "jobs": {
       "title": "Travaux d'impression",

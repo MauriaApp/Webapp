@@ -15,6 +15,7 @@ import {
     MailQuestionMark,
     ArrowDownRightFromSquare,
     Settings,
+    Rocket,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import { useTheme } from "@/components/theme-provider";
 import { useNavigate } from "react-router";
 import { applyScale, readInitialSize } from "@/lib/utils/scale";
 import { clearStorage } from "@/lib/utils/storage";
+import { CONTACT_URL } from "@/lib/utils/contact";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchUpdates } from "@/lib/api/supa";
 import { useTranslation } from "react-i18next";
@@ -40,9 +42,6 @@ import { applyLocale, readInitialLocale } from "@/lib/utils/translations";
 
 const aurionURL = "https://aurion.junia.com";
 const juniaLearningURL = "https://junia-learning.com";
-const contactURL =
-    "mailto:louis.soltysiak@student.junia.com?subject=" +
-    encodeURIComponent("Support/feature pour Mauria");
 const githubURL = "https://github.com/MauriaApp";
 // const preprodURL = "https://mauria-preprod.fly.dev";
 
@@ -222,7 +221,17 @@ export default function Sidebar() {
                             variant="ghost"
                             size="sm"
                             className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
-                            onClick={() => window.open(contactURL, "_blank")}
+                            onClick={() => handleNavigate("/roadmap")}
+                        >
+                            <Rocket className="h-5 w-5" />
+                            {t("sidebar.actions.roadmap")}
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="group w-full justify-start gap-3 px-0 h-10 [&_svg]:size-7 hover:bg-mauria-purple/10 dark:hover:bg-white/10 oled:hover:bg-white/10"
+                            onClick={() => window.open(CONTACT_URL, "_blank")}
                         >
                             <MailQuestionMark className="h-5 w-5" />
                             {t("sidebar.help")}

@@ -29,6 +29,7 @@ import { CampusPage } from "./pages/secondary/campus";
 import { PreparingPage } from "./pages/secondary/preparing";
 import { DocumentsPage } from "./pages/secondary/documents";
 import { VersionsPage } from "./pages/secondary/versions";
+import { RoadmapPage } from "./pages/secondary/roadmap";
 import { PrintPage } from "./pages/secondary/print";
 import { SettingsPage } from "./pages/secondary/settings";
 import { PalantirPage } from "./pages/palantir/page";
@@ -130,6 +131,7 @@ function AppRoutes() {
                     />
                     <Route path="/agenda" element={<AgendaPage />} />
                     <Route path="/versions" element={<VersionsPage />} />
+                    <Route path="/roadmap" element={<RoadmapPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                 </Route>
             </Routes>

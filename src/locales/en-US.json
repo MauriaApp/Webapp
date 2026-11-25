@@ -153,7 +153,8 @@
       "versions": "Updates",
       "settings": "Settings",
       "palantir": "Palantir",
-      "internships": "Internships"
+      "internships": "Internships",
+      "roadmap": "Roadmap"
     },
     "help": "A question, an idea?",
     "logOut": "Log Out",
@@ -972,13 +973,66 @@
     "version": "Version",
     "noVersions": "No updates to display."
   },
+  "roadmapPage": {
+    "title": "Roadmap",
+    "subtitle": "Features in development and pending ones.",
+    "propose": "Suggest a feature",
+    "status": {
+      "inProgress": "In progress",
+      "pending": "Pending"
+    },
+    "platforms": {
+      "web": "Desktop",
+      "ios": "iOS",
+      "android": "Android"
+    },
+    "features": {
+      "iosDevSetup": {
+        "title": "iOS dev environment",
+        "description": "Set up the iOS PWA again to resume native updates."
+      },
+      "flashbang": {
+        "title": "White screen on iOS",
+        "description": "The app freezes on a blank screen with no interaction."
+      },
+      "calendarSync": {
+        "title": "Calendar sync",
+        "description": "Subscribe to your schedule from Apple Calendar, Google Calendar or Notion, without a manual export."
+      },
+      "offline": {
+        "title": "Offline mode",
+        "description": "Check your schedule and grades without a connection."
+      },
+      "gradeNotifications": {
+        "title": "Grade notifications",
+        "description": "An alert when a new grade is published."
+      },
+      "agendaNotifications": {
+        "title": "Agenda notifications",
+        "description": "An alert when an agenda event is due."
+      },
+      "iosWidget": {
+        "title": "iOS widget",
+        "description": "Your next classes and latest grades on the iPhone home screen."
+      },
+      "haptics": {
+        "title": "Haptic feedback",
+        "description": "A light vibration on each interaction."
+      },
+      "generalOptimizations": {
+        "title": "General optimizations",
+        "description": "A smoother app, especially on phones."
+      }
+    }
+  },
   "printPage": {
     "title": "Print",
     "balance": {
       "title": "Print credit",
       "personal": "Personal balance",
       "bonus": "Yearly bonus",
-      "error": "Couldn't load your balance"
+      "error": "Couldn't load your balance",
+      "topUp": "Top up on print.junia.com"
     },
     "jobs": {
       "title": "Print jobs",
